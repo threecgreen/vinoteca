@@ -1,0 +1,76 @@
+{% extends 'wine_profile_base.html' %}
+{% block prev_purchases %}
+    <div class="row">
+        <div class="col s12">
+            <h3>Edit Purchase</h3>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s6 m3">
+                        <input id="purchase-date" name="purchase-date" type="text" class="datepicker">
+                        <label for="purchase-date">Purchase Date</label>
+                    </div>
+                    <div class="input-field col s6 m3">
+                        <input id="quantity" name="quantity" type="number" class="validate" {% if quantity %}value={{ quantity }}{% endif %}>
+                        <label for="quantity">Quantity</label>
+                    </div>
+                    <div class="input-field col s6 m3">
+                        <input id="price" name="price" type="number" class="validate" step="0.01" {% if price %}value={{ price }}{% endif %}>
+                        <label for="price">Price</label>
+                    </div>
+                    <div class="input-field col s6 m3">
+                        <input id="vintage" name="vintage" type="number" class="validate" value={% if vintage %} {{ vintage }} {% else %} "{% now "Y" %}"{% endif %}>
+                        <label for="vintage">Vintage</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="auto-store" name="store" class="autocomplete" {% if store %}value="{{ store }}"{% endif %}>
+                        <label for="auto-store">Store</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="address" name="address" class="validate" {% if address %}value="{{ address }}"{% endif %}>
+                        <label for="address">Address</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="why" name="why" class="validate" {% if why %}value="{{ why }}"{% endif %}>
+                        <label for="why">Why</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <button class="btn waves-effect waves-light" type="submit" name="action">
+                            Confirm Changes<i class="material-icons right">send</i>
+                        </button>
+                        <a class="waves-effect waves-light btn" href={% url "Edit Wine" wine_id=wine_id %}>cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        var $datepicker = $('.datepicker');
+        $(document).ready(function() {
+            $($datepicker).pickadate({
+                selectMonths: true,             // Creates a dropdown to control month
+                selectYears: 25,                 // Creates a dropdown of 5 years to control year,
+                today: 'Today',
+                clear: 'Clear',
+                close: 'Ok',
+                closeOnSelect: false            // Close upon selecting a date,
+            });
+            {% if date %}
+                $datepicker.pickadate().pickadate('picker').set('select', "{{ date }}", { format: 'yyyymmdd'});
+            {% endif %}
+            $('#auto-store').autocomplete({
+                data: {
+                    {% for store in stores %}
+                        "{{ store.name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+        });
+    </script>
+{% endblock %}

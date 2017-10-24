@@ -1,0 +1,24 @@
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Producer</th>
+            <th class="num-col">Purchases</th>
+            <th class="num-col">Avg Rating</th>
+            <th class="num-col">Avg Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producer in producers %}
+            <tr>
+                <td>{{ producer.0 }}</td>
+                <td class="num-col">{{ producer.1 }}</td>
+                {% if producer.2 %}
+                    <td class="num-col">{{ producer.2|floatformat:"1" }}</td>
+                {% else %}
+                    <td class="num-col">&ndash;</td>
+                {% endif %}
+                <td class="num-col">{{ producer.3|floatformat:"2" }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

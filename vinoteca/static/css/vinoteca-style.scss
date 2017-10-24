@@ -1,0 +1,52 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex: 1 0 auto;
+}
+.brand-logo {
+    font-weight: 300;
+    letter-spacing: -0.1rem;
+}
+#logo-img {
+    vertical-align: middle;
+    display: inline;
+    height: 1.6rem!important;
+}
+.bold {
+    font-weight: 700;
+}
+.light {
+    font-weight: 300;
+}
+.by-the-numbers {
+    font-size: 2.7rem;
+    font-weight: 200;
+}
+.num-col {
+    text-align: right;
+}
+td a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+#edit-wine {
+    padding-top: 6rem;
+}
+
+// Media Query Ranges
+$small-screen-up: 601px !default;
+$medium-screen-up: 1001px !default;
+$large-screen-up: 1301px !default;
+$small-screen: 600px !default;
+$medium-screen: 1000px !default;
+$large-screen: 1300px !default;
+$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+

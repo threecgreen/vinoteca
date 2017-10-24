@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block view-nav %}class="active"{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h3>Wines</h3>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header">
+                        <h5><i class="material-icons left">filter_list</i>Filter</h5>
+                    </div>
+                    <div class="collapsible-body">
+                        <div class="row">
+                            <form name="filter row" action="{% url "Filter Wine Table" %}" method="get">
+                                <div class="col s6 m4 l2 input-field">
+                                    <select id="color" name="color">
+                                        <option value="" disabled selected>Select the color</option>
+                                        {% for color in colors %}
+                                            <option value="{{ color.color }}">{{ color.color|title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="color">Color</label>
+                                </div>
+                                <div class="input-field col s6 m4 l3">
+                                    <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete">
+                                    <label for="auto-wine-type">Wine Type</label>
+                                </div>
+                                <div class="input-field col s6 m4 l3">
+                                    <input type="text" id="auto-producer" name="producer" class="autocomplete">
+                                    <label for="auto-producer">Producer</label>
+                                </div>
+                                <div class="input-field col s6 m4 l2">
+                                    <input type="text" id="auto-country" name="country" class="autocomplete">
+                                    <label for="auto-country">Country</label>
+                                </div>
+                                <div class="col s3 m2 l1 input-field">
+                                    <select id="rating-op" name="rating-op">
+                                        <option value="=" selected>=</option>
+                                        <option value=">">&gt;</option>
+                                        <option value="<">&lt;</option>
+                                    </select>
+                                    <label for="rating-op"></label>
+                                </div>
+                                <div class="col s3 m2 l1 input-field">
+                                    <input type="number" id="rating" name="rating" class="validate">
+                                    <label for="rating">Rating</label>
+                                </div>
+                                <div class="col s12">
+                                    <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
+                                        Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="collapsible-header">
+                        <h5><i class="material-icons left">sort</i>Sort By</h5>
+                    </div>
+                    <div class="collapsible-body">
+                        <div class="row">
+                            <form name="sort" action="{% url "Sort Wine Table" %}" method="get">
+                                <div class="col s6 m4">
+                                    <select class="sort" id="sort-1" name="sort-1">
+                                        <option value="country_name" selected>Country</option>
+                                        <option value="producer_name">Producer</option>
+                                        <option value="rating">Rating</option>
+                                        <option value="type">Wine Type</option>
+                                    </select>
+                                    <label for="sort-1">Sort by</label>
+                                </div>
+                                <div class="col s6 m4">
+                                    <select class="sort" id="sort-2" name="sort-2">
+                                        <option value="">None</option>
+                                        <option value="country_name">Country</option>
+                                        <option value="producer_name" selected>Producer</option>
+                                        <option value="rating">Rating</option>
+                                        <option value="type">Wine Type</option>
+                                    </select>
+                                    <label for="sort-2">Sort by</label>
+                                </div>
+                                <div class="col s6 m4">
+                                    <select class="sort" id="sort-3" name="sort-3">
+                                        <option value="" selected>None</option>
+                                        <option value="country_name">Country</option>
+                                        <option value="producer_name">Producer</option>
+                                        <option value="rating">Rating</option>
+                                        <option value="type">Wine Type</option>
+                                    </select>
+                                    <label for="sort-3">Sort by</label>
+                                </div>
+                                <div class="col s12">
+                                    <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
+                                        Sort
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+    </div>
+    {% block results %}
+    {% block pagination-top %}
+    <ul class="pagination center-align">
+        <li class=
+            {% if wines.has_previous %}
+                "waves-effect">
+                <a href="?page={{ wines.previous_page_number }}">
+                    <i class="material-icons">chevron_left</i>
+                </a>
+            {% else %}
+                "disabled">
+                <a href="#!">
+                    <i class="material-icons">chevron_left</i>
+                </a>
+            {% endif %}
+        </li>
+        {% for page in wines.paginator.page_range %}
+            <li class=
+                {% if page == wines.number %}
+                    "active pink darken-3">
+                {% else %}
+                    "waves-effect">
+                {% endif %}
+                <a href="?page={{ page }}">{{ page }}</a>
+            </li>
+        {% endfor %}
+        <li class=
+            {% if wines.has_next %}
+                "waves-effect">
+                <a href="?page={{ wines.next_page_number }}">
+                    <i class="material-icons">chevron_right</i>
+                </a>
+            {% else %}
+                "disabled">
+                <a href="#!">
+                    <i class="material-icons">chevron_right</i>
+                </a>
+            {% endif %}
+        </li>
+    </ul>
+    {% endblock %}
+    <div class="progress">
+        <div class="indeterminate"></div>
+    </div>
+    <table class="highlight responsive-table">
+        <thead>
+            <tr>
+                <th>Color</th>
+                <th>Type</th>
+                <th>Producer</th>
+                <th>Origin</th>
+                <th>Description</th>
+                <th>Additional</th>
+                <th>Notes</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% block wine-table-body %}
+            {% for wine in wines %}
+                <tr>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color.color|title }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.wine_type.type_name }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer.name }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer.country.name }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.additional.additional|default_if_none:"" }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.notes|default_if_none:"" }}</a></td>
+                    <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|default_if_none:"" }}</a></td>
+                </tr>
+            {% endfor %}
+            {% endblock %}
+        </tbody>
+    </table>
+    {% block pagination-bottom %}
+    <ul class="pagination center-align">
+        <li class=
+            {% if wines.has_previous %}
+                "waves-effect">
+                <a href="?page={{ wines.previous_page_number }}">
+                    <i class="material-icons">chevron_left</i>
+                </a>
+            {% else %}
+                "disabled">
+                <a href="#!">
+                    <i class="material-icons">chevron_left</i>
+                </a>
+            {% endif %}
+        </li>
+        {% for page in wines.paginator.page_range %}
+            <li class=
+                {% if page == wines.number %}
+                    "active pink darken-3">
+                {% else %}
+                    "waves-effect">
+                {% endif %}
+                <a href="?page={{ page }}">{{ page }}</a>
+            </li>
+        {% endfor %}
+        <li class=
+            {% if wines.has_next %}
+                "waves-effect">
+                <a href="?page={{ wines.next_page_number }}">
+                    <i class="material-icons">chevron_right</i>
+                </a>
+            {% else %}
+                "disabled">
+                <a href="#!">
+                    <i class="material-icons">chevron_right</i>
+                </a>
+            {% endif %}
+        </li>
+    </ul>
+    {% endblock %}
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.progress').hide();
+            $('select').material_select();
+            $('#auto-wine-type').autocomplete({
+                data: {
+                    {% for wine_type in wine_types %}
+                        "{{ wine_type.type_name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $('#auto-producer').autocomplete({
+                data: {
+                    {% for producer in producers %}
+                        "{{ producer.name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $('#auto-country').autocomplete({
+                data: {
+                    {% for country in countries %}
+                        "{{ country.name }}": {% if country.name in  flags  %} "../../static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $('.collapsible').collapsible();
+{#            $('.sort').change(function () {#}
+{#                var value = $(this).val();#}
+{##}
+{#                if ( value !== "" ) {#}
+{#                    $(this).siblings('.sort').children('option').each(function() {#}
+{#                        if ( $(this).val() === value ) {#}
+{#                            $(this).prop('disabled', true).siblings('option').prop('disabled', false);#}
+{#                            $('select').material_select();#}
+{#                        }#}
+{#                    });#}
+{#                }#}
+{#            });#}
+        });
+    </script>
+{% endblock %}

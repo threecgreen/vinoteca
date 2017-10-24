@@ -1,0 +1,18 @@
+{% load humanize %}
+<p>
+    <span class="by-the-numbers">{{ btn.liters_of_wine|intcomma }}</span>
+    Liters of Wine
+</p>
+<p>
+    <span class="by-the-numbers">{{ btn.most_common_date|date:"F j" }}</span>
+    Most Common Purchase Date
+</p>
+<p>
+    <span class="by-the-numbers">{{ btn.total_purchase_count|intcomma }}</span>
+    Total Purchases
+</p>
+<p>
+    <span class="by-the-numbers">{{ btn.variety_count|intcomma }}</span>
+    Total Varieties
+</p>
+

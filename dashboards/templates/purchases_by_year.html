@@ -1,0 +1,22 @@
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th class="num-col">Bottles Purchased</th>
+            <th class="num-col">Total Spent</th>
+            <th class="num-col">Average Price</th>
+            <th class="num-col">Average Vintage</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for year in years %}
+        <tr>
+            <td>{{ year.0 }}</td>
+            <td class="num-col">{{ year.1 }}</td>
+            <td class="num-col">{{ year.2|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.3|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.4|floatformat }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

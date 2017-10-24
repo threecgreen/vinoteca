@@ -1,0 +1,24 @@
+from django.shortcuts import render
+from dashboards.views import recent_purchases_dash, top_purchase_categories_dash
+from vinoteca.__init__ import __version__
+from vinoteca.utils import get_connection
+
+
+def about(request):
+    context = {
+        "page_name": "About",
+        "version": __version__,
+    }
+    return render(request, "about.html", context)
+
+
+def home(request):
+    conn = get_connection()
+    context = {
+        "purchases": recent_purchases_dash(conn, 10),
+        "top_categories": top_purchase_categories_dash(conn, 10),
+        "page_name": "Home",
+        "version": __version__,
+    }
+    conn.close()
+    return render(request, "home.html", context)

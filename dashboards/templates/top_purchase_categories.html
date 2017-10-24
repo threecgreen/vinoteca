@@ -1,0 +1,20 @@
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Wine Type</th>
+            <th class="num-col">Purchase Count</th>
+            <th class="num-col">Varieties</th>
+            <th class="num-col">Average Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for category in top_categories %}
+        <tr>
+            <td>{{ category.0 }}</td>
+            <td class="num-col">{{ category.1 }}</td>
+            <td class="num-col">{{ category.2 }}</td>
+            <td class="num-col">{{ category.3|floatformat:"2" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

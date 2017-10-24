@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block new-nav %}class="active"{% endblock %}
+{% block body %}
+<div class="container">
+    {% block wine-title %}
+    <div class="row">
+        <div class="col s12">
+            <h3 class="bold">{{ wine_type|title }} by {{ producer }} of {{ country }}</h3>
+            {#                Insert Country Logo#}
+            <h4 class="light">{{ color|title }}{% if additional %} | {{ additional }}{% endif %}</h4>
+            {% if description %}
+                <h6><b>Description:</b> {{ description }}</h6>
+            {% endif %}
+            {% if notes %}
+                <h6><b>Notes:</b> {{ notes }}</h6>
+            {% endif %}
+            {% if rating %}
+                <h6><b>Rating:</b> {{ rating }}</h6>
+            {% endif %}
+            <p>Let me know if you'd like the option to add photos for wines.</p>
+        </div>
+    </div>
+    {% endblock %}
+    {% block prev_purchases %}
+    <div class="row">
+        {% if purchases %}
+        <div class="col s9">
+            <h4>Previous Purchases</h4>
+        </div>
+        <div class="col s3" style="position: relative; height: 60px">
+            {% block edit-wine %}
+            <div class="fixed-action-btn horizontal" style="position: absolute; display: inline-block; top: 20px;">
+                <a class="btn-floating btn-large pink darken-3">
+                    <i class="material-icons">menu</i>
+                </a>
+                <ul>
+                    <li>
+                        <a class="btn-floating light-green darken-2" href="{% url "New Purchase Wine" wine_id=wine_id %}">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="btn-floating yellow darken-2" href="{% url "Edit Wine" wine_id=wine_id %}">
+                            <i class="material-icons">edit</i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            {% endblock %}
+        </div>
+        </div>
+        <div class="col s12">
+            <table class="highlight responsive">
+                <thead>
+                <tr>
+                    {% block table-edit-head %}{% endblock %}
+                    <th>Date</th>
+                    <th class="num-col">Quantity</th>
+                    <th class="num-col">Price</th>
+                    <th class="num-col">Vintage</th>
+                    <th>Store</th>
+                    <th>Why</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for purchase in purchases %}
+                    <tr>
+                        {% block table-edit-body %}{% endblock %}
+                        <td>{{ purchase.0|naturalday:"M j, Y"|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.1|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.2|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.3 }}</td>
+                        <td>{{ purchase.4 }}</td>
+                        <td>{{ purchase.5|default_if_none:"" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="col s12">
+                <h4>No previous recorded purchases, however it is in the database.</h4>
+            </div>
+        {% endif %}
+        </div>
+    {% endblock %}
+    {% block add_body %}
+    {% endblock %}
+</div>
+{% endblock %}

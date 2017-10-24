@@ -1,0 +1,151 @@
+{% extends 'wine_profile_base.html' %}
+{% block wine-title %}
+    <h2 class="pink-text text-darken-3">Edit wine information</h2>
+    <div class="row">
+        <form class="col s12" action="" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field col s4 m2">
+                    <select id="color" name="color">
+                        {% for color_op in colors %}
+                            <option value="{{ color_op.color }}" {% if color_op.color == color %}selected{% endif %}>{{ color_op.color|title }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="color">Color</label>
+                </div>
+                <div class="input-field col s8 m4">
+                    <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete" value="{{ wine_type }}" required>
+                    <label for="auto-wine-type">Wine Type</label>
+                </div>
+                <div class="input-field col s6 m3">
+                    <input type="text" id="auto-producer" name="producer" class="autocomplete" value="{{ producer }}" required>
+                    <label for="auto-producer">Producer</label>
+                </div>
+                <div class="input-field col s6 m3">
+                    <input type="text" id="auto-country" name="country" class="autocomplete" value="{{ country }}" disabled>
+                    <label for="auto-country">Country</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <input id="auto-additional" type="text" name="additional" class="autocomplete" {% if additional %}value="{{ additional }}"{% endif %}>
+                    <label for="auto-additional">Additional</label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <input id="description" name="description" type="text" class="validate" {% if description %}value="{{ description }}"{% endif %}>
+                    <label for="description">Description</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <input id="notes" name="notes" type="text" class="validate" {% if notes %}value="{{ notes }}"{% endif %}>
+                    <label for="notes">Notes</label>
+                </div>
+                <div class="range-field col s4 m2">
+                    <div class="switch">
+                        <label for="have-rating">
+                            No Rating
+                            <input type="checkbox" id="have-rating" name="have-rating">
+                            <span class="lever"></span>
+                            Rating
+                        </label>
+                    </div>
+                    <label for="rating"></label>
+                    <p class="range-field">
+                        <input type="range" id="rating" name="rating" min="0" max="10" {% if rating %}value="{{ rating }}" {% else %} disabled {% endif %}>
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
+                        Confirm Edits<i class="material-icons right">send</i>
+                    </button>
+                    <a class="waves-effect waves-light btn pink darken-3" href={% url "Wine Profile" wine_id=wine_id %}>cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block edit-wine %}{% endblock %}
+{% block table-edit-head %}<th>Edit</th>{% endblock %}
+{% block table-edit-body %}
+    <td>
+        <a class="btn-floating waves-effect waves-light pink darken-3" href="{% url "Edit Purchase" wine_id=wine_id purchase_id=purchase.6 %}">
+            <i class="material-icons">edit</i>
+        </a>
+    </td>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        /* Autocompletion */
+        var producers = [
+            {% for producer_op in producers %}"{{ producer_op.name|safe }}",{% endfor %}
+        ];
+        var $producer = $('#auto-producer');
+        var $country = $('#auto-country');
+        var $have_rating = $('#have-rating');
+        var $rating = $('#rating');
+        $(document).ready(function() {
+            $('select').material_select();
+            $('#auto-wine-type').autocomplete({
+                data: {
+                    {% for wine_type_op in wine_types %}
+                        "{{ wine_type_op.type_name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $producer.autocomplete({
+                data: {
+                    {% for producer_op in producers %}
+                        "{{ producer_op.name|safe }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            {# Disable country selection if producer is chosen and show grayed country for that producer #}
+            $($producer).change(function () {
+                if ($.inArray($(this).val(), producers) !== -1) {
+                    $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
+                        $($country).val(responseJSON["country_name"]);
+                        $($country).prop('disabled', true);
+                        $("label[for='auto-country']").text("");
+                    })
+                } else {
+                    $($country).prop('disabled', false);
+                    $($country).val("");
+                    $("label[for='auto-country']").text("Country");
+                }
+            });
+            $($country).autocomplete({
+                data: {
+                    {% for country_op in countries %}
+                        "{{ country_op.name }}": {% if country_op.name in  flags  %} "/static/img/flags/{{ country_op.name }}.svg", {% else %} null, {% endif %}
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $('#auto-additional').autocomplete({
+                data: {
+                    {% for additional_op in additionals %}
+                        "{{ additional_op.additional }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            {% if rating %}
+                $have_rating.prop('checked', true);
+            {% else %}
+                $have_rating.prop('checked', false);
+            {% endif %}
+            $($have_rating).change(function () {
+                $rating.prop('disabled', !$have_rating.is(':checked'));
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,20 @@
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Color</th>
+            <th style="text-align:right">Purchases</th>
+            <th style="text-align:right">Varieties</th>
+            <th style="text-align:right">Avg Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for color in colors %}
+        <tr>
+            <td>{{ color.0|title }}</td>
+            <td style="text-align:right">{{ color.1 }}</td>
+            <td style="text-align:right">{{ color.2 }}</td>
+            <td style="text-align:right">{{ color.3|floatformat:"2" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

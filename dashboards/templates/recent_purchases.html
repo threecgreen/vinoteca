@@ -1,0 +1,27 @@
+{% load humanize %}
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Store</th>
+            <th>Producer</th>
+            <th>Country</th>
+            <th>Wine Type</th>
+            <th class="num-col">Price</th>
+            <th class="num-col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for purchase in purchases %}
+        <tr>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.0|naturalday:"N j" }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.1 }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.2 }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.3 }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.4 }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.5 }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.6 }}</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

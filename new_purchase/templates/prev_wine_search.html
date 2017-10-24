@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block new-nav %}class="active"{% endblock %}
+{% block body %}
+    <div class="container">
+        <h2 class="pink-text text-darken-3">Find previously purchased wine</h2>
+        <div class="row">
+            <div class="col s6 l3 input-field">
+                <select id="color" name="color">
+                    <option value="" selected>Select the color</option>
+                    {% for color in colors %}
+                        <option value="{{ color.color }}">{{ color.color|title }}</option>
+                    {% endfor %}
+                </select>
+                <label for="color">Color</label>
+            </div>
+            <div class="input-field col s6 l3">
+                <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete">
+                <label for="auto-wine-type">Wine Type</label>
+            </div>
+            <div class="input-field col s6 l3">
+                <input type="text" id="auto-producer" name="producer" class="autocomplete">
+                <label for="auto-producer">Producer</label>
+            </div>
+            <div class="input-field col s6 l3">
+                <input type="text" id="auto-country" name="country" class="autocomplete">
+                <label for="auto-country">Country</label>
+            </div>
+            <div class="col s12">
+                <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
+                    Search
+                </button>
+            </div>
+        </div>
+        <table class="highlight responsive-table">
+            <thead>
+                <tr style="display: none;">
+                    <th>Color</th>
+                    <th>Description</th>
+                    <th>Notes</th>
+                    <th>Wine Type</th>
+                    <th>Producer</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+        <h5 id="no-results" style="display: none;">No results found.</h5>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        var producers = [
+            {% for producer in producers %}"{{ producer.name }}",{% endfor %}
+        ];
+        var $wine_type = $('#auto-wine-type');
+        var $color = $('#color');
+        var $producer = $('#auto-producer');
+        var $country = $('#auto-country');
+        var $no_results = $('#no-results');
+        var $table = $('table tr');
+        $(document).ready(function(){
+            $('select').material_select();
+            $($wine_type).autocomplete({
+                data: {
+                    {% for wine_type in wine_types %}
+                        "{{ wine_type.type_name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $($producer).autocomplete({
+                data: {
+                    {% for producer in producers %}
+                        "{{ producer.name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $($producer).change(function () {
+                if ($.inArray($(this).val(), producers) !== -1) {
+                    $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
+                        $($country).val(responseJSON["country_name"]);
+                        $($country).prop('disabled', true);
+                        $("label[for='auto-country']").text("");
+                    })
+                } else {
+                    $($country).prop('disabled', false);
+                    $($country).val("");
+                    $("label[for='auto-country']").text("Country");
+                }
+            });
+            $($country).autocomplete({
+                data: {
+                    {% for country in countries %}
+                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $('button').click(function () {
+                $($table).hide();
+                $($no_results).hide();
+                $('table tbody').empty();
+                $.get("{% url "Search Wines JSON" %}", {
+                    'wine_type': $wine_type.val(),
+                    'color': $color.val(),
+                    'producer': $producer.val(),
+                    'country': $country.val()
+                }, function (responseJSON) {
+                    if (responseJSON['results'].length > 0) {
+                        $('table tbody').append(responseJSON['results']);
+                        $($table).show();
+                    } else {
+                        $($no_results).show();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

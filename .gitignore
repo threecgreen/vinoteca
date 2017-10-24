@@ -1,0 +1,16 @@
+# Editors
+.vscode/
+.idea/
+
+# Compiled
+*.pyc
+
+# Data files
+data/*.csv
+data/*.db
+.sass-cache/
+
+# Test files
+tests/cov_html/
+.cache/
+.coverage
