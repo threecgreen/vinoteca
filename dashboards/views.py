@@ -68,7 +68,7 @@ def by_the_numbers_dash(conn: sqlite3.Connection) -> ByTheNumbers:
     cursor = conn.cursor()
     query = """
         SELECT 
-            sum(coalesce(p.quantity, 1)) * 750,
+            sum(coalesce(p.quantity, 1)) * 0.75,
             count(p.id)
         FROM purchases p;
     """

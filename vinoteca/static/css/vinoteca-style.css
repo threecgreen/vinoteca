@@ -36,4 +36,7 @@ td a {
 #edit-wine {
   padding-top: 6rem; }
 
+table.highlight tbody tr:hover {
+  background-color: rgba(245, 245, 245, 0.5); }
+
 /*# sourceMappingURL=vinoteca-style.css.map */
