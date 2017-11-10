@@ -37,6 +37,10 @@ td a {
     padding-top: 6rem;
 }
 
+table.highlight tbody tr:hover  {
+    background-color: rgba(245, 245, 245, 0.5);
+}
+
 // Media Query Ranges
 $small-screen-up: 601px !default;
 $medium-screen-up: 1001px !default;
