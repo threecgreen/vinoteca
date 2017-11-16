@@ -1,11 +1,12 @@
 #! /bin/bash
 # Get admin privileges before running
 sudo echo
-echo "Update project"
+dir="$(dirname $0)"
+parentdir="$(dirname "$dir")"
+echo "Updating project source..."
 git pull -r
 source activate vinoteca
 execstack -c $HOME/miniconda/lib/libcrypto.so.1.0.0
-pip install -r ../requirements.txt
-echo "Updating system"
-sudo apt-get -y update
-sudo apt-get -y upgrade
+
+echo "Updating dependencies..."
+pip install -r $parentdir/requirements.txt
