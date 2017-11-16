@@ -17,15 +17,15 @@ echo "Installing..."
 bash Miniconda3-latest-Linux-x86_64.sh -p $HOME/miniconda -b
 # add miniconda to PATH
 echo -e "export PATH=\"\$HOME/miniconda/bin:\$PATH\"" >> $HOME/.bashrc
-conda=$HOME/miniconda/bin/conda
+bin=$HOME/miniconda/bin
 
 # Create environment
 echo "Creating a new python virtual environment called 'vinoteca'..."
 execstack -c $HOME/miniconda/lib/libcrypto.so.1.0.0
-$conda create -n vinoteca -y python=3.6
-source activate vinoteca
+$bin/conda create -n vinoteca -y python=3.6
+source $bin/activate vinoteca
 echo "Installing vinoteca dependencies..."
-pip install -r requirements.txt
+$bin/pip install -r requirements.txt
 
 # Finishing up
 echo
