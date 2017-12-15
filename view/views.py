@@ -207,6 +207,8 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                     , p.name
                     , cn.name
                     , a.additional
+                    , p.id
+                    , p.country_id
                 FROM wines w
                     LEFT JOIN wine_types t
                         ON w.type_id = t.id
@@ -248,14 +250,15 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             "producer": wine_info[5],
             "country": wine_info[6],
             "additional": wine_info[7],
+            "producer_id": wine_info[8],
+            "country_id": wine_info[9],
             "page_name": "New Purchase",
             "version": __version__,
         }
         if do_purchases:
-            purchases = []
-            for purchase in cursor.execute(purchase_query, (wine_id, )).fetchall():
-                purchases.append((int_to_date(purchase[0]), *purchase[1:]))
-            context["purchases"] = purchases
+            purchases = cursor.execute(purchase_query, (wine_id, )).fetchall()
+            context["purchases"] = [(int_to_date(purchase[0]), *purchase[1:])
+                                    for purchase in purchases]
         conn.close()
         return context
     return None
@@ -347,9 +350,98 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
             return redirect("Edit Wine", wine_id=wine_id)
 
 
-def producer_profile(request):
+def producer_profile(request, producer_id: int):
+    producer = Producers.objects.get(id=producer_id)
+    wines_query = """
+        SELECT
+            max(p2.date)
+            , t.type_name
+            , w.description
+            , a.additional
+            , sum(p2.quantity)
+            , avg(p2.price)
+            , w.rating
+            , c2.color
+            , w.id
+        FROM wines w
+            INNER JOIN producers p
+                ON w.producer_id = p.id
+            INNER JOIN purchases p2
+                ON w.id = p2.wine_id
+            INNER JOIN additionals a
+                ON w.add_id = a.id
+            INNER JOIN wine_types t
+                ON w.type_id = t.id
+            INNER JOIN colors c2 
+                ON w.color_id = c2.id
+        WHERE p.id = ?
+        GROUP BY w.id
+        ORDER BY rating DESC , max(p2.date) DESC;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    wines = cursor.execute(wines_query, (producer_id, )).fetchall()
+    context = {
+        "producer": producer,
+        "wines": [(int_to_date(wine[0]), *wine[1:]) for wine in wines],
+        "page_name": "Producer Profile",
+        "version": __version__,
+    }
+    return render(request, "producer_profile.html", context)
+
+
+def edit_producer(request, producer_id: int):
     pass
 
 
-def edit_producer(request):
+def country_profile(request, country_id: int):
+    country = Countries.objects.get(id=country_id)
+    wines_query = """
+        SELECT
+            max(p2.date)
+            , t.type_name
+            , w.description
+            , a.additional
+            , sum(p2.quantity)
+            , avg(p2.price)
+            , w.rating
+            , p.name
+            , w.id
+            , p.id
+        FROM wines w
+            INNER JOIN producers p
+                ON w.producer_id = p.id
+            INNER JOIN purchases p2
+                ON w.id = p2.wine_id
+            INNER JOIN additionals a
+                ON w.add_id = a.id
+            INNER JOIN wine_types t
+                ON w.type_id = t.id
+            INNER JOIN countries c 
+                ON p.country_id = c.id
+        WHERE c.id = ?
+        GROUP BY w.id
+        ORDER BY rating DESC , max(p2.date) DESC;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    wines = cursor.execute(wines_query, (country_id, )).fetchall()
+    context = {
+        "country": country,
+        "wines": [(int_to_date(wine[0]), *wine[1:]) for wine in wines],
+        "page_name": "Country Profile",
+        "version": __version__,
+    }
+    return render(request, "country_profile.html", context)
+
+
+def edit_country(request, country_id: int):
+    pass
+
+
+def store_profile(request, store_id: int):
+    pass
+
+
+def edit_store(request, store_id: int):
     pass

@@ -6,7 +6,11 @@
     {% block wine-title %}
     <div class="row">
         <div class="col s12">
-            <h3 class="bold">{{ wine_type|title }} by {{ producer }} of {{ country }}</h3>
+            <h3 class="bold">
+                {{ wine_type|title }} by
+                <a href="{% url "Producer Profile" producer_id=producer_id %}">{{ producer }}</a>
+                of <a href="{% url "Country Profile" country_id=country_id %}">{{ country }}</a>
+            </h3>
             {#                Insert Country Logo#}
             <h4 class="light">{{ color|title }}{% if additional %} | {{ additional }}{% endif %}</h4>
             {% if description %}
@@ -18,7 +22,6 @@
             {% if rating %}
                 <h6><b>Rating:</b> {{ rating }}</h6>
             {% endif %}
-            <p>Let me know if you'd like the option to add photos for wines.</p>
         </div>
     </div>
     {% endblock %}
@@ -69,7 +72,7 @@
                         {% block table-edit-body %}{% endblock %}
                         <td>{{ purchase.0|naturalday:"M j, Y"|default_if_none:"&ndash;" }}</td>
                         <td class="num-col">{{ purchase.1|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.2|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.2|floatformat:2|default_if_none:"&ndash;" }}</td>
                         <td class="num-col">{{ purchase.3 }}</td>
                         <td>{{ purchase.4 }}</td>
                         <td>{{ purchase.5|default_if_none:"" }}</td>

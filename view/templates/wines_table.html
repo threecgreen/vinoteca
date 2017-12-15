@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="input-field col s6 m4 l2">
                                     <input type="text" id="auto-country" name="country" class="autocomplete">
-                                    <label for="auto-country">Country</label>
+                                    <label for="auto-country">Region</label>
                                 </div>
                                 <div class="col s3 m2 l1 input-field">
                                     <select id="rating-op" name="rating-op">
@@ -66,7 +66,7 @@
                             <form name="sort" action="{% url "Sort Wine Table" %}" method="get">
                                 <div class="col s6 m4">
                                     <select class="sort" id="sort-1" name="sort-1">
-                                        <option value="country_name" selected>Country</option>
+                                        <option value="country_name" selected>Region</option>
                                         <option value="producer_name">Producer</option>
                                         <option value="rating">Rating</option>
                                         <option value="type">Wine Type</option>
@@ -76,7 +76,7 @@
                                 <div class="col s6 m4">
                                     <select class="sort" id="sort-2" name="sort-2">
                                         <option value="">None</option>
-                                        <option value="country_name">Country</option>
+                                        <option value="country_name">Region</option>
                                         <option value="producer_name" selected>Producer</option>
                                         <option value="rating">Rating</option>
                                         <option value="type">Wine Type</option>
@@ -86,7 +86,7 @@
                                 <div class="col s6 m4">
                                     <select class="sort" id="sort-3" name="sort-3">
                                         <option value="" selected>None</option>
-                                        <option value="country_name">Country</option>
+                                        <option value="country_name">Region</option>
                                         <option value="producer_name">Producer</option>
                                         <option value="rating">Rating</option>
                                         <option value="type">Wine Type</option>
@@ -157,7 +157,7 @@
                 <th>Color</th>
                 <th>Type</th>
                 <th>Producer</th>
-                <th>Origin</th>
+                <th>Region</th>
                 <th>Description</th>
                 <th>Additional</th>
                 <th>Notes</th>
