@@ -6,7 +6,8 @@
         <h2 class="pink-text text-darken-3">Enter new wine information</h2>
 
         <div class="row">
-            <form class="col s12" action="" method="post">
+            {# enctype for multimedia upload #}
+            <form class="col s12" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="input-field col s12 m6">
@@ -24,13 +25,13 @@
                                 <option value="{{ color.color }}">{{ color.color|title }}</option>
                             {% endfor %}
                         </select>
-                        <label for="color">Color</label>
+                        <label for="color">Type</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m6">
                         <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete" required>
-                        <label for="auto-wine-type">Wine Type</label>
+                        <label for="auto-wine-type">Name</label>
                     </div>
                     <div class="input-field col s6 m3">
                         <input type="text" id="auto-producer" name="producer" class="autocomplete" required>
@@ -43,12 +44,12 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12 m6">
-                        <input id="auto-additional" type="text" name="additional" class="autocomplete">
-                        <label for="auto-additional">Additional</label>
-                    </div>
-                    <div class="input-field col s12 m6">
                         <input id="description" name="description" type="text" class="validate">
                         <label for="description">Description</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input id="auto-viti-area" name="viti-area" type="text" class="autocomplete">
+                        <label for="auto-viti-area">Viticultural Area</label>
                     </div>
                 </div>
                 <div class="row">
@@ -59,15 +60,14 @@
                     <div class="range-field col s4 m2">
                         <div class="switch">
                             <label for="have-rating">
-                                No Rating
+                                Rating
                                 <input type="checkbox" id="have-rating" name="have-rating">
                                 <span class="lever"></span>
-                                Rating
                             </label>
                         </div>
                         <label for="rating"></label>
                         <p class="range-field">
-                            <input type="range" id="rating" name="rating" min="0" max="10" disabled>
+                            <input type="range" id="rating" name="rating" min="0" max="10" step="1" disabled>
                         </p>
                     </div>
                     <div class="input-field col s4 m2">
@@ -84,15 +84,102 @@
                         <input id="quantity" name="quantity" type="number" class="validate" value=1>
                         <label for="quantity">Quantity</label>
                     </div>
-                    <div class="input-field col s8 m4">
+                    <div class="input-fieldj col s8 m4">
+                        <input type="checkbox" class="filled-in" id="add-to-inventory" name="add-to-inventory" checked="checked"/>
+                        <label for="add-to-inventory">Add to Inventory</label>
+                    </div>
+                    <div class="input-field col s12 m6">
                         <input id="why" name="why" type="text" class="validate">
                         <label for="why">Why</label>
                     </div>
-                    <div class="input-field col s12 m6">
-                        <input id="store-address" name="store-address" type="text" class="validate">
-                        <label for="store-address">Store Address</label>
+                </div>
+                {# Grapes #}
+                <div class="row">
+                    <div class="col s12">
+                        <h6>Grape Composition (optional)</h6>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="input-field col s4 m2">
+                        <input id="grape-1-pct" name="grape-1-pct" type="number" class="validate" value=100>
+                        <label for="grape-1-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4">
+                        <input id="auto-grape-1" name="grape-1" type="text" class="autocomplete">
+                        <label for="auto-grape-1">Grape</label>
+                    </div>
+                    <div class="col s12 m6">
+                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-2">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </div>
+                    <div class="input-field col s4 m2" hidden id="grape-form-2-pct">
+                        <input id="grape-2-pct" name="grape-2-pct" type="number" class="validate" value=50>
+                        <label for="grape-2-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4" hidden id="grape-form-2-name">
+                        <input id="auto-grape-2" name="grape-2" type="text" class="autocomplete">
+                        <label for="auto-grape-2">Grape</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6" hidden>
+                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-3">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </div>
+                    <div class="input-field col s4 m2" hidden id="grape-form-3-pct">
+                        <input id="grape-3-pct" name="grape-3-pct" type="number" class="validate" value=33>
+                        <label for="grape-3-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4" hidden id="grape-form-3-name">
+                        <input id="auto-grape-3" name="grape-3" type="text" class="autocomplete">
+                        <label for="auto-grape-3">Grape</label>
+                    </div>
+                    <div class="col s12 m6" hidden>
+                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-4">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </div>
+                    <div class="input-field col s4 m2" hidden id="grape-form-4-pct">
+                        <input id="grape-4-pct" name="grape-4-pct" type="number" class="validate" value=25>
+                        <label for="grape-4-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4" hidden id="grape-form-4-name">
+                        <input id="auto-grape-4" name="grape-4" type="text" class="autocomplete">
+                        <label for="auto-grape-4">Grape</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6" hidden>
+                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-5">
+                            <i class="material-icons">add</i>
+                        </a>
+                    </div>
+                    <div class="input-field col s4 m2" hidden id="grape-form-5-pct">
+                        <input id="grape-5-pct" name="grape-5-pct" type="number" class="validate" value=20>
+                        <label for="grape-5-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4" hidden id="grape-form-5-name">
+                        <input id="auto-grape-5" name="grape-5" type="text" class="autocomplete">
+                        <label for="auto-grape-5">Grape</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col s1"></div>
+                    <div class="file-field input-field col s10">
+                        <div class="btn">
+                            <span>Wine Image</span>
+                            <input type="file" name="wine-image">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text">
+                        </div>
+                    </div>
+                    <div class="col s1"></div>
+                </div>
+
                 <div class="row">
                     <div class="col s12">
                         <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
@@ -114,7 +201,10 @@
         var $store = $('#auto-store');
         var $producer = $('#auto-producer');
         var $country = $('#auto-country');
+        var $viti_area = $('#auto-viti-area');
         var $have_rating = $('#have-rating');
+        var $grape_buttons = $('.grape-btn');
+        var $grape_names = $('[id^=auto-grape-]');
         $(document).ready(function() {
             $('.datepicker').pickadate({
                 selectMonths: true,             // Creates a dropdown to control month
@@ -127,27 +217,21 @@
             $('select').material_select();
             $($store).autocomplete({
                 data: {
-                    {% for store in stores %}
-                        "{{ store.name }}": null,
-                    {% endfor %}
+                    {% for store in stores %} "{{ store.name }}": null, {% endfor %}
                 },
                 limit: 5,
                 minLength: 1
             });
             $('#auto-wine-type').autocomplete({
                 data: {
-                    {% for wine_type in wine_types %}
-                        "{{ wine_type.type_name }}": null,
-                    {% endfor %}
+                    {% for wine_type in wine_types %} "{{ wine_type.type_name }}": null, {% endfor %}
                 },
                 limit: 5,
                 minLength: 1
             });
-            $producer.autocomplete({
+            $($producer).autocomplete({
                 data: {
-                    {% for producer in producers %}
-                        "{{ producer.name }}": null,
-                    {% endfor %}
+                    {% for producer in producers %} "{{ producer.name }}": null,  {% endfor %}
                 },
                 limit: 5,
                 minLength: 1
@@ -156,10 +240,13 @@
             $($producer).change(function () {
                 if ($.inArray($(this).val(), producers) !== -1) {
                     $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
-                        $($country).val(responseJSON["country_name"]);
-                        $($country).prop('disabled', true);
-                        $("label[for='auto-country']").text("");
-                    })
+                            $($country).val(responseJSON["country_name"]);
+                            $($country).prop('disabled', true);
+                            $("label[for='auto-country']").text("");
+                            {# Update viticultural area autocomplete #}
+                            $($country).change();
+                        }
+                    )
                 } else {
                     $($country).prop('disabled', false);
                     $($country).val("");
@@ -175,19 +262,43 @@
                 limit: 5,
                 minLength: 1
             });
-            $('#auto-additional').autocomplete({
-                data: {
-                    {% for additional in additionals %}
-                        "{{ additional.additional }}": null,
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
+            {# Update viticultural area autocomplete depending on country selection #}
+            $($country).change(function () {
+                $.get("{% url "Get Country Viti Areas JSON" %}", {"country": $(this).val()},
+                    function (responseJSON) {
+                        {#viti_areas = responseJSON["viti_areas"];#}
+                        $($viti_area).autocomplete({
+                            data: responseJSON,
+                            limit: 5,
+                            minLength: 1
+                        });
+                    }
+                )
             });
             $($have_rating).attr('checked', !$('#rating')[0].disabled);
             $($have_rating).click(function () {
                 $('#rating').attr('disabled', !this.checked);
             });
+            {# Show additional grape forms with click of + button #}
+            $($grape_buttons).click(function () {
+                {# Hide parent div and thus self #}
+                $(this).parent().hide();
+                {#$(event.target).parent().hide();#}
+                var id_num = this.id.slice(-1);
+                {# All elements starting with grape-form-2 #}
+                $('[id^=grape-form-' + id_num + ']').show();
+                {# Show next plus button if less than 4 #}
+                if (parseInt(id_num) < 4){
+                    $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().show();
+                }
+            });
+            $($grape_names).autocomplete({
+                data: {
+                    {% for grape in grapes %} "{{ grape.name }}": null, {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            })
         });
     </script>
 {% endblock %}

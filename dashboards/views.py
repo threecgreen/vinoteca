@@ -188,5 +188,5 @@ def dashboards(request):
         "version": __version__,
     }
     conn.close()
-    return render(request, "dashboards.html", context)
+    return render(request, "templates/dashboards.html", context)
 

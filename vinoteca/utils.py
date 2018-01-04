@@ -1,19 +1,30 @@
 import os
 import sqlite3
 from datetime import date, datetime
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from typing import Union
-from vinoteca.models import Additionals, Colors, Countries, Producers, Purchases, Stores, WineTypes, Wines
+from typing import Any, List, Union
+from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores, \
+    VitiAreas, WineGrapes, WineTypes, Wines
 from vinoteca.settings import BASE_DIR
 
 
-def g_or_c_store(store: str, address: Union[str]) -> Stores:
+def g_or_c_store(store: str) -> Stores:
     try:
         return Stores.objects.get(name=store)
     except ObjectDoesNotExist:
-        new_store = Stores(name=store, address=address)
+        new_store = Stores(name=store)
         new_store.save()
         return new_store
+
+
+def g_or_c_additional(additional: str) -> Additionals:
+    try:
+        return Additionals.objects.get(additional=additional)
+    except ObjectDoesNotExist:
+        new_add = Additionals(additional=additional)
+        new_add.save()
+        return new_add
 
 
 def g_or_c_wine_type(wine_type: str) -> WineTypes:
@@ -43,19 +54,29 @@ def g_or_c_producer(producer: str, country: Countries) -> Producers:
         return new_producer
 
 
-def g_or_c_additional(additional: str) -> Additionals:
+def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
     try:
-        return Additionals.objects.get(additional=additional)
+        return VitiAreas.objects.get(name=viti_area, region=country)
     except ObjectDoesNotExist:
-        new_add = Additionals(additional=additional)
-        new_add.save()
-        return new_add
+        new_viti_area = VitiAreas(name=viti_area, region=country)
+        new_viti_area.save()
+        return new_viti_area
 
 
-def c_wine(desc: Union[str], notes: Union[str], prod: Producers, wine_type: WineTypes, add: Additionals, color: Colors,
-           rating: Union[float]) -> Wines:
-    new_wine = Wines(description=desc, notes=notes, producer=prod, wine_type=wine_type, additional=add,
-                     color=color, rating=rating)
+def c_wine_grape(wine: Wines, grape: str, percent: int) -> None:
+    try:
+        grape = Grapes.objects.get(name=grape)
+    except ObjectDoesNotExist:
+        grape = Grapes(name=grape)
+        grape.save()
+    new_wine_grape = WineGrapes(wine=wine, grape=grape, percent=percent)
+    new_wine_grape.save()
+
+
+def c_wine(desc: Union[str], notes: Union[str], prod: Producers, wine_type: WineTypes, color: Colors,
+           rating: Union[float], inventory: int, viti_area: VitiAreas) -> Wines:
+    new_wine = Wines(description=desc, notes=notes, producer=prod, wine_type=wine_type,
+                     color=color, rating=rating, inventory=inventory, viti_area=viti_area)
     new_wine.save()
     return new_wine
 
@@ -69,7 +90,7 @@ def c_purchase(wine: Wines, store: Stores, price: float, why: str, purchase_date
     new_purchase.save()
 
 
-def empty_to_none(item):
+def empty_to_none(item: Any) -> Union[Any]:
     return item if item else None
 
 
@@ -86,3 +107,13 @@ def int_to_date(yyyymmdd: int) -> Union[date]:
     if yyyymmdd:
         return date(year=yyyymmdd // 10000, month=yyyymmdd % 10000 // 100,
                     day=yyyymmdd % 100)
+
+
+def flag_exists(country_name: str) -> bool:
+    return os.path.exists(os.path.join(settings.BASE_DIR, "vinoteca", "static", "img", "flags",
+                                       "{}.svg".format(country_name)))
+
+
+def get_flag_countries() -> List[str]:
+    return [country_file[:-4] for country_file in os.listdir(
+        os.path.join(settings.BASE_DIR, "vinoteca", "static", "img", "flags"))]

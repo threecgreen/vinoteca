@@ -1,18 +1,15 @@
-from datetime import date
 import pytest
-import sqlite3
 
 from vinoteca.utils import *
 
 
-@pytest.mark.parametrize("store,address", [
-    ("Costco", None),
-    ("Costco", "123 Main St."),
-    ("New Test Store", None)
+@pytest.mark.parametrize("store", [
+    "Costco",
+    "New Test Store"
 ])
 @pytest.mark.django_db(transaction=True)
-def test_g_or_store(store, address):
-    store_obj = g_or_c_store(store, address)
+def test_g_or_c_store(store):
+    store_obj = g_or_c_store(store)
     assert isinstance(store_obj, Stores)
 
 
@@ -21,9 +18,53 @@ def test_g_or_store(store, address):
     "A New Type"
 ])
 @pytest.mark.django_db(transaction=True)
-def test_g_or_store(wine_type):
+def test_g_or_c_wine_type(wine_type):
     type_obj = g_or_c_wine_type(wine_type)
     assert isinstance(type_obj, WineTypes)
+
+
+@pytest.mark.parametrize("country", [
+    "New Zealand",
+    "Antarctica"
+])
+@pytest.mark.django_db(transaction=True)
+def test_g_or_c_country(country):
+    country = g_or_c_country(country)
+    assert isinstance(country, Countries)
+
+
+# @pytest.mark.parametrize("producer,country", [
+#     ("Inagery", california),
+#     ("New Producer", california),
+#     ("No Country Producer", "")
+# ])
+# @pytest.mark.django_db(transaction=True)
+# def test_g_or_c_producer(producer, country):
+#     producer = g_or_c_producer(producer, country)
+#     assert isinstance(producer, Producers)
+
+
+# @pytest.mark.parametrize("viti_area,country", [
+#     ("Sonoma County", california),
+#     ("New VA", california),
+#     ("No Country VA", None)
+# ])
+# @pytest.mark.django_db(transaction=True)
+# def test_g_or_c_viti_area(viti_area, country):
+#     viti_area = g_or_c_viti_area(viti_area, country)
+#     assert isinstance(viti_area, VitiAreas)
+
+
+# def test_c_wine_grape(wine, grape, percent):
+#     pass
+#
+#
+# def test_c_wine(desc, notes, prod, wine_type, color, rating, inventory, viti_area):
+#     pass
+#
+#
+# def test_c_purchase(wine, store, price, why, purchase_date, vintage, quantity):
+#     pass
 
 
 @pytest.mark.parametrize("item,result", [
@@ -54,5 +95,26 @@ def test_date_str_to_int(date_str, date_int):
     (20150521, date(2015, 5, 21)),
     (None, None)
 ])
-def int_to_date(yyyymmdd, date):
+def test_int_to_date(yyyymmdd, date):
     assert int_to_date(yyyymmdd) == date
+
+
+@pytest.mark.parametrize("country_name,result", [
+    ("California", True),
+    ("New Zealand", True),
+    ("Antarctica", False)
+])
+def test_flag_exists(country_name, result):
+    assert flag_exists(country_name) == result
+
+
+@pytest.mark.parametrize("country_name,result", [
+    ("California", True),
+    ("New Zealand", True),
+    ("Antarctica", False)
+])
+def test_get_flag_countries(country_name, result):
+    if result:
+        assert country_name in get_flag_countries()
+    else:
+        assert country_name not in get_flag_countries()

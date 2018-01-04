@@ -57,6 +57,8 @@ class Wines(models.Model):
     wine_type = models.ForeignKey("WineTypes", models.DO_NOTHING, db_column="type_id")
     additional = models.ForeignKey("Additionals", models.DO_NOTHING, db_column="add_id")
     color = models.ForeignKey("Colors", models.DO_NOTHING, db_column="color_id")
+    inventory = models.IntegerField(default=0, null=False)
+    viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING, db_column="viti_area_id")
 
     class Meta:
         managed = False
@@ -66,7 +68,6 @@ class Wines(models.Model):
 class Stores(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=500)
-    address = models.CharField(max_length=500, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -86,3 +87,33 @@ class Purchases(models.Model):
     class Meta:
         managed = False
         db_table = "purchases"
+
+
+class Grapes(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=500, blank=False, null=False)
+
+    class Meta:
+        managed = False
+        db_table = "grapes"
+
+
+class WineGrapes(models.Model):
+    wine = models.ForeignKey("Wines", models.DO_NOTHING, db_column="wine_id")
+    grape = models.ForeignKey("Grapes", models.DO_NOTHING, db_column="grape_id")
+    percent = models.IntegerField(null=True)
+
+    class Meta:
+        unique_together = (("wine", "grape"), )
+        managed = False
+        db_table = "wine_grapes"
+
+
+class VitiAreas(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=500, blank=False, null=False)
+    region = models.ForeignKey("Countries", models.DO_NOTHING, db_column="region_id")
+
+    class Meta:
+        managed = False
+        db_table = "viti_areas"

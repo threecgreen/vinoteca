@@ -6,13 +6,24 @@
     {% block wine-title %}
     <div class="row">
         <div class="col s12">
-            <h3 class="bold">
-                {{ wine_type|title }} by
+            <h3 class="bold">{{ wine_type|title }}</h3>
+            <h4>
                 <a href="{% url "Producer Profile" producer_id=producer_id %}">{{ producer }}</a>
-                of <a href="{% url "Country Profile" country_id=country_id %}">{{ country }}</a>
-            </h3>
+                of {% if viti_area %}{{ viti_area }}, {% endif %}<a href="{% url "Country Profile" country_id=country_id %}">{{ country }}</a>
+            </h4>
+        </div>
+        <div class="col s12 m6">
             {#                Insert Country Logo#}
-            <h4 class="light">{{ color|title }}{% if additional %} | {{ additional }}{% endif %}</h4>
+            <h5 class="light">{{ color|title }}</h5>
+            <h5 class="inline-h"><b>Inventory: </b> {{ inventory }}</h5> &thinsp;
+            <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Change Inventory" wine_id=wine_id sign="add" %}">
+                <i class="material-icons">add_circle</i>
+            </a>
+            {% if inventory > 0 %}
+                <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Change Inventory" wine_id=wine_id sign="subtract" %}">
+                    <i class="material-icons">do_not_disturb_on</i>
+                </a>
+            {% endif %}
             {% if description %}
                 <h6><b>Description:</b> {{ description }}</h6>
             {% endif %}
@@ -22,8 +33,41 @@
             {% if rating %}
                 <h6><b>Rating:</b> {{ rating }}</h6>
             {% endif %}
+            {% if additional %}<h6><b>Additional (deprecated):</b> {{ additional }}</h6>{% endif %}
+        </div>
+        {% if grapes %}
+        <div class="col s12 m6">
+            <h5 class="light">Grape composition</h5>
+            <table class="highlight responsive">
+                <thead>
+                <tr>
+                    <th>Grape</th>
+                    <th class="num-col">Percentage</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for grape in grapes %}
+                    <tr>
+                        <td>{{ grape.0 }}</td>
+                        <td class="num-col">{{ grape.1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    {% if wine_img %}
+    <div class="row">
+        <div class="col s12 m7">
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{ wine_img }}" alt="Wine Image">
+                </div>
+            </div>
         </div>
     </div>
+    {% endif %}
     {% endblock %}
     {% block prev_purchases %}
     <div class="row">

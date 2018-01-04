@@ -8,9 +8,15 @@
 # Data files
 data/*.csv
 data/*.db
+data/ipynb_checkpoints/
 .sass-cache/
+**.ipynb
 
 # Test files
 tests/cov_html/
 .cache/
 .coverage
+tests/.svn/
+
+# Media files
+media/*.png

@@ -1,11 +1,12 @@
+from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from view.views import wine_profile_base
 from vinoteca.__init__ import __version__
-from vinoteca.models import Additionals, Colors, Countries, Producers, Stores, WineTypes, Wines
-from vinoteca.utils import g_or_c_additional, g_or_c_country, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine, \
-    c_purchase, empty_to_none
+from vinoteca.models import Colors, Countries, Grapes, Producers, Stores, WineTypes, Wines
+from vinoteca.utils import g_or_c_country, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine, \
+    c_purchase, empty_to_none, g_or_c_viti_area, c_wine_grape, get_flag_countries
 from vinoteca.views import get_connection
 
 
@@ -29,6 +30,28 @@ def get_producer_country(request) -> JsonResponse:
     else:
         conn.close()
         return JsonResponse({"country_name": None})
+
+
+def get_country_viti_areas(request) -> JsonResponse:
+    conn = get_connection()
+    cursor = conn.cursor()
+    # Retrieve data from JSON request data
+    country = request.GET.get("country")
+    query = """
+        SELECT 
+            v.name
+        FROM viti_areas v
+            INNER JOIN countries c
+                ON c.id = v.region_id
+        WHERE c.name LIKE ?;
+    """
+    if country:
+        viti_areas = cursor.execute(query, (country, )).fetchall()
+        conn.close()
+        return JsonResponse({area[0]: None for area in viti_areas})
+    else:
+        conn.close()
+        return JsonResponse({"viti_areas": None})
 
 
 def search_wines(request) -> JsonResponse:
@@ -79,14 +102,13 @@ def insert_new_purchase_and_wine(request):
     wine_type = empty_to_none(request.POST.get("wine-type"))
     producer = empty_to_none(request.POST.get("producer"))
     country = empty_to_none(request.POST.get("country"))
-    additional = empty_to_none(request.POST.get("additional"))
     description = empty_to_none(request.POST.get("description"))
     price = empty_to_none(request.POST.get("price"))
+    viti_area = empty_to_none(request.POST.get("viti-area"))
     if price:
         price = float(price)
     why = empty_to_none(request.POST.get("why"))
     notes = empty_to_none(request.POST.get("notes"))
-    store_address = empty_to_none(request.POST.get("store-address"))
     color = empty_to_none(request.POST.get("color"))
     if request.POST.get("have-rating"):
         rating = int(request.POST.get("rating"))
@@ -94,14 +116,30 @@ def insert_new_purchase_and_wine(request):
         rating = None
     vintage = int(request.POST.get("vintage"))
     quantity = int(request.POST.get("quantity"))
-    color = Colors.objects.get(color=color) if color else None
-    store = g_or_c_store(store, store_address)
+    inventory = quantity if request.POST.get("add-to-inventory") else 0
+    color = empty_to_none(Colors.objects.get(color=color))
+    store = g_or_c_store(store)
     wine_type = g_or_c_wine_type(wine_type)
-    country = g_or_c_country(country) if country else None
+    country = empty_to_none(g_or_c_country(country))
     producer = g_or_c_producer(producer, country)
-    add = g_or_c_additional(additional)
-    wine = c_wine(description, notes, producer, wine_type, add, color, rating)
+    viti_area = g_or_c_viti_area(viti_area, country)
+    wine = c_wine(description, notes, producer, wine_type, color, rating, inventory, viti_area)
     c_purchase(wine, store, price, why, purchase_date, vintage, quantity)
+    # Grape composition
+    for i in range(1, 6):
+        grape = empty_to_none(request.POST.get("grape-{}".format(i)))
+        percent = int(empty_to_none(request.POST.get("grape-{}-pct".format(i))))
+        if grape and 0 < percent <= 100:
+            c_wine_grape(wine, grape, percent)
+        else:
+            # No more grapes
+            break
+
+    if request.FILES.get("wine-image"):
+        wine_image = request.FILES["wine-image"]
+        fs = FileSystemStorage()
+        fs.save(str(wine.id) + ".png", wine_image)
+
     return redirect("Wine Profile", wine_id=wine.id)
 
 
@@ -110,14 +148,12 @@ def first_new_purchase(request):
         return insert_new_purchase_and_wine(request)
     else:
         context = {
-            "additionals": Additionals.objects.all(),
             "colors": Colors.objects.all(),
             "countries": Countries.objects.all(),
-            "flags": ["Argentina", "Australia", "Chile", "France", "Germany",
-                      "Greece", "Italy", "New Zealand", "Portugal", "Slovenia",
-                      "South Africa", "Spain", "Austria"],
+            "flags": get_flag_countries(),
             "producers": Producers.objects.all(),
             "stores": Stores.objects.all(),
+            "grapes": Grapes.objects.all(),
             "wine_types": WineTypes.objects.all(),
             "page_name": "New Purchase",
             "version": __version__,
@@ -129,9 +165,6 @@ def prev_new_purchase_search(request):
     context = {
         "colors": Colors.objects.all(),
         "countries": Countries.objects.all(),
-        "flags": ["Argentina", "Australia", "Chile", "France", "Germany",
-                  "Greece", "Italy", "New Zealand", "Portugal", "Slovenia",
-                  "South Africa", "Spain", "Austria"],
         "producers": Producers.objects.all(),
         "wine_types": WineTypes.objects.all(),
         "page_name": "New Purchase",
@@ -147,10 +180,9 @@ def insert_new_purchase(request, wine_id):
     if price:
         price = float(price)
     why = empty_to_none(request.POST.get("why"))
-    store_address = empty_to_none(request.POST.get("store-address"))
     vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
     quantity = int(request.POST.get("quantity"))
-    store = g_or_c_store(store, store_address)
+    store = g_or_c_store(store)
     wine = Wines.objects.get(id=wine_id)
     c_purchase(wine, store, price, why, purchase_date, vintage, quantity)
     return redirect("Wine Profile", wine_id=wine_id)

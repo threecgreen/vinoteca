@@ -6,16 +6,16 @@
         <div class="row">
             <div class="col s6 l3 input-field">
                 <select id="color" name="color">
-                    <option value="" selected>Select the color</option>
+                    <option value="" selected>Select the type</option>
                     {% for color in colors %}
                         <option value="{{ color.color }}">{{ color.color|title }}</option>
                     {% endfor %}
                 </select>
-                <label for="color">Color</label>
+                <label for="color">Type</label>
             </div>
             <div class="input-field col s6 l3">
                 <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete">
-                <label for="auto-wine-type">Wine Type</label>
+                <label for="auto-wine-type">Name</label>
             </div>
             <div class="input-field col s6 l3">
                 <input type="text" id="auto-producer" name="producer" class="autocomplete">
@@ -34,10 +34,10 @@
         <table class="highlight responsive-table">
             <thead>
                 <tr style="display: none;">
-                    <th>Color</th>
+                    <th>Type</th>
                     <th>Description</th>
                     <th>Notes</th>
-                    <th>Wine Type</th>
+                    <th>Name</th>
                     <th>Producer</th>
                     <th>Region</th>
                 </tr>

@@ -36,13 +36,13 @@
                     <li {% block new-nav %}{% endblock %}>
                         <a href="#!" class="dropdown-button" data-activates="new-purchase-dropdown">
                             <i class="material-icons left">add_circle</i>
-                            New Purchase
+                            New
                             <i class="material-icons right">arrow_drop_down</i>
                         </a>
                     </li>
-                    <li {% block view-nav %}{% endblock %}><a href="{% url "Wine Table" %}"><i class="material-icons left">view_comfy</i>View Wines</a></li>
+                    <li {% block view-nav %}{% endblock %}><a href="{% url "Wine Table" %}"><i class="material-icons left">reorder</i>Wines</a></li>
                     <li {% block dashboard-nav %}{% endblock %}><a href="{% url "Dashboards" %}"><i class="material-icons left">dashboard</i>Dashboards</a></li>
-                    <li {% block about-nav %}{% endblock %}><a href="{% url "About" %}"><i class="material-icons left">subject</i>About</a></li>
+                    <li {% block inventory-nav %}{% endblock %}><a href="{% url "Inventory" %}"><i class="material-icons left">view_comfy</i>Inventory</a> </li>
                 </ul>
             </div>
         </div>
@@ -53,23 +53,12 @@
 
 
     <footer class="page-footer pink darken-4 footer-copyright">
-{#        <div class="container">#}
-{#            <div class="row">#}
-{#                <div class="col s6 m3">#}
-{#                        <a href="{{ "Wine Table" }}">Wine Table</a>#}
-{#                </div>#}
-{#                <div class="col s6 m3">#}
-{#                        <a href="{{ "Dashboards" }}">Dashboards</a>#}
-{#                </div>#}
-{#                <div class="col s6 m3">#}
-{#                        <a href="{{ "About" }}">About</a>#}
-{#                </div>#}
-{#                <div class="col s6 m3">#}
-{#                        <a href="{{ "New Purchase Search" }}">Search Wines</a>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="footer-copyright">#}
+        <div class="container">
+            <div class="row">
+                <a href="{% url "About" %}">About</a>
+            </div>
+        </div>
+        <div class="footer-copyright">
             <div class="container">
                 <div class="row">
                     <div class="col s12">
@@ -78,7 +67,7 @@
                     </div>
                 </div>
             </div>
-{#        </div>#}
+        </div>
     </footer>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

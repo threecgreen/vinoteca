@@ -19,5 +19,62 @@
         <h4>Bugs and suggestions</h4>
         <p>Send me an <a href="mailto:cartergr@usc.edu?subject=vinoteca">email</a>
         with any problems or bugs you encounter and any suggestions you have for improvements.</p>
+
+        <h4>Built with</h4>
+        <ul class="bullets">
+            <li>Django</li>
+            <li>Materialize CSS</li>
+            <li>SQLite</li>
+            <li><a href="https://github.com/stevenrskelton/flag-icon">Flags by Steven Skelton</a></li>
+            <li><a href="https://github.com/Mottie/tablesorter">Tablesorter (unofficial fork)</a></li>
+            <li><a href="https://www.reddit.com/r/travel/comments/6z7cu0/loved_visiting_burgundy_right_before_harvest/">Cover photo from /u/CollideStorm</a></li>
+        </ul>
+
+        <h3>Changelog</h3>
+        <h4>v1.0.0</h4>
+        <p>Several major additions and changes were made to the point where it felt usable enough to be the initial
+           full version.</p>
+        <ul class="bullets">
+            <li>Added Viticultural Area field</li>
+            <li>Added Grape composition table field (many-to-many relationship)</li>
+            <li>Inventory<ul class="bullets">
+                <li style="list-style-type: square">Added the inventory field to each wine</li>
+                <li style="list-style-type: square">Added view where the wine inventory can be viewed and easily edited</li>
+            </ul></li>
+            <li>Country profile improvements<ul class="bullets">
+                <li style="list-style-type: square">Added flags to profile</li>
+                <li style="list-style-type: square">Added viticultural areas table</li>
+            </ul></li>
+            <li>Improved sorting and filtering with JQuery tablesorter plug-in, removing the need for separate
+                sorting and filtering views</li>
+            <li>Added vector flags for U.S. states</li>
+            <li>Added the ability to upload images for each wine</li>
+            <li>Wine Color renamed to Type and Wine Type renamed to Name</li>
+            <li>Deprecated Additional, as its purpose was no longer needed with dedicated fields for grape
+                composition and viticultural area</li>
+            <li>Store address field was removed as it was found to be unneeded</li>
+            <li>Improved test coverage</li>
+            <li>Added migrate line to the update script</li>
+        </ul>
+
+        <h4>v0.3.0</h4>
+        <ul class="bullets">
+            <li>Added country/region profile</li>
+            <li>Added wine producer profile</li>
+            <li>Fixed issue with automatic browser opening on Windows</li>
+            <li>Upgraded to Django 2.0</li>
+        </ul>
+
+        <h4>v0.2.1</h4>
+        <p>Minor improvements to the scripts including automatically opening the browser when running run.sh</p>
+
+        <h4>v0.2.0</h4>
+        <ul class="bullets">
+            <li>Fix unit conversions</li>
+            <li>Standardize button colors</li>
+            <li>Update About page</li>
+            <li>Add logo to navbar</li>
+            <li>Better table highlighting</li>
+        </ul>
     </div>
 {% endblock %}

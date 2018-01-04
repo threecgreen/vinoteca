@@ -3,10 +3,46 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            <div class="col s12">
+            {% if flag_exists %}
+            <div class="col s2 m1">
+                <img src="/static/img/flags/{{ country.name }}.svg" alt="Country flag" class="circle z-depth-2 img-responsive country-flag">
+            </div>
+            {% endif %}
+            <div class="col s10 m11">
                 <h3 class="bold">{{ country.name }}</h3>
             </div>
         </div>
+        {% if viti_areas %}
+        <div class="row">
+            <div class="col s12 m8">
+                <h5>Viticultural Areas</h5>
+                <table class="highlight responsive">
+                    <thead>
+                    <tr>
+                        <th>Viticultural Area</th>
+                        <th class="num-col">Wines</th>
+                        <th class="num-col">Avg Rating</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for viti_area in viti_areas %}
+                        <tr>
+                            <td>{{ viti_area.0 }}</td>
+                            <td class="num-col">{{ viti_area.1 }}</td>
+                            <td class="num-col">
+                                {% if viti_area.2 %}
+                                {{ viti_area.2|floatformat:"2" }}
+                                {% else %}
+                                &ndash;
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
         <div class="row">
             <div class="col s12">
                 <h5>Wines</h5>
@@ -14,7 +50,7 @@
                     <thead>
                     <tr>
                         <th>Last Purchased</th>
-                        <th>Wine Type</th>
+                        <th>Name</th>
                         <th>Producer</th>
                         <th>Additional</th>
                         <th>Description</th>

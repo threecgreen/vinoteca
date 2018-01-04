@@ -126,6 +126,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "vinoteca/static"),
 ]
 
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # debug_toolbar settings
 # if DEBUG:
 #     INTERNAL_IPS = ('127.0.0.1',)
