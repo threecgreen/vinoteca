@@ -30,20 +30,11 @@ def test_urls(url, view_name):
     assert resolver.view_name == view_name
 
 
-# @pytest.mark.parametrize("data", [
-#     # With rating
-#     {"producer": }
-#     # Without
-#
-#     # With image
-#
-#     # Without
-# ])
-def test_edit_wine(client, data):
+def test_edit_wine(client):
     pass
 
 
-def test_edit_purchaseS(client):
+def test_edit_purchases(client):
     pass
 
 
