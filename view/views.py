@@ -1,3 +1,4 @@
+import attr
 import os.path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -10,14 +11,42 @@ from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_
 
 
 def wine_table(request):
-    wines = Wines.objects.all().order_by("producer__country__name",
-                                         "producer__name")
+    @attr.s
+    class WineTableDatum(object):
+        id = attr.ib(type=int)
+        description = attr.ib(type=str)
+        rating = attr.ib(type=int)
+        region = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        name = attr.ib(type=str)
+        type = attr.ib(type=str)
+        grapes = attr.ib(type=str)
+
+    wine_query = """
+        SELECT
+            w.id
+            , w.description
+            , w.rating
+            , c.name
+            , p.name
+            , wt.type_name
+            , c2.color
+            , group_concat(g.name, ', ')
+        FROM wines w 
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN countries c ON p.country_id = c.id
+            LEFT JOIN colors c2 ON w.color_id = c2.id
+            LEFT JOIN wine_types wt ON w.type_id = wt.id
+            LEFT JOIN wine_grapes wg ON w.id = wg.wine_id
+            LEFT JOIN grapes g ON wg.grape_id = g.id
+        GROUP BY w.id;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    wines = [WineTableDatum(*row) for row in cursor.execute(wine_query).fetchall()]
+    conn.close()
     context = {
-        "colors": Colors.objects.all(),
-        "countries": Countries.objects.all(),
-        "producers": Producers.objects.all(),
         "wines": wines,
-        "wine_types": WineTypes.objects.all(),
         "page_name": "Wine Table",
         "version": __version__,
     }
@@ -357,7 +386,3 @@ def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool
     if return_to_inventory:
         return redirect("Inventory")
     return redirect("Wine Profile", wine_id=wine.id)
-
-
-def edit_country(request, country_id: int):
-    pass

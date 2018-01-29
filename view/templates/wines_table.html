@@ -19,7 +19,7 @@
                         <th>Producer</th>
                         <th>Region</th>
                         <th>Description</th>
-                        <th>Notes</th>
+                        <th>Grapes</th>
                         <th>Rating</th>
                     </tr>
                 </thead>
@@ -30,7 +30,7 @@
                         <th>Producer</th>
                         <th>Region</th>
                         <th>Description</th>
-                        <th>Notes</th>
+                        <th>Grapes</th>
                         <th>Rating</th>
                     </tr>
                     <!-- include "tablesorter-ignoreRow" class for pager rows in thead -->
@@ -53,12 +53,12 @@
                 <tbody>
                     {% for wine in wines %}
                     <tr>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color.color|title }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.wine_type.type_name }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer.name }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer.country.name }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.type|default_if_none:""|title }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.region }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.notes|default_if_none:"" }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.grapes|default_if_none:"" }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|default_if_none:"" }}</a></td>
                     </tr>
                     {% endfor %}
