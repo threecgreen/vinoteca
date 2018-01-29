@@ -14,13 +14,13 @@
     <tbody>
     {% for purchase in purchases %}
         <tr>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.0|naturalday:"N j" }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.1 }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.2 }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.3 }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.4 }}</a></td>
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.5 }}</a></td>
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.7 %}">{{ purchase.6 }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.date|naturalday:"N j" }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.store }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.producer }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.region }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.name }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.price }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.quantity }}</a></td>
         </tr>
     {% endfor %}
     </tbody>
