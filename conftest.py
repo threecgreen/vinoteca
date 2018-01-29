@@ -3,6 +3,7 @@ Main (along with pytest.ini) pytest configuration file for django testing.
 """
 import pytest
 from django.test import Client
+from vinoteca.models import Wines
 
 
 @pytest.fixture(scope="session")
@@ -28,3 +29,7 @@ def client():
     Basic fixture for django client used for interacting with web pages as a user and making requests.
     """
     return Client()
+
+
+# skipif_db_empty = pytest.mark.skipif(not bool(Wines.objects.first()),
+#                                      reason="Need data in database")

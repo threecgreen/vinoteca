@@ -11,11 +11,11 @@
     <tbody>
     {% for year in years %}
         <tr>
-            <td>{{ year.0 }}</td>
-            <td class="num-col">{{ year.1 }}</td>
-            <td class="num-col">{{ year.2|floatformat:"2" }}</td>
-            <td class="num-col">{{ year.3|floatformat:"2" }}</td>
-            <td class="num-col">{{ year.4|floatformat }}</td>
+            <td>{{ year.year }}</td>
+            <td class="num-col">{{ year.quantity }}</td>
+            <td class="num-col">{{ year.price|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.avg_price|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.avg_vintage|floatformat }}</td>
         </tr>
     {% endfor %}
     </tbody>

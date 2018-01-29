@@ -4,9 +4,9 @@ import pytest
 from vinoteca.views import *
 
 
-@pytest.mark.django_db
-def test_home_page(client):
-    response = client.get("/home/")
+@pytest.mark.parametrize("url", ["/home/", "/", "/about/"])
+def test_pages(client, url):
+    response = client.get(url)
     assert response.status_code == 200
 
 

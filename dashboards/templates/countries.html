@@ -11,15 +11,15 @@
     <tbody>
         {% for country in countries %}
         <tr>
-            <td>{{ country.0 }}</td>
-            <td class="num-col">{{ country.1 }}</td>
-            <td class="num-col">{{ country.2 }}</td>
-            {% if country.3 %}
-                <td class="num-col">{{ country.3|floatformat:"1" }}</td>
+            <td>{{ country.name }}</td>
+            <td class="num-col">{{ country.producer_count }}</td>
+            <td class="num-col">{{ country.wine_count }}</td>
+            {% if country.avg_rating %}
+                <td class="num-col">{{ country.avg_rating|floatformat:"1" }}</td>
             {% else %}
                 <td class="num-col">&ndash;</td>
             {% endif %}
-            <td class="num-col">{{ country.4|floatformat:"2" }}</td>
+            <td class="num-col">{{ country.avg_price|floatformat:"2" }}</td>
         </tr>
         {% endfor %}
     </tbody>

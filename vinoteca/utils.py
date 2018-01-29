@@ -110,8 +110,8 @@ def int_to_date(yyyymmdd: int) -> Union[date]:
 
 
 def flag_exists(country_name: str) -> bool:
-    return os.path.exists(os.path.join(settings.BASE_DIR, "vinoteca", "static", "img", "flags",
-                                       "{}.svg".format(country_name)))
+    return os.path.exists(os.path.join(settings.BASE_DIR, "vinoteca", "static",
+                                       "img", "flags", f"{country_name}.svg"))
 
 
 def get_flag_countries() -> List[str]:
