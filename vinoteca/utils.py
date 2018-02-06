@@ -1,8 +1,8 @@
-import os
 import sqlite3
 from datetime import date, datetime
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from pathlib import Path
 from typing import Any, List, Union
 from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores, \
     VitiAreas, WineGrapes, WineTypes, Wines
@@ -95,7 +95,7 @@ def empty_to_none(item: Any) -> Union[Any]:
 
 
 def get_connection() -> sqlite3.Connection:
-    return sqlite3.connect(os.path.join(BASE_DIR, "data/wine.db"))
+    return sqlite3.connect(str(Path(BASE_DIR) / "data" / "wine.db"))
 
 
 def date_str_to_int(date_str: str) -> Union[int]:
@@ -110,10 +110,10 @@ def int_to_date(yyyymmdd: int) -> Union[date]:
 
 
 def flag_exists(country_name: str) -> bool:
-    return os.path.exists(os.path.join(settings.BASE_DIR, "vinoteca", "static",
-                                       "img", "flags", f"{country_name}.svg"))
+    return (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags"
+            / f"{country_name}.svg").is_file()
 
 
 def get_flag_countries() -> List[str]:
-    return [country_file[:-4] for country_file in os.listdir(
-        os.path.join(settings.BASE_DIR, "vinoteca", "static", "img", "flags"))]
+    img_glob = (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags").glob("*.svg")
+    return [str(country_file)[:-4] for country_file in list(img_glob)]
