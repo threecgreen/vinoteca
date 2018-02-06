@@ -2,6 +2,7 @@
 scripts_dir="$(dirname $0)"
 root_dir="$(dirname "$scripts_dir")"
 echo "Updating project source..."
+# TODO: re-enable for master branch
 #git reset --hard
 #git pull -r
 source activate vinoteca || (echo "No Python environment 'vinoteca'." && exit 1)
