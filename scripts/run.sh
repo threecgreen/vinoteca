@@ -1,8 +1,14 @@
-#! /bin/bash
-echo "Backing up database..."
-dir="$(dirname $0)"
-parentdir="$(dirname "$dir")"
-cp -a $parentdir/data/wine.db "$parentdir/data/wine_$(date +"%y%m%d_%H%M%S").db"
+#!/usr/bin/env bash
+set -e
+scripts_dir="$(dirname $0)"
+root_dir="$(dirname "$scripts_dir")"
+
+# Only backup db if --backup-db arg passed
+if [ "$1" == "--backup-db" ]; then
+    echo "Backing up database..."
+    cp -a "$root_dir/data/wine.db" "$root_dir/data/wine_$(date +"%y%m%d_%H%M%S").db"
+fi
+
 source activate vinoteca
 # Run browser
 echo "Attempting to open browser..."
@@ -23,4 +29,4 @@ elif [ "$cmd" != "false" ] ; then
 fi
 # Run django server
 echo "Starting server..."
-python manage.py runserver
+python "$root_dir/manage.py" runserver
