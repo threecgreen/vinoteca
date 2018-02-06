@@ -14,6 +14,7 @@ data/ipynb_checkpoints/
 
 # Test files
 tests/cov_html/
+.pytest_cache/
 .cache/
 .coverage
 tests/.svn/

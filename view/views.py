@@ -1,5 +1,5 @@
 import attr
-import os.path
+from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
@@ -110,8 +110,8 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             rating = int(wine_info[2])
         except TypeError:
             rating = None
-        if os.path.isfile(os.path.join(settings.MEDIA_ROOT, (str(wine_id) + ".png"))):
-            wine_img = "/media/" + str(wine_id) + ".png"
+        if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
+            wine_img = str(Path(settings.MEDIA_ROOT) / f"{wine_id}.png")
         else:
             wine_img = None
 
@@ -173,8 +173,8 @@ def edit_wine(request, wine_id: int):
         if request.FILES.get("wine-image"):
             wine_image = request.FILES["wine-image"]
             # Remove old image if it exists
-            if os.path.exists(os.path.join(settings.MEDIA_ROOT, str(wine_id) + ".png")):
-                os.remove(os.path.join(settings.MEDIA_ROOT, str(wine_id) + ".png"))
+            if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
+                (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").unlink()
             fs = FileSystemStorage()
             fs.save(str(wine.id) + ".png", wine_image)
 
