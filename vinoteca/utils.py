@@ -116,4 +116,4 @@ def flag_exists(country_name: str) -> bool:
 
 def get_flag_countries() -> List[str]:
     img_glob = (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags").glob("*.svg")
-    return [str(country_file)[:-4] for country_file in list(img_glob)]
+    return [country_file.stem for country_file in list(img_glob)]

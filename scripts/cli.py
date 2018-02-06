@@ -46,8 +46,9 @@ def main():
         subcommand = sys.argv[1]
         if subcommand not in options.keys():
             # Invalid argument
-            print(f"Invalid argument '{sys.argv[0]}'.", file=sys.stderr)
+            print(f"Invalid subcommand '{sys.argv[1]}'.", file=sys.stderr)
             print()
+            print_subcommands(options)
         elif subcommand == "help":
             vinoteca_help(options)
         else:
