@@ -16,6 +16,11 @@ from pathlib import Path
 from subprocess import call
 
 
+def print_error(text):
+    # Bold red
+    print(f"\033[1;31m{text}\033[0m", file=sys.stderr)
+
+
 def print_subcommands(options):
     print("Available subcommands:")
     print("    ", end="")
@@ -39,15 +44,13 @@ def main():
         "update": (scripts_dir / "update.sh").resolve(),
     }
     if len(sys.argv) == 1:
-        print(f"Missing subcommand", file=sys.stderr)
-        print()
+        print_error("Missing subcommand.\n")
         print_subcommands(options)
     elif len(sys.argv) == 2:
         subcommand = sys.argv[1]
         if subcommand not in options.keys():
             # Invalid argument
-            print(f"Invalid subcommand '{sys.argv[1]}'.", file=sys.stderr)
-            print()
+            print_error(f"Invalid subcommand '{sys.argv[1]}'.\n")
             print_subcommands(options)
         elif subcommand == "help":
             vinoteca_help(options)
@@ -55,10 +58,8 @@ def main():
             # Run corresponding bash script
             call([options[subcommand]], cwd=scripts_dir)
     else:
-        print("Too many arguments.", file=sys.stderr)
-        print()
-        print("Run vinoteca with a subcommand.")
-        print()
+        print_error("Too many arguments.\n")
+        print("Run vinoteca with a subcommand.\n", file=sys.stdout)
         print_subcommands(options)
 
 
