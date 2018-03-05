@@ -12,7 +12,7 @@ from vinoteca.settings import BASE_DIR
 def g_or_c_store(store: str) -> Stores:
     try:
         return Stores.objects.get(name=store)
-    except ObjectDoesNotExist:
+    except Stores.DoesNotExist:
         new_store = Stores(name=store)
         new_store.save()
         return new_store
@@ -21,7 +21,7 @@ def g_or_c_store(store: str) -> Stores:
 def g_or_c_additional(additional: str) -> Additionals:
     try:
         return Additionals.objects.get(additional=additional)
-    except ObjectDoesNotExist:
+    except Additionals.DoesNotExist:
         new_add = Additionals(additional=additional)
         new_add.save()
         return new_add
@@ -30,7 +30,7 @@ def g_or_c_additional(additional: str) -> Additionals:
 def g_or_c_wine_type(wine_type: str) -> WineTypes:
     try:
         return WineTypes.objects.get(type_name=wine_type)
-    except ObjectDoesNotExist:
+    except WineTypes.DoesNotExist:
         new_wine_type = WineTypes(type_name=wine_type)
         new_wine_type.save()
         return new_wine_type
@@ -39,7 +39,7 @@ def g_or_c_wine_type(wine_type: str) -> WineTypes:
 def g_or_c_country(country: str) -> Countries:
     try:
         return Countries.objects.get(name=country)
-    except ObjectDoesNotExist:
+    except Countries.DoesNotExist:
         new_country = Countries(name=country, is_us=False)
         new_country.save()
         return new_country
@@ -48,7 +48,7 @@ def g_or_c_country(country: str) -> Countries:
 def g_or_c_producer(producer: str, country: Countries) -> Producers:
     try:
         return Producers.objects.get(name=producer)
-    except ObjectDoesNotExist:
+    except Producers.DoesNotExist:
         new_producer = Producers(name=producer, country=country)
         new_producer.save()
         return new_producer
@@ -57,7 +57,7 @@ def g_or_c_producer(producer: str, country: Countries) -> Producers:
 def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
     try:
         return VitiAreas.objects.get(name=viti_area, region=country)
-    except ObjectDoesNotExist:
+    except VitiAreas.DoesNotExist:
         new_viti_area = VitiAreas(name=viti_area, region=country)
         new_viti_area.save()
         return new_viti_area
@@ -66,7 +66,7 @@ def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
 def c_wine_grape(wine: Wines, grape: str, percent: int) -> None:
     try:
         grape = Grapes.objects.get(name=grape)
-    except ObjectDoesNotExist:
+    except Grapes.DoesNotExist:
         grape = Grapes(name=grape)
         grape.save()
     new_wine_grape = WineGrapes(wine=wine, grape=grape, percent=percent)
