@@ -120,7 +120,7 @@ def insert_new_purchase_and_wine(request):
         rating = int(request.POST.get("rating"))
     else:
         rating = None
-    vintage = int(request.POST.get("vintage"))
+    vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
     quantity = int(request.POST.get("quantity"))
     inventory = quantity if request.POST.get("add-to-inventory") else 0
     color = empty_to_none(Colors.objects.get(color=color))
