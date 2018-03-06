@@ -3,7 +3,7 @@ from django.conf import settings
 from pathlib import Path
 import pytest
 
-from vinoteca.models import Wines, Purchases
+from vinoteca.models import Producers, Purchases, Wines
 from vinoteca.utils import date_str_to_int, int_to_date
 from view import *
 
@@ -147,3 +147,33 @@ def test_change_inventory(client, sign):
         assert wine.inventory == 2
     else:
         assert wine.inventory == 0
+
+
+@pytest.mark.parametrize("attr,val", [
+    ("country", "France"),
+    ("name", "Yalumbaaaa")
+])
+@pytest.mark.django_db
+def test_edit_producer(client, attr, val):
+    producer = Producers.objects.get(id=1)
+    if attr == "country":
+        init_val = producer.country.name
+    else:
+        init_val = producer.name
+    assert init_val != val
+    post_data = {
+        "name": producer.name,
+        "country": producer.country.name
+    }
+    post_data[attr] = val
+    response = client.post("/producers/1/edit/", post_data, follow=True)
+    assert response.status_code == 200
+    assert ("/producers/1/", 302) in response.redirect_chain
+    if attr == "country":
+        assert Producers.objects.get(id=1).__getattribute__(attr).name == val
+    else:
+        assert Producers.objects.get(id=1).__getattribute__(attr) == val
+
+
+def test_delete_wine(client):
+    pass

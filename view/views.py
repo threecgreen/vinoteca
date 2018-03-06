@@ -272,7 +272,13 @@ def producer_profile(request, producer_id: int):
 
 
 def edit_producer(request, producer_id: int):
-    pass
+    producer = Producers.objects.get(id=producer_id)
+    context = {
+        "producer": producer,
+        "page_name": "Edit Producer",
+        "version": __version__,
+    }
+    return
 
 
 def country_profile(request, country_id: int):
@@ -386,3 +392,7 @@ def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool
     if return_to_inventory:
         return redirect("Inventory")
     return redirect("Wine Profile", wine_id=wine.id)
+
+
+def delete_wine(request, wine_id: int):
+    pass
