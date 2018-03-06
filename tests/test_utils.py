@@ -3,11 +3,17 @@ import pytest
 from vinoteca.utils import *
 
 
+@pytest.fixture
+@pytest.mark.django_db
+def california():
+    return Countries.objects.get(name="California")
+
+
 @pytest.mark.parametrize("store", [
     "Costco",
     "New Test Store"
 ])
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_g_or_c_store(store):
     store_obj = g_or_c_store(store)
     assert isinstance(store_obj, Stores)
@@ -17,7 +23,7 @@ def test_g_or_c_store(store):
     "Shiraz",
     "A New Type"
 ])
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_g_or_c_wine_type(wine_type):
     type_obj = g_or_c_wine_type(wine_type)
     assert isinstance(type_obj, WineTypes)
@@ -27,44 +33,38 @@ def test_g_or_c_wine_type(wine_type):
     "New Zealand",
     "Antarctica"
 ])
-@pytest.mark.django_db(transaction=True)
+@pytest.mark.django_db
 def test_g_or_c_country(country):
     country = g_or_c_country(country)
     assert isinstance(country, Countries)
 
 
-# @pytest.mark.parametrize("producer,country", [
-#     ("Inagery", california),
-#     ("New Producer", california),
-#     ("No Country Producer", "")
-# ])
-# @pytest.mark.django_db(transaction=True)
-# def test_g_or_c_producer(producer, country):
-#     producer = g_or_c_producer(producer, country)
-#     assert isinstance(producer, Producers)
+@pytest.mark.parametrize("producer,country", [
+    ("Inagery", True),
+    ("New Producer", True),
+    ("No Country Producer", False)
+])
+@pytest.mark.django_db
+def test_g_or_c_producer(producer, country):
+    country = california() if country else None
+    producer = g_or_c_producer(producer, country)
+    assert isinstance(producer, Producers)
+    if country:
+        assert producer.country == california()
 
 
-# @pytest.mark.parametrize("viti_area,country", [
-#     ("Sonoma County", california),
-#     ("New VA", california),
-#     ("No Country VA", None)
-# ])
-# @pytest.mark.django_db(transaction=True)
-# def test_g_or_c_viti_area(viti_area, country):
-#     viti_area = g_or_c_viti_area(viti_area, country)
-#     assert isinstance(viti_area, VitiAreas)
-
-
-# def test_c_wine_grape(wine, grape, percent):
-#     pass
-#
-#
-# def test_c_wine(desc, notes, prod, wine_type, color, rating, inventory, viti_area):
-#     pass
-#
-#
-# def test_c_purchase(wine, store, price, why, purchase_date, vintage, quantity):
-#     pass
+@pytest.mark.parametrize("viti_area,country", [
+    ("Sonoma County", True),
+    ("New VA", True),
+    ("No Country VA", False)
+])
+@pytest.mark.django_db
+def test_g_or_c_viti_area(viti_area, country):
+    country = california() if country else None
+    viti_area = g_or_c_viti_area(viti_area, country)
+    assert isinstance(viti_area, VitiAreas)
+    if country:
+        assert viti_area.region == country
 
 
 @pytest.mark.parametrize("item,result", [
@@ -118,3 +118,16 @@ def test_get_flag_countries(country_name, result):
         assert country_name in get_flag_countries()
     else:
         assert country_name not in get_flag_countries()
+
+
+@pytest.mark.parametrize("grape,pct", [
+    ("Sauvignon Blanc", 50),
+    ("A new grape", 25),
+    ("No pct grape", None)
+])
+@pytest.mark.django_db
+def test_c_wine_grape(grape, pct):
+    wine = Wines.objects.get(id=850)
+    start_count = WineGrapes.objects.filter(wine=wine).count()
+    c_wine_grape(wine, grape, pct)
+    assert WineGrapes.objects.filter(wine=wine).count() == start_count + 1

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 set -e
 # Install script for Debian-based systems
 # Get admin privileges before running

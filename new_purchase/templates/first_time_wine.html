@@ -75,7 +75,7 @@
                         <label for="price">Price</label>
                     </div>
                     <div class="input-field col s4 m2">
-                        <input id="vintage" name="vintage" type="number" class="validate" value="{% now "Y" %}">
+                        <input id="vintage" name="vintage" type="number" class="validate" value="{{ default_vintage }}">
                         <label for="vintage">Vintage</label>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                         <label for="auto-grape-2">Grape</label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" hidden>
                     <div class="col s12 m6" hidden>
                         <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-3">
                             <i class="material-icons">add</i>
@@ -150,7 +150,7 @@
                         <label for="auto-grape-4">Grape</label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" hidden>
                     <div class="col s12 m6" hidden>
                         <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-5">
                             <i class="material-icons">add</i>
@@ -169,7 +169,7 @@
                 <div class="row">
                     <div class="col s1"></div>
                     <div class="file-field input-field col s10">
-                        <div class="btn">
+                        <div class="btn yellow darken-2">
                             <span>Wine Image</span>
                             <input type="file" name="wine-image">
                         </div>
@@ -287,9 +287,10 @@
                 var id_num = this.id.slice(-1);
                 {# All elements starting with grape-form-2 #}
                 $('[id^=grape-form-' + id_num + ']').show();
-                {# Show next plus button if less than 4 #}
-                if (parseInt(id_num) < 4){
+                {# Show next plus button if less than 5 #}
+                if (parseInt(id_num) < 5){
                     $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().show();
+                    $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().parent().show();
                 }
             });
             $($grape_names).autocomplete({

@@ -1,11 +1,11 @@
 import attr
-import os.path
+from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from vinoteca import __version__
 from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores,\
-    Wines, WineTypes
+    Wines, WineTypes, WineGrapes
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type, g_or_c_store, \
     g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists
 
@@ -91,7 +91,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             FROM purchases p
                 LEFT JOIN stores s ON p.store_id = s.id
             WHERE p.wine_id = ?
-            ORDER BY p.date;
+            ORDER BY p.date DESC;
         """
         grape_query = """
             SELECT
@@ -110,8 +110,8 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             rating = int(wine_info[2])
         except TypeError:
             rating = None
-        if os.path.isfile(os.path.join(settings.MEDIA_ROOT, (str(wine_id) + ".png"))):
-            wine_img = "/media/" + str(wine_id) + ".png"
+        if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
+            wine_img = str(Path(settings.MEDIA_ROOT) / f"{wine_id}.png")
         else:
             wine_img = None
 
@@ -173,8 +173,8 @@ def edit_wine(request, wine_id: int):
         if request.FILES.get("wine-image"):
             wine_image = request.FILES["wine-image"]
             # Remove old image if it exists
-            if os.path.exists(os.path.join(settings.MEDIA_ROOT, str(wine_id) + ".png")):
-                os.remove(os.path.join(settings.MEDIA_ROOT, str(wine_id) + ".png"))
+            if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
+                (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").unlink()
             fs = FileSystemStorage()
             fs.save(str(wine.id) + ".png", wine_image)
 
@@ -189,7 +189,7 @@ def edit_wine(request, wine_id: int):
             context["producers"] = Producers.objects.all()
             context["wine_types"] = WineTypes.objects.all()
             return render(request, "edit_wine.html", context)
-        return redirect("home")
+        return redirect("Home")
 
 
 def edit_purchase(request, wine_id: int, purchase_id: int):
@@ -203,37 +203,35 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
         purchase.store = g_or_c_store(request.POST.get("store"))
         purchase.save()
         return redirect("Edit Wine", wine_id=wine_id)
-    else:
-        context = wine_profile_base(wine_id, do_purchases=False)
-        purchase_query = """
-            SELECT
-                p.date
-                , p.quantity
-                , p.vintage
-                , s.name
-                , p.price
-                , p.why
-            FROM purchases p
-                LEFT JOIN stores s ON s.id = p.store_id
-            WHERE p.id = ?;
-        """
-        conn = get_connection()
-        cursor = conn.cursor()
-        purchase = cursor.execute(purchase_query, (purchase_id, )).fetchone()
-        if purchase:
-            context["purchase_id"] = purchase_id
-            if purchase[0]:
-                context["date"] = str(purchase[0])
-            context["quantity"] = purchase[1]
-            context["vintage"] = purchase[2]
-            context["store"] = purchase[3]
-            context["price"] = purchase[4]
-            context["why"] = purchase[5]
-            context["stores"] = Stores.objects.all()
-            return render(request, "edit_purchase.html", context)
-        else:
-            conn.close()
-            return redirect("Edit Wine", wine_id=wine_id)
+    context = wine_profile_base(wine_id, do_purchases=False)
+    purchase_query = """
+        SELECT
+            p.date
+            , p.quantity
+            , p.vintage
+            , s.name
+            , p.price
+            , p.why
+        FROM purchases p
+            LEFT JOIN stores s ON s.id = p.store_id
+        WHERE p.id = ?;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    purchase = cursor.execute(purchase_query, (purchase_id, )).fetchone()
+    conn.close()
+    if purchase:
+        context["purchase_id"] = purchase_id
+        if purchase[0]:
+            context["date"] = str(purchase[0])
+        context["quantity"] = purchase[1]
+        context["vintage"] = purchase[2]
+        context["store"] = purchase[3]
+        context["price"] = purchase[4]
+        context["why"] = purchase[5]
+        context["stores"] = Stores.objects.all()
+        return render(request, "edit_purchase.html", context)
+    return redirect("Edit Wine", wine_id=wine_id)
 
 
 def producer_profile(request, producer_id: int):
@@ -251,13 +249,13 @@ def producer_profile(request, producer_id: int):
             , w.id
         FROM wines w
             INNER JOIN producers p ON w.producer_id = p.id
-            INNER JOIN purchases p2 ON w.id = p2.wine_id
-            INNER JOIN additionals a ON w.add_id = a.id
-            INNER JOIN wine_types t ON w.type_id = t.id
-            INNER JOIN colors c2 ON w.color_id = c2.id
+            LEFT JOIN purchases p2 ON w.id = p2.wine_id
+            LEFT JOIN additionals a ON w.add_id = a.id
+            LEFT JOIN wine_types t ON w.type_id = t.id
+            LEFT JOIN colors c2 ON w.color_id = c2.id
         WHERE p.id = ?
         GROUP BY w.id
-        ORDER BY rating DESC , max(p2.date) DESC;
+        ORDER BY max(p2.date) DESC;
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -272,7 +270,20 @@ def producer_profile(request, producer_id: int):
 
 
 def edit_producer(request, producer_id: int):
-    pass
+    if request.method == "POST":
+        producer = Producers.objects.get(id=producer_id)
+        country = request.POST.get("country")
+        producer.name = request.POST.get("producer")
+        producer.country = g_or_c_country(country)
+        producer.save()
+        return redirect("Producer Profile", producer_id=producer_id)
+    context = {
+        "producer": Producers.objects.get(id=producer_id),
+        "countries": Countries.objects.all(),
+        "page_name": "Edit Producer",
+        "version": __version__,
+    }
+    return render(request, "edit_producer.html", context)
 
 
 def country_profile(request, country_id: int):
@@ -302,14 +313,14 @@ def country_profile(request, country_id: int):
             , w.id
             , p.id
         FROM wines w
-            INNER JOIN producers p ON w.producer_id = p.id
-            INNER JOIN purchases p2 ON w.id = p2.wine_id
-            INNER JOIN additionals a ON w.add_id = a.id
-            INNER JOIN wine_types t ON w.type_id = t.id
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN purchases p2 ON w.id = p2.wine_id
+            LEFT JOIN additionals a ON w.add_id = a.id
+            LEFT JOIN wine_types t ON w.type_id = t.id
             INNER JOIN countries c ON p.country_id = c.id
         WHERE c.id = ?
         GROUP BY w.id
-        ORDER BY rating DESC , max(p2.date) DESC;
+        ORDER BY max(p2.date) DESC;
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -386,3 +397,36 @@ def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool
     if return_to_inventory:
         return redirect("Inventory")
     return redirect("Wine Profile", wine_id=wine.id)
+
+
+def delete_wine(request, wine_id: int):
+    wine = Wines.objects.get(id=wine_id)
+    wine_grapes = WineGrapes.objects.filter(wine=wine)
+    purchases = Purchases.objects.get(wine=wine)
+    wine_grapes.delete()
+    purchases.delete()
+    wine.delete()
+    # Determine if producer was created for this wine
+    query = """
+        SELECT
+            p.id
+        FROM producers p
+        INNER JOIN wines w ON p.id = w.producer_id
+        WHERE w.id = ? 
+        GROUP BY p.id
+        HAVING count(w.id) < 2;
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute(query, (wine_id, ))
+    if cursor.rowcount == 1:
+        producer = Producers.objects.get(id=cursor.fetchone()[0])
+        producer.delete()
+    connection.close()
+    return redirect("Wine Table")
+
+
+def delete_purchase(request, wine_id: int, purchase_id: int):
+    purchase = Purchases.objects.get(id=purchase_id)
+    purchase.delete()
+    return redirect("Edit Wine", wine_id=wine_id)
