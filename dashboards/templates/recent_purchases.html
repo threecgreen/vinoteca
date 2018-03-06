@@ -19,7 +19,7 @@
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.producer }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.region }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.name }}</a></td>
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.price }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.price|default_if_none:"&ndash;" }}</a></td>
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.quantity }}</a></td>
         </tr>
     {% endfor %}

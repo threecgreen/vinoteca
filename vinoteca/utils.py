@@ -1,11 +1,10 @@
 import sqlite3
 from datetime import date, datetime
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from dateutil.relativedelta import relativedelta
 from pathlib import Path
 from typing import Any, List, Union
-from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores, \
-    VitiAreas, WineGrapes, WineTypes, Wines
+from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
+    Purchases, Stores, VitiAreas, WineGrapes, WineTypes, Wines)
 from vinoteca.settings import BASE_DIR
 
 
@@ -63,7 +62,7 @@ def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
         return new_viti_area
 
 
-def c_wine_grape(wine: Wines, grape: str, percent: int) -> None:
+def c_wine_grape(wine: Wines, grape: str, percent: Union[int]) -> None:
     try:
         grape = Grapes.objects.get(name=grape)
     except Grapes.DoesNotExist:
@@ -117,3 +116,7 @@ def flag_exists(country_name: str) -> bool:
 def get_flag_countries() -> List[str]:
     img_glob = (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags").glob("*.svg")
     return [country_file.stem for country_file in list(img_glob)]
+
+
+def default_vintage_year() -> int:
+    return (datetime.now() - relativedelta(years=2)).year

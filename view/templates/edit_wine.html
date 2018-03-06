@@ -157,7 +157,7 @@
             <div class="row">
                 <div class="col s1"></div>
                 <div class="file-field input-field col s10">
-                    <div class="btn">
+                    <div class="btn yellow darken-2">
                         <span>Wine Image</span>
                         <input type="file" name="wine-image">
                     </div>
@@ -184,7 +184,7 @@
 {% block table-edit-head %}<th>Edit</th>{% endblock %}
 {% block table-edit-body %}
     <td>
-        <a class="btn-floating waves-effect waves-light pink darken-3" href="{% url "Edit Purchase" wine_id=wine_id purchase_id=purchase.6 %}">
+        <a class="btn-floating waves-effect waves-light yellow darken-2" href="{% url "Edit Purchase" wine_id=wine_id purchase_id=purchase.6 %}">
             <i class="material-icons">edit</i>
         </a>
     </td>
@@ -283,9 +283,10 @@
             var id_num = this.id.slice(-1);
             {# All elements starting with grape-form-2 #}
             $('[id^=grape-form-' + id_num + ']').show();
-            {# Show next plus button if less than 4 #}
-            if (parseInt(id_num) < 4){
+            {# Show next plus button if less than 5 #}
+            if (parseInt(id_num) < 5){
                 $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().show();
+                $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().par.show();
             }
         });
         {# Gave weird error when in same document ready function #}

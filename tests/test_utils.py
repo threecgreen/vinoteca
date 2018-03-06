@@ -118,3 +118,16 @@ def test_get_flag_countries(country_name, result):
         assert country_name in get_flag_countries()
     else:
         assert country_name not in get_flag_countries()
+
+
+@pytest.mark.parametrize("grape,pct", [
+    ("Sauvignon Blanc", 50),
+    ("A new grape", 25),
+    ("No pct grape", None)
+])
+@pytest.mark.django_db
+def test_c_wine_grape(grape, pct):
+    wine = Wines.objects.get(id=850)
+    start_count = WineGrapes.objects.filter(wine=wine).count()
+    c_wine_grape(wine, grape, pct)
+    assert WineGrapes.objects.filter(wine=wine).count() == start_count + 1

@@ -5,10 +5,10 @@ from django.template.loader import render_to_string
 from view.views import wine_profile_base
 from vinoteca import __version__
 from vinoteca.models import (Colors, Countries, Grapes, Producers, Stores,
-                             WineTypes, Wines)
+    WineTypes, Wines)
 from vinoteca.utils import (g_or_c_country, g_or_c_producer, g_or_c_store,
-                            g_or_c_wine_type, c_wine, c_purchase, empty_to_none,
-                            g_or_c_viti_area, c_wine_grape, get_flag_countries)
+    g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
+    c_wine_grape, get_flag_countries, default_vintage_year)
 from vinoteca.views import get_connection
 
 
@@ -136,8 +136,11 @@ def insert_new_purchase_and_wine(request):
     if request.POST.get("grape-1"):
         for i in range(1, 6):
             grape = empty_to_none(request.POST.get(f"grape-{i}"))
-            percent = int(empty_to_none(request.POST.get(f"grape-{i}-pct")))
-            if grape and 0 < percent <= 100:
+            if request.POST.get(f"grape-{i}-pct"):
+                percent = int(request.POST.get(f"grape-{i}-pct"))
+            else:
+                percent = None
+            if grape and (percent is None or 0 < percent <= 100):
                 c_wine_grape(wine, grape, percent)
             else:
                 # No more grapes
@@ -163,6 +166,7 @@ def first_new_purchase(request):
             "stores": Stores.objects.all(),
             "grapes": Grapes.objects.all(),
             "wine_types": WineTypes.objects.all(),
+            "default_vintage": default_vintage_year(),
             "page_name": "New Purchase",
             "version": __version__,
         }
@@ -202,6 +206,7 @@ def prev_purchase(request, wine_id):
     else:
         context = wine_profile_base(wine_id)
         context["stores"] = Stores.objects.all()
+        context["default_vintage"] = default_vintage_year()
         if context:
             return render(request, "prev_wine.html", context)
         else:

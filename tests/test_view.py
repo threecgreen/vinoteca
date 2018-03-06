@@ -4,8 +4,6 @@ from pathlib import Path
 import pytest
 
 from vinoteca.models import Producers, Purchases, Wines
-from vinoteca.utils import date_str_to_int, int_to_date
-from view import *
 
 
 @pytest.fixture
@@ -151,7 +149,7 @@ def test_change_inventory(client, sign):
 
 @pytest.mark.parametrize("attr,val", [
     ("country", "France"),
-    ("name", "Yalumbaaaa")
+    ("producer", "Yalumbaaaa")
 ])
 @pytest.mark.django_db
 def test_edit_producer(client, attr, val):
@@ -162,7 +160,7 @@ def test_edit_producer(client, attr, val):
         init_val = producer.name
     assert init_val != val
     post_data = {
-        "name": producer.name,
+        "producer": producer.name,
         "country": producer.country.name
     }
     post_data[attr] = val
@@ -170,10 +168,22 @@ def test_edit_producer(client, attr, val):
     assert response.status_code == 200
     assert ("/producers/1/", 302) in response.redirect_chain
     if attr == "country":
-        assert Producers.objects.get(id=1).__getattribute__(attr).name == val
+        assert Producers.objects.get(id=1).country.name == val
     else:
-        assert Producers.objects.get(id=1).__getattribute__(attr) == val
+        assert Producers.objects.get(id=1).name == val
 
 
+@pytest.mark.django_db
 def test_delete_wine(client):
-    pass
+    response = client.get("/wines/850/edit/delete/confirmed/", follow=True)
+    assert response.status_code == 200
+    with pytest.raises(Wines.DoesNotExist):
+        Wines.objects.get(id=850)
+
+
+@pytest.mark.django_db
+def test_delete_purchase(client):
+    response = client.get("/wines/850/edit/119/delete/", follow=True)
+    assert response.status_code == 200
+    with pytest.raises(Purchases.DoesNotExist):
+        Purchases.objects.get(id=119)

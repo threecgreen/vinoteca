@@ -22,35 +22,41 @@
 
         <h4>Built with</h4>
         <ul class="bullets">
-            <li>Django</li>
-            <li>Materialize CSS</li>
-            <li>SQLite</li>
+            <li><a href="https://www.djangoproject.com/">Django</a></li>
+            <li><a href="http://materializecss.com/">Materialize CSS</a></li>
+            <li><a href="https://www.sqlite.org/index.html">SQLite</a></li>
             <li><a href="https://github.com/stevenrskelton/flag-icon">Flags by Steven Skelton</a></li>
             <li><a href="https://github.com/Mottie/tablesorter">Tablesorter (unofficial fork)</a></li>
             <li><a href="https://www.reddit.com/r/travel/comments/6z7cu0/loved_visiting_burgundy_right_before_harvest/">Cover photo from /u/CollideStorm</a></li>
         </ul>
 
         <h3>Changelog</h3>
-        <h4>v1.1.0</h4>
+        <h4>1.1.0</h4>
         <ul class="bullets">
-            <li>Improved CLI</li>
+            <li>Added ability to delete wines and purchases</li>
+            <li>Added ability to edit producers</li>
+            <li>Default vintage year is now two years before the current year</li>
             <li>Added tests for image upload, and purchase and wine editing</li>
+            <li>Order purchases by reverse chronological order</li>
+            <li>Improved CLI</li>
             <li>Fixed bug where adding non-vintage wines would cause an exception</li>
+            <li>Fixed bug where grapes with no composition percentage would cause an exception</li>
+            <li>Removed Django debug toolbar dependency</li>
         </ul>
 
-        <h4>v1.0.2</h4>
+        <h4>1.0.2</h4>
         <ul class="bullets">
             <li>Update dependencies</li>
         </ul>
 
-        <h4>v1.0.1</h4>
+        <h4>1.0.1</h4>
         <ul class="bullets">
             <li>Replaced notes with grape composition in wines table</li>
             <li>Scripts now stop if any step fails</li>
             <li>Added more testing</li>
         </ul>
 
-        <h4>v1.0.0</h4>
+        <h4>1.0.0</h4>
         <p>Several major additions and changes were made to the point where it felt usable enough to be the initial
            full version.</p>
         <ul class="bullets">
@@ -76,7 +82,7 @@
             <li>Added migrate line to the update script</li>
         </ul>
 
-        <h4>v0.3.0</h4>
+        <h4>0.3.0</h4>
         <ul class="bullets">
             <li>Added country/region profile</li>
             <li>Added wine producer profile</li>
@@ -84,10 +90,10 @@
             <li>Upgraded to Django 2.0</li>
         </ul>
 
-        <h4>v0.2.1</h4>
+        <h4>0.2.1</h4>
         <p>Minor improvements to the scripts including automatically opening the browser when running run.sh</p>
 
-        <h4>v0.2.0</h4>
+        <h4>0.2.0</h4>
         <ul class="bullets">
             <li>Fix unit conversions</li>
             <li>Standardize button colors</li>
