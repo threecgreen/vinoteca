@@ -129,5 +129,12 @@ def test_get_flag_countries(country_name, result):
 def test_c_wine_grape(grape, pct):
     wine = Wines.objects.get(id=850)
     start_count = WineGrapes.objects.filter(wine=wine).count()
-    c_wine_grape(wine, grape, pct)
+    assert c_wine_grape(wine, grape, pct)
     assert WineGrapes.objects.filter(wine=wine).count() == start_count + 1
+
+
+@pytest.mark.parametrize("grape", ["Negroamaro", "Primitivo"])
+@pytest.mark.django_db
+def test_c_wine_grape_existing(grape):
+    wine = Wines.objects.get(id=732)
+    assert c_wine_grape(wine, grape, 0) is False
