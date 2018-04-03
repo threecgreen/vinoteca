@@ -52,7 +52,6 @@
                         <th>Last Purchased</th>
                         <th>Name</th>
                         <th>Producer</th>
-                        <th>Additional</th>
                         <th>Description</th>
                         <th class="num-col">Total Quantity</th>
                         <th class="num-col">Avg. Price</th>
@@ -62,10 +61,13 @@
                     <tbody>
                     {% for wine in wines %}
                         <tr>
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.0|naturalday:"M j, Y"|default_if_none:"&ndash;" }}</a></td>
+                            {% if wine.0 %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.0|naturalday:"b j, Y"|title }}</a></td>
+                            {% else %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">&ndash;</a></td>
+                            {% endif %}
                             <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.1 }}</a></td>
                             <td><a href="{% url "Producer Profile" producer_id=wine.9 %}">{{ wine.7 }}</a></td>
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.3 }}</a></td>
                             <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.2|default_if_none:"" }}</a></td>
                             <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.4|default_if_none:"&ndash;" }}</a></td>
                             <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.5|floatformat:"2" }}</a></td>
