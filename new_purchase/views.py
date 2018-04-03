@@ -126,7 +126,7 @@ def insert_new_purchase_and_wine(request):
     color = empty_to_none(Colors.objects.get(color=color))
     store = g_or_c_store(store)
     wine_type = g_or_c_wine_type(wine_type)
-    country = empty_to_none(g_or_c_country(country))
+    country = g_or_c_country(country)
     producer = g_or_c_producer(producer, country)
     viti_area = g_or_c_viti_area(viti_area, country)
     wine = c_wine(description, notes, producer, wine_type, color, rating,
