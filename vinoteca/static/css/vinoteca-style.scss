@@ -78,15 +78,6 @@ table.highlight tbody tr:hover  {
   background-color: #e6bf99;
 }
 
-.tablesorter-filter-row {
-  td {
-    padding-left: 5px;
-    padding-right: 5px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-
 ul.bullets {
   padding-left: 30px;
   margin-top: 10px;
@@ -100,28 +91,19 @@ ul.bullets {
   }
 }
 
-//table.sortable {
-//    ul {
-//        padding-left: 20px;
-//    }
-//    .btn {
-//        font-size: .8em;
-//    }
-//    .material-icons {
-//        vertical-align: bottom;
-//    }
-//}
+a:link.text-link {
+  color: #c5e1a5;
+}
 
-// Media Query Ranges
-$small-screen-up: 601px !default;
-$medium-screen-up: 1001px !default;
-$large-screen-up: 1301px !default;
-$small-screen: 600px !default;
-$medium-screen: 1000px !default;
-$large-screen: 1300px !default;
-$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
-$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
-$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
-$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
-$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+a:hover.text-link {
+  color: #9ccc65;
+}
 
+a:visited.text-link {
+  color: #880e4f;
+}
+
+table.condensed td, th {
+  padding-top: 7.5px;
+  padding-bottom: 7.5px;
+}

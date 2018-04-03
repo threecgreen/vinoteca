@@ -6,34 +6,44 @@
     {% block wine-title %}
     <div class="row">
         <div class="col s12">
-            <h3 class="bold">{{ wine_type|title }}</h3>
+            <h3 class="bold">{{ wine.wine_type|title }}</h3>
             <h4>
-                <a href="{% url "Producer Profile" producer_id=producer_id %}">{{ producer }}</a>
-                of {% if viti_area %}{{ viti_area }}, {% endif %}<a href="{% url "Country Profile" country_id=country_id %}">{{ country }}</a>
+                <a class="text-link" href="{% url "Producer Profile" producer_id=wine.producer_id %}">{{ wine.producer }}</a>
+                of <a class="text-link" href="{% url "Country Profile" country_id=wine.region_id %}">{{ wine.region }}</a>
             </h4>
         </div>
         <div class="col s12 m6">
-            {#                Insert Country Logo#}
-            <h5 class="light">{{ color|title }}</h5>
-            <h5 class="inline-h"><b>Inventory: </b> {{ inventory }}</h5> &thinsp;
-            <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Change Inventory" wine_id=wine_id sign="add" %}">
+            <h5 class="light">{{ wine.color|title }}</h5>
+            <h5 class="inline-h"><b>Inventory: </b> {{ wine.inventory }}</h5> &thinsp;
+            <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Change Inventory" wine_id=wine.id sign="add" %}">
                 <i class="material-icons">add_circle</i>
             </a>
             {% if inventory > 0 %}
-                <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Change Inventory" wine_id=wine_id sign="subtract" %}">
+                <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Change Inventory" wine_id=wine.id sign="subtract" %}">
                     <i class="material-icons">do_not_disturb_on</i>
                 </a>
             {% endif %}
-            {% if description %}
-                <h6><b>Description:</b> {{ description }}</h6>
+            {% if recent_vintage %}
+                <h6><b>Vintage: {{ recent_vintage }}</b></h6>
             {% endif %}
-            {% if notes %}
-                <h6><b>Notes:</b> {{ notes }}</h6>
+            {% if wine.viti_area %}
+                <h6><b>Viticultural Area: {{ wine.viti_area }}</b></h6>
             {% endif %}
-            {% if rating %}
-                <h6><b>Rating:</b> {{ rating }}</h6>
+            {% if wine.description %}
+                <h6><b>Description:</b> {{ wine.description }}</h6>
             {% endif %}
-            {% if additional %}<h6><b>Additional (deprecated):</b> {{ additional }}</h6>{% endif %}
+            {% if wine.rating %}
+                <h6><b>Rating:</b> {{ wine.rating }}</h6>
+            {% endif %}
+            {% if wine.additional %}
+                <h6><b>Additional (deprecated):</b> {{ wine.additional }}</h6>
+            {% endif %}
+            {% if wine.notes %}
+                <h6><b>Notes:</b> {{ wine.notes }}</h6>
+            {% endif %}
+            {% if wine.why %}
+                <h6><b>Why:</b> {{ wine.why }}</h6>
+            {% endif %}
         </div>
         {% if grapes %}
         <div class="col s12 m6">
@@ -48,8 +58,8 @@
                 <tbody>
                 {% for grape in grapes %}
                     <tr>
-                        <td>{{ grape.0 }}</td>
-                        <td class="num-col">{{ grape.1|default_if_none:"" }}</td>
+                        <td>{{ grape.name }}</td>
+                        <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -83,12 +93,12 @@
                 </a>
                 <ul>
                     <li>
-                        <a class="btn-floating light-green darken-2 waves-effect waves-light" href="{% url "New Purchase Wine" wine_id=wine_id %}">
+                        <a class="btn-floating light-green darken-2 waves-effect waves-light" href="{% url "New Purchase Wine" wine_id=wine.id %}">
                             <i class="material-icons">add</i>
                         </a>
                     </li>
                     <li>
-                        <a class="btn-floating yellow darken-2 waves-effect waves-light" href="{% url "Edit Wine" wine_id=wine_id %}">
+                        <a class="btn-floating yellow darken-2 waves-effect waves-light" href="{% url "Edit Wine" wine_id=wine.id %}">
                             <i class="material-icons">edit</i>
                         </a>
                     </li>
@@ -105,7 +115,7 @@
                     <p>This action is not reversible.</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="{% url "Delete Wine" wine_id=wine_id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this wine</a>
+                    <a href="{% url "Delete Wine" wine_id=wine.id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this wine</a>
                     <a href="" class="btn modal-action modal-close light-green darken-2 waves-effect waves-light">No</a>
                 </div>
             </div>
@@ -122,19 +132,23 @@
                     <th class="num-col">Price</th>
                     <th class="num-col">Vintage</th>
                     <th>Store</th>
-                    <th>Why</th>
+                    <th>Memo</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for purchase in purchases %}
                     <tr>
                         {% block table-edit-body %}{% endblock %}
-                        <td>{{ purchase.0|naturalday:"M j, Y"|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.1|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.2|floatformat:2|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.3|default_if_none:"NV" }}</td>
-                        <td>{{ purchase.4 }}</td>
-                        <td>{{ purchase.5|default_if_none:"" }}</td>
+                        {% if purchase.date %}
+                            <td>{{ purchase.date|naturalday:"b j, Y"|title }}</td>
+                        {% else %}
+                            <td>&ndash;</td>
+                        {% endif %}
+                        <td class="num-col">{{ purchase.quantity|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.price|floatformat:2|default_if_none:"&ndash;" }}</td>
+                        <td class="num-col">{{ purchase.vintage|default_if_none:"NV" }}</td>
+                        <td>{{ purchase.store }}</td>
+                        <td>{{ purchase.why|default_if_none:"" }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
