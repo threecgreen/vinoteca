@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from django.db import IntegrityError
 from pathlib import Path
 from typing import Any, List, Union
 from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
@@ -72,36 +73,25 @@ def g_or_c_viti_area(viti_area: str, country: Countries) -> Union[VitiAreas, Non
         return new_viti_area
 
 
-def c_wine_grape(wine: Wines, grape: str, percent: Union[int]) -> bool:
+def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bool:
     if grape is None:
         return False
     try:
         grape = Grapes.objects.get(name=grape)
     except Grapes.DoesNotExist:
-        # Create grape
         grape = Grapes(name=grape)
         grape.save()
-    # Find or create wine_grape
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("""SELECT percent
-                          FROM wine_grapes
-                          WHERE wine_id = ? AND grape_id = ? ;""", (wine.id, grape.id))
-        if cursor.rowcount < 1:
-            # No existing wine grape
-            cursor.execute("""INSERT INTO wine_grapes (wine_id, grape_id, percent) 
-                              VALUES (?, ?, ?);""",
-                           (wine.id, grape.id, percent))
-            return True
-        if cursor.fetchone()[0] == percent:
-            # Different percent
-            cursor.execute("""UPDATE wine_grapes 
-                              SET percent = ? 
-                              WHERE wine_id = ? AND grape_id = ? ;""",
-                           (percent, wine.id, grape.id))
-            return True
-        # Nothing changed
-        return False
+    try:
+        wine_grape = WineGrapes.objects.get(wine=wine, grape=grape)
+    except WineGrapes.DoesNotExist:
+        wine_grape = WineGrapes(wine=wine, grape=grape, percent=percent)
+        ret_val = True
+    else:
+        # update percent for extant winegrape
+        wine_grape.percent = percent
+        ret_val = False
+    wine_grape.save()
+    return ret_val
 
 
 def c_wine(desc: Union[str], notes: Union[str], prod: Producers, wine_type: WineTypes, color: Colors,
