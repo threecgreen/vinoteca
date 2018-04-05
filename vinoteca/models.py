@@ -99,6 +99,7 @@ class Grapes(models.Model):
 
 
 class WineGrapes(models.Model):
+    id = models.AutoField(primary_key=True)
     wine = models.ForeignKey("Wines", models.DO_NOTHING, db_column="wine_id")
     grape = models.ForeignKey("Grapes", models.DO_NOTHING, db_column="grape_id")
     percent = models.IntegerField(null=True)

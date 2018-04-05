@@ -73,15 +73,6 @@ CREATE UNIQUE INDEX "auth_permission_content_type_id_codename_01ab375a_uniq" ON 
 CREATE INDEX "auth_permission_content_type_id_2f476e4b" ON "auth_permission" ("content_type_id");
 CREATE TABLE IF NOT EXISTS "django_session" ("session_key" varchar(40) NOT NULL PRIMARY KEY, "session_data" text NOT NULL, "expire_date" datetime NOT NULL);
 CREATE INDEX "django_session_expire_date_a5c62663" ON "django_session" ("expire_date");
-CREATE TABLE wine_grapes
-(
-    wine_id INTEGER NOT NULL,
-    grape_id INTEGER NOT NULL,
-    percent INTEGER,
-  PRIMARY KEY (wine_id, grape_id)
-    CONSTRAINT wine_grapes_wines_id_fk FOREIGN KEY (wine_id) REFERENCES wines (id),
-    CONSTRAINT wine_grapes_grapes_id_fk FOREIGN KEY (grape_id) REFERENCES grapes (id)
-);
 CREATE TABLE viti_areas
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -103,8 +94,7 @@ FROM wine_grapes wg
 LEFT JOIN wines w ON wg.wine_id = w.id
 LEFT JOIN producers p on p.id = w.producer_id
 GROUP BY w.id
-HAVING sum(wg.percent) < 100
-/* incomplete_grape_wines(wine_id,description,producer,total_percent,grape_count) */;
+HAVING sum(wg.percent) < 100;
 CREATE TABLE IF NOT EXISTS "grapes"
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -140,3 +130,14 @@ CREATE INDEX fk_wines_type_id ON "wines" (type_id);
 CREATE INDEX fk_wines_add_id ON "wines" (add_id);
 CREATE INDEX fk_wines_color_id ON "wines" (color_id);
 CREATE INDEX wines_viti_area_id_index ON "wines" (viti_area_id);
+CREATE TABLE IF NOT EXISTS "wine_grapes"
+(
+    id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+    wine_id integer NOT NULL,
+    grape_id integer NOT NULL,
+    percent integer,
+    CONSTRAINT wine_grapes2_wines_id_fk FOREIGN KEY (wine_id) REFERENCES wines (id),
+    CONSTRAINT wine_grapes2_grapes_id_fk FOREIGN KEY (grape_id) REFERENCES grapes (id)
+);
+CREATE UNIQUE INDEX wine_grapes2_id_uindex ON "wine_grapes" (id);
+CREATE UNIQUE INDEX wine_grapes2_wine_id_grape_id_uindex ON "wine_grapes" (wine_id, grape_id);
