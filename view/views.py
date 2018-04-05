@@ -1,13 +1,14 @@
 import attr
-from pathlib import Path
+from datetime import date
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
+from pathlib import Path
 from vinoteca import __version__
 from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores,\
     Wines, WineTypes, WineGrapes
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type, g_or_c_store, \
-    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists
+    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists, empty_to_none, c_or_u_wine_grapes
 
 
 def wine_table(request):
@@ -20,7 +21,9 @@ def wine_table(request):
         producer = attr.ib(type=str)
         name = attr.ib(type=str)
         type = attr.ib(type=str)
-        grapes = attr.ib(type=str)
+        inventory = attr.ib(type=int)
+        vintage = attr.ib(type=int)
+        viti_area = attr.ib(type=str)
 
     wine_query = """
         SELECT
@@ -31,15 +34,25 @@ def wine_table(request):
             , p.name
             , wt.type_name
             , c2.color
-            , group_concat(g.name, ', ')
-        FROM wines w 
+            , w.inventory
+            , pu.vintage
+            , v.name
+        FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
             LEFT JOIN colors c2 ON w.color_id = c2.id
             LEFT JOIN wine_types wt ON w.type_id = wt.id
-            LEFT JOIN wine_grapes wg ON w.id = wg.wine_id
-            LEFT JOIN grapes g ON wg.grape_id = g.id
-        GROUP BY w.id;
+            LEFT JOIN purchases pu ON pu.wine_id = w.id
+            LEFT JOIN (
+                          SELECT
+                              id
+                              , max(date) as recent_purchase
+                          FROM purchases
+                          GROUP BY id
+                      ) as sub on pu.id = sub.id
+            LEFT JOIN viti_areas v on w.viti_area_id = v.id
+        GROUP BY w.id
+        ORDER BY sub.recent_purchase desc ;
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -54,6 +67,38 @@ def wine_table(request):
 
 
 def wine_profile_base(wine_id: int, do_purchases: bool=True):
+    @attr.s
+    class WineProfile(object):
+        id = attr.ib(type=int)
+        notes = attr.ib(type=str)
+        description = attr.ib(type=str)
+        rating = attr.ib(type=int)
+        color = attr.ib(type=str)
+        wine_type = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        additional = attr.ib(type=str)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+        inventory = attr.ib(type=int)
+        viti_area = attr.ib(type=str)
+        why = attr.ib(type=str)
+
+    @attr.s
+    class Grape(object):
+        name = attr.ib(type=int)
+        percent = attr.ib(type=int)
+
+    @attr.s
+    class Purchase(object):
+        date = attr.ib(type=date)
+        quantity = attr.ib(type=int)
+        price = attr.ib(type=float)
+        vintage = attr.ib(type=int)
+        name = attr.ib(type=str)
+        why = attr.ib(type=str)
+        id = attr.ib(type=int)
+
     wine = Wines.objects.get(id=wine_id)
     if wine:
         wine_query = """
@@ -70,6 +115,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 , p.country_id
                 , w.inventory
                 , v.name
+                , w.why
             FROM wines w
                 LEFT JOIN wine_types t ON w.type_id = t.id
                 LEFT JOIN producers p ON w.producer_id = p.id
@@ -102,6 +148,18 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             WHERE wg.wine_id = ? 
             ORDER BY wg.percent DESC, g.name;
         """
+        recent_vintage_query = """
+            SELECT
+                p.vintage
+            FROM purchases p
+            INNER JOIN (
+                SELECT 
+                    max(date) as max_date
+                FROM purchases
+                WHERE wine_id = ? 
+            ) sub ON sub.max_date = p.date
+            WHERE wine_id = ? ;
+        """
         conn = get_connection()
         cursor = conn.cursor()
         wine_info = cursor.execute(wine_query, (wine_id, )).fetchone()
@@ -114,29 +172,20 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             wine_img = str(Path(settings.MEDIA_ROOT) / f"{wine_id}.png")
         else:
             wine_img = None
+        wine = WineProfile(wine_id, *wine_info[:2], rating, *wine_info[3:])
+        recent_vintage_query = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
 
         context = {
-            "wine_id": wine_id,
-            "notes": wine_info[0],
-            "description": wine_info[1],
-            "rating": rating,
-            "color": wine_info[3],
-            "wine_type": wine_info[4],
-            "producer": wine_info[5],
-            "country": wine_info[6],
-            "additional": wine_info[7],
-            "producer_id": wine_info[8],
-            "country_id": wine_info[9],
-            "inventory": wine_info[10],
-            "viti_area": wine_info[11],
-            "grapes": grapes,
+            "grapes": [Grape(*grape) for grape in grapes],
+            "recent_vintage": recent_vintage_query[0] if recent_vintage_query else None,
+            "wine": wine,
             "wine_img": wine_img,
-            "page_name": "New Purchase",
+            "page_name": wine.wine_type,
             "version": __version__,
         }
         if do_purchases:
             purchases = cursor.execute(purchase_query, (wine_id, )).fetchall()
-            context["purchases"] = [(int_to_date(purchase[0]), *purchase[1:])
+            context["purchases"] = [Purchase(int_to_date(purchase[0]), *purchase[1:])
                                     for purchase in purchases]
         conn.close()
         return context
@@ -154,10 +203,10 @@ def edit_wine(request, wine_id: int):
     if request.method == "POST":
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
-        country = request.POST.get("country")
-        additional = request.POST.get("additional")
-        wine.description = request.POST.get("description")
-        wine.notes = request.POST.get("notes")
+        country = empty_to_none(request.POST.get("country"))
+        additional = empty_to_none(request.POST.get("additional"))
+        wine.description = empty_to_none(request.POST.get("description"))
+        wine.notes = empty_to_none(request.POST.get("notes"))
         if request.POST.get("have-rating"):
             wine.rating = int(request.POST.get("rating"))
         else:
@@ -168,6 +217,30 @@ def edit_wine(request, wine_id: int):
         wine.producer = g_or_c_producer(producer, country)
         wine.add = g_or_c_additional(additional) if additional else None
         wine.save()
+
+        # Grape composition
+        if request.POST.get("grape-1"):
+            # Get grapes already connected to this wine
+            grapes_query = """
+                SELECT
+                    g.id
+                    , g.name
+                    , wg.percent
+                FROM wine_grapes wg
+                INNER JOIN grapes g ON wg.grape_id = g.id
+                WHERE wg.wine_id = ? ;"""
+            prev_grapes = Grapes.objects.raw(grapes_query, [wine_id])
+            for i in range(1, 6):
+                grape = empty_to_none(request.POST.get(f"grape-{i}"))
+                if request.POST.get(f"grape-{i}-pct"):
+                    percent = int(request.POST.get(f"grape-{i}-pct"))
+                else:
+                    percent = None
+                if grape and (percent is None or 0 < percent <= 100):
+                    c_or_u_wine_grapes(wine, grape, percent)
+                else:
+                    # No more grapes
+                    break
 
         # Wine image changes
         if request.FILES.get("wine-image"):

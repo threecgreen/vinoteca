@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from django.db import IntegrityError
 from pathlib import Path
 from typing import Any, List, Union
 from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
@@ -8,7 +9,9 @@ from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
 from vinoteca.settings import BASE_DIR
 
 
-def g_or_c_store(store: str) -> Stores:
+def g_or_c_store(store: str) -> Union[Stores, None]:
+    if store is None:
+        return
     try:
         return Stores.objects.get(name=store)
     except Stores.DoesNotExist:
@@ -17,7 +20,9 @@ def g_or_c_store(store: str) -> Stores:
         return new_store
 
 
-def g_or_c_additional(additional: str) -> Additionals:
+def g_or_c_additional(additional: str) -> Union[Additionals, None]:
+    if additional is None:
+        return
     try:
         return Additionals.objects.get(additional=additional)
     except Additionals.DoesNotExist:
@@ -26,7 +31,9 @@ def g_or_c_additional(additional: str) -> Additionals:
         return new_add
 
 
-def g_or_c_wine_type(wine_type: str) -> WineTypes:
+def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
+    if wine_type is None:
+        return
     try:
         return WineTypes.objects.get(type_name=wine_type)
     except WineTypes.DoesNotExist:
@@ -35,7 +42,9 @@ def g_or_c_wine_type(wine_type: str) -> WineTypes:
         return new_wine_type
 
 
-def g_or_c_country(country: str) -> Countries:
+def g_or_c_country(country: str) -> Union[Countries, None]:
+    if country is None:
+        return
     try:
         return Countries.objects.get(name=country)
     except Countries.DoesNotExist:
@@ -53,7 +62,9 @@ def g_or_c_producer(producer: str, country: Countries) -> Producers:
         return new_producer
 
 
-def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
+def g_or_c_viti_area(viti_area: str, country: Countries) -> Union[VitiAreas, None]:
+    if viti_area is None:
+        return
     try:
         return VitiAreas.objects.get(name=viti_area, region=country)
     except VitiAreas.DoesNotExist:
@@ -62,14 +73,25 @@ def g_or_c_viti_area(viti_area: str, country: Countries) -> VitiAreas:
         return new_viti_area
 
 
-def c_wine_grape(wine: Wines, grape: str, percent: Union[int]) -> None:
+def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bool:
+    if grape is None:
+        return False
     try:
         grape = Grapes.objects.get(name=grape)
     except Grapes.DoesNotExist:
         grape = Grapes(name=grape)
         grape.save()
-    new_wine_grape = WineGrapes(wine=wine, grape=grape, percent=percent)
-    new_wine_grape.save()
+    try:
+        wine_grape = WineGrapes.objects.get(wine=wine, grape=grape)
+    except WineGrapes.DoesNotExist:
+        wine_grape = WineGrapes(wine=wine, grape=grape, percent=percent)
+        ret_val = True
+    else:
+        # update percent for extant winegrape
+        wine_grape.percent = percent
+        ret_val = False
+    wine_grape.save()
+    return ret_val
 
 
 def c_wine(desc: Union[str], notes: Union[str], prod: Producers, wine_type: WineTypes, color: Colors,

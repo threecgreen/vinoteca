@@ -7,8 +7,8 @@ from vinoteca import __version__
 from vinoteca.models import (Colors, Countries, Grapes, Producers, Stores,
     WineTypes, Wines)
 from vinoteca.utils import (g_or_c_country, g_or_c_producer, g_or_c_store,
-    g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
-    c_wine_grape, get_flag_countries, default_vintage_year)
+                            g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
+                            c_or_u_wine_grapes, get_flag_countries, default_vintage_year)
 from vinoteca.views import get_connection
 
 
@@ -126,7 +126,7 @@ def insert_new_purchase_and_wine(request):
     color = empty_to_none(Colors.objects.get(color=color))
     store = g_or_c_store(store)
     wine_type = g_or_c_wine_type(wine_type)
-    country = empty_to_none(g_or_c_country(country))
+    country = g_or_c_country(country)
     producer = g_or_c_producer(producer, country)
     viti_area = g_or_c_viti_area(viti_area, country)
     wine = c_wine(description, notes, producer, wine_type, color, rating,
@@ -141,7 +141,7 @@ def insert_new_purchase_and_wine(request):
             else:
                 percent = None
             if grape and (percent is None or 0 < percent <= 100):
-                c_wine_grape(wine, grape, percent)
+                c_or_u_wine_grapes(wine, grape, percent)
             else:
                 # No more grapes
                 break

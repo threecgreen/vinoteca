@@ -14,7 +14,7 @@
     <tbody>
     {% for purchase in purchases %}
         <tr>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.date|naturalday:"N j" }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.date|naturalday:"b j"|title }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.store }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.producer }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.region }}</a></td>
