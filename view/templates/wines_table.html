@@ -28,7 +28,7 @@
                 <tfoot>
                     <!-- include "tablesorter-ignoreRow" class for pager rows in thead -->
                     <tr class="tablesorter-ignoreRow">
-                        <th colspan="7" class="ts-pager form-horizontal center">
+                        <th colspan="9" class="ts-pager form-horizontal center">
                             <button type="button" class="btn first"><i class="small material-icons">first_page</i></button>
                             <button type="button" class="btn prev"><i class="small material-icons">navigate_before</i></button>
                             <span class="pagedisplay"></span>
@@ -52,7 +52,7 @@
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.region }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.viti_area|default_if_none:"" }}</a></td>
-                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.vintage|default_if_none:"&ndash;" }}</a></td>
+                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.vintage|default_if_none:"NV" }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
                         <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|default_if_none:"" }}</a></td>
                     </tr>

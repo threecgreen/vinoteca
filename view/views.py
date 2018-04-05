@@ -8,7 +8,7 @@ from vinoteca import __version__
 from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores,\
     Wines, WineTypes, WineGrapes
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type, g_or_c_store, \
-    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists, empty_to_none, c_wine_grape
+    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists, empty_to_none, c_or_u_wine_grapes
 
 
 def wine_table(request):
@@ -37,21 +37,22 @@ def wine_table(request):
             , w.inventory
             , pu.vintage
             , v.name
-        FROM wines w 
+        FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
             LEFT JOIN colors c2 ON w.color_id = c2.id
             LEFT JOIN wine_types wt ON w.type_id = wt.id
+            LEFT JOIN purchases pu ON pu.wine_id = w.id
             LEFT JOIN (
-                SELECT 
-                    id
-                    , max(date) as recent_vintage
-                FROM purchases
-                GROUP BY id
-            ) as sub
-            LEFT JOIN purchases pu ON pu.id = sub.id
+                          SELECT
+                              id
+                              , max(date) as recent_purchase
+                          FROM purchases
+                          GROUP BY id
+                      ) as sub on pu.id = sub.id
             LEFT JOIN viti_areas v on w.viti_area_id = v.id
-        GROUP BY w.id;
+        GROUP BY w.id
+        ORDER BY sub.recent_purchase desc ;
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -155,7 +156,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 SELECT 
                     max(date) as max_date
                 FROM purchases
-                WHERE id = ? 
+                WHERE wine_id = ? 
             ) sub ON sub.max_date = p.date
             WHERE wine_id = ? ;
         """
@@ -219,6 +220,16 @@ def edit_wine(request, wine_id: int):
 
         # Grape composition
         if request.POST.get("grape-1"):
+            # Get grapes already connected to this wine
+            grapes_query = """
+                SELECT
+                    g.id
+                    , g.name
+                    , wg.percent
+                FROM wine_grapes wg
+                INNER JOIN grapes g ON wg.grape_id = g.id
+                WHERE wg.wine_id = ? ;"""
+            prev_grapes = Grapes.objects.raw(grapes_query, [wine_id])
             for i in range(1, 6):
                 grape = empty_to_none(request.POST.get(f"grape-{i}"))
                 if request.POST.get(f"grape-{i}-pct"):
@@ -226,7 +237,7 @@ def edit_wine(request, wine_id: int):
                 else:
                     percent = None
                 if grape and (percent is None or 0 < percent <= 100):
-                    c_wine_grape(wine, grape, percent)
+                    c_or_u_wine_grapes(wine, grape, percent)
                 else:
                     # No more grapes
                     break
