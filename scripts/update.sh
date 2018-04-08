@@ -2,9 +2,8 @@
 scripts_dir="$(dirname $0)"
 root_dir="$(dirname "$scripts_dir")"
 echo "Updating project source..."
-# TODO: re-enable for master branch
-#git reset --hard
-#git pull -r
+git reset --hard
+git pull -r
 source activate vinoteca || (echo "No Python environment 'vinoteca'." && exit 1)
 # Sometimes needed in WSL
 if [ -f $HOME/miniconda/lib/libcrypto.so.1.0.0 ]; then
