@@ -21,21 +21,16 @@ echo "Running test suite..."
 bash "$scripts_dir/test.sh" || \
     echo "Some tests failed. Some functionality might not work properly."
 
-echo
-echo "Checking for vinoteca alias..."
-command -v vinoteca
-# grep will return 0 if found
-if [ $? -ne 0 ]; then
-    # Add executable ability to all scripts
-    chmod +x "$scripts_dir/cli.py"
-    find "$scripts_dir" -name "*.sh" -exec chmod +x {} \;
-    # Add to PATH and .bashrc
-    echo -e "alias vinoteca=\"$scripts_dir/cli.py\"" >> $HOME/.bashrc
-    alias vinoteca="$scripts_dir/cli.py"
-    echo "Successfully added vinoteca alias..."
-    echo "Bash configuration will need to be reloaded to work."
-    echo "Either restart the terminal or run: "
-    echo "$ source ~/.bashrc"
-else
-    echo "vinoteca alias already exists."
-fi
+read -rp "Would you like to add an alias for vinoteca to your .bashrc? [y/N] " response
+case "$response" in
+    [yY][eE][yY])_
+        # Add to .bashrc
+        echo -e "alias vinoteca=\"$scripts_dir/cli.py\"" >> $HOME/.bashrc
+        echo "Successfully added vinoteca alias..."
+        echo "Bash configuration will need to be reloaded to work."
+        echo "Either restart the terminal or run: "
+        echo "$ source ~/.bashrc"
+        ;;
+    *)
+        ;;
+esac
