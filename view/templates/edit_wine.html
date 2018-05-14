@@ -61,6 +61,9 @@
             </div>
 
             {# Grapes #}
+            <div class="row col s12">
+                <h6>Grape composition</h6>
+            </div>
             {% for grape in grapes %}
                 {% cycle '<div class="row">' '' %}
                 {% with count=forloop.counter %}
@@ -76,13 +79,13 @@
                 {% cycle '' '</div>' %}
             {% empty %}
                 <div class="row">
-                    <div class="col s12 m6" hidden>
+                    <div class="col s12 m6">
                         <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-1">
                             <i class="material-icons">add</i>
                         </a>
                     </div>
                     <div class="input-field col s4 m2" hidden id="grape-form-1-pct">
-                        <input id="grape-1-pct" name="grape-1-pct" type="number" class="validate" value=33>
+                        <input id="grape-1-pct" name="grape-1-pct" type="number" class="validate" value=100>
                         <label for="grape-1-pct">Percentage</label>
                     </div>
                     <div class="input-field col s8 m4" hidden id="grape-form-1-name">
@@ -95,7 +98,7 @@
                         </a>
                     </div>
                     <div class="input-field col s4 m2" hidden id="grape-form-2-pct">
-                        <input id="grape-2-pct" name="grape-2-pct" type="number" class="validate" value=25>
+                        <input id="grape-2-pct" name="grape-2-pct" type="number" class="validate" value=50>
                         <label for="grape-2-pct">Percentage</label>
                     </div>
                     <div class="input-field col s8 m4" hidden id="grape-form-2-name">
@@ -109,12 +112,24 @@
                         </a>
                     </div>
                     <div class="input-field col s4 m2" hidden id="grape-form-3-pct">
-                        <input id="grape-3-pct" name="grape-3-pct" type="number" class="validate" value=20>
+                        <input id="grape-3-pct" name="grape-3-pct" type="number" class="validate" value=33>
                         <label for="grape-3-pct">Percentage</label>
                     </div>
                     <div class="input-field col s8 m4" hidden id="grape-form-3-name">
-                        <input id="auto-grape-3" name="grape-5" type="text" class="autocomplete">
+                        <input id="auto-grape-3" name="grape-3" type="text" class="autocomplete">
                         <label for="auto-grape-3">Grape</label>
+                    </div>
+                    <div class="col s12 m6" hidden> <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-4">
+                        <i class="material-icons">add</i>
+                    </a>
+                    </div>
+                    <div class="input-field col s4 m2" hidden id="grape-form-4-pct">
+                        <input id="grape-4-pct" name="grape-4-pct" type="number" class="validate" value=25>
+                        <label for="grape-4-pct">Percentage</label>
+                    </div>
+                    <div class="input-field col s8 m4" hidden id="grape-form-4-name">
+                        <input id="auto-grape-4" name="grape-4" type="text" class="autocomplete">
+                        <label for="auto-grape-4">Grape</label>
                     </div>
                 </div>
             {% endfor %}

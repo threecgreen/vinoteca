@@ -95,7 +95,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         quantity = attr.ib(type=int)
         price = attr.ib(type=float)
         vintage = attr.ib(type=int)
-        name = attr.ib(type=str)
+        store = attr.ib(type=str)
         why = attr.ib(type=str)
         id = attr.ib(type=int)
 
@@ -122,7 +122,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 LEFT JOIN countries cn ON p.country_id = cn.id
                 LEFT JOIN colors cl ON w.color_id = cl.id
                 LEFT JOIN additionals a ON w.add_id = a.id
-                LEFT JOIN viti_areas v ON cn.id = v.region_id
+                LEFT JOIN viti_areas v ON w.viti_area_id = v.id
             WHERE w.id = ?;
             """
         purchase_query = """
