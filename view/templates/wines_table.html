@@ -28,7 +28,7 @@
                 <tfoot>
                     <!-- include "tablesorter-ignoreRow" class for pager rows in thead -->
                     <tr class="tablesorter-ignoreRow">
-                        <th colspan="10" class="ts-pager form-horizontal center">
+                        <th colspan="9" class="ts-pager form-horizontal center">
                             <button type="button" class="btn first"><i class="small material-icons">first_page</i></button>
                             <button type="button" class="btn prev"><i class="small material-icons">navigate_before</i></button>
                             <span class="pagedisplay"></span>
@@ -72,8 +72,9 @@
     <script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
 
     <script type="text/javascript">
+    var $table = $("table");
     $(function() {
-        $("table").tablesorter({
+        $table.tablesorter({
             theme : "materialize",
 
             widthFixed: true,
@@ -105,9 +106,24 @@
             // output string - default is '{page}/{totalPages}';
             // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
             size: 100
-
-
-        });
+        })
+        .bind('filterInit', function() {
+            // check that storage ulility is loaded
+            if ($.tablesorter.storage) {
+                // get saved filters
+                var f = $.tablesorter.storage(this, 'tablesorter-filters') || [];
+                $(this).trigger('search', [f]);
+            }
+        })
+        .bind('filterEnd', function(){
+            if ($.tablesorter.storage) {
+                // save current filters
+                var f = $(this).find('.tablesorter-filter').map(function(){
+                    return $(this).val() || '';
+                }).get();
+                $.tablesorter.storage(this, 'tablesorter-filters', f);
+            }
+        })
     });
     $(document).ready(function () {
         $('select').material_select();
