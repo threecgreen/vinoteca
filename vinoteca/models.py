@@ -1,8 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
 
@@ -102,13 +97,13 @@ class Wines(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.TextField(null=True)
     notes = models.TextField(null=True)
-    producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id")
-    wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING, db_column="type_id")
-    additional = models.ForeignKey(Additionals, models.DO_NOTHING, db_column="add_id")
-    color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id")
+    producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id", null=True)
+    wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING, db_column="type_id", null=True)
+    additional = models.ForeignKey(Additionals, models.DO_NOTHING, db_column="add_id", null=True)
+    color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id", null=True)
     rating = models.FloatField(null=True)
     inventory = models.IntegerField()
-    viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING, db_column="viti_area_id")
+    viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING, db_column="viti_area_id", null=True)
     why = models.TextField(null=True)
 
     class Meta:
