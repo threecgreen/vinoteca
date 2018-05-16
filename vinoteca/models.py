@@ -1,101 +1,82 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
-
-class Countries(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500, blank=True, null=True)
-    is_us = models.IntegerField(default=1)
-
-    class Meta:
-        managed = False
-        db_table = "countries"
-
-
-class WineTypes(models.Model):
-    id = models.AutoField(primary_key=True)
-    type_name = models.CharField(max_length=500)
-
-    class Meta:
-        managed = False
-        db_table = "wine_types"
 
 
 class Additionals(models.Model):
     id = models.AutoField(primary_key=True)
-    additional = models.CharField(max_length=500, blank=True, null=True)
+    additional = models.TextField(unique=True)
 
     class Meta:
-        managed = False
-        db_table = "additionals"
+        db_table = 'additionals'
 
 
 class Colors(models.Model):
     id = models.AutoField(primary_key=True)
-    color = models.CharField(max_length=500)
+    color = models.TextField(unique=True)
 
     class Meta:
-        managed = False
-        db_table = "colors"
+        db_table = 'colors'
 
 
-class Producers(models.Model):
+class Countries(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500, blank=True, null=True)
-    country = models.ForeignKey("Countries", models.DO_NOTHING, db_column="country_id")
+    name = models.TextField(unique=True)
+    is_us = models.IntegerField()
 
     class Meta:
-        managed = False
-        db_table = "producers"
-
-
-class Wines(models.Model):
-    id = models.AutoField(primary_key=True)
-    description = models.CharField(max_length=500, blank=True, null=True)
-    notes = models.CharField(max_length=500, blank=True, null=True)
-    rating = models.FloatField(blank=True, null=True)
-    producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id")
-    wine_type = models.ForeignKey("WineTypes", models.DO_NOTHING, db_column="type_id")
-    additional = models.ForeignKey("Additionals", models.DO_NOTHING, db_column="add_id")
-    color = models.ForeignKey("Colors", models.DO_NOTHING, db_column="color_id")
-    inventory = models.IntegerField(default=0, null=False)
-    viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING, db_column="viti_area_id")
-
-    class Meta:
-        managed = False
-        db_table = "wines"
-
-
-class Stores(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500)
-
-    class Meta:
-        managed = False
-        db_table = "stores"
-
-
-class Purchases(models.Model):
-    id = models.AutoField(primary_key=True)
-    wine = models.ForeignKey("Wines", models.DO_NOTHING, db_column="wine_id")
-    store = models.ForeignKey("Stores", models.DO_NOTHING, db_column="store_id")
-    price = models.FloatField(null=True, blank=True)
-    quantity = models.IntegerField()
-    date = models.IntegerField(null=True, blank=True)
-    vintage = models.IntegerField(null=True, blank=True)
-    why = models.CharField(max_length=500, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = "purchases"
+        db_table = 'countries'
 
 
 class Grapes(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500, blank=False, null=False)
+    name = models.TextField(unique=True)
 
     class Meta:
-        managed = False
-        db_table = "grapes"
+        db_table = 'grapes'
+
+
+class Producers(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(unique=True)
+    country = models.ForeignKey("Countries", models.DO_NOTHING, db_column="country_id")
+
+    class Meta:
+        db_table = 'producers'
+
+
+class Purchases(models.Model):
+    id = models.AutoField(primary_key=True)
+    store = models.ForeignKey('Stores', models.DO_NOTHING, null=True)
+    wine = models.ForeignKey('Wines', models.DO_NOTHING)
+    price = models.FloatField(null=True)
+    quantity = models.IntegerField(null=True)
+    date = models.IntegerField(null=True)
+    vintage = models.IntegerField(null=True)
+    why = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'purchases'
+
+
+class Stores(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField(unique=True)
+
+    class Meta:
+        db_table = 'stores'
+
+
+class VitiAreas(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.TextField()
+    region = models.ForeignKey("Countries", models.DO_NOTHING, db_column="region_id")
+
+    class Meta:
+        db_table = 'viti_areas'
 
 
 class WineGrapes(models.Model):
@@ -105,16 +86,30 @@ class WineGrapes(models.Model):
     percent = models.IntegerField(null=True)
 
     class Meta:
-        unique_together = (("wine", "grape"), )
-        managed = False
-        db_table = "wine_grapes"
+        db_table = 'wine_grapes'
+        unique_together = (('wine', 'grape'),)
 
 
-class VitiAreas(models.Model):
+class WineTypes(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=500, blank=False, null=False)
-    region = models.ForeignKey("Countries", models.DO_NOTHING, db_column="region_id")
+    type_name = models.TextField(unique=True)
 
     class Meta:
-        managed = False
-        db_table = "viti_areas"
+        db_table = 'wine_types'
+
+
+class Wines(models.Model):
+    id = models.AutoField(primary_key=True)
+    description = models.TextField(null=True)
+    notes = models.TextField(null=True)
+    producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id")
+    wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING, db_column="type_id")
+    additional = models.ForeignKey(Additionals, models.DO_NOTHING, db_column="add_id")
+    color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id")
+    rating = models.FloatField(null=True)
+    inventory = models.IntegerField()
+    viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING, db_column="viti_area_id")
+    why = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'wines'
