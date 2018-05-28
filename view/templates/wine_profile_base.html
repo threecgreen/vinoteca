@@ -18,7 +18,7 @@
             <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Change Inventory" wine_id=wine.id sign="add" %}">
                 <i class="material-icons">add_circle</i>
             </a>
-            {% if inventory > 0 %}
+            {% if wine.inventory > 0 %}
                 <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Change Inventory" wine_id=wine.id sign="subtract" %}">
                     <i class="material-icons">do_not_disturb_on</i>
                 </a>
