@@ -5,10 +5,11 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
-from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores,\
-    Wines, WineTypes, WineGrapes
-from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type, g_or_c_store, \
-    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists, empty_to_none, c_or_u_wine_grapes
+from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, \
+    Stores, Wines, WineTypes, WineGrapes
+from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
+    g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
+    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area
 
 
 def wine_table(request):
@@ -21,6 +22,7 @@ def wine_table(request):
         producer = attr.ib(type=str)
         name = attr.ib(type=str)
         type = attr.ib(type=str)
+        color = attr.ib(type=str)
         inventory = attr.ib(type=int)
         vintage = attr.ib(type=int)
         viti_area = attr.ib(type=str)
@@ -32,6 +34,7 @@ def wine_table(request):
             , w.rating
             , c.name
             , p.name
+            , w.name
             , wt.type_name
             , c2.color
             , w.inventory
@@ -73,6 +76,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         notes = attr.ib(type=str)
         description = attr.ib(type=str)
         rating = attr.ib(type=int)
+        name = attr.ib(type=str)
         color = attr.ib(type=str)
         wine_type = attr.ib(type=str)
         producer = attr.ib(type=str)
@@ -106,6 +110,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 w.notes
                 , w.description
                 , w.rating
+                , w.name
                 , cl.color
                 , t.type_name
                 , p.name
@@ -168,10 +173,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             rating = int(wine_info[2])
         except TypeError:
             rating = None
-        if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
-            wine_img = str(Path(settings.MEDIA_ROOT) / f"{wine_id}.png")
-        else:
-            wine_img = None
+        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
         wine = WineProfile(wine_id, *wine_info[:2], rating, *wine_info[3:])
         recent_vintage_query = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
 
@@ -179,8 +181,8 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             "grapes": [Grape(*grape) for grape in grapes],
             "recent_vintage": recent_vintage_query[0] if recent_vintage_query else None,
             "wine": wine,
-            "wine_img": wine_img,
-            "page_name": wine.wine_type,
+            "has_img": has_img,
+            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
             "version": __version__,
         }
         if do_purchases:
@@ -207,6 +209,8 @@ def edit_wine(request, wine_id: int):
         additional = empty_to_none(request.POST.get("additional"))
         wine.description = empty_to_none(request.POST.get("description"))
         wine.notes = empty_to_none(request.POST.get("notes"))
+        wine.name = empty_to_none(request.POST.get("name"))
+        viti_area = empty_to_none(request.POST.get("viti-area"))
         if request.POST.get("have-rating"):
             wine.rating = int(request.POST.get("rating"))
         else:
@@ -216,6 +220,7 @@ def edit_wine(request, wine_id: int):
         country = g_or_c_country(country) if country else None
         wine.producer = g_or_c_producer(producer, country)
         wine.add = g_or_c_additional(additional) if additional else None
+        wine.viti_area = g_or_c_viti_area(viti_area, wine.producer.country) if viti_area else None
         wine.save()
 
         # Grape composition
@@ -308,13 +313,25 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
 
 
 def producer_profile(request, producer_id: int):
+    @attr.s
+    class ProducerProfileWine(object):
+        last_purchased_date = attr.ib(type=str)
+        type = attr.ib(type=str)
+        name = attr.ib(type=str)
+        description = attr.ib(type=str)
+        total_quantity = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
+        rating = attr.ib(type=int)
+        color = attr.ib(type=str)
+        id = attr.ib(type=int)
+
     producer = Producers.objects.get(id=producer_id)
     wines_query = """
         SELECT
             max(p2.date)
             , t.type_name
+            , w.name
             , w.description
-            , a.additional
             , sum(p2.quantity)
             , avg(p2.price)
             , w.rating
@@ -323,7 +340,6 @@ def producer_profile(request, producer_id: int):
         FROM wines w
             INNER JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
-            LEFT JOIN additionals a ON w.add_id = a.id
             LEFT JOIN wine_types t ON w.type_id = t.id
             LEFT JOIN colors c2 ON w.color_id = c2.id
         WHERE p.id = ?
@@ -335,7 +351,7 @@ def producer_profile(request, producer_id: int):
     wines = cursor.execute(wines_query, (producer_id, )).fetchall()
     context = {
         "producer": producer,
-        "wines": [(int_to_date(wine[0]), *wine[1:]) for wine in wines],
+        "wines": [ProducerProfileWine(int_to_date(wine[0]), *wine[1:]) for wine in wines],
         "page_name": "Producer Profile",
         "version": __version__,
     }
@@ -360,6 +376,27 @@ def edit_producer(request, producer_id: int):
 
 
 def country_profile(request, country_id: int):
+    @attr.s
+    class VitiArea(object):
+        name = attr.ib(type=str)
+        total_quantity = attr.ib(type=int)
+        avg_rating = attr.ib(type=float)
+
+    @attr.s
+    class CountryProfileWine(object):
+        last_purchased_date = attr.ib(type=str)
+        color = attr.ib(type=str)
+        type = attr.ib(type=str)
+        name = attr.ib(type=str)
+        description = attr.ib(type=str)
+        total_quantity = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
+        rating = attr.ib(type=int)
+        producer = attr.ib(type=str)
+        id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+
+
     country = Countries.objects.get(id=country_id)
     viti_area_query = """
         SELECT
@@ -376,9 +413,10 @@ def country_profile(request, country_id: int):
     wines_query = """
         SELECT
             max(p2.date)
+            , c2.color
             , t.type_name
+            , w.name
             , w.description
-            , a.additional
             , sum(p2.quantity)
             , avg(p2.price)
             , w.rating
@@ -388,24 +426,23 @@ def country_profile(request, country_id: int):
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
-            LEFT JOIN additionals a ON w.add_id = a.id
             LEFT JOIN wine_types t ON w.type_id = t.id
             INNER JOIN countries c ON p.country_id = c.id
+            LEFT JOIN colors c2 on w.color_id = c2.id
         WHERE c.id = ?
         GROUP BY w.id
         ORDER BY max(p2.date) DESC;
     """
     conn = get_connection()
     cursor = conn.cursor()
-    print(country_id)
     wines = cursor.execute(wines_query, (country_id, )).fetchall()
     viti_areas = cursor.execute(viti_area_query, (country_id, )).fetchall()
-    print(viti_areas)
+    wines_profs = [CountryProfileWine(int_to_date(wine[0]), *wine[1:]) for wine in wines]
     context = {
         "country": country,
         "flag_exists": flag_exists(country.name),
-        "wines": [(int_to_date(wine[0]), *wine[1:]) for wine in wines],
-        "viti_areas": viti_areas,
+        "wines": wines_profs,
+        "viti_areas": [VitiArea(*viti_area) for viti_area in viti_areas],
         "page_name": "Country Profile",
         "version": __version__,
     }
@@ -413,9 +450,24 @@ def country_profile(request, country_id: int):
 
 
 def inventory(request):
+    @attr.s
+    class InventoryItem(object):
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        type = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        vintage = attr.ib(type=int)
+        last_purchase_date = attr.ib(type=str)
+        inventory_cnt = attr.ib(type=int)
+        wine_id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+
     query = """
         SELECT
             c2.color
+            , w.name
             , wt.type_name
             , p.name
             , c.name
@@ -447,8 +499,8 @@ def inventory(request):
     wine_inventory = []
     for item in cursor.execute(query).fetchall():
         # Convert YYYYMMDD date format to date object for formatting
-        purchase_date = int_to_date(item[5])
-        wine_inventory.append((*item[:5], purchase_date, *item[6:]))
+        purchase_date = int_to_date(item[6])
+        wine_inventory.append(InventoryItem(*item[:6], purchase_date, *item[7:]))
     context = {
         "inventory": wine_inventory,
         "page_name": "Country Profile",

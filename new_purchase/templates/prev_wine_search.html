@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block new-nav %}class="active"{% endblock %}
 {% block body %}
     <div class="container">
@@ -25,6 +26,7 @@
                 <input type="text" id="auto-country" name="country" class="autocomplete">
                 <label for="auto-country">Region</label>
             </div>
+            {% include "special_chars.html" %}
             <div class="col s12">
                 <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
                     Search
@@ -122,4 +124,5 @@
             });
         });
     </script>
+    <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
 {% endblock %}

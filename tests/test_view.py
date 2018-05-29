@@ -58,7 +58,8 @@ def test_urls(url, view_name):
 @pytest.mark.parametrize("attr,val", [
     ("description", "Test"),
     ("producer", "A new producer"),
-    ("color", "white")
+    ("color", "white"),
+    ("viti_area", "Mendocino County")
 ])
 @pytest.mark.django_db
 def test_edit_wine(client, attr, val):
@@ -74,14 +75,15 @@ def test_edit_wine(client, attr, val):
         "rating": wine.rating,
         "color": wine.color.color,
         "wine-type": wine.wine_type.type_name,
+        "viti-area": wine.viti_area.name if wine.viti_area else None,
     }
-    post_data[attr] = val
+    post_data[attr.replace("_", "-")] = val
     response = client.post("/wines/800/edit/", post_data, follow=True)
     assert response.status_code == 200
     assert ("/wines/800/", 302) in response.redirect_chain
     if attr == "color":
         assert Wines.objects.get(id=800).__getattribute__(attr).color == val
-    elif attr == "producer":
+    elif attr == "producer" or attr == "viti_area":
         assert Wines.objects.get(id=800).__getattribute__(attr).name == val
     else:
         assert Wines.objects.get(id=800).__getattribute__(attr) == val
@@ -105,6 +107,8 @@ def test_edit_wine_image(client, upload_file):
     assert response.status_code == 200
     assert ("/wines/800/", 302) in response.redirect_chain
     assert (Path(settings.BASE_DIR) / "media" / "800.png").is_file()
+    response = client.get("/media/800.png")
+    assert response.status_code == 200
 
 
 @pytest.mark.parametrize("attr,val", [

@@ -5,7 +5,11 @@
         <div class="row">
             <div class="col s12">
                 <h3 class="bold">{{ producer.name }}</h3>
-                <h4 class="light"><a class="text-link" href="{% url "Country Profile" country_id=producer.country.id %}"> {{ producer.country.name }}</a></h4>
+                {% if producer.country %}
+                    <h4 class="light"><a class="text-link" href="{% url "Country Profile" country_id=producer.country.id %}"> {{ producer.country.name }}</a></h4>
+                {% else %}
+                    <h5>This producer currently does not have a region, please add one.</h5>
+                {% endif %}
             </div>
         </div>
         <div class="row">
@@ -36,8 +40,8 @@
                     <thead>
                     <tr>
                         <th>Last Purchased</th>
-                        <th>Type</th>
-                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Name and Type</th>
                         <th>Description</th>
                         <th class="num-col">Total Quantity</th>
                         <th class="num-col">Avg Price</th>
@@ -47,17 +51,17 @@
                     <tbody>
                     {% for wine in wines %}
                     <tr>
-                        {% if wine.0 %}
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}"> {{ wine.0|naturalday:"b j, Y"|title }}</a></td>
+                        {% if wine.last_purchased_date %}
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}"> {{ wine.last_purchased_date|naturalday:"b j, Y"|title }}</a></td>
                         {% else %}
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">&ndash;</a></td>
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">&ndash;</a></td>
                         {% endif %}
-                        <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.7|title }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.1 }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.2|default_if_none:"" }}</a></td>
-                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.4|default_if_none:"&ndash;" }}</a></td>
-                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.5|floatformat:"2" }}</a></td>
-                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.6|default_if_none:"&ndash;" }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color|title }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name }} {{ wine.type }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
+                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.total_quantity|default_if_none:"&ndash;" }}</a></td>
+                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.avg_price|floatformat:"2" }}</a></td>
+                        <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|default_if_none:"&ndash;" }}</a></td>
                     </tr>
                     {% endfor %}
                     </tbody>

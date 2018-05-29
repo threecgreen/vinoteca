@@ -13,6 +13,7 @@ class RecentPurchase(object):
     store = attr.ib(type=str)
     producer = attr.ib(type=str)
     region = attr.ib(type=str)
+    type = attr.ib(type=str)
     name = attr.ib(type=str)
     price = attr.ib(type=float)
     quantity = attr.ib(type=int)
@@ -27,6 +28,7 @@ def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPu
             , p2.name
             , c.name
             , t.type_name
+            , w.name
             , p.price
             , p.quantity
             , w.id
