@@ -97,6 +97,7 @@ class Wines(models.Model):
     id = models.AutoField(primary_key=True)
     description = models.TextField(null=True)
     notes = models.TextField(null=True)
+    name = models.TextField(null=True)
     producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id", null=True)
     wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING, db_column="type_id", null=True)
     additional = models.ForeignKey(Additionals, models.DO_NOTHING, db_column="add_id", null=True)

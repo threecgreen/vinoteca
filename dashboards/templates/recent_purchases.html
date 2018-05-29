@@ -6,7 +6,7 @@
             <th>Store</th>
             <th>Producer</th>
             <th>Region</th>
-            <th>Name</th>
+            <th>Name and Type</th>
             <th class="num-col">Price</th>
             <th class="num-col">Quantity</th>
         </tr>
@@ -18,7 +18,7 @@
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.store }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.producer }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.region }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.name }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.name|default_if_none:"" }} {{ purchase.type }}</a></td>
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.price|default_if_none:"&ndash;"|floatformat:2 }}</a></td>
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.quantity }}</a></td>
         </tr>

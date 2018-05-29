@@ -16,7 +16,7 @@
                 </div>
                 <div class="input-field col s8 m4">
                     <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete" value="{{ wine.wine_type }}" required>
-                    <label for="auto-wine-type">Name</label>
+                    <label for="auto-wine-type">Type</label>
                 </div>
                 <div class="input-field col s6 m3">
                     <input type="text" id="auto-producer" name="producer" class="autocomplete" value="{{ wine.producer }}" required>
@@ -28,7 +28,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s12 m6">
+                <div class="input-field col s6 m3">
+                    <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
+                    <label for="name">Name</label>
+                </div>
+                <div class="input-field col s6 m3">
                     <input id="auto-additional" type="text" name="additional" class="autocomplete" {% if wine.additional %}value="{{ wine.additional }}"{% endif %}>
                     <label for="auto-additional">Additional</label>
                 </div>
@@ -39,7 +43,7 @@
             </div>
             <div class="row">
                 <div class="input-field col s12 m6">
-                    <input id="notes" name="notes" type="text" class="validate" {% if notes %}value="{{ wine.notes }}"{% endif %}>
+                    <input id="notes" name="notes" type="text" class="validate" {% if wine.notes %}value="{{ wine.notes }}"{% endif %}>
                     <label for="notes">Notes</label>
                 </div>
                 <div class="range-field col s4 m2">

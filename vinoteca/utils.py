@@ -94,10 +94,12 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
     return ret_val
 
 
-def c_wine(desc: Union[str], notes: Union[str], prod: Producers, wine_type: WineTypes, color: Colors,
-           rating: Union[float], inventory: int, viti_area: VitiAreas) -> Wines:
-    new_wine = Wines(description=desc, notes=notes, producer=prod, wine_type=wine_type,
-                     color=color, rating=rating, inventory=inventory, viti_area=viti_area)
+def c_wine(desc: Union[str], notes: Union[str], name: Union[str], prod: Producers,
+           wine_type: WineTypes, color: Colors, rating: Union[float],
+           inventory: int, viti_area: VitiAreas) -> Wines:
+    new_wine = Wines(description=desc, notes=notes, name=name, producer=prod,
+                     wine_type=wine_type, color=color, rating=rating,
+                     inventory=inventory, viti_area=viti_area)
     new_wine.save()
     return new_wine
 

@@ -16,7 +16,7 @@
                     <tr>
                         <th class="filter-select filter-exact" data-placeholder="Select a color">Color</th>
                         <th class="num-col">Inventory</th>
-                        <th>Name</th>
+                        <th>Name and Type</th>
                         <th>Producer</th>
                         <th>Region</th>
                         <th>Viticultural Area</th>
@@ -46,9 +46,9 @@
                 <tbody>
                     {% for wine in wines %}
                     <tr>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.type|default_if_none:""|title }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color|default_if_none:""|title }}</a></td>
                         <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.inventory }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name }}</a></td>
+                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.region }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.viti_area|default_if_none:"" }}</a></td>

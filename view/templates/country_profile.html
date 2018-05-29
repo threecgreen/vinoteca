@@ -27,11 +27,11 @@
                     <tbody>
                     {% for viti_area in viti_areas %}
                         <tr>
-                            <td>{{ viti_area.0 }}</td>
-                            <td class="num-col">{{ viti_area.1 }}</td>
+                            <td>{{ viti_area.name }}</td>
+                            <td class="num-col">{{ viti_area.total_quantity }}</td>
                             <td class="num-col">
-                                {% if viti_area.2 %}
-                                {{ viti_area.2|floatformat:"2" }}
+                                {% if viti_area.avg_rating %}
+                                {{ viti_area.avg_rating|floatformat:"2" }}
                                 {% else %}
                                 &ndash;
                                 {% endif %}
@@ -50,7 +50,8 @@
                     <thead>
                     <tr>
                         <th>Last Purchased</th>
-                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Name and Type</th>
                         <th>Producer</th>
                         <th>Description</th>
                         <th class="num-col">Total Quantity</th>
@@ -61,17 +62,18 @@
                     <tbody>
                     {% for wine in wines %}
                         <tr>
-                            {% if wine.0 %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.0|naturalday:"b j, Y"|title }}</a></td>
+                            {% if wine.last_purchased_date %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.last_purchased_date|naturalday:"b j, Y"|title }}</a></td>
                             {% else %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">&ndash;</a></td>
+                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">&ndash;</a></td>
                             {% endif %}
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.1 }}</a></td>
-                            <td><a href="{% url "Producer Profile" producer_id=wine.9 %}">{{ wine.7 }}</a></td>
-                            <td><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.2|default_if_none:"" }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.4|default_if_none:"&ndash;" }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.5|floatformat:"2" }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.8 %}">{{ wine.6|default_if_none:"&ndash;" }}</a></td>
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color|title }}</a></td>
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
+                            <td><a href="{% url "Producer Profile" producer_id=wine.producer_id %}">{{ wine.producer }}</a></td>
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
+                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.total_quantity|default_if_none:"&ndash;" }}</a></td>
+                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.avg_price|floatformat:"2" }}</a></td>
+                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|default_if_none:"&ndash;" }}</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>

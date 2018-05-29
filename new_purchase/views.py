@@ -115,6 +115,7 @@ def insert_new_purchase_and_wine(request):
         price = float(price)
     why = empty_to_none(request.POST.get("why"))
     notes = empty_to_none(request.POST.get("notes"))
+    name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
     if request.POST.get("have-rating"):
         rating = int(request.POST.get("rating"))
@@ -129,7 +130,7 @@ def insert_new_purchase_and_wine(request):
     country = g_or_c_country(country)
     producer = g_or_c_producer(producer, country)
     viti_area = g_or_c_viti_area(viti_area, country)
-    wine = c_wine(description, notes, producer, wine_type, color, rating,
+    wine = c_wine(description, notes, name, producer, wine_type, color, rating,
                   inventory, viti_area)
     c_purchase(wine, store, price, why, purchase_date, vintage, quantity)
     # Grape composition
