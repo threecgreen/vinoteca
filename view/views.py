@@ -169,10 +169,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             rating = int(wine_info[2])
         except TypeError:
             rating = None
-        if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
-            wine_img = str(Path(settings.MEDIA_ROOT) / f"{wine_id}.png")
-        else:
-            wine_img = None
+        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
         wine = WineProfile(wine_id, *wine_info[:2], rating, *wine_info[3:])
         recent_vintage_query = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
 
@@ -180,7 +177,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             "grapes": [Grape(*grape) for grape in grapes],
             "recent_vintage": recent_vintage_query[0] if recent_vintage_query else None,
             "wine": wine,
-            "wine_img": wine_img,
+            "has_img": has_img,
             "page_name": wine.wine_type,
             "version": __version__,
         }

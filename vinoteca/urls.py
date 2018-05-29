@@ -1,8 +1,7 @@
 """vinoteca URL Configuration"""
 from django.conf import settings
-from django.conf.urls import url
-from django.conf.urls.static import static
-from django.urls import include, path
+from django.urls import path, re_path
+from django.views.static import serve
 
 from vinoteca.views import about, home
 from dashboards.views import dashboards
@@ -50,4 +49,5 @@ urlpatterns = [
     path("wines/<int:wine_id>/change/<slug:sign>/inventory/", change_inventory,
          name="Change Inventory from Inventory",
          kwargs={"return_to_inventory": True}),
+    re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT})
 ]

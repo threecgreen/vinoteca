@@ -67,12 +67,12 @@
         </div>
         {% endif %}
     </div>
-    {% if wine_img %}
+    {% if has_img %}
     <div class="row">
         <div class="col s12 m7">
             <div class="card">
                 <div class="card-image">
-                    <img src="{{ wine_img }}" alt="Wine Image">
+                    <img src="/media/{{ wine.id }}.png" alt="Wine Image">
                 </div>
             </div>
         </div>
