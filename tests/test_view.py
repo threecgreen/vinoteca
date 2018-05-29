@@ -58,7 +58,8 @@ def test_urls(url, view_name):
 @pytest.mark.parametrize("attr,val", [
     ("description", "Test"),
     ("producer", "A new producer"),
-    ("color", "white")
+    ("color", "white"),
+    ("viti_area", "Mendocino County")
 ])
 @pytest.mark.django_db
 def test_edit_wine(client, attr, val):

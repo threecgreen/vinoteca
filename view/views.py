@@ -5,10 +5,11 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
-from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, Stores,\
-    Wines, WineTypes, WineGrapes
-from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type, g_or_c_store, \
-    g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists, empty_to_none, c_or_u_wine_grapes
+from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, \
+    Stores, Wines, WineTypes, WineGrapes
+from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
+    g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
+    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area
 
 
 def wine_table(request):
@@ -207,6 +208,7 @@ def edit_wine(request, wine_id: int):
         additional = empty_to_none(request.POST.get("additional"))
         wine.description = empty_to_none(request.POST.get("description"))
         wine.notes = empty_to_none(request.POST.get("notes"))
+        viti_area = empty_to_none(request.POST.get("viti-area"))
         if request.POST.get("have-rating"):
             wine.rating = int(request.POST.get("rating"))
         else:
@@ -216,6 +218,7 @@ def edit_wine(request, wine_id: int):
         country = g_or_c_country(country) if country else None
         wine.producer = g_or_c_producer(producer, country)
         wine.add = g_or_c_additional(additional) if additional else None
+        wine.viti_area = g_or_c_viti_area(viti_area, wine.producer.country) if viti_area else None
         wine.save()
 
         # Grape composition
