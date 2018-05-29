@@ -9,7 +9,11 @@
             <h3 class="bold">{{ wine.wine_type|title }}</h3>
             <h4>
                 <a class="text-link" href="{% url "Producer Profile" producer_id=wine.producer_id %}">{{ wine.producer }}</a>
-                of <a class="text-link" href="{% url "Country Profile" country_id=wine.region_id %}">{{ wine.region }}</a>
+                {% if wine.region_id %}
+                    of <a class="text-link" href="{% url "Country Profile" country_id=wine.region_id %}">{{ wine.region }}</a>
+                {% else %}
+                    This producer currently does not have a region, please add one.
+                {% endif %}
             </h4>
         </div>
         <div class="col s12 m6">
