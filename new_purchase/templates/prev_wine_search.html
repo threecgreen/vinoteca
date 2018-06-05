@@ -53,18 +53,18 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        var producers = [
+        const producers = [
             {% for producer in producers %}"{{ producer.name }}",{% endfor %}
         ];
-        var $wine_type = $('#auto-wine-type');
-        var $color = $('#color');
-        var $producer = $('#auto-producer');
-        var $country = $('#auto-country');
-        var $no_results = $('#no-results');
-        var $table = $('table tr');
-        $(document).ready(function(){
+        const wine_type = $('#auto-wine-type');
+        const color = $('#color');
+        const producer = $('#auto-producer');
+        const country = $('#auto-country');
+        const no_results = $('#no-results');
+        const table = $('table tr');
+        $(function(){
             $('select').material_select();
-            $($wine_type).autocomplete({
+            $(wine_type).autocomplete({
                 data: {
                     {% for wine_type in wine_types %}
                         "{{ wine_type.type_name }}": null,
@@ -73,7 +73,7 @@
                 limit: 5,
                 minLength: 1
             });
-            $($producer).autocomplete({
+            $(producer).autocomplete({
                 data: {
                     {% for producer in producers %}
                         "{{ producer.name }}": null,
@@ -82,20 +82,20 @@
                 limit: 5,
                 minLength: 1
             });
-            $($producer).change(function () {
+            $(producer).on("change", function () {
                 if ($.inArray($(this).val(), producers) !== -1) {
                     $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
-                        $($country).val(responseJSON["country_name"]);
-                        $($country).prop('disabled', true);
+                        $(country).val(responseJSON["country_name"]);
+                        $(country).prop('disabled', true);
                         $("label[for='auto-country']").text("");
                     })
                 } else {
-                    $($country).prop('disabled', false);
-                    $($country).val("");
+                    $(country).prop('disabled', false);
+                    $(country).val("");
                     $("label[for='auto-country']").text("Country");
                 }
             });
-            $($country).autocomplete({
+            $(country).autocomplete({
                 data: {
                     {% for country in countries %}
                         "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
@@ -104,21 +104,21 @@
                 limit: 5,
                 minLength: 1
             });
-            $('button').click(function () {
-                $($table).hide();
-                $($no_results).hide();
+            $('button').on("click", function () {
+                $(table).hide();
+                $(no_results).hide();
                 $('table tbody').empty();
                 $.get("{% url "Search Wines JSON" %}", {
-                    'wine_type': $wine_type.val(),
-                    'color': $color.val(),
-                    'producer': $producer.val(),
-                    'country': $country.val()
+                    'wine_type': wine_type.val(),
+                    'color': color.val(),
+                    'producer': producer.val(),
+                    'country': country.val()
                 }, function (responseJSON) {
                     if (responseJSON['results'].length > 0) {
                         $('table tbody').append(responseJSON['results']);
-                        $($table).show();
+                        $(table).show();
                     } else {
-                        $($no_results).show();
+                        $(no_results).show();
                     }
                 });
             });
