@@ -28,14 +28,21 @@
                 </div>
             </div>
             <div class="row">
+{#                Don't allow users to add additional if the wine doesn't already have one #}
+                {% if wine.additional %}
                 <div class="input-field col s6 m3">
+                {% else %}
+                <div class="input-field col s12 m6">
+                {% endif %}
                     <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
                     <label for="name">Name</label>
                 </div>
+                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                    <input id="auto-additional" type="text" name="additional" class="autocomplete" {% if wine.additional %}value="{{ wine.additional }}"{% endif %}>
-                    <label for="auto-additional">Additional</label>
+                    <input id="additional" type="text" name="additional" class="autocomplete" value="{{ wine.additional }}">
+                    <label for="additional">Additional</label>
                 </div>
+                {% endif %}
                 <div class="input-field col s12 m6">
                     <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
                     <label for="description">Description</label>
@@ -73,7 +80,7 @@
                 {% cycle '<div class="row">' '' %}
                 {% with count=forloop.counter %}
                         <div class="input-field col s4 m2">
-                            <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate" value={{ grape.percent }}>
+                            <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate" {% if grape.percent %}value={{ grape.percent }}{% endif %}>
                             <label for="grape-{{ count }}-pct">Percentage</label>
                         </div>
                         <div class="input-field col s8 m4">
@@ -264,15 +271,6 @@
                 data: {
                     {% for country_op in countries %}
                         "{{ country_op.name }}": {% if country_op.name in  flags  %} "/static/img/flags/{{ country_op.name }}.svg", {% else %} null, {% endif %}
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $('#auto-additional').autocomplete({
-                data: {
-                    {% for additional_op in additionals %}
-                        "{{ additional_op.additional }}": null,
                     {% endfor %}
                 },
                 limit: 5,
