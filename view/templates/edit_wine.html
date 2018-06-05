@@ -28,14 +28,21 @@
                 </div>
             </div>
             <div class="row">
+{#                Don't allow users to add additional if the wine doesn't already have one #}
+                {% if wine.additional %}
                 <div class="input-field col s6 m3">
+                {% else %}
+                <div class="input-field col s12 m6">
+                {% endif %}
                     <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
                     <label for="name">Name</label>
                 </div>
+                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                    <input id="auto-additional" type="text" name="additional" class="autocomplete" {% if wine.additional %}value="{{ wine.additional }}"{% endif %}>
-                    <label for="auto-additional">Additional</label>
+                    <input id="additional" type="text" name="additional" class="autocomplete" value="{{ wine.additional }}">
+                    <label for="additional">Additional</label>
                 </div>
+                {% endif %}
                 <div class="input-field col s12 m6">
                     <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
                     <label for="description">Description</label>
@@ -73,7 +80,7 @@
                 {% cycle '<div class="row">' '' %}
                 {% with count=forloop.counter %}
                         <div class="input-field col s4 m2">
-                            <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate" value={{ grape.percent }}>
+                            <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate" {% if grape.percent %}value={{ grape.percent }}{% endif %}>
                             <label for="grape-{{ count }}-pct">Percentage</label>
                         </div>
                         <div class="input-field col s8 m4">
@@ -216,17 +223,17 @@
 {% block js %}
     <script type="text/javascript">
         /* Autocompletion */
-        var producers = [
+        const producers = [
             {% for producer_op in producers %}"{{ producer_op.name|safe }}",{% endfor %}
         ];
-        var $producer = $('#auto-producer');
-        var $country = $('#auto-country');
-        var $have_rating = $('#have-rating');
-        var $rating = $('#rating');
-        var $viti_area = $('#auto-viti-area');
-        var $grape_buttons = $('.grape-btn');
-        var $grape_names = $('[id^=auto-grape-]');
-        $(document).ready(function() {
+        const producer = $('#auto-producer');
+        const country = $('#auto-country');
+        const have_rating = $('#have-rating');
+        const rating = $('#rating');
+        const viti_area = $('#auto-viti-area');
+        const grape_buttons = $('.grape-btn');
+        const grape_names = $('[id^=auto-grape-]');
+        $(function() {
             $('select').material_select();
             $('#auto-wine-type').autocomplete({
                 data: {
@@ -237,7 +244,7 @@
                 limit: 5,
                 minLength: 1
             });
-            $producer.autocomplete({
+            producer.autocomplete({
                 data: {
                     {% for producer_op in producers %}
                         "{{ producer_op.name|safe }}": null,
@@ -247,20 +254,20 @@
                 minLength: 1
             });
             {# Disable country selection if producer is chosen and show grayed country for that producer #}
-            $($producer).change(function () {
+            $(producer).on("change", function () {
                 if ($.inArray($(this).val(), producers) !== -1) {
                     $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
-                        $($country).val(responseJSON["country_name"]);
-                        $($country).prop('disabled', true);
+                        $(country).val(responseJSON["country_name"]);
+                        $(country).prop('disabled', true);
                         $("label[for='auto-country']").text("");
                     })
                 } else {
-                    $($country).prop('disabled', false);
-                    $($country).val("");
+                    $(country).prop('disabled', false);
+                    $(country).val("");
                     $("label[for='auto-country']").text("Country");
                 }
             });
-            $country.autocomplete({
+            country.autocomplete({
                 data: {
                     {% for country_op in countries %}
                         "{{ country_op.name }}": {% if country_op.name in  flags  %} "/static/img/flags/{{ country_op.name }}.svg", {% else %} null, {% endif %}
@@ -269,29 +276,20 @@
                 limit: 5,
                 minLength: 1
             });
-            $('#auto-additional').autocomplete({
-                data: {
-                    {% for additional_op in additionals %}
-                        "{{ additional_op.additional }}": null,
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
             {% if rating %}
-                $have_rating.prop('checked', true);
+                have_rating.prop('checked', true);
             {% else %}
-                $have_rating.prop('checked', false);
+                have_rating.prop('checked', false);
             {% endif %}
-            $($have_rating).change(function () {
-                $rating.prop('disabled', !$have_rating.is(':checked'));
+            $(have_rating).on("change", function () {
+                rating.prop('disabled', !have_rating.is(':checked'));
             });
         });
         {# Update viticultural area autocomplete depending on country selection #}
-        $($country).change(function () {
+        $(country).on("change", function () {
             $.get("{% url "Get Country Viti Areas JSON" %}", {"country": $(this).val()},
                 function (responseJSON) {
-                    $($viti_area).autocomplete({
+                    $(viti_area).autocomplete({
                         data: responseJSON,
                         limit: 5,
                         minLength: 1
@@ -300,22 +298,23 @@
             )
         });
         {# Show additional grape forms with click of + button #}
-        $($grape_buttons).click(function () {
+        $(grape_buttons).on("click", function () {
             {# Hide parent div and thus self #}
             $(this).parent().hide();
             {#$(event.target).parent().hide();#}
-            var id_num = this.id.slice(-1);
+            let id_num = this.id.slice(-1);
             {# All elements starting with grape-form-2 #}
             $('[id^=grape-form-' + id_num + ']').show();
             {# Show next plus button if less than 5 #}
             if (parseInt(id_num) < 5){
-                $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().show();
-                $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent().par.show();
+                let grape_btn_parent = $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent();
+                grape_btn_parent.show();
+                grape_btn_parent.parent().show();
             }
         });
         {# Gave weird error when in same document ready function #}
-        $(document).ready(function () {
-            $grape_names.autocomplete({
+        $(function () {
+            grape_names.autocomplete({
                 data: {
                     {% for grape in all_grapes %}
                         "{{ grape.name }}": null,
@@ -325,7 +324,7 @@
                 minLength: 1
             });
             {# Run first for initial country #}
-            $($country).change();
+            $(country).trigger("change");
         })
     </script>
     <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>

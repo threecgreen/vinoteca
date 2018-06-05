@@ -58,9 +58,9 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        var $datepicker = $('.datepicker');
-        $(document).ready(function() {
-            $($datepicker).pickadate({
+        const datepicker = $('.datepicker');
+        $(function() {
+            $(datepicker).pickadate({
                 selectMonths: true,             // Creates a dropdown to control month
                 selectYears: 25,                 // Creates a dropdown of 5 years to control year,
                 today: 'Today',
@@ -69,7 +69,7 @@
                 closeOnSelect: false            // Close upon selecting a date,
             });
             {% if date %}
-                $datepicker.pickadate().pickadate('picker').set('select', "{{ date }}", { format: 'yyyymmdd'});
+                datepicker.pickadate().pickadate('picker').set('select', "{{ date }}", { format: 'yyyymmdd'});
             {% endif %}
             $('#auto-store').autocomplete({
                 data: {

@@ -219,7 +219,7 @@ def edit_wine(request, wine_id: int):
         wine.wine_type = g_or_c_wine_type(request.POST.get("wine-type"))
         country = g_or_c_country(country) if country else None
         wine.producer = g_or_c_producer(producer, country)
-        wine.add = g_or_c_additional(additional) if additional else None
+        wine.additional = g_or_c_additional(additional) if additional else None
         wine.viti_area = g_or_c_viti_area(viti_area, wine.producer.country) if viti_area else None
         wine.save()
 
@@ -260,7 +260,6 @@ def edit_wine(request, wine_id: int):
     else:
         context = wine_profile_base(wine_id)
         if context:
-            context["additionals"] = Additionals.objects.all()
             context["colors"] = Colors.objects.all()
             context["countries"] = Countries.objects.all()
             context["all_grapes"] = Grapes.objects.all()
