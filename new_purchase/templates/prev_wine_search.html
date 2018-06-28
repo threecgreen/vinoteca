@@ -4,53 +4,59 @@
 {% block body %}
     <div class="container">
         <h2 class="pink-text text-darken-3">Find previously purchased wine</h2>
-        <div class="row">
-            <div class="col s6 l3 input-field">
-                <select id="color" name="color">
-                    <option value="" selected>Select the type</option>
-                    {% for color in colors %}
-                        <option value="{{ color.color }}">{{ color.color|title }}</option>
-                    {% endfor %}
-                </select>
-                <label for="color">Type</label>
-            </div>
-            <div class="input-field col s6 l3">
-                <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete">
-                <label for="auto-wine-type">Name</label>
-            </div>
-            <div class="input-field col s6 l3">
-                <input type="text" id="auto-producer" name="producer" class="autocomplete">
-                <label for="auto-producer">Producer</label>
-            </div>
-            <div class="input-field col s6 l3">
-                <input type="text" id="auto-country" name="country" class="autocomplete">
-                <label for="auto-country">Region</label>
-            </div>
-            {% include "special_chars.html" %}
-            <div class="col s12">
-                <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
-                    Search
-                </button>
-            </div>
+        <div class="col s12">
+            <button class="btn waves-effect waves-light yellow darken-2" id="reset-btn">Reset Filters</button>
         </div>
-        <table class="highlight responsive-table">
-            <thead>
-                <tr style="display: none;">
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th>Notes</th>
-                    <th>Name</th>
-                    <th>Producer</th>
-                    <th>Region</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-        <h5 id="no-results" style="display: none;">No results found.</h5>
+        <form autocomplete="off">
+            <div class="row">
+                <div class="input-field col s4 l2">
+                    <select id="color" name="color">
+                        <option value="" selected>Select the color</option>
+                        {% for color in colors %}
+                            <option value="{{ color.color }}">{{ color.color|title }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="color">Color</label>
+                </div>
+                <div class="input-field col s8 l4">
+                    <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete">
+                    <label for="auto-wine-type">Type</label>
+                </div>
+                <div class="input-field col s6 l3">
+                    <input type="text" id="auto-producer" name="producer" class="autocomplete">
+                    <label for="auto-producer">Producer</label>
+                </div>
+                <div class="input-field col s6 l3">
+                    <input type="text" id="auto-country" name="country" class="autocomplete">
+                    <label for="auto-country">Region</label>
+                </div>
+                <div class="input-field col s6 l3">
+                    <input type="text" id="auto-viti-area" name="viti-area" class="autocomplete">
+                    <label for="auto-viti-area">Viticultural Area</label>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            {% include "special_chars.html" %}
+        </div>
+        <div class="row">
+            <table class="highlight responsive-table" hidden>
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>Name and Type</th>
+                        <th>Producer</th>
+                        <th>Region</th>
+                        <th>Viticultural Area</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <h5 id="no-results" hidden>No results found.</h5>
+        </div>
     </div>
 {% endblock %}
+
 {% block js %}
     <script type="text/javascript">
         const producers = [
@@ -60,10 +66,22 @@
         const color = $('#color');
         const producer = $('#auto-producer');
         const country = $('#auto-country');
+        const viti_area = $('#auto-viti-area');
+        const search_params = $('.input-field');
         const no_results = $('#no-results');
-        const table = $('table tr');
+        const table = $('table');
+        const reset_btn = $('#reset-btn');
+
+        {# Cleans search results table and hides result elements #}
+        function clear_table() {
+            $(table).hide();
+            $(no_results).hide();
+            $('table tbody').empty();
+        }
+
         $(function(){
             $('select').material_select();
+            {# Search fields autocomplete #}
             $(wine_type).autocomplete({
                 data: {
                     {% for wine_type in wine_types %}
@@ -82,6 +100,26 @@
                 limit: 5,
                 minLength: 1
             });
+            $(country).autocomplete({
+                data: {
+                    {% for country in countries %}
+                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $(viti_area).autocomplete({
+                data: {
+                    {% for viti_area in viti_areas %}
+                        "{{ viti_area.name }}": null,
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+
+            {# Update whether region is active every time producer changes #}
             $(producer).on("change", function () {
                 if ($.inArray($(this).val(), producers) !== -1) {
                     $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
@@ -95,26 +133,31 @@
                     $("label[for='auto-country']").text("Country");
                 }
             });
-            $(country).autocomplete({
-                data: {
-                    {% for country in countries %}
-                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
+
+            {# Empty all fields when reset button is clicked #}
+            $(reset_btn).on("click", function () {
+                $('form')[0].reset();
+                clear_table();
             });
-            $('button').on("click", function () {
-                $(table).hide();
-                $(no_results).hide();
-                $('table tbody').empty();
+
+            {# Update search results when search fields change #}
+            $(search_params).on("change", function (e) {
+                {# Prevents double event #}
+                if (e.originalEvent) {
+                    return;
+                }
+                clear_table();
+                {# Send search fields data to Search Wines URL #}
                 $.get("{% url "Search Wines JSON" %}", {
                     'wine_type': wine_type.val(),
                     'color': color.val(),
                     'producer': producer.val(),
-                    'country': country.val()
+                    'country': country.val(),
+                    'viti_area': viti_area.val()
                 }, function (responseJSON) {
-                    if (responseJSON['results'].length > 0) {
+                    {# Update search results with received data #}
+                    {# Greater than 1 because spaces count in length #}
+                    if (responseJSON['results'].length > 1) {
                         $('table tbody').append(responseJSON['results']);
                         $(table).show();
                     } else {

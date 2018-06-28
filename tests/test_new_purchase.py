@@ -51,23 +51,26 @@ def test_get_country_viti_area(client, country):
         assert len(response.json().keys()) > 0
 
 
-@pytest.mark.parametrize("wine_type,color,producer,country", [
-    ("Pinot Noir", "", "", ""),
-    ("", "Red", "", ""),
-    ("", "", "Yalumba", ""),
-    ("", "", "", "California"),
-    ("", "Red", "Yalumba", "Australia"),
-    ("Pinot Noir", "Red", "", "California"),
-    ("", "", "", ""),
+@pytest.mark.parametrize("wine_type,color,producer,country,viti_area", [
+    ("Pinot Noir", "", "", "", ""),
+    ("", "Red", "", "", ""),
+    ("", "", "Yalumba", "", ""),
+    ("", "", "", "California", ""),
+    ("", "", "", "", "Napa County"),
+    ("", "Red", "Yalumba", "Australia", ""),
+    ("Pinot Noir", "Red", "", "California", ""),
+    ("", "", "", "", ""),
 ])
 @pytest.mark.django_db
-def test_search_wines(client, wine_type, color, producer, country):
-    is_empty = all(len(param) == 0 for param in (wine_type, color, producer, country))
+def test_search_wines(client, wine_type, color, producer, country, viti_area):
+    is_empty = all(len(param) == 0 for param in (wine_type, color, producer,
+                                                 country, viti_area))
     search_data = {
         "wine_type": wine_type,
         "color": color,
         "producer": producer,
-        "country": country
+        "country": country,
+        "viti_area": viti_area
     }
     response = client.get("/new/search-wines/", search_data)
     assert response.status_code == 200
