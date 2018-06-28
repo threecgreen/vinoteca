@@ -4,12 +4,12 @@ from vinoteca.__init__ import __version__
 from vinoteca.utils import get_connection
 
 
-def about(request):
+def simple_page(request, page_name:str):
     context = {
-        "page_name": "About",
+        "page_name": page_name.title(),
         "version": __version__,
     }
-    return render(request, "about.html", context)
+    return render(request, f"{page_name}.html", context)
 
 
 def home(request):
