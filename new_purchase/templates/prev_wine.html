@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col s12">
             <h4>New Purchase</h4>
-            <form action="" method="post">
+            <form action="" method="post" autocomplete="off">
                 {% csrf_token %}
                 <div class="row">
                     <div class="input-field col s6 m3">
@@ -47,12 +47,12 @@
     <script type="text/javascript">
         $(function() {
             $('.datepicker').pickadate({
-                selectMonths: true,             // Creates a dropdown to control month
-                selectYears: 15,                 // Creates a dropdown of 5 years to control year,
+                selectMonths: true,             {# Creates a dropdown to control month #}
+                selectYears: 15,                {# Creates a dropdown of 5 years to control year #}
                 today: 'Today',
                 clear: 'Clear',
                 close: 'Ok',
-                closeOnSelect: false            // Close upon selecting a date,
+                closeOnSelect: false,           {# Close upon selecting a date #}
             });
             $('#auto-store').autocomplete({
                 data: {
