@@ -1,3 +1,4 @@
+import attr
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -5,7 +6,7 @@ from django.template.loader import render_to_string
 from view.views import wine_profile_base
 from vinoteca import __version__
 from vinoteca.models import (Colors, Countries, Grapes, Producers, Stores,
-    WineTypes, Wines)
+    VitiAreas, WineTypes, Wines)
 from vinoteca.utils import (g_or_c_country, g_or_c_producer, g_or_c_store,
                             g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
                             c_or_u_wine_grapes, get_flag_countries, default_vintage_year)
@@ -58,41 +59,55 @@ def get_country_viti_areas(request) -> JsonResponse:
 
 
 def search_wines(request) -> JsonResponse:
+    @attr.s
+    class WineSearchResult(object):
+        id = attr.ib(type=int)
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        type = attr.ib(type=str)
+        viti_area = attr.ib(type=str)
+
     conn = get_connection()
     cursor = conn.cursor()
     wine_type = empty_to_none(request.GET.get("wine_type"))
     color = empty_to_none(request.GET.get("color"))
     producer = empty_to_none(request.GET.get("producer"))
     country = empty_to_none(request.GET.get("country"))
-    params = [color, wine_type, producer, country]
+    viti_area = empty_to_none(request.GET.get("viti_area"))
+    params = [color, wine_type, producer, country, viti_area]
     params = [param for param in params if param is not None]
     if len(params) > 0:
         query = """
             SELECT
                 w.id
-                , w.description
-                , w.notes
                 , cl.color
+                , w.name
                 , pro.name
                 , cn.name
                 , t.type_name
+                , v.name
             FROM wines w
-                LEFT JOIN producers pro
-                    ON w.producer_id = pro.id
-                LEFT JOIN countries cn
-                    ON pro.country_id = cn.id
-                LEFT JOIN wine_types t
-                    ON w.type_id = t.id
-                LEFT JOIN colors cl
-                    ON w.color_id = cl.id
+                LEFT JOIN producers pro ON w.producer_id = pro.id
+                LEFT JOIN countries cn ON pro.country_id = cn.id
+                LEFT JOIN wine_types t ON w.type_id = t.id
+                LEFT JOIN colors cl ON w.color_id = cl.id
+                LEFT JOIN viti_areas v on w.viti_area_id = v.id
             WHERE
                 t.type_name LIKE coalesce(?, t.type_name)
                 AND cl.color LIKE coalesce(?, cl.color)
                 AND pro.name LIKE coalesce(?, pro.name)
-                AND cn.name LIKE coalesce(?, cn.name);
+                AND cn.name LIKE coalesce(?, cn.name)
+                and (
+                    ? is null or ? like v.name
+                );
         """
-        context = {"wine_results": cursor.execute(query, (wine_type, color,
-                   producer, country)).fetchall()}
+        results = cursor.execute(query, (wine_type, color, producer, country,
+                                         viti_area, viti_area)).fetchall()
+        context = {
+            "wine_results": [WineSearchResult(*item) for item in results]
+        }
         if context["wine_results"] is not None:
             conn.close()
             return JsonResponse({
@@ -118,7 +133,8 @@ def insert_new_purchase_and_wine(request):
     name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
     if request.POST.get("have-rating"):
-        rating = int(request.POST.get("rating"))
+        rating = int(request.POST.get("rating")) if empty_to_none(request.POST.get("rating")) \
+            else None
     else:
         rating = None
     vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
@@ -180,6 +196,7 @@ def prev_new_purchase_search(request):
         "countries": Countries.objects.all(),
         "producers": Producers.objects.all(),
         "wine_types": WineTypes.objects.all(),
+        "viti_areas": VitiAreas.objects.all(),
         "page_name": "New Purchase",
         "version": __version__,
     }
