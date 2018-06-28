@@ -3,7 +3,7 @@
 {% block wine-title %}
     <h2 class="pink-text text-darken-3">Edit wine information</h2>
     <div class="row">
-        <form class="col s12" action="" method="post" enctype="multipart/form-data">
+        <form class="col s12" action="" method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
             <div class="row">
                 <div class="input-field col s4 m2">
@@ -145,7 +145,7 @@
                     </div>
                 </div>
             {% endfor %}
-{#            Add additional blank rows if this wine already has grapes#}
+            {# Add additional blank rows if this wine already has grapes #}
             {% if grapes %}
                 {% with count=grapes|length %}
                 {% if not grapes|length|divisibleby:2 %}
@@ -162,7 +162,6 @@
                         <input id="auto-grape-{{ count }}" name="grape-{{ count }}" type="text" class="autocomplete">
                         <label for="auto-grape-{{ count }}">Grape</label>
                     </div>
-{#                </div>#}
                 {% else %}
                     <div class="row">
                         <div class="col s12 m6">
@@ -222,7 +221,7 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        /* Autocompletion */
+        {# Autocompletion #}
         const producers = [
             {% for producer_op in producers %}"{{ producer_op.name|safe }}",{% endfor %}
         ];

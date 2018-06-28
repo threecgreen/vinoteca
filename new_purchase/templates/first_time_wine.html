@@ -7,7 +7,7 @@
 
         <div class="row">
             {# enctype for multimedia upload #}
-            <form class="col s12" action="" method="post" enctype="multipart/form-data">
+            <form class="col s12" action="" method="post" enctype="multipart/form-data" autocomplete="off">
                 {% csrf_token %}
                 <div class="row">
                     <div class="input-field col s12 m6">
@@ -25,7 +25,7 @@
                                 <option value="{{ color.color }}">{{ color.color|title }}</option>
                             {% endfor %}
                         </select>
-                        <label for="color">Type</label>
+                        <label for="color">Color</label>
                     </div>
                 </div>
                 <div class="row">
@@ -63,9 +63,9 @@
                     </div>
                     <div class="range-field col s4 m2">
                         <div class="switch">
-                            <label for="have-rating">
+                            <label for="has-rating">
                                 Rating
-                                <input type="checkbox" id="have-rating" name="have-rating">
+                                <input type="checkbox" id="has-rating" name="has-rating">
                                 <span class="lever"></span>
                             </label>
                         </div>
@@ -88,7 +88,7 @@
                         <input id="quantity" name="quantity" type="number" class="validate" value=1>
                         <label for="quantity">Quantity</label>
                     </div>
-                    <div class="input-fieldj col s8 m4">
+                    <div class="input-field col s8 m4">
                         <input type="checkbox" class="filled-in" id="add-to-inventory" name="add-to-inventory" checked="checked"/>
                         <label for="add-to-inventory">Add to Inventory</label>
                     </div>
@@ -200,7 +200,6 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        /* Autocompletion */
         const producers = [
             {% for producer in producers %}"{{ producer.name }}",{% endfor %}
         ];
@@ -208,10 +207,13 @@
         const producer = $('#auto-producer');
         const country = $('#auto-country');
         const viti_area = $('#auto-viti-area');
-        const have_rating = $('#have-rating');
+        const has_rating = $('#has-rating')[0];
+        const rating = $('#rating')[0];
         const grape_buttons = $('.grape-btn');
         const grape_names = $('[id^=auto-grape-]');
+
         $(function() {
+            {# Selection widget settings #}
             $('.datepicker').pickadate({
                 selectMonths: true,             // Creates a dropdown to control month
                 selectYears: 15,                 // Creates a dropdown of 5 years to control year,
@@ -221,6 +223,8 @@
                 closeOnSelect: false            // Close upon selecting a date,
             });
             $('select').material_select();
+
+            {# Autocompletion #}
             $(store).autocomplete({
                 data: {
                     {% for store in stores %} "{{ store.name }}": null, {% endfor %}
@@ -242,6 +246,23 @@
                 limit: 5,
                 minLength: 1
             });
+            $(country).autocomplete({
+                data: {
+                    {% for country in countries %}
+                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
+                    {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+            $(grape_names).autocomplete({
+                data: {
+                    {% for grape in grapes %} "{{ grape.name }}": null, {% endfor %}
+                },
+                limit: 5,
+                minLength: 1
+            });
+
             {# Disable country selection if producer is chosen and show grayed country for that producer #}
             $(producer).on("change", function () {
                 if ($.inArray($(this).val(), producers) !== -1) {
@@ -259,15 +280,7 @@
                     $("label[for='auto-country']").text("Country");
                 }
             });
-            $(country).autocomplete({
-                data: {
-                    {% for country in countries %}
-                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
+
             {# Update viticultural area autocomplete depending on country selection #}
             $(country).on("change", function () {
                 $.get("{% url "Get Country Viti Areas JSON" %}", {"country": $(this).val()},
@@ -281,10 +294,13 @@
                     }
                 )
             });
-            $(have_rating).attr('checked', (!$('#rating')[0].disabled).toString());
-            $(have_rating).on("click", function () {
-                $('#rating').attr('disabled', (!this.checked).toString());
+
+            {# Enable/disable rating slider depending on checkbox #}
+            $(has_rating).prop('checked', false);
+            $(has_rating).on('click', function () {
+                $(rating).prop('disabled', !$(this).prop('checked'));
             });
+
             {# Show additional grape forms with click of + button #}
             $(grape_buttons).on("click", function () {
                 {# Hide parent div and thus self #}
@@ -299,13 +315,6 @@
                     grape_btn_parent.show();
                     grape_btn_parent.parent().show();
                 }
-            });
-            $(grape_names).autocomplete({
-                data: {
-                    {% for grape in grapes %} "{{ grape.name }}": null, {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
             });
         });
     </script>
