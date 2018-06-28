@@ -3,7 +3,7 @@ from django.conf import settings
 from django.urls import path, re_path
 from django.views.static import serve
 
-from vinoteca.views import about, home
+from vinoteca.views import simple_page, home
 from dashboards.views import dashboards
 from new_purchase.views import (
     get_producer_country, first_new_purchase, prev_new_purchase_search,
@@ -17,7 +17,9 @@ from view.views import (
 urlpatterns = [
     path("", home, name="Home"),
     path("home/", home, name="Home"),
-    path("about/", about, name="About"),
+    path("about/", simple_page, name="About", kwargs={"page_name": "about"}),
+    path("help/", simple_page, name="Help", kwargs={"page_name": "help"}),
+    path("changelog/", simple_page, name="Changelog", kwargs={"page_name": "changelog"}),
     path("new/first-time/", first_new_purchase, name="New Purchase First"),
     path("new/prev-purchased/", prev_new_purchase_search,
          name="New Purchase Search"),
