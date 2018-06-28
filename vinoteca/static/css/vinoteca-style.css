@@ -1,3 +1,4 @@
+/* Color variables */
 body {
   display: flex;
   min-height: 100vh;
@@ -6,6 +7,23 @@ body {
 main {
   flex: 1 0 auto; }
 
+.container {
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 90%; }
+
+/* Table Devices */
+@media only screen and (min-width: 601px) {
+  .container {
+    width: 90%; } }
+/* Desktop Devices */
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 90%; } }
+/* Large Desktop Devices */
+@media only screen and (min-width: 1201px) {
+  .container {
+    width: 90%; } }
 .brand-logo {
   font-weight: 300;
   letter-spacing: -0.1rem; }
@@ -78,6 +96,8 @@ ul.bullets {
     ul.bullets li ul {
       margin-top: 0;
       margin-bottom: 0; }
+      ul.bullets li ul li {
+        list-style-type: square; }
 
 a:link.text-link {
   color: #c5e1a5; }
@@ -91,5 +111,20 @@ a:visited.text-link {
 table.condensed td, th {
   padding-top: 3px;
   padding-bottom: 3px; }
+
+/* For linking to a section of a page */
+.page-link {
+  color: rgba(0, 0, 0, 0.87); }
+
+.fixed-action-div {
+  position: relative;
+  height: 60px; }
+  .fixed-action-div .fixed-action-btn {
+    position: absolute;
+    display: inline-block;
+    top: 5px; }
+
+.footer-link {
+  color: pink; }
 
 /*# sourceMappingURL=vinoteca-style.css.map */
