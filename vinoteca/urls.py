@@ -1,17 +1,11 @@
 """vinoteca URL Configuration"""
-from django.conf import settings
 from django.urls import path, re_path
 from django.views.static import serve
 
 from vinoteca.views import simple_page, home
 from dashboards.views import dashboards
-from new_purchase.views import (
-    get_producer_country, first_new_purchase, prev_new_purchase_search,
-    prev_purchase, search_wines, get_country_viti_areas)
-from view.views import (
-    wine_table, wine_profile, edit_wine, edit_purchase, producer_profile,
-    country_profile, inventory, change_inventory, delete_wine, delete_purchase,
-    edit_producer)
+from new_purchase.views import *
+from view.views import *
 
 
 urlpatterns = [
@@ -23,10 +17,16 @@ urlpatterns = [
     path("new/first-time/", first_new_purchase, name="New Purchase First"),
     path("new/prev-purchased/", prev_new_purchase_search,
          name="New Purchase Search"),
-    path("new/get-producer-country/", get_producer_country,
+    path("producers/region/", get_producer_country,
          name="Get Producer Country JSON"),
-    path("new/get-country-viti-areas/", get_country_viti_areas,
+    path("regions/viti_areas/", get_country_viti_areas,
          name="Get Country Viti Areas JSON"),
+    path("colors/all/", get_colors, "Get Colors JSON"),
+    path("regions/all/", get_regions, "Get Regions JSON"),
+    path("producers/all/", get_producers, "Get Producers JSON"),
+    path("stores/all/", get_stores, "Get Stores JSON"),
+    path("grapes/all/", get_grapes, "Get Grapes JSON"),
+    path("wine_types/all/", get_wine_types, "Get WineTypes JSON"),
     path("new/search-wines/", search_wines, name="Search Wines JSON"),
     path("wines/<int:wine_id>/", wine_profile, name="Wine Profile"),
     path("wines/<int:wine_id>/new-purchase/", prev_purchase,

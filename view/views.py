@@ -2,14 +2,43 @@ import attr
 from datetime import date
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
-from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, \
+from vinoteca.models import Colors, Countries, Grapes, Producers, Purchases, \
     Stores, Wines, WineTypes, WineGrapes
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
     g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
-    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area
+    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries
+
+
+def get_colors(request) -> JsonResponse:
+    return JsonResponse({color.color: None for color in Colors.objects.all()})
+
+
+def get_regions(request) -> JsonResponse:
+    flag_countries = get_flag_countries()
+    regions = {}
+    for region in Countries.objects.all():
+        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name in flag_countries else None
+    return JsonResponse(regions)
+
+
+def get_producers(request) -> JsonResponse:
+    return JsonResponse({producer.name: None for producer in Producers.objects.all()})
+
+
+def get_stores(request) -> JsonResponse:
+    return JsonResponse({store.name: None for store in Stores.objects.all()})
+
+
+def get_grapes(request) -> JsonResponse:
+    return JsonResponse({grape.name: None for grape in Grapes.objects.all()})
+
+
+def get_wine_types(request) -> JsonResponse:
+    return JsonResponse({wine_type.type_name: None for wine_type in WineTypes.objects.all()})
 
 
 def wine_table(request):
