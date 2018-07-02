@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from view.views import wine_profile_base
 from vinoteca import __version__
 from vinoteca.models import (Colors, Countries, Grapes, Producers, Stores,
-    VitiAreas, WineTypes, Wines)
+                             VitiAreas, WineTypes, Wines)
 from vinoteca.utils import (g_or_c_country, g_or_c_producer, g_or_c_store,
                             g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
                             c_or_u_wine_grapes, get_flag_countries, default_vintage_year)
