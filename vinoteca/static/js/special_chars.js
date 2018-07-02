@@ -7,21 +7,22 @@ var text_inputs = jquery_1.default("[type=text]");
 /* Keep track of last active text element */
 var last_input = null;
 jquery_1.default(function () {
+    var _this = this;
     /* Add special character to last input */
     jquery_1.default(spec_char_btns).on("click", function () {
-        last_input = last_input + jquery_1.default(this).text();
+        last_input = last_input + jquery_1.default(_this).text();
     });
     /* Change special character buttons between upper and lowercase */
     jquery_1.default(shift_btn).on("click", function () {
         if (jquery_1.default(shift_btn).text() === "↑") {
             jquery_1.default(spec_char_btns).each(function () {
-                jquery_1.default(this).text(jquery_1.default(this).text().toUpperCase());
+                jquery_1.default(_this).text(jquery_1.default(_this).text().toUpperCase());
             });
             jquery_1.default(shift_btn).text("↓");
         }
         else {
             jquery_1.default(spec_char_btns).each(function () {
-                jquery_1.default(this).text(jquery_1.default(this).text().toLowerCase());
+                jquery_1.default(_this).text(jquery_1.default(_this).text().toLowerCase());
             });
             jquery_1.default(shift_btn).text("↑");
         }

@@ -63,7 +63,7 @@ $(function () {
     var wine_img = $("#wine-image");
     if (wine_img) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", wine_img[0].src);
+        // xhr.open("GET", wine_img[0].src);
         xhr.responseType = "blob";
         xhr.onload = function () {
             orientation(this.response, function (base64img, value) {
