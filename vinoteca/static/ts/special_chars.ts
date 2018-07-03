@@ -1,4 +1,4 @@
-import $ from "jquery"
+/// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 
 const spec_char_btns: JQuery<HTMLLinkElement> = $(".spec-chars");
 const shift_btn: JQuery<HTMLLinkElement> = $("#shift");
@@ -32,4 +32,4 @@ $(function () {
     $(text_inputs).on("focusout", function () {
         last_input = "#" + this.id;
     });
-});
+})

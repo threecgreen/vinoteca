@@ -1,7 +1,5 @@
-"use strict";
 /* Modified from runeb's GitHub gist
  * https://gist.github.com/runeb/c11f864cd7ead969a5f0 */
-Object.defineProperty(exports, "__esModule", { value: true });
 var rotation = {
     1: 'rotate(0deg)',
     3: 'rotate(180deg)',
@@ -17,7 +15,7 @@ function _arrayBufferToBase64(buffer) {
     }
     return window.btoa(binary);
 }
-function orientation(file, callback) {
+export function orientation(file, callback) {
     var fileReader = new FileReader();
     fileReader.onloadend = function () {
         var base64img = "data:" + file.type + ";base64," + _arrayBufferToBase64(fileReader.result);
@@ -57,7 +55,6 @@ function orientation(file, callback) {
     };
     fileReader.readAsArrayBuffer(file);
 }
-exports.orientation = orientation;
 ;
 $(function () {
     var wine_img = $("#wine-image");

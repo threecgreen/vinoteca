@@ -1,39 +1,34 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var jquery_1 = require("jquery");
-require("materialize-css");
+/// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
+/// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 /** Disable region selection if producer is chosen and show grayed region for that producer */
-function toggleRegion(producer, country, producerRegionURL, producersURL) {
+export function toggleRegion(producer, region, producerRegionURL, producersURL) {
     var producers;
-    jquery_1.default.getJSON(producersURL, function (responseJSON) {
-        responseJSON.forEach(function (element) {
-            producers.push(element);
-        });
+    $.getJSON(producersURL, function (responseJSON) {
+        producers = responseJSON.keys;
     });
-    jquery_1.default(producer).on("change", function () {
-        if (jquery_1.default.inArray(jquery_1.default(this).val(), producers) !== -1) {
-            jquery_1.default.getJSON(producerRegionURL, { 'producer': jquery_1.default(this).val() }, function (responseJSON) {
-                jquery_1.default(country).val(responseJSON["country_name"]);
-                jquery_1.default(country).prop('disabled', true);
-                jquery_1.default("label[for='auto-country']").text("");
+    $(producer).on("change", function () {
+        if ($.inArray($(this).val(), producers) !== -1) {
+            $.getJSON(producerRegionURL, { 'producer': $(this).val() }, function (responseJSON) {
+                $(region).val(responseJSON["country_name"]);
+                $(region).prop('disabled', true);
+                $("label[for='auto-country']").text("");
                 // Update viticultural area autocomplete
-                jquery_1.default(country).trigger("change");
+                $(region).trigger("change");
             });
         }
         else {
-            jquery_1.default(country).prop('disabled', false);
-            jquery_1.default(country).val("");
-            jquery_1.default("label[for='auto-country']").text("Country");
+            $(region).prop('disabled', false);
+            $(region).val("");
+            $("label[for='auto-country']").text("Country");
         }
     });
 }
-exports.toggleRegion = toggleRegion;
-/** Update viticultural area autocomplete depending on country selection */
-function updateVitiAreaSelections(country, viti_area, getJSONURL) {
-    var _this = this;
-    jquery_1.default(country).on("change", function () {
-        jquery_1.default.get(getJSONURL, { "country": jquery_1.default(_this).val() }, function (responseJSON) {
-            jquery_1.default(viti_area).autocomplete({
+/** Update viticultural area autocomplete depending on region selection */
+export function updateVitiAreaSelections(region, viti_area, getJSONURL) {
+    $(region).on("change", function () {
+        $.get(getJSONURL, { "country": $(this).val() }, function (responseJSON) {
+            console.log(responseJSON);
+            $(viti_area).autocomplete({
                 data: responseJSON,
                 limit: 5,
                 minLength: 1
@@ -41,5 +36,4 @@ function updateVitiAreaSelections(country, viti_area, getJSONURL) {
         });
     });
 }
-exports.updateVitiAreaSelections = updateVitiAreaSelections;
 //# sourceMappingURL=producer_region.js.map
