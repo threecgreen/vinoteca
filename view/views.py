@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
 from vinoteca.models import Colors, Countries, Grapes, Producers, Purchases, \
-    Stores, Wines, WineTypes, WineGrapes
+    Stores, Wines, WineTypes, WineGrapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
     g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
     empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries
@@ -39,6 +39,10 @@ def get_grapes(request) -> JsonResponse:
 
 def get_wine_types(request) -> JsonResponse:
     return JsonResponse({wine_type.type_name: None for wine_type in WineTypes.objects.all()})
+
+
+def get_viti_areas(request) -> JsonResponse:
+    return JsonResponse({viti_area.name: None for viti_area in VitiAreas.objects.all()})
 
 
 def wine_table(request):
