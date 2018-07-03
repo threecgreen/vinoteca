@@ -36,4 +36,4 @@ export function updateVitiAreaSelections(region, viti_area, getJSONURL) {
         });
     });
 }
-//# sourceMappingURL=producer_region.js.map
+//# sourceMappingURL=new_wines.js.map

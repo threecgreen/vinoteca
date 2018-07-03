@@ -200,7 +200,7 @@
 {% endblock %}
 {% block js %}
     <script type="module">
-        import { toggleRegion, updateVitiAreaSelections } from '{% static "js/producer_region.js" %}'
+        import { toggleRegion, updateVitiAreaSelections } from '{% static "js/new_wines.js" %}'
         import { autocomplete } from "{% static "js/autocomplete.js" %}";
 
         const store = $('#auto-store');
@@ -225,14 +225,7 @@
             $('select').material_select();
 
             {# Autocompletion #}
-            {#$(store).autocomplete({#}
-            {#    data: {#}
-            {#        {% for store in stores %} "{{ store.name }}": null, {% endfor %}#}
-            {#    },#}
-            {#    limit: 5,#}
-            {#    minLength: 1#}
-            {#});#}
-            autocomplete("store");
+            autocomplete({ {% for store in stores %} "{{ store.name }}": null, {% endfor %} }, store);
             $('#auto-wine-type').autocomplete({
                 data: {
                     {% for wine_type in wine_types %} "{{ wine_type.type_name }}": null, {% endfor %}
