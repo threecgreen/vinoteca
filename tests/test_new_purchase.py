@@ -6,8 +6,8 @@ import pytest
 @pytest.mark.django_db
 @pytest.mark.parametrize("page", [
     "/new/prev-purchased/",
-    "/new/get-producer-country/",
-    "/new/get-country-viti-areas/",
+    "/producers/region/",
+    "/regions/viti-areas/",
     "/new/search-wines/"
 ])
 def test_pages(client, page):
@@ -17,8 +17,8 @@ def test_pages(client, page):
 
 @pytest.mark.parametrize("url,view_name", [
     ("/new/prev-purchased/", "New Purchase Search"),
-    ("/new/get-producer-country/", "Get Producer Country JSON"),
-    ("/new/get-country-viti-areas/", "Get Country Viti Areas JSON"),
+    ("/producers/region/", "Get Producer Country JSON"),
+    ("/regions/viti-areas/", "Get Country Viti Areas JSON"),
     ("/new/search-wines/", "Search Wines JSON")
 ])
 def test_urls(url, view_name):
@@ -32,7 +32,7 @@ def test_urls(url, view_name):
 ])
 @pytest.mark.django_db
 def test_get_producer_country(client, producer, country):
-    response = client.get("/new/get-producer-country/", {"producer": producer})
+    response = client.get("/producers/region/", {"producer": producer})
     assert response.status_code == 200
     if country:
         assert response.json()["country_name"] == country
@@ -43,7 +43,7 @@ def test_get_producer_country(client, producer, country):
 @pytest.mark.parametrize("country", ["France", "California", ""])
 @pytest.mark.django_db
 def test_get_country_viti_area(client, country):
-    response = client.get("/new/get-country-viti-areas/", {"country": country})
+    response = client.get("/regions/viti-areas/", {"country": country})
     assert response.status_code == 200
     if len(country) == 0:
         assert len(response.json().keys()) == 0
@@ -98,7 +98,7 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     assert response.status_code == 302
 
 
-@pytest.mark.parametrize("store,wine_type,producer,country,description,price,viti_area,why,notes,color,rating," 
+@pytest.mark.parametrize("store,wine_type,producer,country,description,price,viti_area,why,notes,color,rating,"
                          "vintage,quantity,add_to_inventory,grapes", [
     ("Surdyk's", "Merlot", "Yalumba", "Australia", None, "", "", "", "", "red", 8, 2020, 2, True, None),
     ("ABC", "Shiraz", "Francais", "France", "desc", 12.23, "Bordeaux", "why", "notes", "white", 2, 2020, 1, False, [

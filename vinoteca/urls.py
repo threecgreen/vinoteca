@@ -19,7 +19,7 @@ urlpatterns = [
          name="New Purchase Search"),
     path("producers/region/", get_producer_country,
          name="Get Producer Country JSON"),
-    path("regions/viti_areas/", get_country_viti_areas,
+    path("regions/viti-areas/", get_country_viti_areas,
          name="Get Country Viti Areas JSON"),
     path("colors/all/", get_colors, name="Get Colors JSON"),
     path("regions/all/", get_regions, name="Get Regions JSON"),
