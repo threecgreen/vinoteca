@@ -56,7 +56,7 @@ def test_get_country_viti_area(client, country):
     ("", "Red", "", "", ""),
     ("", "", "Yalumba", "", ""),
     ("", "", "", "California", ""),
-    ("", "", "", "", "Napa County"),
+    ("", "", "", "", "Russian River Valley"),
     ("", "Red", "Yalumba", "Australia", ""),
     ("Pinot Noir", "Red", "", "California", ""),
     ("", "", "", "", ""),
