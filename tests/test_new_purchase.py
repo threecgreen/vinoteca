@@ -6,6 +6,7 @@ import pytest
 @pytest.mark.django_db
 @pytest.mark.parametrize("page", [
     "/new/prev-purchased/",
+    "/new/first-time/",
     "/producers/region/",
     "/regions/viti-areas/",
     "/new/search-wines/"
