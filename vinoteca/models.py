@@ -1,14 +1,6 @@
 from django.db import models
 
 
-class Additionals(models.Model):
-    id = models.AutoField(primary_key=True)
-    additional = models.TextField(unique=True)
-
-    class Meta:
-        db_table = 'additionals'
-
-
 class Colors(models.Model):
     id = models.AutoField(primary_key=True)
     color = models.TextField(unique=True)
@@ -100,7 +92,6 @@ class Wines(models.Model):
     name = models.TextField(null=True)
     producer = models.ForeignKey("Producers", models.DO_NOTHING, db_column="producer_id", null=True)
     wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING, db_column="type_id", null=True)
-    additional = models.ForeignKey(Additionals, models.DO_NOTHING, db_column="add_id", null=True)
     color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id", null=True)
     rating = models.FloatField(null=True)
     inventory = models.IntegerField()

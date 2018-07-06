@@ -48,7 +48,7 @@ def test_by_the_numbers(connection):
 @pytest.mark.parametrize("limit", [5, 10])
 def test_top_purchase_categories(connection, limit):
     top_purchase_categories = top_purchase_wine_types_dash(connection, limit)
-    assert isinstance(top_purchase_categories[0], TopPurchaseCategory)
+    assert isinstance(top_purchase_categories[0], TopPurchaseWineType)
     assert len(top_purchase_categories) == limit
 
 

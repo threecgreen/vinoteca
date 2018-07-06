@@ -9,7 +9,7 @@ from vinoteca import __version__
 from vinoteca.models import Colors, Countries, Grapes, Producers, Purchases, \
     Stores, Wines, WineTypes, WineGrapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
-    g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
+    g_or_c_store, g_or_c_producer, g_or_c_country, flag_exists,\
     empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries
 
 
@@ -114,7 +114,6 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         wine_type = attr.ib(type=str)
         producer = attr.ib(type=str)
         region = attr.ib(type=str)
-        additional = attr.ib(type=str)
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
         inventory = attr.ib(type=int)
@@ -149,7 +148,6 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 , t.type_name
                 , p.name
                 , cn.name
-                , a.additional
                 , p.id
                 , p.country_id
                 , w.inventory
@@ -161,7 +159,6 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 LEFT JOIN producers p ON w.producer_id = p.id
                 LEFT JOIN countries cn ON p.country_id = cn.id
                 LEFT JOIN colors cl ON w.color_id = cl.id
-                LEFT JOIN additionals a ON w.add_id = a.id
                 LEFT JOIN viti_areas v ON w.viti_area_id = v.id
             WHERE w.id = ?;
             """
@@ -241,7 +238,6 @@ def edit_wine(request, wine_id: int):
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
         country = empty_to_none(request.POST.get("country"))
-        additional = empty_to_none(request.POST.get("additional"))
         wine.description = empty_to_none(request.POST.get("description"))
         wine.notes = empty_to_none(request.POST.get("notes"))
         wine.name = empty_to_none(request.POST.get("name"))
@@ -254,7 +250,6 @@ def edit_wine(request, wine_id: int):
         wine.wine_type = g_or_c_wine_type(request.POST.get("wine-type"))
         country = g_or_c_country(country) if country else None
         wine.producer = g_or_c_producer(producer, country)
-        wine.additional = g_or_c_additional(additional) if additional else None
         wine.viti_area = g_or_c_viti_area(viti_area, wine.producer.country) if viti_area else None
         wine.save()
 

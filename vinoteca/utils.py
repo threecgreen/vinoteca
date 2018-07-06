@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
 from pathlib import Path
 from typing import Any, List, Union
-from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
+from vinoteca.models import (Colors, Countries, Grapes, Producers,
     Purchases, Stores, VitiAreas, WineGrapes, WineTypes, Wines)
 from vinoteca.settings import BASE_DIR
 
@@ -18,17 +18,6 @@ def g_or_c_store(store: str) -> Union[Stores, None]:
         new_store = Stores(name=store)
         new_store.save()
         return new_store
-
-
-def g_or_c_additional(additional: str) -> Union[Additionals, None]:
-    if additional is None:
-        return
-    try:
-        return Additionals.objects.get(additional=additional)
-    except Additionals.DoesNotExist:
-        new_add = Additionals(additional=additional)
-        new_add.save()
-        return new_add
 
 
 def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:

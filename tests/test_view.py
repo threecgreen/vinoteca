@@ -111,7 +111,6 @@ def wine_and_post_data():
     post_data = {
         "producer": wine.producer.name,
         "country": wine.producer.country.name,
-        "additional": wine.additional.additional,
         "description": wine.description,
         "notes": wine.notes,
         "rating": wine.rating,
@@ -172,7 +171,6 @@ def test_edit_wine_image(client, upload_file):
     post_data = {
         "producer": wine.producer.name,
         "country": wine.producer.country.name,
-        "additional": wine.additional.additional,
         "description": wine.description,
         "notes": wine.notes,
         "rating": wine.rating,
