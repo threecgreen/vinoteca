@@ -59,6 +59,9 @@ def wine_table(request):
         inventory = attr.ib(type=int)
         vintage = attr.ib(type=int)
         viti_area = attr.ib(type=str)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     wine_query = """
         SELECT
@@ -73,6 +76,9 @@ def wine_table(request):
             , w.inventory
             , pu.vintage
             , v.name
+            , p.id
+            , c.id
+            , wt.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
