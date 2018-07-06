@@ -35,8 +35,9 @@ export function updateVitiAreaSelections(region, viti_area, getJSONURL) {
     ;
 }
 /** Enables/disables a rating slider depending on the state of checkbox. */
-export function toggleRating(hasRatingSelector, ratingSelector) {
-    $(hasRatingSelector).prop("checked", false);
+export function toggleRating(hasRatingSelector, ratingSelector, checked) {
+    if (checked === void 0) { checked = false; }
+    $(hasRatingSelector).prop("checked", checked);
     $(hasRatingSelector).on("click", function () {
         $(ratingSelector).prop("disabled", !$(this).prop("checked"));
     });

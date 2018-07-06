@@ -65,69 +65,16 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
-    <script src="{% static "js/jquery.tablesorter.widgets.js" %}"></script>
-    <!-- pager plugin -->
-    <link rel="stylesheet" href="{% static "css/jquery.tablesorter.pager.css" %}">
-    <script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
+<script src="{% static "js/jquery.tablesorter.js" %}"></script>
+<script src="{% static "js/jquery.tablesorter.widgets.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/jquery.tablesorter.pager.css" %}">
+<script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
+<script src="{% static "js/wine_table.js" %}"></script>
+<script type="module">
 
-    <script type="text/javascript">
-    const table = $("table");
-    $(function() {
-        table.tablesorter({
-            theme : "materialize",
-
-            widthFixed: true,
-            // widget code contained in the jquery.tablesorter.widgets.js file
-            widgets : [ "filter"],
-
-            widgetOptions : {
-                // reset filters button
-                filter_reset : ".reset",
-                {#filter_searchDelay: 500,#}
-                filter_ignoreCase: true,
-                // extra css class name (string or array) added to the filter element (input or select)
-                // select needs a "browser-default" class or it gets hidden
-                filter_cssFilter: ["browser-default"]
-            }
-        })
-        .tablesorterPager({
-
-            // target the pager markup - see the HTML block below
-            container: $(".ts-pager"),
-
-            // target the pager page select dropdown - choose a page
-            cssGoto: ".pagenum",
-
-            // remove rows from the table to speed up the sort of large tables.
-            // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-            removeRows: false,
-
-            // output string - default is '{page}/{totalPages}';
-            // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
-            size: 100
-        })
-        .bind('filterInit', function() {
-            // check that storage ulility is loaded
-            if ($.tablesorter.storage) {
-                // get saved filters
-                let f = $.tablesorter.storage(this, 'tablesorter-filters') || [];
-                $(this).trigger('search', [f]);
-            }
-        })
-        .bind('filterEnd', function(){
-            if ($.tablesorter.storage) {
-                // save current filters
-                let f = $(this).find('.tablesorter-filter').map(function(){
-                    return $(this).val() || '';
-                }).get();
-                $.tablesorter.storage(this, 'tablesorter-filters', f);
-            }
-        })
-    });
-    $(function () {
-        $('select').material_select();
-        $('#pagesize-sel').val("50");
-    });
-    </script>
+$(function () {
+    $('select').material_select();
+    $('#pagesize-sel').val("50");
+});
+</script>
 {% endblock %}

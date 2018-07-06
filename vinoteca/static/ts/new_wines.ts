@@ -1,7 +1,6 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 
-import { datepicker } from "./widgets";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
@@ -42,8 +41,10 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>, viti_
 }
 
 /** Enables/disables a rating slider depending on the state of checkbox. */
-export function toggleRating(hasRatingSelector: JQuery<HTMLInputElement>, ratingSelector: JQuery<HTMLInputElement>): void {
-    $(hasRatingSelector).prop("checked", false);
+export function toggleRating(hasRatingSelector: JQuery<HTMLInputElement>, ratingSelector: JQuery<HTMLInputElement>,
+    checked = false): void {
+
+    $(hasRatingSelector).prop("checked", checked);
     $(hasRatingSelector).on("click", function () {
         $(ratingSelector).prop("disabled", !$(this).prop("checked"));
     });
@@ -84,8 +85,8 @@ export function resetFormBtn(): void {
 
 /** Update search results when search fields change */
 export function liveWineSearch(searchParams: JQuery<HTMLInputElement>[], searchURL: string,
-    wineType: JQuery<HTMLInputElement>, color: JQuery<HTMLInputElement>, producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
-    vitiArea: JQuery<HTMLInputElement>) {
+    wineType: JQuery<HTMLInputElement>, color: JQuery<HTMLInputElement>, producer: JQuery<HTMLInputElement>,
+    region: JQuery<HTMLInputElement>, vitiArea: JQuery<HTMLInputElement>) {
 
     $(searchParams).on("change", function (e) {
         // Prevents double event
