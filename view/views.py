@@ -120,6 +120,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         inventory = attr.ib(type=int)
         viti_area = attr.ib(type=str)
         why = attr.ib(type=str)
+        wine_type_id = attr.ib(type=int)
 
     @attr.s
     class Grape(object):
@@ -154,6 +155,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 , w.inventory
                 , v.name
                 , w.why
+                , t.id
             FROM wines w
                 LEFT JOIN wine_types t ON w.type_id = t.id
                 LEFT JOIN producers p ON w.producer_id = p.id
@@ -356,6 +358,7 @@ def producer_profile(request, producer_id: int):
         rating = attr.ib(type=int)
         color = attr.ib(type=str)
         id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     producer = Producers.objects.get(id=producer_id)
     wines_query = """
@@ -369,6 +372,7 @@ def producer_profile(request, producer_id: int):
             , w.rating
             , c2.color
             , w.id
+            , t.id
         FROM wines w
             INNER JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
@@ -427,7 +431,7 @@ def country_profile(request, country_id: int):
         producer = attr.ib(type=str)
         id = attr.ib(type=int)
         producer_id = attr.ib(type=int)
-
+        wine_type_id = attr.ib(type=int)
 
     country = Countries.objects.get(id=country_id)
     viti_area_query = """
@@ -455,6 +459,7 @@ def country_profile(request, country_id: int):
             , p.name
             , w.id
             , p.id
+            , t.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
@@ -495,6 +500,7 @@ def inventory(request):
         wine_id = attr.ib(type=int)
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     query = """
         SELECT
@@ -509,6 +515,7 @@ def inventory(request):
             , w.id
             , p.id
             , c.id
+            , wt.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
@@ -587,3 +594,56 @@ def delete_purchase(request, wine_id: int, purchase_id: int):
     purchase = Purchases.objects.get(id=purchase_id)
     purchase.delete()
     return redirect("Edit Wine", wine_id=wine_id)
+
+
+def wine_type_profile(request, wine_type_id: int):
+    @attr.s
+    class WineTypeProfile(object):
+        last_purchased_date = attr.ib(type=str)
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        description = attr.ib(type=str)
+        total_quantity = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
+        rating = attr.ib(type=int)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+
+    wines_query = """
+        SELECT
+            max(p2.date)
+            , c2.color
+            , w.name
+            , w.description
+            , sum(p2.quantity)
+            , avg(p2.price)
+            , w.rating
+            , p.name
+            , c.name
+            , w.id
+            , p.id
+            , c.id
+        FROM wines w
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN purchases p2 ON w.id = p2.wine_id
+            LEFT JOIN wine_types t ON w.type_id = t.id
+            INNER JOIN countries c ON p.country_id = c.id
+            LEFT JOIN colors c2 on w.color_id = c2.id
+        WHERE t.id = ?
+        GROUP BY w.id
+        ORDER BY max(p2.date) DESC;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    wines = cursor.execute(wines_query, (wine_type_id, )).fetchall()
+    wines_profs = [WineTypeProfile(int_to_date(wine[0]), *wine[1:]) for wine in wines]
+    context = {
+        "wines": wines_profs,
+        "wine_type": WineTypes.objects.get(id=wine_type_id),
+        "page_name": "Wine Type Profile",
+        "version": __version__
+    }
+    return render(request, "wine_type_profile.html", context)

@@ -33,7 +33,8 @@ def upload_file():
     "/producers/75/edit/",
     "/regions/3/",
     "/wines/table/",
-    "/inventory/"
+    "/inventory/",
+    "/wine-types/30/",
 ])
 @pytest.mark.django_db
 def test_pages(client, url):
@@ -50,7 +51,8 @@ def test_pages(client, url):
     ("/producers/75/edit/", "Edit Producer"),
     ("/regions/3/", "Country Profile"),
     ("/wines/table/", "Wine Table"),
-    ("/inventory/", "Inventory")
+    ("/inventory/", "Inventory"),
+    ("/wine-types/30/", "Wine Type Profile"),
 ])
 @pytest.mark.django_db
 def test_urls(url, view_name):

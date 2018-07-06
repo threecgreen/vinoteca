@@ -52,5 +52,6 @@ urlpatterns = [
     path("wines/<int:wine_id>/change/<slug:sign>/inventory/", change_inventory,
          name="Change Inventory from Inventory",
          kwargs={"return_to_inventory": True}),
+    path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT})
 ]
