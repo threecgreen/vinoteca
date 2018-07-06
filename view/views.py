@@ -10,7 +10,8 @@ from vinoteca.models import Colors, Countries, Grapes, Producers, Purchases, \
     Stores, Wines, WineTypes, WineGrapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
     g_or_c_store, g_or_c_producer, g_or_c_country, flag_exists,\
-    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries
+    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries, \
+    convert_to_png
 
 
 def get_colors(request) -> JsonResponse:
@@ -188,7 +189,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
               , wg.percent
             FROM wine_grapes wg
             INNER JOIN grapes g ON wg.grape_id = g.id
-            WHERE wg.wine_id = ? 
+            WHERE wg.wine_id = ?
             ORDER BY wg.percent DESC, g.name;
         """
         recent_vintage_query = """
@@ -196,10 +197,10 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 p.vintage
             FROM purchases p
             INNER JOIN (
-                SELECT 
+                SELECT
                     max(date) as max_date
                 FROM purchases
-                WHERE wine_id = ? 
+                WHERE wine_id = ?
             ) sub ON sub.max_date = p.date
             WHERE wine_id = ? ;
         """
@@ -291,6 +292,8 @@ def edit_wine(request, wine_id: int):
                 (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").unlink()
             fs = FileSystemStorage()
             fs.save(str(wine.id) + ".png", wine_image)
+            # Convert to PNG to match extension
+            convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
 
         return redirect("Wine Profile", wine_id=wine_id)
     else:
@@ -577,7 +580,7 @@ def delete_wine(request, wine_id: int):
             p.id
         FROM producers p
         INNER JOIN wines w ON p.id = w.producer_id
-        WHERE w.id = ? 
+        WHERE w.id = ?
         GROUP BY p.id
         HAVING count(w.id) < 2;
     """

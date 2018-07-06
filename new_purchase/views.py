@@ -167,6 +167,8 @@ def insert_new_purchase_and_wine(request):
         wine_image = request.FILES["wine-image"]
         fs = FileSystemStorage()
         fs.save(str(wine.id) + ".png", wine_image)
+        # Convert to PNG to match extension
+        convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
 
     return redirect("Wine Profile", wine_id=wine.id)
 
