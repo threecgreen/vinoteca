@@ -32,9 +32,21 @@
                             </td>
                             <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">{{ wine.inventory_cnt }}</a></td>
                             <td><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">{{ wine.color|title }}</a> </td>
-                            <td><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
-                            <td><a href="{% url "Producer Profile" producer_id=wine.producer_id %}"> {{ wine.producer }}</a></td>
-                            <td><a href="{% url "Country Profile" country_id=wine.region_id %}"> {{ wine.region }}</a></td>
+                            {% if wine.wine_type_id %}
+                                <td><a href="{% url "Wine Type Profile" wine_type_id=wine.wine_type_id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
+                            {% else %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
+                            {% endif %}
+                            {% if wine.producer_id %}
+                                <td><a href="{% url "Producer Profile" producer_id=wine.producer_id %}"> {{ wine.producer }}</a></td>
+                            {% else %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}"> {{ wine.producer }}</a></td>
+                            {% endif %}
+                            {% if wine.region_id %}
+                                <td><a href="{% url "Country Profile" country_id=wine.region_id %}"> {{ wine.region }}</a></td>
+                            {% else %}
+                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}"> {{ wine.region }}</a></td>
+                            {% endif %}
                             <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">{{ wine.vintage|default_if_none:"NV" }}</a></td>
                             {% if wine.last_purchase_date %}
                                 <td><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">{{ wine.last_purchase_date|naturalday:"b j, Y"|title }}</a></td>

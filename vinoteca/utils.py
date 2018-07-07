@@ -1,10 +1,12 @@
+import os
 import sqlite3
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
 from pathlib import Path
+from PIL import Image
 from typing import Any, List, Union
-from vinoteca.models import (Additionals, Colors, Countries, Grapes, Producers,
+from vinoteca.models import (Colors, Countries, Grapes, Producers,
     Purchases, Stores, VitiAreas, WineGrapes, WineTypes, Wines)
 from vinoteca.settings import BASE_DIR
 
@@ -18,17 +20,6 @@ def g_or_c_store(store: str) -> Union[Stores, None]:
         new_store = Stores(name=store)
         new_store.save()
         return new_store
-
-
-def g_or_c_additional(additional: str) -> Union[Additionals, None]:
-    if additional is None:
-        return
-    try:
-        return Additionals.objects.get(additional=additional)
-    except Additionals.DoesNotExist:
-        new_add = Additionals(additional=additional)
-        new_add.save()
-        return new_add
 
 
 def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
@@ -144,3 +135,16 @@ def get_flag_countries() -> List[str]:
 
 def default_vintage_year() -> int:
     return (datetime.now() - relativedelta(years=2)).year
+
+
+def convert_to_png(in_file: Union[str, Path]) -> bool:
+    file_name, ext = os.path.splitext(in_file)
+    out_file = file_name + ".png"
+    # Given that previously every file has been saved with a PNG extension
+    # regardless of actual format, probably best to convert all to PNG for good
+    # measure.
+    try:
+        Image.open(in_file).save(out_file)
+    except IOError:
+        return False
+    return True

@@ -27,8 +27,8 @@
                     <label for="auto-producer">Producer</label>
                 </div>
                 <div class="input-field col s6 l3">
-                    <input type="text" id="auto-country" name="country" class="autocomplete">
-                    <label for="auto-country">Region</label>
+                    <input type="text" id="auto-region" name="country" class="autocomplete">
+                    <label for="auto-region">Region</label>
                 </div>
                 <div class="input-field col s6 l3">
                     <input type="text" id="auto-viti-area" name="viti-area" class="autocomplete">
@@ -58,114 +58,27 @@
 {% endblock %}
 
 {% block js %}
-    <script type="text/javascript">
-        const producers = [
-            {% for producer in producers %}"{{ producer.name }}",{% endfor %}
-        ];
-        const wine_type = $('#auto-wine-type');
-        const color = $('#color');
-        const producer = $('#auto-producer');
-        const country = $('#auto-country');
-        const viti_area = $('#auto-viti-area');
-        const search_params = $('.input-field');
-        const no_results = $('#no-results');
-        const table = $('table');
-        const reset_btn = $('#reset-btn');
+<script type="module">
+import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInput, resetFormBtn, liveWineSearch } from '{% static "js/new_wines.js" %}';
+import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
 
-        {# Cleans search results table and hides result elements #}
-        function clear_table() {
-            $(table).hide();
-            $(no_results).hide();
-            $('table tbody').empty();
-        }
+const producer = $('#auto-producer');
+const region = $('#auto-region');
 
-        $(function(){
-            $('select').material_select();
-            {# Search fields autocomplete #}
-            $(wine_type).autocomplete({
-                data: {
-                    {% for wine_type in wine_types %}
-                        "{{ wine_type.type_name }}": null,
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(producer).autocomplete({
-                data: {
-                    {% for producer in producers %}
-                        "{{ producer.name }}": null,
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(country).autocomplete({
-                data: {
-                    {% for country in countries %}
-                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(viti_area).autocomplete({
-                data: {
-                    {% for viti_area in viti_areas %}
-                        "{{ viti_area.name }}": null,
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
+$(function(){
+    $('select').material_select();
+    {# Search fields autocomplete #}
+    autocomplete("wine-type");
+    autocomplete("producer");
+    autocomplete("region");
+    autocomplete("viti-area");
 
-            {# Update whether region is active every time producer changes #}
-            $(producer).on("change", function () {
-                if ($.inArray($(this).val(), producers) !== -1) {
-                    $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
-                        $(country).val(responseJSON["country_name"]);
-                        $(country).prop('disabled', true);
-                        $("label[for='auto-country']").text("");
-                    })
-                } else {
-                    $(country).prop('disabled', false);
-                    $(country).val("");
-                    $("label[for='auto-country']").text("Country");
-                }
-            });
+    toggleRegion(producer, region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
 
-            {# Empty all fields when reset button is clicked #}
-            $(reset_btn).on("click", function () {
-                $('form')[0].reset();
-                clear_table();
-            });
-
-            {# Update search results when search fields change #}
-            $(search_params).on("change", function (e) {
-                {# Prevents double event #}
-                if (e.originalEvent) {
-                    return;
-                }
-                clear_table();
-                {# Send search fields data to Search Wines URL #}
-                $.get("{% url "Search Wines JSON" %}", {
-                    'wine_type': wine_type.val(),
-                    'color': color.val(),
-                    'producer': producer.val(),
-                    'country': country.val(),
-                    'viti_area': viti_area.val()
-                }, function (responseJSON) {
-                    {# Update search results with received data #}
-                    {# Greater than 1 because spaces count in length #}
-                    if (responseJSON['results'].length > 1) {
-                        $('table tbody').append(responseJSON['results']);
-                        $(table).show();
-                    } else {
-                        $(no_results).show();
-                    }
-                });
-            });
-        });
-    </script>
-    <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+    resetFormBtn();
+    liveWineSearch($(".input-field"), "{% url "Search Wines JSON" %}", $("#auto-wine-type"), $("#color"), producer,
+        region, $("#auto-viti-area"));
+});
+</script>
+<script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
 {% endblock %}

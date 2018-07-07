@@ -42,8 +42,8 @@
                         <label for="auto-producer">Producer</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input type="text" id="auto-country" name="country" class="autocomplete" required>
-                        <label for="auto-country">Region</label>
+                        <input type="text" id="auto-region" name="country" class="autocomplete" required>
+                        <label for="auto-region">Region</label>
                     </div>
                 </div>
                 <div class="row">
@@ -199,124 +199,28 @@
     </div>
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
-        const producers = [
-            {% for producer in producers %}"{{ producer.name }}",{% endfor %}
-        ];
-        const store = $('#auto-store');
-        const producer = $('#auto-producer');
-        const country = $('#auto-country');
-        const viti_area = $('#auto-viti-area');
-        const has_rating = $('#has-rating')[0];
-        const rating = $('#rating')[0];
-        const grape_buttons = $('.grape-btn');
-        const grape_names = $('[id^=auto-grape-]');
+<script type="module">
+import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInput } from '{% static "js/new_wines.js" %}';
+import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
 
-        $(function() {
-            {# Selection widget settings #}
-            $('.datepicker').pickadate({
-                selectMonths: true,             // Creates a dropdown to control month
-                selectYears: 15,                 // Creates a dropdown of 5 years to control year,
-                today: 'Today',
-                clear: 'Clear',
-                close: 'Ok',
-                closeOnSelect: false            // Close upon selecting a date,
-            });
-            $('select').material_select();
+$(function() {
 
-            {# Autocompletion #}
-            $(store).autocomplete({
-                data: {
-                    {% for store in stores %} "{{ store.name }}": null, {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $('#auto-wine-type').autocomplete({
-                data: {
-                    {% for wine_type in wine_types %} "{{ wine_type.type_name }}": null, {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(producer).autocomplete({
-                data: {
-                    {% for producer in producers %} "{{ producer.name }}": null,  {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(country).autocomplete({
-                data: {
-                    {% for country in countries %}
-                        "{{ country.name }}": {% if country.name in  flags  %} "/static/img/flags/{{ country.name }}.svg", {% else %} null, {% endif %}
-                    {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
-            $(grape_names).autocomplete({
-                data: {
-                    {% for grape in grapes %} "{{ grape.name }}": null, {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            });
+    datepicker();
+    $('select').material_select();
 
-            {# Disable country selection if producer is chosen and show grayed country for that producer #}
-            $(producer).on("change", function () {
-                if ($.inArray($(this).val(), producers) !== -1) {
-                    $.get("{% url "Get Producer Country JSON" %}", {'producer': $(this).val()}, function (responseJSON) {
-                            $(country).val(responseJSON["country_name"]);
-                            $(country).prop('disabled', true);
-                            $("label[for='auto-country']").text("");
-                            {# Update viticultural area autocomplete #}
-                            $(country).trigger("change");
-                        }
-                    )
-                } else {
-                    $(country).prop('disabled', false);
-                    $(country).val("");
-                    $("label[for='auto-country']").text("Country");
-                }
-            });
+    autocomplete("store");
+    autocomplete("wine-type");
+    autocomplete("producer");
+    autocomplete("grape", 5, 1, "[id^=auto-grape-]");
 
-            {# Update viticultural area autocomplete depending on country selection #}
-            $(country).on("change", function () {
-                $.get("{% url "Get Country Viti Areas JSON" %}", {"country": $(this).val()},
-                    function (responseJSON) {
-                        {#viti_areas = responseJSON["viti_areas"];#}
-                        $(viti_area).autocomplete({
-                            data: responseJSON,
-                            limit: 5,
-                            minLength: 1
-                        });
-                    }
-                )
-            });
+    const region = $('#auto-region');
+    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Country Viti Areas JSON" %}");
 
-            {# Enable/disable rating slider depending on checkbox #}
-            $(has_rating).prop('checked', false);
-            $(has_rating).on('click', function () {
-                $(rating).prop('disabled', !$(this).prop('checked'));
-            });
+    toggleRating($('#has-rating')[0], $('#rating')[0]);
 
-            {# Show additional grape forms with click of + button #}
-            $(grape_buttons).on("click", function () {
-                {# Hide parent div and thus self #}
-                $(this).parent().hide();
-                {#$(event.target).parent().hide();#}
-                let id_num = this.id.slice(-1);
-                {# All elements starting with grape-form-2 #}
-                $('[id^=grape-form-' + id_num + ']').show();
-                {# Show next plus button if less than 5 #}
-                if (parseInt(id_num) < 5){
-                    let grape_btn_parent = $('#grape-btn-' + (parseInt(id_num) + 1).toString()).parent();
-                    grape_btn_parent.show();
-                    grape_btn_parent.parent().show();
-                }
-            });
-        });
-    </script>
-    <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+    showNextGrapeInput($(".grape-btn"));
+});
+</script>
+<script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
 {% endblock %}

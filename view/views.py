@@ -2,14 +2,48 @@ import attr
 from datetime import date
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
-from vinoteca.models import Additionals, Colors, Countries, Grapes, Producers, Purchases, \
-    Stores, Wines, WineTypes, WineGrapes
+from vinoteca.models import Colors, Countries, Grapes, Producers, Purchases, \
+    Stores, Wines, WineTypes, WineGrapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
-    g_or_c_store, g_or_c_producer, g_or_c_country, g_or_c_additional, flag_exists,\
-    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area
+    g_or_c_store, g_or_c_producer, g_or_c_country, flag_exists,\
+    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_flag_countries, \
+    convert_to_png
+
+
+def get_colors(request) -> JsonResponse:
+    return JsonResponse({color.color: None for color in Colors.objects.all()})
+
+
+def get_regions(request) -> JsonResponse:
+    flag_countries = get_flag_countries()
+    regions = {}
+    for region in Countries.objects.all():
+        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name in flag_countries else None
+    return JsonResponse(regions)
+
+
+def get_producers(request) -> JsonResponse:
+    return JsonResponse({producer.name: None for producer in Producers.objects.all()})
+
+
+def get_stores(request) -> JsonResponse:
+    return JsonResponse({store.name: None for store in Stores.objects.all()})
+
+
+def get_grapes(request) -> JsonResponse:
+    return JsonResponse({grape.name: None for grape in Grapes.objects.all()})
+
+
+def get_wine_types(request) -> JsonResponse:
+    return JsonResponse({wine_type.type_name: None for wine_type in WineTypes.objects.all()})
+
+
+def get_viti_areas(request) -> JsonResponse:
+    return JsonResponse({viti_area.name: None for viti_area in VitiAreas.objects.all()})
 
 
 def wine_table(request):
@@ -26,6 +60,9 @@ def wine_table(request):
         inventory = attr.ib(type=int)
         vintage = attr.ib(type=int)
         viti_area = attr.ib(type=str)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     wine_query = """
         SELECT
@@ -40,6 +77,9 @@ def wine_table(request):
             , w.inventory
             , pu.vintage
             , v.name
+            , p.id
+            , c.id
+            , wt.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
@@ -81,12 +121,12 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         wine_type = attr.ib(type=str)
         producer = attr.ib(type=str)
         region = attr.ib(type=str)
-        additional = attr.ib(type=str)
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
         inventory = attr.ib(type=int)
         viti_area = attr.ib(type=str)
         why = attr.ib(type=str)
+        wine_type_id = attr.ib(type=int)
 
     @attr.s
     class Grape(object):
@@ -115,18 +155,17 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 , t.type_name
                 , p.name
                 , cn.name
-                , a.additional
                 , p.id
                 , p.country_id
                 , w.inventory
                 , v.name
                 , w.why
+                , t.id
             FROM wines w
                 LEFT JOIN wine_types t ON w.type_id = t.id
                 LEFT JOIN producers p ON w.producer_id = p.id
                 LEFT JOIN countries cn ON p.country_id = cn.id
                 LEFT JOIN colors cl ON w.color_id = cl.id
-                LEFT JOIN additionals a ON w.add_id = a.id
                 LEFT JOIN viti_areas v ON w.viti_area_id = v.id
             WHERE w.id = ?;
             """
@@ -150,7 +189,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
               , wg.percent
             FROM wine_grapes wg
             INNER JOIN grapes g ON wg.grape_id = g.id
-            WHERE wg.wine_id = ? 
+            WHERE wg.wine_id = ?
             ORDER BY wg.percent DESC, g.name;
         """
         recent_vintage_query = """
@@ -158,10 +197,10 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 p.vintage
             FROM purchases p
             INNER JOIN (
-                SELECT 
+                SELECT
                     max(date) as max_date
                 FROM purchases
-                WHERE wine_id = ? 
+                WHERE wine_id = ?
             ) sub ON sub.max_date = p.date
             WHERE wine_id = ? ;
         """
@@ -206,7 +245,6 @@ def edit_wine(request, wine_id: int):
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
         country = empty_to_none(request.POST.get("country"))
-        additional = empty_to_none(request.POST.get("additional"))
         wine.description = empty_to_none(request.POST.get("description"))
         wine.notes = empty_to_none(request.POST.get("notes"))
         wine.name = empty_to_none(request.POST.get("name"))
@@ -219,7 +257,6 @@ def edit_wine(request, wine_id: int):
         wine.wine_type = g_or_c_wine_type(request.POST.get("wine-type"))
         country = g_or_c_country(country) if country else None
         wine.producer = g_or_c_producer(producer, country)
-        wine.additional = g_or_c_additional(additional) if additional else None
         wine.viti_area = g_or_c_viti_area(viti_area, wine.producer.country) if viti_area else None
         wine.save()
 
@@ -255,6 +292,8 @@ def edit_wine(request, wine_id: int):
                 (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").unlink()
             fs = FileSystemStorage()
             fs.save(str(wine.id) + ".png", wine_image)
+            # Convert to PNG to match extension
+            convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
 
         return redirect("Wine Profile", wine_id=wine_id)
     else:
@@ -323,6 +362,7 @@ def producer_profile(request, producer_id: int):
         rating = attr.ib(type=int)
         color = attr.ib(type=str)
         id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     producer = Producers.objects.get(id=producer_id)
     wines_query = """
@@ -336,6 +376,7 @@ def producer_profile(request, producer_id: int):
             , w.rating
             , c2.color
             , w.id
+            , t.id
         FROM wines w
             INNER JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
@@ -394,7 +435,7 @@ def country_profile(request, country_id: int):
         producer = attr.ib(type=str)
         id = attr.ib(type=int)
         producer_id = attr.ib(type=int)
-
+        wine_type_id = attr.ib(type=int)
 
     country = Countries.objects.get(id=country_id)
     viti_area_query = """
@@ -422,6 +463,7 @@ def country_profile(request, country_id: int):
             , p.name
             , w.id
             , p.id
+            , t.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN purchases p2 ON w.id = p2.wine_id
@@ -462,6 +504,7 @@ def inventory(request):
         wine_id = attr.ib(type=int)
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
 
     query = """
         SELECT
@@ -476,6 +519,7 @@ def inventory(request):
             , w.id
             , p.id
             , c.id
+            , wt.id
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN countries c ON p.country_id = c.id
@@ -536,7 +580,7 @@ def delete_wine(request, wine_id: int):
             p.id
         FROM producers p
         INNER JOIN wines w ON p.id = w.producer_id
-        WHERE w.id = ? 
+        WHERE w.id = ?
         GROUP BY p.id
         HAVING count(w.id) < 2;
     """
@@ -554,3 +598,56 @@ def delete_purchase(request, wine_id: int, purchase_id: int):
     purchase = Purchases.objects.get(id=purchase_id)
     purchase.delete()
     return redirect("Edit Wine", wine_id=wine_id)
+
+
+def wine_type_profile(request, wine_type_id: int):
+    @attr.s
+    class WineTypeProfile(object):
+        last_purchased_date = attr.ib(type=str)
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        description = attr.ib(type=str)
+        total_quantity = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
+        rating = attr.ib(type=int)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+
+    wines_query = """
+        SELECT
+            max(p2.date)
+            , c2.color
+            , w.name
+            , w.description
+            , sum(p2.quantity)
+            , avg(p2.price)
+            , w.rating
+            , p.name
+            , c.name
+            , w.id
+            , p.id
+            , c.id
+        FROM wines w
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN purchases p2 ON w.id = p2.wine_id
+            LEFT JOIN wine_types t ON w.type_id = t.id
+            INNER JOIN countries c ON p.country_id = c.id
+            LEFT JOIN colors c2 on w.color_id = c2.id
+        WHERE t.id = ?
+        GROUP BY w.id
+        ORDER BY max(p2.date) DESC;
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    wines = cursor.execute(wines_query, (wine_type_id, )).fetchall()
+    wines_profs = [WineTypeProfile(int_to_date(wine[0]), *wine[1:]) for wine in wines]
+    context = {
+        "wines": wines_profs,
+        "wine_type": WineTypes.objects.get(id=wine_type_id),
+        "page_name": "Wine Type Profile",
+        "version": __version__
+    }
+    return render(request, "wine_type_profile.html", context)

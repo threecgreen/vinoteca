@@ -48,9 +48,21 @@
                     <tr>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color|default_if_none:""|title }}</a></td>
                         <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.inventory }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer }}</a></td>
-                        <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.region }}</a></td>
+                        {% if wine.wine_type_id %}
+                            <td><a href="{% url "Wine Type Profile" wine_type_id=wine.wine_type_id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
+                        {% else %}
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
+                        {% endif %}
+                        {% if wine.producer_id %}
+                            <td><a href="{% url "Producer Profile" producer_id=wine.producer_id %}">{{ wine.producer }}</a></td>
+                        {% else %}
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.producer }}</a></td>
+                        {% endif %}
+                        {% if wine.region_id %}
+                            <td><a href="{% url "Country Profile" country_id=wine.region_id %}">{{ wine.region }}</a></td>
+                        {% else %}
+                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.region }}</a></td>
+                        {% endif %}
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.viti_area|default_if_none:"" }}</a></td>
                         <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.vintage|default_if_none:"NV" }}</a></td>
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
@@ -65,69 +77,16 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static "js/jquery.tablesorter.js" %}"></script>
-    <script src="{% static "js/jquery.tablesorter.widgets.js" %}"></script>
-    <!-- pager plugin -->
-    <link rel="stylesheet" href="{% static "css/jquery.tablesorter.pager.css" %}">
-    <script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
+<script src="{% static "js/jquery.tablesorter.js" %}"></script>
+<script src="{% static "js/jquery.tablesorter.widgets.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/jquery.tablesorter.pager.css" %}">
+<script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
+<script src="{% static "js/wine_table.js" %}"></script>
+<script type="module">
 
-    <script type="text/javascript">
-    const table = $("table");
-    $(function() {
-        table.tablesorter({
-            theme : "materialize",
-
-            widthFixed: true,
-            // widget code contained in the jquery.tablesorter.widgets.js file
-            widgets : [ "filter"],
-
-            widgetOptions : {
-                // reset filters button
-                filter_reset : ".reset",
-                {#filter_searchDelay: 500,#}
-                filter_ignoreCase: true,
-                // extra css class name (string or array) added to the filter element (input or select)
-                // select needs a "browser-default" class or it gets hidden
-                filter_cssFilter: ["browser-default"]
-            }
-        })
-        .tablesorterPager({
-
-            // target the pager markup - see the HTML block below
-            container: $(".ts-pager"),
-
-            // target the pager page select dropdown - choose a page
-            cssGoto: ".pagenum",
-
-            // remove rows from the table to speed up the sort of large tables.
-            // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-            removeRows: false,
-
-            // output string - default is '{page}/{totalPages}';
-            // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
-            size: 100
-        })
-        .bind('filterInit', function() {
-            // check that storage ulility is loaded
-            if ($.tablesorter.storage) {
-                // get saved filters
-                let f = $.tablesorter.storage(this, 'tablesorter-filters') || [];
-                $(this).trigger('search', [f]);
-            }
-        })
-        .bind('filterEnd', function(){
-            if ($.tablesorter.storage) {
-                // save current filters
-                let f = $(this).find('.tablesorter-filter').map(function(){
-                    return $(this).val() || '';
-                }).get();
-                $.tablesorter.storage(this, 'tablesorter-filters', f);
-            }
-        })
-    });
-    $(function () {
-        $('select').material_select();
-        $('#pagesize-sel').val("50");
-    });
-    </script>
+$(function () {
+    $('select').material_select();
+    $('#pagesize-sel').val("50");
+});
+</script>
 {% endblock %}

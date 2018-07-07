@@ -18,6 +18,9 @@ class RecentPurchase(object):
     price = attr.ib(type=float)
     quantity = attr.ib(type=int)
     id = attr.ib(type=int)
+    producer_id = attr.ib(type=int)
+    region_id = attr.ib(type=int)
+    wine_type_id = attr.ib(type=int)
 
 
 def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPurchase]:
@@ -32,6 +35,9 @@ def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPu
             , p.price
             , p.quantity
             , w.id
+            , p2.id
+            , c.id
+            , t.id
         FROM purchases p
             LEFT JOIN wines w ON p.wine_id = w.id
             LEFT JOIN wine_types t ON w.type_id = t.id
@@ -52,20 +58,22 @@ def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPu
 
 
 @attr.s
-class TopPurchaseCategory(object):
-    name = attr.ib(type=str)
+class TopPurchaseWineType(object):
+    wine_type = attr.ib(type=str)
     quantity = attr.ib(type=int)
     variety = attr.ib(type=int)
     avg_price = attr.ib(type=float)
+    id = attr.ib(type=int)
 
 
-def top_purchase_categories_dash(conn: sqlite3.Connection, limit: int) -> List[TopPurchaseCategory]:
+def top_purchase_wine_types_dash(conn: sqlite3.Connection, limit: int) -> List[TopPurchaseWineType]:
     query = """
         SELECT
             t.type_name
             , sum(coalesce(p.quantity, 1))
             , count(w.id)
             , avg(p.price)
+            , t.id
         FROM wine_types t
             LEFT JOIN wines w ON t.id = w.type_id
             LEFT JOIN purchases p ON w.id = p.wine_id
@@ -74,7 +82,7 @@ def top_purchase_categories_dash(conn: sqlite3.Connection, limit: int) -> List[T
         LIMIT ?;
     """
     cursor = conn.cursor()
-    return [TopPurchaseCategory(*row) for row in cursor.execute(query, (limit, )).fetchall()]
+    return [TopPurchaseWineType(*row) for row in cursor.execute(query, (limit, )).fetchall()]
 
 
 @attr.s
@@ -232,7 +240,7 @@ def dashboards(request):
         "countries": countries_dash(conn, 6),
         "producers": producers_dash(conn, 7),
         "purchases": recent_purchases_dash(conn, 10),
-        "top_categories": top_purchase_categories_dash(conn, 10),
+        "top_wine_types": top_purchase_wine_types_dash(conn, 10),
         "years": purchases_by_year(conn),
         "page_name": "Home",
         "version": __version__,

@@ -13,8 +13,8 @@
                             <label for="producer">Producer</label>
                         </div>
                         <div class="input-field col s12 m6">
-                            <input type="text" id="auto-country" name="country" class="autocomplete" required {% if producer.country %}value="{{ producer.country.name }}"{% endif %}>
-                            <label for="auto-country">Region</label>
+                            <input type="text" id="auto-region" name="country" class="autocomplete" required {% if producer.country %}value="{{ producer.country.name }}"{% endif %}>
+                            <label for="auto-region">Region</label>
                         </div>
                     </div>
                     {% include "special_chars.html" %}
@@ -32,18 +32,12 @@
     </div>
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
-        $(function () {
-            $('#auto-country').autocomplete({
-                data: {
-                {% for country in countries %}
-                    "{{ country.name }}": null,
-                {% endfor %}
-                },
-                limit: 5,
-                minLength: 1
-            })
-        });
-    </script>
-    <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+<script type="module">
+import { autocomplete} from "{% static "js/widgets.js" %}";
+
+$(function () {
+    autocomplete("region");
+});
+</script>
+<script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
 {% endblock %}

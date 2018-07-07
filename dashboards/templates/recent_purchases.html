@@ -16,9 +16,21 @@
         <tr>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.date|naturalday:"b j"|title }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.store }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.producer }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.region }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.name|default_if_none:"" }} {{ purchase.type }}</a></td>
+            {% if purchase.producer_id %}
+                <td><a href="{% url "Producer Profile" producer_id=purchase.producer_id %}">{{ purchase.producer }}</a></td>
+            {% else %}
+                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ purchase.producer }}</a></td>
+            {% endif %}
+            {% if purchase.region_id %}
+                <td><a href="{% url "Country Profile" country_id=purchase.region_id %}">{{ purchase.region }}</a></td>
+            {% else %}
+                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ purchase.region }}</a></td>
+            {% endif %}
+            {% if purchase.wine_type_id %}
+                <td><a href="{% url "Wine Type Profile" wine_type_id=purchase.wine_type_id %}">{{ purchase.name|default_if_none:"" }} {{ purchase.type }}</a></td>
+            {% else %}
+                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ purchase.name|default_if_none:"" }} {{ purchase.type }}</a></td>
+            {% endif %}
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.price|default_if_none:"&ndash;"|floatformat:2 }}</a></td>
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.id %}">{{ purchase.quantity }}</a></td>
         </tr>
