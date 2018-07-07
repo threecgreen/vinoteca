@@ -163,7 +163,7 @@
                         <td class="num-col">{{ purchase.quantity|default_if_none:"&ndash;" }}</td>
                         <td class="num-col">{{ purchase.price|floatformat:2|default_if_none:"&ndash;" }}</td>
                         <td class="num-col">{{ purchase.vintage|default_if_none:"NV" }}</td>
-                        <td>{{ purchase.store }}</td>
+                        <td>{{ purchase.store|default_if_none:"" }}</td>
                         <td>{{ purchase.why|default_if_none:"" }}</td>
                     </tr>
                 {% endfor %}
