@@ -4,24 +4,22 @@
 import { Dict } from "./dict"
 
 /** Creates a pie chart on the provided canvas using the provided data. */
-export function pieChart(chartID: JQuery<HTMLCanvasElement>, data: Dict<number>): void {
+export function pieChart(label: string, chartID: JQuery<HTMLCanvasElement>, data: Dict<number>): void {
+    let chartVals: number[];
+    for (let key in data) {
+        chartVals.concat(data[key]);
+    }
+
     const config = {
         type: 'pie',
         data: {
             datasets: [{
-                data: [
-                ],
+                data: chartVals,
                 backgroundColor: [
                 ],
-                label: 'Dataset 1'
+                label: label
             }],
-            labels: [
-                'Red',
-                'Orange',
-                'Yellow',
-                'Green',
-                'Blue'
-            ]
+            labels: Object.getOwnPropertyNames(data)
         },
         options: {
             responsive: true

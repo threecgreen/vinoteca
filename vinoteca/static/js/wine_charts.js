@@ -1,22 +1,20 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 /** Creates a pie chart on the provided canvas using the provided data. */
-export function pieChart(chartID, data) {
+export function pieChart(label, chartID, data) {
+    var chartVals;
+    for (var key in data) {
+        chartVals.concat(data[key]);
+    }
     var config = {
         type: 'pie',
         data: {
             datasets: [{
-                    data: [],
+                    data: chartVals,
                     backgroundColor: [],
-                    label: 'Dataset 1'
+                    label: label
                 }],
-            labels: [
-                'Red',
-                'Orange',
-                'Yellow',
-                'Green',
-                'Blue'
-            ]
+            labels: Object.getOwnPropertyNames(data)
         },
         options: {
             responsive: true
