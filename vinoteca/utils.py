@@ -87,19 +87,19 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
 
 def c_wine(desc: Union[str], notes: Union[str], name: Union[str], prod: Producers,
            wine_type: WineTypes, color: Colors, rating: Union[float],
-           inventory: int, viti_area: VitiAreas) -> Wines:
+           inventory: int, viti_area: VitiAreas, why: Union[str]) -> Wines:
     new_wine = Wines(description=desc, notes=notes, name=name, producer=prod,
                      wine_type=wine_type, color=color, rating=rating,
-                     inventory=inventory, viti_area=viti_area)
+                     inventory=inventory, viti_area=viti_area, why=why)
     new_wine.save()
     return new_wine
 
 
-def c_purchase(wine: Wines, store: Stores, price: float, why: str, purchase_date: str, vintage: int,
+def c_purchase(wine: Wines, store: Stores, price: float, memo: str, purchase_date: str, vintage: int,
                quantity: int) -> None:
     # Convert date str to int YYYYMMDD
     purchase_date = date_str_to_int(purchase_date)
-    new_purchase = Purchases(store=store, wine=wine, price=price, why=why, date=purchase_date,
+    new_purchase = Purchases(store=store, wine=wine, price=price, memo=memo, date=purchase_date,
                              vintage=vintage, quantity=quantity)
     new_purchase.save()
 

@@ -199,7 +199,7 @@ def test_edit_purchases(client, attr, val):
         "quantity": purchase.quantity,
         "price": purchase.price,
         "vintage": purchase.vintage,
-        "why": purchase.why,
+        "memo": purchase.memo,
         "store": purchase.store
     }
     post_data[attr] = val
