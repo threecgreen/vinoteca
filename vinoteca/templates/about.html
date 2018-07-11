@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% block about-nav %}class="active"{% endblock %}
 {% block body %}
     <div class="container">
 
@@ -48,48 +47,57 @@
         <br>
 
         <h4><a class="page-link" name="changelog">Changelog</a></h4>
+
+        <h5>2.1.1</h5>
+        <ul class="bullets">
+            <li>Fix &ldquo;Add to Inventory&rdquo; button bug</li>
+            <li>Fix bug where there was no option to add to inventory for a new purchase of an existing wine</li>
+            <li>Fix bug where &ldquo;None&rdquo; would sometimes appear in wine names</li>
+            <li>Fix bug with Viticultural Area duplication and removed existing duplicates</li>
+            <li>Add characters with caron (ˇ) to special characters buttons list</li>
+        </ul>
+
         <h5>2.1.0</h5>
         <ul class="bullets">
-            <li>Fixed image rotation bug</li>
-            <li>Fixed bug where there was no option to edit wines that had no purchases</li>
-            <li>Finished deprecating Additional; remaining information has been moved to description</li>
-            <li>Added a Wine Type Profile</li>
-            <li>Removed a duplicate Viticultural Area</li>
-            <li>Migrated to Typescript</li>
+            <li>Fix image rotation bug</li>
+            <li>Fix bug where there was no option to edit wines that had no purchases</li>
+            <li>Finish deprecating Additional; remaining information has been moved to description</li>
+            <li>Add a Wine Type Profile</li>
+            <li>Remove a duplicate Viticultural Area</li>
+            <li>Migrate to Typescript</li>
         </ul>
 
         <h5>2.0.2</h5>
         <ul class="bullets">
-            <li>Stopped Chrome autocomplete from competing with site autocomplete for forms</li>
-            <li>Updated &ldquo;New/Previously Purchased&rdquo; search</li>
-            <li>Added link to Help page in footer</li>
-            <li>Increased use of horizontal space</li>
-            <li>Fixed bug where lack of rating in New Wine form caused error</li>
-            <li>Fixed typo where wine color was still referred to as &ldquo;Type&rdquo;</li>
+            <li>Stop Chrome autocomplete from competing with site autocomplete for forms</li>
+            <li>Update &ldquo;New/Previously Purchased&rdquo; search</li>
+            <li>Add link to Help page in footer</li>
+            <li>Increase use of horizontal space</li>
+            <li>Fix bug where lack of rating in New Wine form caused error</li>
+            <li>Fix typo where wine color was still referred to as &ldquo;Type&rdquo;</li>
         </ul>
 
         <h5>2.0.1</h5>
         <ul class="bullets">
-            {#            <li>Fixed wine image rotation issue with EXIF metadata</li>#}
-            <li>Fixed editing of wine&rsquo;s additional field, but removed ability to add it after it is gone</li>
-            <li>Removed deprecated JavaScript syntax</li>
+            <li>Fix editing of wine&rsquo;s additional field, but removed ability to add it after it is gone</li>
+            <li>Remove deprecated JavaScript syntax</li>
         </ul>
 
         <h5>2.0.0</h5>
         <ul class="bullets">
-            <li>Added name column to wines for further differentiation</li>
-            <li>Added buttons for inserting special characters on relevant pages</li>
-            <li>Fixed issue where editing a wine&rsquo;s viticultural area failed</li>
-            <li>Fixed bug where wine images wouldn&rsquo;t display</li>
-            <li>Fixed bug with wines/producers without a region</li>
+            <li>Add name column to wines for further differentiation</li>
+            <li>Add buttons for inserting special characters on relevant pages</li>
+            <li>Fix issue where editing a wine&rsquo;s viticultural area failed</li>
+            <li>Fix bug where wine images wouldn&rsquo;t display</li>
+            <li>Fix bug with wines/producers without a region</li>
             <li>Formatting and appearance changes:<ul class="bullets">
-                <li>Added year to purchase date in inventory table</li>
-                <li>Fixed where inventory minus button would never appear in wine profiles</li>
-                <li>Fixed bug where edit producer cancel button didn&rsquo;t work</li>
-                <li>Fixed reset button color in wines table</li>
-                <li>Fixed recent purchases dashboard float formatting</li>
-                <li>Standardized dashboard naming</li>
-                <li>Reduced spacing in inventory and country profile tables</li></ul></li>
+                <li>Add year to purchase date in inventory table</li>
+                <li>Fix where inventory minus button would never appear in wine profiles</li>
+                <li>Fix bug where edit producer cancel button didn&rsquo;t work</li>
+                <li>Fix reset button color in wines table</li>
+                <li>Fix recent purchases dashboard float formatting</li>
+                <li>Standardize dashboard naming</li>
+                <li>Reduce spacing in inventory and country profile tables</li></ul></li>
             <li>Database now managed by Django for easier future schema changes</li>
             <li>Add Changelog link</li>
         </ul>
@@ -97,9 +105,9 @@
         <h5>1.3.0</h5>
         <ul class="bullets">
             <li>vinoteca now remembers previous filters in the wine table</li>
-            <li>Fixed bug preventing adding grape composition data to extant wines</li>
-            <li>Fixed bug where viticultural area in wine profiles always appeared as first viticultural area created for a producer's region</li>
-            <li>Fixed bug where the store was not displayed in recent purchases in wine profiles</li>
+            <li>Fix bug preventing adding grape composition data to extant wines</li>
+            <li>Fix bug where viticultural area in wine profiles always appeared as first viticultural area created for a producer's region</li>
+            <li>Fix bug where the store was not displayed in recent purchases in wine profiles</li>
         </ul>
 
         <h5>1.2.2</h5>
@@ -132,15 +140,15 @@
 
         <h5>1.1.0</h5>
         <ul class="bullets">
-            <li>Added ability to delete wines and purchases</li>
-            <li>Added ability to edit producers</li>
+            <li>Add ability to delete wines and purchases</li>
+            <li>Add ability to edit producers</li>
             <li>Default vintage year is now two years before the current year</li>
-            <li>Added tests for image upload, and purchase and wine editing</li>
+            <li>Add tests for image upload, and purchase and wine editing</li>
             <li>Order purchases by reverse chronological order</li>
-            <li>Improved CLI</li>
-            <li>Fixed bug where adding non-vintage wines would cause an exception</li>
-            <li>Fixed bug where grapes with no composition percentage would cause an exception</li>
-            <li>Removed Django debug toolbar dependency</li>
+            <li>Improve CLI</li>
+            <li>Fix bug where adding non-vintage wines would cause an exception</li>
+            <li>Fix bug where grapes with no composition percentage would cause an exception</li>
+            <li>Remove Django debug toolbar dependency</li>
         </ul>
 
         <h5>1.0.2</h5>
@@ -150,43 +158,43 @@
 
         <h5>1.0.1</h5>
         <ul class="bullets">
-            <li>Replaced notes with grape composition in wines table</li>
+            <li>Replace notes with grape composition in wines table</li>
             <li>Scripts now stop if any step fails</li>
-            <li>Added more testing</li>
+            <li>Add more testing</li>
         </ul>
 
         <h5>1.0.0</h5>
         <p>Several major additions and changes were made to the point where it felt usable enough to be the initial
             full version.</p>
         <ul class="bullets">
-            <li>Added Viticultural Area field</li>
-            <li>Added Grape composition table field (many-to-many relationship)</li>
+            <li>Add Viticultural Area field</li>
+            <li>Add Grape composition table field (many-to-many relationship)</li>
             <li>Inventory<ul class="bullets">
-                <li>Added the inventory field to each wine</li>
-                <li>Added view where the wine inventory can be viewed and easily edited</li>
+                <li>Add the inventory field to each wine</li>
+                <li>Add view where the wine inventory can be viewed and easily edited</li>
             </ul></li>
             <li>Country profile improvements<ul class="bullets">
-                <li>Added flags to profile</li>
-                <li>Added viticultural areas table</li>
+                <li>Add flags to profile</li>
+                <li>Add viticultural areas table</li>
             </ul></li>
-            <li>Improved sorting and filtering with JQuery tablesorter plug-in, removing the need for separate
+            <li>Improve sorting and filtering with JQuery tablesorter plug-in, removing the need for separate
                 sorting and filtering views</li>
-            <li>Added vector flags for U.S. states</li>
-            <li>Added the ability to upload images for each wine</li>
+            <li>Add vector flags for U.S. states</li>
+            <li>Add the ability to upload images for each wine</li>
             <li>Wine Color renamed to Type and Wine Type renamed to Name</li>
-            <li>Deprecated Additional, as its purpose was no longer needed with dedicated fields for grape
+            <li>Deprecate Additional, as its purpose was no longer needed with dedicated fields for grape
                 composition and viticultural area</li>
             <li>Store address field was removed as it was found to be unneeded</li>
-            <li>Improved test coverage</li>
-            <li>Added migrate line to the update script</li>
+            <li>Improve test coverage</li>
+            <li>Add migrate line to the update script</li>
         </ul>
 
         <h5>0.3.0</h5>
         <ul class="bullets">
-            <li>Added country/region profile</li>
-            <li>Added wine producer profile</li>
-            <li>Fixed issue with automatic browser opening on Windows</li>
-            <li>Upgraded to Django 2.0</li>
+            <li>Add country/region profile</li>
+            <li>Add wine producer profile</li>
+            <li>Fix issue with automatic browser opening on Windows</li>
+            <li>Upgrade to Django 2.0</li>
         </ul>
 
         <h5>0.2.1</h5>
