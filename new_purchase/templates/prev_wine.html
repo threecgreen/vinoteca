@@ -11,23 +11,32 @@
                         <input id="purchase-date" name="purchase-date" type="text" class="datepicker" required>
                         <label for="purchase-date">Purchase Date</label>
                     </div>
-                    <div class="input-field col s6 m3">
+                    <div class="col s3 m1">
+                        <div class="switch">
+                            <label for="add-to-inventory">
+                                Add to Inventory
+                                <input type="checkbox" id="add-to-inventory" name="add-to-inventory" checked="checked">
+                                <span class="lever"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-field col s3 m2">
                         <input id="quantity" name="quantity" type="number" class="validate" required>
                         <label for="quantity">Quantity</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input id="price" name="price" type="number" class="validate" step="0.01">
+                        <input id="price" name="price" type="number" class="validate" step="0.01" min="0">
                         <label for="price">Price</label>
                     </div>
                     <div class="input-field col s6 m3">
                         <input id="vintage" name="vintage" type="number" class="validate" value="{{ default_vintage }}">
                         <label for="vintage">Vintage</label>
                     </div>
-                    <div class="input-field col s12 m4">
+                    <div class="input-field col s12 m3">
                         <input type="text" id="auto-store" name="store" class="autocomplete">
                         <label for="auto-store">Store</label>
                     </div>
-                    <div class="input-field col s12 m4">
+                    <div class="input-field col s12 m6">
                         <input type="text" id="why" name="why" class="validate">
                         <label for="why">Why</label>
                     </div>

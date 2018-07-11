@@ -61,6 +61,29 @@
                         <input id="notes" name="notes" type="text" class="validate">
                         <label for="notes">Notes</label>
                     </div>
+                    <div class="input-field col s12 m6">
+                        <input id="why" name="why" type="text" class="validate">
+                        <label for="why">Why</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s3 m1">
+                        <div class="switch">
+                            <label for="add-to-inventory">
+                                Add to Inventory
+                                <input type="checkbox" id="add-to-inventory" name="add-to-inventory" checked="checked">
+                                <span class="lever"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-field col s3 m2">
+                        <input id="quantity" name="quantity" type="number" class="validate" value=1 min="0">
+                        <label for="quantity">Quantity</label>
+                    </div>
+                    <div class="input-field col s6 m3">
+                        <input id="memo" name="memo" type="text" class="validate">
+                        <label for="memo">Memo</label>
+                    </div>
                     <div class="range-field col s4 m2">
                         <div class="switch">
                             <label for="has-rating">
@@ -75,26 +98,12 @@
                         </p>
                     </div>
                     <div class="input-field col s4 m2">
-                        <input id="price" name="price" type="number" class="validate" step="0.01">
+                        <input id="price" name="price" type="number" class="validate" step="0.01" min="0">
                         <label for="price">Price</label>
                     </div>
                     <div class="input-field col s4 m2">
                         <input id="vintage" name="vintage" type="number" class="validate" value="{{ default_vintage }}">
                         <label for="vintage">Vintage</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s4 m2">
-                        <input id="quantity" name="quantity" type="number" class="validate" value=1>
-                        <label for="quantity">Quantity</label>
-                    </div>
-                    <div class="input-field col s8 m4">
-                        <input type="checkbox" class="filled-in" id="add-to-inventory" name="add-to-inventory" checked="checked"/>
-                        <label for="add-to-inventory">Add to Inventory</label>
-                    </div>
-                    <div class="input-field col s12 m6">
-                        <input id="why" name="why" type="text" class="validate">
-                        <label for="why">Why</label>
                     </div>
                 </div>
                 {# Grapes #}
@@ -204,13 +213,13 @@ import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInpu
 import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
 
 $(function() {
-
     datepicker();
     $('select').material_select();
 
     autocomplete("store");
     autocomplete("wine-type");
     autocomplete("producer");
+    autocomplete("region");
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
 
     const region = $('#auto-region');

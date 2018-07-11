@@ -1,15 +1,18 @@
 import attr
+from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from pathlib import Path
 from view.views import wine_profile_base
 from vinoteca import __version__
 from vinoteca.models import (Colors, Countries, Grapes, Producers, Stores,
                              VitiAreas, WineTypes, Wines)
 from vinoteca.utils import (g_or_c_country, g_or_c_producer, g_or_c_store,
                             g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
-                            c_or_u_wine_grapes, get_flag_countries, default_vintage_year)
+                            c_or_u_wine_grapes, get_flag_countries, default_vintage_year,
+                            convert_to_png)
 from vinoteca.views import get_connection
 
 
@@ -129,6 +132,7 @@ def insert_new_purchase_and_wine(request):
     if price:
         price = float(price)
     why = empty_to_none(request.POST.get("why"))
+    memo = empty_to_none(request.POST.get("memo"))
     notes = empty_to_none(request.POST.get("notes"))
     name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
@@ -147,8 +151,8 @@ def insert_new_purchase_and_wine(request):
     producer = g_or_c_producer(producer, country)
     viti_area = g_or_c_viti_area(viti_area, country)
     wine = c_wine(description, notes, name, producer, wine_type, color, rating,
-                  inventory, viti_area)
-    c_purchase(wine, store, price, why, purchase_date, vintage, quantity)
+                  inventory, viti_area, why)
+    c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
     # Grape composition
     if request.POST.get("grape-1"):
         for i in range(1, 6):
@@ -168,7 +172,7 @@ def insert_new_purchase_and_wine(request):
         fs = FileSystemStorage()
         fs.save(str(wine.id) + ".png", wine_image)
         # Convert to PNG to match extension
-        convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
+        convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine.id}.png").resolve())
 
     return redirect("Wine Profile", wine_id=wine.id)
 
