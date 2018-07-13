@@ -27,3 +27,8 @@ export function datepicker(selector = ".datepicker"): void {
         closeOnSelect: false             // Close upon selecting a date,
     });
 }
+
+/** Streamlines the Materialize CSS tab widget. */
+export function tabs(selector = ".tabs"): void {
+    $(selector).tabs();
+}
