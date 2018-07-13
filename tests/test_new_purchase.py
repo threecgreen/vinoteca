@@ -1,6 +1,9 @@
 from datetime import date
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import resolve
 import pytest
+
+from vinoteca.models import VitiAreas
 
 
 @pytest.mark.django_db
@@ -136,3 +139,32 @@ def test_insert_new_purchase(client, store, wine_type, producer, country, descri
         post_data["grape-{}-pct".format(len(grapes) + 1)] = 100
     response = client.post("/new/first-time/", post_data)
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_no_duplicate_viti_area(client):
+    r"""Some duplicate areas had been created, this test tries to create duplicates and tests
+    whether they fail, because duplicates are undesired behavior."""
+    post_data = {
+        "store": "Surdyk's",
+        "purchase-date": date.today().strftime("%d %B, %Y"),
+        "wine-type": "Chardonnay",
+        "producer": "A new producer",
+        "country": "Spain",
+        "price": 0.01,
+        "viti-area": "Rueda2",
+        "color": "white",
+        "has-rating": False,
+        "vintage": 2016,
+        "quantity": 1,
+        "add-to-inventory": False,
+    }
+    # First make sure no wines in the viti area 'Rueda' exist
+    assert VitiAreas.objects.filter(name="Rueda2").count() == 0
+    response = client.post("/new/first-time/", post_data)
+    assert response.status_code == 302
+    # Change producer that shouldn't matter
+    post_data["producer"] = "A second producer"
+    response = client.post("/new/first-time/", post_data)
+    assert response.status_code == 302
+    assert VitiAreas.objects.filter(name="Rueda2").count() == 1
