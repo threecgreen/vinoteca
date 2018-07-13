@@ -24,11 +24,13 @@ info_text()
 scripts_dir="$(dirname $0)"
 root_dir="$(dirname "$scripts_dir")"
 
+source activate vinoteca 2> /dev/null || error_exit "Failed to find vinoteca Python environment."
+old_ver="$(python -c 'import vinoteca; print(vinoteca.__version__)')"
+
 info_text "Updating project source..."
 git reset --hard
 git pull -r || error_exit "Failed to update source code."
 
-source activate vinoteca 2> /dev/null || error_exit "Failed to find vinoteca Python environment."
 # Sometimes needed in WSL
 if [ -f $HOME/miniconda/lib/libcrypto.so.1.0.0 ]; then
     execstack -c $HOME/miniconda/lib/libcrypto.so.1.0.0
@@ -45,7 +47,10 @@ info_text "Running test suite..."
 bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."
 
 echo
-info_text "Successfully updated vinoteca to version $(python -c 'import vinoteca; print(vinoteca.__version__)')"
+new_ver="$(python -c 'import vinoteca; print(vinoteca.__version__)')"
+if [ "$old_ver" != "$new_ver" ]; then
+    info_text "Successfully updated vinoteca from version $old_ver to $new_ver"
+fi
 
 #read -rp "Would you like to add an alias for vinoteca to your .bashrc? [y/N] " response
 #case "$response" in
