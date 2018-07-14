@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load static %}
 {% block new-nav %}class="active"{% endblock %}
 {% block body %}
 <div class="container">
@@ -59,116 +60,127 @@
         {% if grapes %}
         <div class="col s12 m6">
             <h5 class="light">Grape composition</h5>
-            <table class="highlight responsive">
-                <thead>
-                <tr>
-                    <th>Grape</th>
-                    <th class="num-col">Percentage</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for grape in grapes %}
+            <ul class="tabs tabs-fixed-with">
+                <li class="wine-red-tab tab col s6" id="grape-comp-table-li"><a href="#grape-comp-table-tab">Table</a></li>
+                <li class="wine-green-tab tab col s6" id="grape-comp-chart-li"><a href="#grape-comp-chart-tab">Pie chart</a></li>
+            </ul>
+            <div id="grape-comp-table-tab" class="s12">
+                <table class="highlight responsive">
+                    <thead>
                     <tr>
-                        <td>{{ grape.name }}</td>
-                        <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
+                        <th>Grape</th>
+                        <th class="num-col">Percentage</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                    {% for grape in grapes %}
+                        <tr>
+                            <td>{{ grape.name }}</td>
+                            <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="grape-comp-chart-tab" class="s12">
+                <canvas id="grape-comp-chart"></canvas>
+            </div>
         {% endif %}
     </div>
-    {% if has_img %}
-    <div class="row">
-        <div class="col s12 m7">
-            <div class="card">
-                <div class="card-image">
-                    <img src="/media/{{ wine.id }}.png" alt="Wine Image">
+        {% if has_img %}
+            <div class="row">
+                <div class="col s12 m7">
+                    <div class="card">
+                        <div class="card-image">
+                            <img src="/media/{{ wine.id }}.png" alt="Wine Image">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    {% endif %}
+        {% endif %}
     {% endblock %}
     {% block prev_purchases %}
-    <div class="row">
-        <div class="col s9">
-            {% if purchases %}
-            <h4>Purchases</h4>
-            {% else %}
-            <h5>No previously recorded purchases.</h5>
-            {% endif  %}
-        </div>
-        <div class="col s3 fixed-action-div">
-            {% block edit-wine %}
-            <div class="fixed-action-btn horizontal">
-                <a class="btn-floating btn-large pink darken-3">
-                    <i class="material-icons">menu</i>
-                </a>
-                <ul>
-                    <li>
-                        <a class="btn-floating light-green darken-2 waves-effect waves-light" href="{% url "New Purchase Wine" wine_id=wine.id %}">
-                            <i class="material-icons">add</i>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="btn-floating yellow darken-2 waves-effect waves-light" href="{% url "Edit Wine" wine_id=wine.id %}">
-                            <i class="material-icons">edit</i>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="btn-floating pink darken-3 modal-trigger waves-effect waves-light" href="#delete-modal">
-                            <i class="material-icons">delete</i>
-                        </a>
-                    </li>
-                </ul>
+        <div class="row">
+            <div class="col s9">
+                {% if purchases %}
+                    <h4>Purchases</h4>
+                {% else %}
+                    <h5>No previously recorded purchases.</h5>
+                {% endif  %}
             </div>
-            <div id="delete-modal" class="modal ">
-                <div class="modal-content">
-                    <h5>Are you sure you want to delete this wine?</h5>
-                    <p>This action is not reversible.</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="{% url "Delete Wine" wine_id=wine.id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this wine</a>
-                    <a href="" class="btn modal-action modal-close light-green darken-2 waves-effect waves-light">No</a>
-                </div>
+            <div class="col s3 fixed-action-div">
+                {% block edit-wine %}
+                    <div class="fixed-action-btn horizontal">
+                        <a class="btn-floating btn-large pink darken-3">
+                            <i class="material-icons">menu</i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="btn-floating light-green darken-2 waves-effect waves-light" href="{% url "New Purchase Wine" wine_id=wine.id %}">
+                                    <i class="material-icons">add</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-floating yellow darken-2 waves-effect waves-light" href="{% url "Edit Wine" wine_id=wine.id %}">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="btn-floating pink darken-3 modal-trigger waves-effect waves-light" href="#delete-modal">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="delete-modal" class="modal ">
+                        <div class="modal-content">
+                            <h5>Are you sure you want to delete this wine?</h5>
+                            <p>This action is not reversible.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url "Delete Wine" wine_id=wine.id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this wine</a>
+                            <a href="" class="btn modal-action modal-close light-green darken-2 waves-effect waves-light">No</a>
+                        </div>
+                    </div>
+                {% endblock %}
             </div>
-            {% endblock %}
         </div>
-    </div>
-    {% if purchases %}
-    <div class="row">
-        <div class="col s12">
-            <table class="highlight responsive">
-                <thead>
-                <tr>
-                    {% block table-edit-head %}{% endblock %}
-                    <th>Date</th>
-                    <th class="num-col">Quantity</th>
-                    <th class="num-col">Price</th>
-                    <th class="num-col">Vintage</th>
-                    <th>Store</th>
-                    <th>Memo</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for purchase in purchases %}
-                    <tr>
-                        {% block table-edit-body %}{% endblock %}
-                        {% if purchase.date %}
-                            <td>{{ purchase.date|naturalday:"b j, Y"|title }}</td>
-                        {% else %}
-                            <td>&ndash;</td>
-                        {% endif %}
-                        <td class="num-col">{{ purchase.quantity|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.price|floatformat:2|default_if_none:"&ndash;" }}</td>
-                        <td class="num-col">{{ purchase.vintage|default_if_none:"NV" }}</td>
-                        <td>{{ purchase.store }}</td>
-                        <td>{{ purchase.why|default_if_none:"" }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        {% if purchases %}
+            <div class="row">
+                <div class="col s12">
+                    <table class="highlight responsive">
+                        <thead>
+                        <tr>
+                            {% block table-edit-head %}{% endblock %}
+                            <th>Date</th>
+                            <th class="num-col">Quantity</th>
+                            <th class="num-col">Price</th>
+                            <th class="num-col">Vintage</th>
+                            <th>Store</th>
+                            <th>Memo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for purchase in purchases %}
+                            <tr>
+                                {% block table-edit-body %}{% endblock %}
+                                {% if purchase.date %}
+                                    <td>{{ purchase.date|naturalday:"b j, Y"|title }}</td>
+                                {% else %}
+                                    <td>&ndash;</td>
+                                {% endif %}
+                                <td class="num-col">{{ purchase.quantity|default_if_none:"&ndash;" }}</td>
+                                <td class="num-col">{{ purchase.price|floatformat:2|default_if_none:"&ndash;" }}</td>
+                                <td class="num-col">{{ purchase.vintage|default_if_none:"NV" }}</td>
+                                <td>{{ purchase.store }}</td>
+                                <td>{{ purchase.memo|default_if_none:"" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+            </div>
+
         </div>
     </div>
     {% endif %}
@@ -178,9 +190,28 @@
 </div>
 {% endblock %}
 {% block js %}
-    <script type="text/javascript">
-        $(function () {
-            $("#delete-modal").modal();
+<script src="{% static "js/Chart.bundle.min.js" %}"></script>
+<script type="module">
+import { tabs, setTabAccessibility } from '{% static "js/widgets.js" %}'
+import { pieChart } from '{% static "js/wine_charts.js" %}'
+import { pipe } from '{% static "js/pipes.js" %}'
+
+$(function () {
+    $("#delete-modal").modal();
+    tabs();
+    {% if grapes %}
+        pipe({
+            {% for grape in grapes %}
+                "{{ grape.name }}": {{ grape.percent|default_if_none:0 }},
+            {% endfor %}
+        }).chain(chartData => {
+            pieChart($("#grape-comp-chart"), chartData)
+        }).chain(success => {
+            setTabAccessibility($("#grape-comp-chart-li"), success);
         });
-    </script>
+    {% else %}
+        setTabAccessibility($("#grape-comp-chart-li"), false);
+    {% endif %}
+});
+</script>
 {% endblock %}

@@ -140,7 +140,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         price = attr.ib(type=float)
         vintage = attr.ib(type=int)
         store = attr.ib(type=str)
-        why = attr.ib(type=str)
+        memo = attr.ib(type=str)
         id = attr.ib(type=int)
 
     wine = Wines.objects.get(id=wine_id)
@@ -176,7 +176,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 , p.price
                 , p.vintage
                 , s.name
-                , p.why
+                , p.memo
                 , p.id
             FROM purchases p
                 LEFT JOIN stores s ON p.store_id = s.id
@@ -248,6 +248,7 @@ def edit_wine(request, wine_id: int):
         wine.description = empty_to_none(request.POST.get("description"))
         wine.notes = empty_to_none(request.POST.get("notes"))
         wine.name = empty_to_none(request.POST.get("name"))
+        wine.why = empty_to_none(request.POST.get("why"))
         viti_area = empty_to_none(request.POST.get("viti-area"))
         if request.POST.get("have-rating"):
             wine.rating = int(request.POST.get("rating"))
@@ -263,15 +264,15 @@ def edit_wine(request, wine_id: int):
         # Grape composition
         if request.POST.get("grape-1"):
             # Get grapes already connected to this wine
-            grapes_query = """
-                SELECT
-                    g.id
-                    , g.name
-                    , wg.percent
-                FROM wine_grapes wg
-                INNER JOIN grapes g ON wg.grape_id = g.id
-                WHERE wg.wine_id = ? ;"""
-            prev_grapes = Grapes.objects.raw(grapes_query, [wine_id])
+            # grapes_query = """
+            #     SELECT
+            #         g.id
+            #         , g.name
+            #         , wg.percent
+            #     FROM wine_grapes wg
+            #     INNER JOIN grapes g ON wg.grape_id = g.id
+            #     WHERE wg.wine_id = ? ;"""
+            # prev_grapes = Grapes.objects.raw(grapes_query, [wine_id])
             for i in range(1, 6):
                 grape = empty_to_none(request.POST.get(f"grape-{i}"))
                 if request.POST.get(f"grape-{i}-pct"):
@@ -315,7 +316,7 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
         purchase.quantity = int(request.POST.get("quantity")) if request.POST.get("quantity") else None
         purchase.price = float(request.POST.get("price")) if request.POST.get("price") else None
         purchase.vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
-        purchase.why = request.POST.get("why") if request.POST.get("why") else None
+        purchase.memo = request.POST.get("memo") if request.POST.get("memo") else None
         purchase.store = g_or_c_store(request.POST.get("store"))
         purchase.save()
         return redirect("Edit Wine", wine_id=wine_id)
@@ -327,7 +328,7 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
             , p.vintage
             , s.name
             , p.price
-            , p.why
+            , p.memo
         FROM purchases p
             LEFT JOIN stores s ON s.id = p.store_id
         WHERE p.id = ?;
@@ -344,7 +345,7 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
         context["vintage"] = purchase[2]
         context["store"] = purchase[3]
         context["price"] = purchase[4]
-        context["why"] = purchase[5]
+        context["memo"] = purchase[5]
         context["stores"] = Stores.objects.all()
         return render(request, "edit_purchase.html", context)
     return redirect("Edit Wine", wine_id=wine_id)

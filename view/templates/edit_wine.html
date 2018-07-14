@@ -28,30 +28,13 @@
                 </div>
             </div>
             <div class="row">
-{#                Don't allow users to add additional if the wine doesn't already have one #}
-                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                {% else %}
-                <div class="input-field col s12 m6">
-                {% endif %}
                     <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
                     <label for="name">Name</label>
                 </div>
-                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                    <input id="additional" type="text" name="additional" class="autocomplete" value="{{ wine.additional }}">
-                    <label for="additional">Additional</label>
-                </div>
-                {% endif %}
-                <div class="input-field col s12 m6">
-                    <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
-                    <label for="description">Description</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12 m6">
-                    <input id="notes" name="notes" type="text" class="validate" {% if wine.notes %}value="{{ wine.notes }}"{% endif %}>
-                    <label for="notes">Notes</label>
+                    <input id="why" name="why" type="text" class="validate" {% if wine.why %}value="{{ wine.why }}"{% endif %}>
+                    <label for="why">Why</label>
                 </div>
                 <div class="range-field col s4 m2">
                     <div class="switch">
@@ -69,6 +52,16 @@
                 <div class="input-field col s8 m4">
                     <input id="auto-viti-area" type="text" name="viti-area" class="autocomplete" {% if wine.viti_area %}value="{{ wine.viti_area }}"{% endif %}>
                     <label for="auto-viti-area">Viticultural Area</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
+                    <label for="description">Description</label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <input id="notes" name="notes" type="text" class="validate" {% if wine.notes %}value="{{ wine.notes }}"{% endif %}>
+                    <label for="notes">Notes</label>
                 </div>
             </div>
 

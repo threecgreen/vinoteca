@@ -1,5 +1,8 @@
 /* Color variables */
 $black: rgba(0,0,0,0.87)
+$pink: rgb(233, 30, 99)
+$wine-red: darken($pink, 20)
+$light-green: rgb(139, 195, 74)
 
 body
   display: flex
@@ -105,17 +108,40 @@ ul.bullets
         list-style-type: square
 
 a:link.text-link
-  color: #c5e1a5
+  color: $light-green
 
 a:hover.text-link
-  color: #9ccc65
+  color: lighten($light-green, 15)
 
 a:visited.text-link
-  color: #880e4f
+  color: $wine-red
+
+a:visited:hover.text-link
+  color: lighten($wine-red, 15)
 
 table.condensed td, th
   padding-top: 3px
   padding-bottom: 3px
+
+/* Change tabs colors */
+.tabs
+  .wine-green-tab
+    a
+      color: $light-green !important
+    a:hover
+      color: lighten($light-green, 15) !important
+    a:active
+      color: $light-green !important
+  .wine-red-tab
+    a
+      color: $wine-red !important
+    a:hover
+      color: lighten($wine-red, 15) !important
+    a:active
+      color: $wine-red !important
+  .indicator
+    background-color: lighten($wine-red, 40)
+
 
 /* For linking to a section of a page */
 .page-link

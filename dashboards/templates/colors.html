@@ -1,20 +1,37 @@
-<table class="responsive highlight">
-    <thead>
+<ul class="tabs">
+    <li class="wine-red-tab tab " id="colors-table-li" ><a href="#colors-table-tab">Table</a> </li>
+    <li class="wine-green-tab tab " id="colors-purchases-chart-li"><a href="#colors-purchases-chart-tab">Purchases</a> </li>
+    <li class="wine-green-tab tab " id="colors-varieties-chart-li"><a href="#colors-varieties-chart-tab">Varieties</a> </li>
+    <li class="wine-green-tab tab " id="colors-avg-price-chart-li"><a href="#colors-avg-price-chart-tab">Avg Price</a> </li>
+</ul>
+<div id="colors-table-tab" class="s12">
+    <table class="responsive highlight">
+        <thead>
         <tr>
-            <th>Type</th>
+            <th>Color</th>
             <th class="num-col">Purchases</th>
             <th class="num-col">Varieties</th>
             <th class="num-col">Avg Price</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         {% for color in colors %}
-        <tr>
-            <td>{{ color.name|title }}</td>
-            <td class="num-col">{{ color.quantity }}</td>
-            <td class="num-col">{{ color.variety }}</td>
-            <td class="num-col">{{ color.avg_price|floatformat:"2" }}</td>
-        </tr>
+            <tr>
+                <td>{{ color.name|title }}</td>
+                <td class="num-col">{{ color.quantity }}</td>
+                <td class="num-col">{{ color.variety }}</td>
+                <td class="num-col">{{ color.avg_price|floatformat:"2" }}</td>
+            </tr>
         {% endfor %}
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
+<div id="colors-purchases-chart-tab" class="s12">
+    <canvas height="275px" id="colors-purchases-chart"></canvas>
+</div>
+<div id="colors-varieties-chart-tab" class="s12">
+    <canvas height="275px" id="colors-varieties-chart"></canvas>
+</div>
+<div id="colors-avg-price-chart-tab" class="s12">
+    <canvas height="275px" id="colors-avg-price-chart"></canvas>
+</div>

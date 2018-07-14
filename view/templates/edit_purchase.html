@@ -16,7 +16,7 @@
                         <label for="quantity">Quantity</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input id="price" name="price" type="number" class="validate" step="0.01" {% if price %}value={{ price }}{% endif %}>
+                        <input id="price" name="price" type="number" class="validate" step="0.01" min="0" {% if price %}value={{ price }}{% endif %}>
                         <label for="price">Price</label>
                     </div>
                     <div class="input-field col s6 m3">
@@ -28,8 +28,8 @@
                         <label for="auto-store">Store</label>
                     </div>
                     <div class="input-field col s12 m4">
-                        <input type="text" id="why" name="why" class="validate" {% if why %}value="{{ why }}"{% endif %}>
-                        <label for="why">Why</label>
+                        <input type="text" id="memo" name="memo" class="validate" {% if memo %}value="{{ memo }}"{% endif %}>
+                        <label for="memo">Memo</label>
                     </div>
                 </div>
                 <div class="row">

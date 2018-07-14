@@ -43,7 +43,7 @@ class Purchases(models.Model):
     quantity = models.IntegerField(null=True)
     date = models.IntegerField(null=True)
     vintage = models.IntegerField(null=True)
-    why = models.TextField(null=True)
+    memo = models.TextField(null=True)
 
     class Meta:
         db_table = 'purchases'
