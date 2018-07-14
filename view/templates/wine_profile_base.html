@@ -61,8 +61,8 @@
         <div class="col s12 m6">
             <h5 class="light">Grape composition</h5>
             <ul class="tabs tabs-fixed-with">
-                <li class="wine-red-tab tab col s6"><a href="#grape-comp-table-tab">Table</a></li>
-                <li class="wine-green-tab tab col s6"><a href="#grape-comp-chart-tab">Pie chart</a></li>
+                <li class="wine-red-tab tab col s6" id="grape-comp-table-li"><a href="#grape-comp-table-tab">Table</a></li>
+                <li class="wine-green-tab tab col s6" id="grape-comp-chart-li"><a href="#grape-comp-chart-tab">Pie chart</a></li>
             </ul>
             <div id="grape-comp-table-tab" class="s12">
                 <table class="highlight responsive">
@@ -192,20 +192,25 @@
 {% block js %}
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
-import { tabs } from '{% static "js/widgets.js" %}'
+import { tabs, setTabAccessibility } from '{% static "js/widgets.js" %}'
 import { pieChart } from '{% static "js/wine_charts.js" %}'
+import { pipe } from '{% static "js/pipes.js" %}'
 
 $(function () {
     $("#delete-modal").modal();
     tabs();
     {% if grapes %}
-    const grapeCompData = {
-        {% for grape in grapes %}
-            "{{ grape.name }}": {{ grape.percent|default_if_none:0 }},
-        {% endfor %}
-    };
-    console.log(grapeCompData);
-    pieChart($("#grape-comp-chart"), grapeCompData);
+        pipe({
+            {% for grape in grapes %}
+                "{{ grape.name }}": {{ grape.percent|default_if_none:0 }},
+            {% endfor %}
+        }).chain(chartData => {
+            pieChart($("#grape-comp-chart"), chartData)
+        }).chain(success => {
+            setTabAccessibility($("#grape-comp-chart-li"), success);
+        });
+    {% else %}
+        setTabAccessibility($("#grape-comp-chart-li"), false);
     {% endif %}
 });
 </script>

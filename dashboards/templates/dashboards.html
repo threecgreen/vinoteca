@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block dashboard-nav %}class="active"{% endblock %}
 
 {% block body %}
@@ -65,4 +67,50 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block js %}
+<script src="{% static "js/Chart.bundle.min.js" %}"></script>
+<script type="module">
+import { tabs } from '{% static "js/widgets.js" %}'
+import { barChart, chartHelper } from "{% static "js/wine_charts.js" %}";
+import { pipe } from '{% static "js/pipes.js" %}'
+
+$(function () {
+    tabs();
+
+    // Colors
+    pipe({
+        {% for color in colors %}
+            "{{ color.name|title }}": {{ color.quantity|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartHelper(barChart, $("#colors-purchases-chart")));
+    pipe({
+        {% for color in colors %}
+            "{{ color.name|title }}": {{ color.variety|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartHelper(barChart, $("#colors-varieties-chart")));
+    pipe({
+        {% for color in colors %}
+            "{{ color.name|title }}": {{ color.avg_price|floatformat:2 }},
+        {% endfor %}
+    }).chain(chartHelper(barChart, $("#colors-avg-price-chart")));
+
+    // Top Recent Purchases
+    pipe({
+         {% for wine_type in top_wine_types %}
+             "{{ wine_type.wine_type }}": {{ wine_type.quantity|default_if_none:0 }},
+         {% endfor %}
+    }).chain(chartHelper(barChart, $("#top-purchases-chart")));
+    pipe({
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.wine_type }}": {{ wine_type.variety|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartHelper(barChart, $("#top-varieties-chart")));
+    pipe({
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.wine_type }}": {{ wine_type.avg_price|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartHelper(barChart, $("#avg-price-chart")));
+});
+</script>
 {% endblock %}

@@ -33,4 +33,15 @@ export function tabs(selector) {
     if (selector === void 0) { selector = ".tabs"; }
     $(selector).tabs();
 }
+/** Either enable or disable a Materialize CSS tab. */
+export function setTabAccessibility(tabListElem, ability) {
+    if (ability) {
+        console.log("Enabling...");
+        $(tabListElem).removeClass("disabled");
+    }
+    else {
+        console.log("Disabling...");
+        $(tabListElem).addClass("disabled");
+    }
+}
 //# sourceMappingURL=widgets.js.map

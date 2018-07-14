@@ -41,9 +41,37 @@
     </div>
 {% endblock %}
 {% block js %}
-<script type="text/javascript">
+<script src="{% static "js/Chart.bundle.min.js" %}"></script>
+<script type="module">
+import { tabs } from '{% static "js/widgets.js" %}'
+import { barChart } from "{% static "js/wine_charts.js" %}";
+import { pipe } from '{% static "js/pipes.js" %}'
+
 $(function(){
     $('.parallax').parallax();
+    tabs();
+
+    pipe({
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.wine_type }}": {{ wine_type.quantity|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartData => {
+        barChart($("#top-purchases-chart"), chartData);
+    });
+    pipe({
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.wine_type }}": {{ wine_type.variety|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartData => {
+        barChart($("#top-varieties-chart"), chartData);
+    });
+    pipe({
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.wine_type }}": {{ wine_type.avg_price|default_if_none:0 }},
+        {% endfor %}
+    }).chain(chartData => {
+        barChart($("#avg-price-chart"), chartData)
+    });
 });
 </script>
 {% endblock %}
