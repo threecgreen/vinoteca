@@ -1,5 +1,29 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style type="text/css">
+    body {
+        margin: 0;
+    }
+    #container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+{% endblock %}
 {% block main %}
+<div id="container"></div>
 {% endblock %}
 {% block js %}
+<script src="{% static "js/sigma.min.js" %}"></script>
+<script type="module">
+import { addWine } from "{% static "js/graph.js" %}"
+
+$(function () {
+    // Let's first initialize sigma:
+    let s = new sigma('container');
+});
+</script>
 {% endblock %}
