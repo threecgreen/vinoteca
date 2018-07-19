@@ -5,8 +5,8 @@
 import { Wine } from "./graph_models";
 
 export function addWine(sigma: SigmaJs.Sigma, wine_id: number) {
-    sigma.graph.addNode({
-        id: `wine${wine.id}`,
-        label: `${wine.name} ${wine.wine_type}`,
-    });
+    // sigma.graph.addNode({
+    //     id: `wine${wine.id}`,
+    //     label: `${wine.name} ${wine.wine_type}`,
+    // });
 }
