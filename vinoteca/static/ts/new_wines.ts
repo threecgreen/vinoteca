@@ -1,9 +1,7 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 
-/// <reference path ="./utils.ts" />
-
-import { pipe, range } from "utils";
+import { pipe } from "./utils.js";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
@@ -55,18 +53,17 @@ export function toggleRating(hasRatingSelector: JQuery<HTMLInputElement>, rating
 
 /** Determine the percentage of grape composition not yet accounted for. */
 function remGrapePct(lastVisibleId: number): number {
-    return range(lastVisibleId).reduce((sum, i) => {
-        return sum + <number>$(`[id^=grape-${i + 1}-pct]`).val()
-    });
-    // let sum = 0;
-    // for (let i = 1; i <= lastVisibleId; i++) {
-    //     sum += <number>$(`[id^=grape-${i}-pct]`).val();
-    // }
-    // return sum;
+    let sum = 0;
+    for (let i = 1; i < lastVisibleId; i++) {
+        sum += parseInt(<string>$(`#grape-${i}-pct`).val());
+    }
+    return sum < 100 ? 100 - sum : 0;
 }
 
-function setGrapePct(id: number): void {
-    $(`[id^=grape-${id}-pct`).val(id);
+function setGrapePct(id: number, pct: number): void {
+    console.log(id);
+    console.log($(`#grape-${id}-pct`).val());
+    $(`#grape-${id}-pct`).val(pct);
 }
 
 /** Show additional grape forms with click of + button. */
@@ -74,6 +71,7 @@ export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>):
     $(grapeBtnSelector).on("click", function () {
         // Hide parent div and thus self
         $(this).parent().hide();
+        console.log(this.id);
         let id = parseInt(this.id.slice(-1));
         // All elements starting with grape-form-2
         $(`[id^=grape-form-${id}]`).show();
@@ -84,7 +82,7 @@ export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>):
             grape_btn_parent.parent().show();
         }
         // Update wine percentage
-        pipe(remGrapePct(id)).chain(setGrapePct);
+        setGrapePct(id, remGrapePct(id));
     });
 }
 

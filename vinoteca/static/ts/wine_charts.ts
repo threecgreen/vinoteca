@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 
-import { Dict } from "./utils"
+import { Dict } from "./utils.js"
 
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";

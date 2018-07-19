@@ -22,8 +22,3 @@ export function pipe<T>(val: T): IPipe<T> {
         value: () => val
     };
 }
-
-/** Creates a range like the Python built-in of the same name. */
-export function range(size:number, startAt:number = 0):ReadonlyArray<number> {
-    return [...Array(size)].map(i => i + startAt);
-}

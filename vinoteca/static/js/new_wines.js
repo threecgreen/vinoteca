@@ -1,7 +1,5 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
-/// <reference path ="./utils.ts" />
-import { pipe, range } from "utils";
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer, region, producerRegionURL, producersURL) {
     $(producer).on("change", function () {
@@ -46,23 +44,23 @@ export function toggleRating(hasRatingSelector, ratingSelector, checked) {
 }
 /** Determine the percentage of grape composition not yet accounted for. */
 function remGrapePct(lastVisibleId) {
-    return range(lastVisibleId).reduce(function (sum, i) {
-        return sum + $("[id^=grape-" + (i + 1) + "-pct]").val();
-    });
-    // let sum = 0;
-    // for (let i = 1; i <= lastVisibleId; i++) {
-    //     sum += <number>$(`[id^=grape-${i}-pct]`).val();
-    // }
-    // return sum;
+    var sum = 0;
+    for (var i = 1; i < lastVisibleId; i++) {
+        sum += parseInt($("#grape-" + i + "-pct").val());
+    }
+    return sum < 100 ? 100 - sum : 0;
 }
-function setGrapePct(id) {
-    $("[id^=grape-" + id + "-pct").val(id);
+function setGrapePct(id, pct) {
+    console.log(id);
+    console.log($("#grape-" + id + "-pct").val());
+    $("#grape-" + id + "-pct").val(pct);
 }
 /** Show additional grape forms with click of + button. */
 export function showNextGrapeInput(grapeBtnSelector) {
     $(grapeBtnSelector).on("click", function () {
         // Hide parent div and thus self
         $(this).parent().hide();
+        console.log(this.id);
         var id = parseInt(this.id.slice(-1));
         // All elements starting with grape-form-2
         $("[id^=grape-form-" + id + "]").show();
@@ -73,7 +71,7 @@ export function showNextGrapeInput(grapeBtnSelector) {
             grape_btn_parent.parent().show();
         }
         // Update wine percentage
-        pipe(remGrapePct(id)).chain(setGrapePct);
+        setGrapePct(id, remGrapePct(id));
     });
 }
 /** Helper function for clearing table */
