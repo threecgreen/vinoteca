@@ -39,11 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
+    # Installed
+    'rest_framework',
+
     # vinoteca apps
     'vinoteca',
     'dashboards',
     'new_purchase',
-    'view'
+    'view',
+    'graph'
 ]
 
 MIDDLEWARE = [

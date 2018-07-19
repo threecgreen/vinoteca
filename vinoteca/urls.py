@@ -1,5 +1,5 @@
 """vinoteca URL Configuration"""
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from django.views.static import serve
 
 from vinoteca.views import simple_page, home
@@ -55,5 +55,6 @@ urlpatterns = [
          kwargs={"return_to_inventory": True}),
     path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
     path("graph/test/", graph, name="Wine Graph"),
+    path("graph/", include("graph.urls")),
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT})
 ]
