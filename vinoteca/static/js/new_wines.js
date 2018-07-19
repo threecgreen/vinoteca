@@ -1,5 +1,7 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
+/// <reference path ="./utils.ts" />
+import { pipe, range } from "utils";
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer, region, producerRegionURL, producersURL) {
     $(producer).on("change", function () {
@@ -42,20 +44,36 @@ export function toggleRating(hasRatingSelector, ratingSelector, checked) {
         $(ratingSelector).prop("disabled", !$(this).prop("checked"));
     });
 }
+/** Determine the percentage of grape composition not yet accounted for. */
+function remGrapePct(lastVisibleId) {
+    return range(lastVisibleId).reduce(function (sum, i) {
+        return sum + $("[id^=grape-" + (i + 1) + "-pct]").val();
+    });
+    // let sum = 0;
+    // for (let i = 1; i <= lastVisibleId; i++) {
+    //     sum += <number>$(`[id^=grape-${i}-pct]`).val();
+    // }
+    // return sum;
+}
+function setGrapePct(id) {
+    $("[id^=grape-" + id + "-pct").val(id);
+}
 /** Show additional grape forms with click of + button. */
 export function showNextGrapeInput(grapeBtnSelector) {
     $(grapeBtnSelector).on("click", function () {
         // Hide parent div and thus self
         $(this).parent().hide();
-        var id_num = this.id.slice(-1);
+        var id = parseInt(this.id.slice(-1));
         // All elements starting with grape-form-2
-        $("[id^=grape-form-" + id_num + "]").show();
-        //"Show next plus b"tton if less"t"an 5
-        if (parseInt(id_num) < 5) {
-            var grape_btn_parent = $("#grape-btn-" + (parseInt(id_num) + 1).toString()).parent();
+        $("[id^=grape-form-" + id + "]").show();
+        // Show next plus button if less than 5
+        if (id < 5) {
+            var grape_btn_parent = $("#grape-btn-" + (id + 1)).parent();
             grape_btn_parent.show();
             grape_btn_parent.parent().show();
         }
+        // Update wine percentage
+        pipe(remGrapePct(id)).chain(setGrapePct);
     });
 }
 /** Helper function for clearing table */

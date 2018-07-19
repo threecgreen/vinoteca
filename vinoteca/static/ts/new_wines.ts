@@ -1,6 +1,9 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 
+/// <reference path ="./utils.ts" />
+
+import { pipe, range } from "utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
@@ -50,20 +53,38 @@ export function toggleRating(hasRatingSelector: JQuery<HTMLInputElement>, rating
     });
 }
 
+/** Determine the percentage of grape composition not yet accounted for. */
+function remGrapePct(lastVisibleId: number): number {
+    return range(lastVisibleId).reduce((sum, i) => {
+        return sum + <number>$(`[id^=grape-${i + 1}-pct]`).val()
+    });
+    // let sum = 0;
+    // for (let i = 1; i <= lastVisibleId; i++) {
+    //     sum += <number>$(`[id^=grape-${i}-pct]`).val();
+    // }
+    // return sum;
+}
+
+function setGrapePct(id: number): void {
+    $(`[id^=grape-${id}-pct`).val(id);
+}
+
 /** Show additional grape forms with click of + button. */
 export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>): void {
     $(grapeBtnSelector).on("click", function () {
         // Hide parent div and thus self
         $(this).parent().hide();
-        let id_num = this.id.slice(-1);
+        let id = parseInt(this.id.slice(-1));
         // All elements starting with grape-form-2
-        $("[id^=grape-form-" + id_num + "]").show();
-        //"Show next plus b"tton if less"t"an 5
-        if (parseInt(id_num) < 5) {
-            let grape_btn_parent = $("#grape-btn-" + (parseInt(id_num) + 1).toString()).parent();
+        $(`[id^=grape-form-${id}]`).show();
+        // Show next plus button if less than 5
+        if (id < 5) {
+            let grape_btn_parent = $(`#grape-btn-${id + 1}`).parent();
             grape_btn_parent.show();
             grape_btn_parent.parent().show();
         }
+        // Update wine percentage
+        pipe(remGrapePct(id)).chain(setGrapePct);
     });
 }
 

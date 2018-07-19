@@ -7,4 +7,9 @@ export function pipe(val) {
         value: function () { return val; }
     };
 }
-//# sourceMappingURL=pipes.js.map
+/** Creates a range like the Python built-in of the same name. */
+export function range(size, startAt) {
+    if (startAt === void 0) { startAt = 0; }
+    return Array(size).slice().map(function (i) { return i + startAt; });
+}
+//# sourceMappingURL=utils.js.map

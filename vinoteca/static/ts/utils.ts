@@ -1,3 +1,8 @@
+/** Basic type that corresponds to the response JSON of many asynchronous requests. */
+export interface Dict<T> {
+    [key: string]: T;
+}
+
 /** Basic piping of the return values of one function to arguments of the next
  * function.
  *
@@ -16,4 +21,9 @@ export function pipe<T>(val: T): IPipe<T> {
         chain: fn => pipe(fn(val)),
         value: () => val
     };
+}
+
+/** Creates a range like the Python built-in of the same name. */
+export function range(size:number, startAt:number = 0):ReadonlyArray<number> {
+    return [...Array(size)].map(i => i + startAt);
 }

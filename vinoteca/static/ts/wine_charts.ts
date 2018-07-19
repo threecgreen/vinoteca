@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 
-import { Dict } from "./dict"
+import { Dict } from "./utils"
 
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
@@ -9,7 +9,7 @@ const translucentWhite = "rgba(240, 240, 240, 0.9)";
 const translucentGray = "rgba(200, 200, 200, 0.9)";
 
 function allZero(array: number[]): boolean {
-    for (var num of array) {
+    for (let num of array) {
         if (num != 0) {
             return false;
         }
