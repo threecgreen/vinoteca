@@ -47,5 +47,7 @@ urlpatterns = [
     path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
     path("graph/test/", graph, name="Wine Graph"),
     path("graph/", include("graph.urls")),
-    re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT})
+
+    re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    re_path("^js_error_hook/", include("django_js_error_hook.urls")),
 ]
