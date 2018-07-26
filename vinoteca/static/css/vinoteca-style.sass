@@ -1,8 +1,9 @@
 /* Color variables */
 $black: rgba(0,0,0,0.87)
 $pink: rgb(233, 30, 99)
-$wine-red: darken($pink, 20)
-$light-green: rgb(139, 195, 74)
+$wine-red: rgb(135, 14, 79)
+$wine-green: rgb(139, 195, 74)
+$golden-yellow: rgb(251, 192, 45)
 
 body
   display: flex
@@ -108,10 +109,10 @@ ul.bullets
         list-style-type: square
 
 a:link.text-link
-  color: $light-green
+  color: $wine-green
 
 a:hover.text-link
-  color: lighten($light-green, 15)
+  color: lighten($wine-green, 15)
 
 a:visited.text-link
   color: $wine-red
@@ -127,11 +128,11 @@ table.condensed td, th
 .tabs
   .wine-green-tab
     a
-      color: $light-green !important
+      color: $wine-green !important
     a:hover
-      color: lighten($light-green, 15) !important
+      color: lighten($wine-green, 15) !important
     a:active
-      color: $light-green !important
+      color: $wine-green !important
   .wine-red-tab
     a
       color: $wine-red !important
@@ -160,3 +161,23 @@ table.condensed td, th
 
 code
   font-size: 14.5px
+
+.dashboard-row
+  margin-bottom: 0
+
+.dashboard-top-card
+  margin-top: 0
+
+.wine-red-card
+  background-color: lighten($wine-red, 5)
+  div.card-content
+    /* White text */
+    color: white
+.wine-green-card
+  background-color: lighten($wine-green, 8)
+  div.card-content
+    /* White text */
+    color: white
+.golden-yellow-card
+  background-color: $golden-yellow
+

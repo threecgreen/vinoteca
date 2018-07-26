@@ -106,10 +106,10 @@ a:hover.text-link {
   color: #b0d683; }
 
 a:visited.text-link {
-  color: #930e3b; }
+  color: #870e4f; }
 
 a:visited:hover.text-link {
-  color: #d81558; }
+  color: #cc1578; }
 
 table.condensed td, th {
   padding-top: 3px;
@@ -123,13 +123,13 @@ table.condensed td, th {
 .tabs .wine-green-tab a:active {
   color: #8bc34a !important; }
 .tabs .wine-red-tab a {
-  color: #930e3b !important; }
+  color: #870e4f !important; }
 .tabs .wine-red-tab a:hover {
-  color: #d81558 !important; }
+  color: #cc1578 !important; }
 .tabs .wine-red-tab a:active {
-  color: #930e3b !important; }
+  color: #870e4f !important; }
 .tabs .indicator {
-  background-color: #f27ba3; }
+  background-color: #f071b5; }
 
 /* For linking to a section of a page */
 .page-link {
@@ -148,5 +148,26 @@ table.condensed td, th {
 
 code {
   font-size: 14.5px; }
+
+.dashboard-row {
+  margin-bottom: 0; }
+
+.dashboard-top-card {
+  margin-top: 0; }
+
+.wine-red-card {
+  background-color: #9e105d; }
+  .wine-red-card div.card-content {
+    /* White text */
+    color: white; }
+
+.wine-green-card {
+  background-color: #9fcd69; }
+  .wine-green-card div.card-content {
+    /* White text */
+    color: white; }
+
+.golden-yellow-card {
+  background-color: #fbc02d; }
 
 /*# sourceMappingURL=vinoteca-style.css.map */
