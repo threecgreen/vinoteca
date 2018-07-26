@@ -4,7 +4,7 @@ from graph.views import *
 
 rest_patterns = [
     path("color/", rest, kwargs={"obj_name": "color"}, name="REST Color"),
-    path("country/", rest, kwargs={"obj_name": "country"}, name="REST Country"),
+    path("region/", rest, kwargs={"obj_name": "region"}, name="REST Region"),
     path("producer/", rest, kwargs={"obj_name": "producer"}, name="REST Producer"),
     path("viti-area/", rest, kwargs={"obj_name": "viti_area"}, name="REST Viti Area"),
     path("wine-type/", rest, kwargs={"obj_name": "wine_type"}, name="REST Wine Type"),

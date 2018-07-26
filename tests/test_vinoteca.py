@@ -1,8 +1,6 @@
 from django.urls import resolve
 import pytest
 
-from vinoteca.views import *
-
 
 @pytest.mark.parametrize("url", ["/home/", "/", "/about/"])
 def test_pages(client, url):

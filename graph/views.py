@@ -1,19 +1,14 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
 
 import vinoteca
-from vinoteca.models import Colors, Countries, Producers, VitiAreas, \
-    WineGrapes, WineTypes, Wines
 from graph.serializers import *
 
 
 def rest(request, obj_name: str) -> JsonResponse:
     relations = {
         "color": (Colors, ColorsSerializer),
-        "country": (Countries, CountriesSerializer),
+        "region": (Regions, RegionsSerializer),
         "producer": (Producers, ProducersSerializer),
         "viti_area": (VitiAreas, VitiAreasSerializer),
         "wine_type": (WineTypes, WineTypesSerializer),

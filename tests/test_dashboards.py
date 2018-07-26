@@ -55,7 +55,7 @@ def test_top_purchase_categories(connection, limit):
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_regions(connection, limit):
-    regions = countries_dash(connection, limit)
+    regions = regions_dash(connection, limit)
     assert isinstance(regions[0], Region)
     assert len(regions) == limit
 

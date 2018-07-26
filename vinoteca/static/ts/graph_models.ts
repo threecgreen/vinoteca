@@ -3,7 +3,7 @@ export interface Color {
     color: string
 }
 
-export interface Country {
+export interface Region {
     id: number
     name: string
     is_us: boolean
@@ -17,7 +17,7 @@ export interface Grape {
 export interface Producer {
     id: number
     name: string
-    country: number
+    region: number
 }
 
 export interface VitiArea {

@@ -22,7 +22,7 @@
                 <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ purchase.producer }}</a></td>
             {% endif %}
             {% if purchase.region_id %}
-                <td><a href="{% url "Country Profile" country_id=purchase.region_id %}">{{ purchase.region }}</a></td>
+                <td><a href="{% url "Region Profile" region_id=purchase.region_id %}">{{ purchase.region }}</a></td>
             {% else %}
                 <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ purchase.region }}</a></td>
             {% endif %}

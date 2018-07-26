@@ -2,16 +2,16 @@ import os
 import sqlite3
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from django.db import IntegrityError
 from pathlib import Path
 from PIL import Image
 from typing import Any, List, Union
-from vinoteca.models import (Colors, Countries, Grapes, Producers,
-    Purchases, Stores, VitiAreas, WineGrapes, WineTypes, Wines)
+from vinoteca.models import (Colors, Regions, Grapes, Producers, Purchases, Stores,
+                             VitiAreas, WineGrapes, WineTypes, Wines)
 from vinoteca.settings import BASE_DIR
 
 
 def g_or_c_store(store: str) -> Union[Stores, None]:
+    # TODO: error handling
     if store is None:
         return
     try:
@@ -23,48 +23,53 @@ def g_or_c_store(store: str) -> Union[Stores, None]:
 
 
 def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
+    # TODO: error handling
     if wine_type is None:
         return
     try:
-        return WineTypes.objects.get(type_name=wine_type)
+        return WineTypes.objects.get(name=wine_type)
     except WineTypes.DoesNotExist:
-        new_wine_type = WineTypes(type_name=wine_type)
+        new_wine_type = WineTypes(name=wine_type)
         new_wine_type.save()
         return new_wine_type
 
 
-def g_or_c_country(country: str) -> Union[Countries, None]:
-    if country is None:
+def g_or_c_region(region: str) -> Union[Regions, None]:
+    # TODO: error handling
+    if region is None:
         return
     try:
-        return Countries.objects.get(name=country)
-    except Countries.DoesNotExist:
-        new_country = Countries(name=country, is_us=False)
-        new_country.save()
-        return new_country
+        return Regions.objects.get(name=region)
+    except Regions.DoesNotExist:
+        region = Regions(name=region, is_us=False)
+        region.save()
+        return region
 
 
-def g_or_c_producer(producer: str, country: Countries) -> Producers:
+def g_or_c_producer(producer: str, region: Regions) -> Producers:
+    # TODO: error handling
     try:
         return Producers.objects.get(name=producer)
     except Producers.DoesNotExist:
-        new_producer = Producers(name=producer, country=country)
+        new_producer = Producers(name=producer, region=region)
         new_producer.save()
         return new_producer
 
 
-def g_or_c_viti_area(viti_area: str, country: Countries) -> Union[VitiAreas, None]:
+def g_or_c_viti_area(viti_area: str, region: Regions) -> Union[VitiAreas, None]:
+    # TODO: error handling
     if viti_area is None:
         return
     try:
-        return VitiAreas.objects.get(name=viti_area, region=country)
+        return VitiAreas.objects.get(name=viti_area, region=region)
     except VitiAreas.DoesNotExist:
-        new_viti_area = VitiAreas(name=viti_area, region=country)
+        new_viti_area = VitiAreas(name=viti_area, region=region)
         new_viti_area.save()
         return new_viti_area
 
 
 def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bool:
+    # TODO: error handling
     if grape is None:
         return False
     try:
@@ -123,14 +128,14 @@ def int_to_date(yyyymmdd: int) -> Union[date]:
                     day=yyyymmdd % 100)
 
 
-def flag_exists(country_name: str) -> bool:
+def flag_exists(region_name: str) -> bool:
     return (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags"
-            / f"{country_name}.svg").is_file()
+            / f"{region_name}.svg").is_file()
 
 
-def get_flag_countries() -> List[str]:
+def get_region_flags() -> List[str]:
     img_glob = (Path(BASE_DIR) / "vinoteca" / "static" / "img" / "flags").glob("*.svg")
-    return [country_file.stem for country_file in list(img_glob)]
+    return [flag_file.stem for flag_file in list(img_glob)]
 
 
 def default_vintage_year() -> int:

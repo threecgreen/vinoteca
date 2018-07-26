@@ -43,7 +43,7 @@
                                 <td><a href="{% url "Wine Profile" wine_id=wine.id %}"> {{ wine.producer }}</a></td>
                             {% endif %}
                             {% if wine.region_id %}
-                                <td><a href="{% url "Country Profile" country_id=wine.region_id %}"> {{ wine.region }}</a></td>
+                                <td><a href="{% url "Region Profile" region_id=wine.region_id %}"> {{ wine.region }}</a></td>
                             {% else %}
                                 <td><a href="{% url "Wine Profile" wine_id=wine.id %}"> {{ wine.region }}</a></td>
                             {% endif %}

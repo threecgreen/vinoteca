@@ -5,11 +5,11 @@
         <div class="row">
             {% if flag_exists %}
             <div class="col s2 m1">
-                <img src="/static/img/flags/{{ country.name }}.svg" alt="Country flag" class="circle z-depth-2 img-responsive country-flag">
+                <img src="/static/img/flags/{{ region.name }}.svg" alt="Region flag" class="circle z-depth-2 img-responsive region-flag">
             </div>
             {% endif %}
             <div class="col s10 m11">
-                <h3 class="bold">{{ country.name }}</h3>
+                <h3 class="bold">{{ region.name }}</h3>
             </div>
         </div>
         {% if viti_areas %}

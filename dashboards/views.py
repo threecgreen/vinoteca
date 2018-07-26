@@ -3,7 +3,9 @@ import sqlite3
 from datetime import date
 from django.shortcuts import render
 from typing import List
-from vinoteca.__init__ import __version__
+
+from vinoteca import __version__
+from vinoteca.models import Wines
 from vinoteca.utils import get_connection, int_to_date
 
 
@@ -29,20 +31,20 @@ def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPu
             p.date
             , s.name
             , p2.name
-            , c.name
-            , t.type_name
+            , r.name
+            , t.name
             , w.name
             , p.price
             , p.quantity
             , w.id
             , p2.id
-            , c.id
+            , r.id
             , t.id
         FROM purchases p
             LEFT JOIN wines w ON p.wine_id = w.id
-            LEFT JOIN wine_types t ON w.type_id = t.id
+            LEFT JOIN wine_types t ON w.wine_type_id = t.id
             LEFT JOIN producers p2 ON w.producer_id = p2.id
-            LEFT JOIN countries c ON p2.country_id = c.id
+            LEFT JOIN regions r ON p2.region_id = r.id
             LEFT JOIN stores s ON p.store_id = s.id
         ORDER BY p.date DESC
         LIMIT ?;
@@ -69,13 +71,13 @@ class TopPurchaseWineType(object):
 def top_purchase_wine_types_dash(conn: sqlite3.Connection, limit: int) -> List[TopPurchaseWineType]:
     query = """
         SELECT
-            t.type_name
+            t.name
             , sum(coalesce(p.quantity, 1))
             , count(w.id)
             , avg(p.price)
             , t.id
         FROM wine_types t
-            LEFT JOIN wines w ON t.id = w.type_id
+            LEFT JOIN wines w ON t.id = w.wine_type_id
             LEFT JOIN purchases p ON w.id = p.wine_id
         GROUP BY t.id
         ORDER BY count(w.id) DESC
@@ -112,12 +114,7 @@ def by_the_numbers_dash(conn: sqlite3.Connection) -> ByTheNumbers:
         LIMIT 1;
     """
     most_common_date = int_to_date(cursor.execute(query).fetchone()[0])
-    query = """
-        SELECT
-            count(w.id)
-        FROM wines w;
-    """
-    variety_count = cursor.execute(query).fetchone()[0]
+    variety_count = Wines.objects.all().count()
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
 
 
@@ -130,19 +127,19 @@ class Region(object):
     avg_price = attr.ib(type=float)
 
 
-def countries_dash(conn: sqlite3.Connection, limit: int) -> List[Region]:
+def regions_dash(conn: sqlite3.Connection, limit: int) -> List[Region]:
     query = """
         SELECT
-            c.name
+            r.name
             , count(DISTINCT pro.id)
             , count(w.id)
             , avg(w.rating)
             , avg(pur.price)
-        FROM countries c 
-            LEFT JOIN producers pro ON c.id = pro.country_id
+        FROM regions r
+            LEFT JOIN producers pro ON r.id = pro.region_id
             LEFT JOIN wines w ON pro.id = w.producer_id
             LEFT JOIN purchases pur ON w.id = pur.wine_id
-        GROUP BY c.id
+        GROUP BY r.id
         ORDER BY count(pur.id) DESC
         LIMIT ?;
     """
@@ -161,14 +158,14 @@ class Type(object):
 def color_dash(conn: sqlite3.Connection) -> List[Type]:
     query = """
         SELECT
-            c.color
+            c.name
             , sum(coalesce(p.quantity, 1))
             , count(w.id)
             , avg(p.price)
         FROM colors c
             LEFT JOIN wines w ON c.id = w.color_id
             LEFT JOIN purchases p ON w.id = p.wine_id
-        GROUP BY c.color
+        GROUP BY c.name
         ORDER BY count(coalesce(p.quantity, 1)) DESC;
     """
     cursor = conn.cursor()
@@ -237,7 +234,7 @@ def dashboards(request):
     context = {
         "btn": by_the_numbers_dash(conn),
         "colors": color_dash(conn),
-        "countries": countries_dash(conn, 6),
+        "regions": regions_dash(conn, 6),
         "producers": producers_dash(conn, 7),
         "purchases": recent_purchases_dash(conn, 10),
         "top_wine_types": top_purchase_wine_types_dash(conn, 10),

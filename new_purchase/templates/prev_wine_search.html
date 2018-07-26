@@ -13,7 +13,7 @@
                     <select id="color" name="color">
                         <option value="" selected>Select the color</option>
                         {% for color in colors %}
-                            <option value="{{ color.color }}">{{ color.color|title }}</option>
+                            <option value="{{ color.name }}">{{ color.name|title }}</option>
                         {% endfor %}
                     </select>
                     <label for="color">Color</label>
@@ -27,7 +27,7 @@
                     <label for="auto-producer">Producer</label>
                 </div>
                 <div class="input-field col s6 l3">
-                    <input type="text" id="auto-region" name="country" class="autocomplete">
+                    <input type="text" id="auto-region" name="region" class="autocomplete">
                     <label for="auto-region">Region</label>
                 </div>
                 <div class="input-field col s6 l3">
@@ -73,7 +73,7 @@ $(function(){
     autocomplete("region");
     autocomplete("viti-area");
 
-    toggleRegion(producer, region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
+    toggleRegion(producer, region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
 
     resetFormBtn();
     liveWineSearch($(".input-field"), "{% url "Search Wines JSON" %}", $("#auto-wine-type"), $("#color"), producer,

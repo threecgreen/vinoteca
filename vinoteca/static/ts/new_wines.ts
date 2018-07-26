@@ -11,7 +11,7 @@ export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<
         $.getJSON(producersURL, (responseJSON) => {
             if ($.inArray($(producer).val(), Object.keys(responseJSON)) !== -1) {
                 $.getJSON(producerRegionURL, { "producer": $(producer).val() }, (responseJSON) => {
-                    $(region).val(responseJSON["country_name"]);
+                    $(region).val(responseJSON["region_name"]);
                     $(region).prop('disabled', true);
                     $("label[for='auto-country']").text("");
                     // Update viticulture area autocomplete
@@ -31,7 +31,7 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>, viti_
     getJSONURL: string): void {
 
     $(region).on("change", function () {
-        $.get(getJSONURL, { "country": $(this).val() }, (responseJSON) => {
+        $.get(getJSONURL, { "region": $(this).val() }, (responseJSON) => {
             $(viti_area).autocomplete({
                 data: responseJSON,
                 limit: 5,
@@ -118,7 +118,7 @@ export function liveWineSearch(searchParams: JQuery<HTMLInputElement>[], searchU
             "wine_type": wineType.val(),
             "color": color.val(),
             "producer": producer.val(),
-            "country": region.val(),
+            "region": region.val(),
             "viti_area": vitiArea.val()
         }, function (responseJSON) {
             // Update search results with received data

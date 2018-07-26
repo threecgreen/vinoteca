@@ -49,7 +49,7 @@ def test_pages(client, url):
     ("/wines/752/edit/1/", "Edit Purchase"),
     ("/producers/75/", "Producer Profile"),
     ("/producers/75/edit/", "Edit Producer"),
-    ("/regions/3/", "Country Profile"),
+    ("/regions/3/", "Region Profile"),
     ("/wines/table/", "Wine Table"),
     ("/inventory/", "Inventory"),
     ("/wine-types/30/", "Wine Type Profile"),
@@ -69,7 +69,7 @@ def test_colors(client):
 @pytest.mark.django_db
 def test_regions(client):
     response = client.get("/regions/all/")
-    assert len(Countries.objects.all()) == len(response.json().keys())
+    assert len(Regions.objects.all()) == len(response.json().keys())
     # Check for flags
     assert ".svg" in response.json()["California"]
     assert ".svg" in response.json()["France"]
@@ -110,12 +110,12 @@ def wine_and_post_data():
     wine = Wines.objects.get(id=800)
     post_data = {
         "producer": wine.producer.name,
-        "country": wine.producer.country.name,
+        "region": wine.producer.region.name,
         "description": wine.description,
         "notes": wine.notes,
         "rating": wine.rating,
-        "color": wine.color.color,
-        "wine-type": wine.wine_type.type_name,
+        "color": wine.color.name,
+        "wine-type": wine.wine_type.name,
         "viti-area": wine.viti_area.name if wine.viti_area else None,
     }
     return wine, post_data
@@ -135,9 +135,7 @@ def test_edit_wine(client, wine_and_post_data, attr, val):
     response = client.post("/wines/800/edit/", post_data, follow=True)
     assert response.status_code == 200
     assert ("/wines/800/", 302) in response.redirect_chain
-    if attr == "color":
-        assert Wines.objects.get(id=800).__getattribute__(attr).color == val
-    elif attr == "producer" or attr == "viti_area":
+    if attr in ("producer", "viti_area", "color") or attr == "viti_area":
         assert Wines.objects.get(id=800).__getattribute__(attr).name == val
     else:
         assert Wines.objects.get(id=800).__getattribute__(attr) == val
@@ -170,12 +168,12 @@ def test_edit_wine_image(client, upload_file):
     wine = Wines.objects.get(id=800)
     post_data = {
         "producer": wine.producer.name,
-        "country": wine.producer.country.name,
+        "region": wine.producer.region.name,
         "description": wine.description,
         "notes": wine.notes,
         "rating": wine.rating,
-        "color": wine.color.color,
-        "wine-type": wine.wine_type.type_name,
+        "color": wine.color.name,
+        "wine-type": wine.wine_type.name,
         "wine-image": upload_file
     }
     response = client.post("/wines/800/edit/", post_data, follow=True)
@@ -227,27 +225,27 @@ def test_change_inventory(client, sign):
 
 
 @pytest.mark.parametrize("attr,val", [
-    ("country", "France"),
+    ("region", "France"),
     ("producer", "Yalumbaaaa")
 ])
 @pytest.mark.django_db
 def test_edit_producer(client, attr, val):
     producer = Producers.objects.get(id=1)
-    if attr == "country":
-        init_val = producer.country.name
+    if attr == "region":
+        init_val = producer.region.name
     else:
         init_val = producer.name
     assert init_val != val
     post_data = {
         "producer": producer.name,
-        "country": producer.country.name
+        "region": producer.region.name
     }
     post_data[attr] = val
     response = client.post("/producers/1/edit/", post_data, follow=True)
     assert response.status_code == 200
     assert ("/producers/1/", 302) in response.redirect_chain
-    if attr == "country":
-        assert Producers.objects.get(id=1).country.name == val
+    if attr == "region":
+        assert Producers.objects.get(id=1).region.name == val
     else:
         assert Producers.objects.get(id=1).name == val
 

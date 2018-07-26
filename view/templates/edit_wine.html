@@ -23,7 +23,7 @@
                     <label for="auto-producer">Producer</label>
                 </div>
                 <div class="input-field col s6 m3">
-                    <input type="text" id="auto-region" name="country" class="autocomplete" value="{{ wine.region }}" disabled>
+                    <input type="text" id="auto-region" name="region" class="autocomplete" value="{{ wine.region }}" disabled>
                     <label for="auto-region">Region (edit the producer)</label>
                 </div>
             </div>
@@ -223,20 +223,20 @@ $(function() {
     $('select').material_select();
     autocomplete("wine-type");
     autocomplete("producer");
-    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
+    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
     autocomplete("region");
     {% if rating %}
         toggleRating($("#has-rating")[0], $("#rating")[0], true);
     {% else %}
         toggleRating($("#has-rating")[0], $("#rating")[0], false);
     {% endif %}
-    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Country Viti Areas JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Region Viti Areas JSON" %}");
     showNextGrapeInput($(".grape-btn"));
 });
 {# Gave weird error when in same document ready function #}
 $(function () {
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
-    {# Run first for initial country #}
+    {# Run first for initial region #}
     $(region).trigger("change");
 })
 </script>

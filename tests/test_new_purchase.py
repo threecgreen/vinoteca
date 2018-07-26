@@ -1,5 +1,4 @@
 from datetime import date
-from django.core.exceptions import ObjectDoesNotExist
 from django.urls import resolve
 import pytest
 
@@ -21,8 +20,8 @@ def test_pages(client, page):
 
 @pytest.mark.parametrize("url,view_name", [
     ("/new/prev-purchased/", "New Purchase Search"),
-    ("/producers/region/", "Get Producer Country JSON"),
-    ("/regions/viti-areas/", "Get Country Viti Areas JSON"),
+    ("/producers/region/", "Get Producer Region JSON"),
+    ("/regions/viti-areas/", "Get Region Viti Areas JSON"),
     ("/new/search-wines/", "Search Wines JSON")
 ])
 def test_urls(url, view_name):
@@ -30,32 +29,32 @@ def test_urls(url, view_name):
     assert resolver.view_name == view_name
 
 
-@pytest.mark.parametrize("producer,country", [
+@pytest.mark.parametrize("producer,region", [
     ("Yalumba", "Australia"),
     ("ABC", None)
 ])
 @pytest.mark.django_db
-def test_get_producer_country(client, producer, country):
+def test_get_producer_region(client, producer, region):
     response = client.get("/producers/region/", {"producer": producer})
     assert response.status_code == 200
-    if country:
-        assert response.json()["country_name"] == country
+    if region:
+        assert response.json()["region_name"] == region
     else:
-        assert response.json()["country_name"] is None
+        assert response.json()["region_name"] is None
 
 
-@pytest.mark.parametrize("country", ["France", "California", ""])
+@pytest.mark.parametrize("region", ["France", "California", ""])
 @pytest.mark.django_db
-def test_get_country_viti_area(client, country):
-    response = client.get("/regions/viti-areas/", {"country": country})
+def test_get_region_viti_area(client, region):
+    response = client.get("/regions/viti-areas/", {"region": region})
     assert response.status_code == 200
-    if len(country) == 0:
+    if len(region) == 0:
         assert len(response.json().keys()) == 0
     else:
         assert len(response.json().keys()) > 0
 
 
-@pytest.mark.parametrize("wine_type,color,producer,country,viti_area", [
+@pytest.mark.parametrize("wine_type,color,producer,region,viti_area", [
     ("Pinot Noir", "", "", "", ""),
     ("", "Red", "", "", ""),
     ("", "", "Yalumba", "", ""),
@@ -66,14 +65,14 @@ def test_get_country_viti_area(client, country):
     ("", "", "", "", ""),
 ])
 @pytest.mark.django_db
-def test_search_wines(client, wine_type, color, producer, country, viti_area):
+def test_search_wines(client, wine_type, color, producer, region, viti_area):
     is_empty = all(len(param) == 0 for param in (wine_type, color, producer,
-                                                 country, viti_area))
+                                                 region, viti_area))
     search_data = {
         "wine_type": wine_type,
         "color": color,
         "producer": producer,
-        "country": country,
+        "region": region,
         "viti_area": viti_area
     }
     response = client.get("/new/search-wines/", search_data)
@@ -102,7 +101,7 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     assert response.status_code == 302
 
 
-@pytest.mark.parametrize("store,wine_type,producer,country,description,price,viti_area,why,notes,color,rating,"
+@pytest.mark.parametrize("store,wine_type,producer,region,description,price,viti_area,why,notes,color,rating,"
                          "vintage,quantity,add_to_inventory,grapes", [
     ("Surdyk's", "Merlot", "Yalumba", "Australia", None, "", "", "", "", "red", 8, 2020, 2, True, None),
     ("ABC", "Shiraz", "Francais", "France", "desc", 12.23, "Bordeaux", "why", "notes", "white", 2, 2020, 1, False, [
@@ -111,14 +110,14 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     ])
 ])
 @pytest.mark.django_db
-def test_insert_new_purchase(client, store, wine_type, producer, country, description, price, viti_area, why,
+def test_insert_new_purchase(client, store, wine_type, producer, region, description, price, viti_area, why,
                              notes, color, rating, vintage, quantity, add_to_inventory, grapes):
     post_data = {
         "store": store,
         "purchase-date": date.today().strftime("%d %B, %Y"),
         "wine-type": wine_type,
         "producer": producer,
-        "country": country,
+        "region": region,
         "description": description,
         "price": price,
         "viti-area": viti_area,
@@ -150,7 +149,7 @@ def test_no_duplicate_viti_area(client):
         "purchase-date": date.today().strftime("%d %B, %Y"),
         "wine-type": "Chardonnay",
         "producer": "A new producer",
-        "country": "Spain",
+        "region": "Spain",
         "price": 0.01,
         "viti-area": "Rueda2",
         "color": "white",
