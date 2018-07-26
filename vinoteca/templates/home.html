@@ -67,7 +67,7 @@ $(function(){
     });
     pipe({
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.wine_type }}": {{ wine_type.avg_price|default_if_none:0 }},
+            "{{ wine_type.wine_type }}": {{ wine_type.avg_price|floatformat:2 }},
         {% endfor %}
     }).chain(chartData => {
         barChart($("#avg-price-chart"), chartData)
