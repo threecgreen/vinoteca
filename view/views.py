@@ -281,10 +281,8 @@ def edit_wine(request, wine_id: int):
         return redirect("Wine Profile", wine_id=wine_id)
     else:
         context = wine_profile_base(wine_id)
-        if context:
-            context["colors"] = Colors.objects.all()
-            return render(request, "edit_wine.html", context)
-        return redirect("Home")
+        context["colors"] = Colors.objects.all()
+        return render(request, "edit_wine.html", context)
 
 
 def edit_purchase(request, wine_id: int, purchase_id: int):
@@ -507,8 +505,7 @@ def inventory(request):
 
 
 def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool=False):
-    if sign not in ("add", "subtract"):
-        return redirect("Home")
+    assert sign not in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
         wine.inventory += 1

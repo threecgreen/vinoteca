@@ -189,7 +189,4 @@ def prev_purchase(request, wine_id):
     context = wine_profile_base(wine_id)
     context["stores"] = Stores.objects.all()
     context["default_vintage"] = default_vintage_year()
-    if context:
-        return render(request, "prev_wine.html", context)
-    else:
-        return redirect("New Purchase Previous")
+    return render(request, "prev_wine.html", context)
