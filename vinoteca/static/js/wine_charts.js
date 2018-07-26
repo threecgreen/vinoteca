@@ -75,7 +75,7 @@ export function pieChart(canvas, data) {
             },
             tooltips: {
                 bodyFontFamily: fontFamily,
-                bodyFontSize: 14,
+                bodyFontSize: 14
             }
         }
     };

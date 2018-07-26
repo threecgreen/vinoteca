@@ -32,7 +32,7 @@ function splitData(data: Dict<number>): [string[], number[]] {
 
 /** Helper higher-order function for piping data to a chart function. */
 export function chartHelper(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Dict<number>) => boolean,
-     canvas: JQuery<HTMLCanvasElement>) {
+    canvas: JQuery<HTMLCanvasElement>) {
 
     return (data: Dict<number>) => {
         chartFn(canvas, data)
@@ -84,12 +84,7 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>):
             },
             tooltips: {
                 bodyFontFamily: fontFamily,
-                bodyFontSize: 14,
-                // callbacks: {
-                //     afterLabel: (tooltipItem, data) => {
-                //         return "%";
-                //     }
-                // }
+                bodyFontSize: 14
             }
         }
     };
