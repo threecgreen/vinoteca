@@ -3,7 +3,6 @@ Main (along with pytest.ini) pytest configuration file for django testing.
 """
 import pytest
 from django.test import Client
-from vinoteca.models import Wines
 
 
 @pytest.fixture(scope="session")
