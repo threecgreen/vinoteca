@@ -1,46 +1,39 @@
 # vinoteca
-A wine purchase tracker and review system in a django web app.
+A wine purchase tracker and review system in a Django web app.
+I created this project to give my dad a better way to track his wine purchases than the Excel spreadsheet he was using.
+As such, vinoteca is designed with one specific user in mind and it shows.
 
 ## Installation
-### macOS/Linux
  1. Install sqlite3 if not already installed
+ 1. Clone the repository
+     ```bash
+     $ git clone https://github.com/threecgreen/vinoteca
+     ```
  1. Create a new virtual environment and activate it
      ```bash
-     $ create -n vinoteca python=3.6
-     $ source activate vinoteca
+     $ conda create -n vinoteca python=3.6
+     $ conda activate vinoteca
      ```
      or use virtualenv
  1. Install dependencies
     ```bash
     $ pip install -r requirements.txt
     ```
- 1. Create a new sqlite3 database in `data/wine.db`
+ 1. Run Django migrations
     ```bash
-    $ sqlite3 data/wine.db < data/schema.sql
+    $ python manage.py migrate
     ```
-### Windows Linux Subsystem
-1. Activate the [Windows Linux Subsystem](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide)
-    1. Open PowerShell as an Administrator
-    1. Run the following command:
-        ```PowerShell
-        > Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
-        ```
-    1. Restart your computer
-1. Run the Bash program
-1. Clone the repository
-1. Run the following commands
-```bash
-$ bash scripts/install.sh
-$ bash scripts/run.sh
-```
-
-### Windows
-TODO
+   
+**NB: Many of the tests currently rely on specific data in the database.
+I haven't gotten around to creating test data.**
 
 ## Built-With
 * Django
 * sqlite3
 * Materialize CSS
+* Typescript
+* Chart.js
+* Sigma.js
 
 ## Acknowledgements
 * Homepage image taken by [CollideStorm](https://www.reddit.com/r/wine/comments/6z7d6c/one_of_my_favorite_road_trips_i_have_ever_done_i/)
