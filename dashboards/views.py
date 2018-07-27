@@ -7,7 +7,7 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import render
 from typing import List
 
-from vinoteca.models import Purchases, Wines, WineTypes
+from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, Producers
 from vinoteca.utils import get_connection, int_to_date
 
 
@@ -17,36 +17,11 @@ def recent_purchases_dash(limit: int) -> List[Purchases]:
         .order_by("-date")[:limit]
 
 
-@attr.s
-class TopPurchaseWineType(object):
-    wine_type = attr.ib(type=str)
-    quantity = attr.ib(type=int)
-    variety = attr.ib(type=int)
-    avg_price = attr.ib(type=float)
-    id = attr.ib(type=int)
-
-
-def top_purchase_wine_types_dash(conn: sqlite3.Connection, limit: int) -> List[TopPurchaseWineType]:
+def top_purchase_wine_types_dash(limit: int) -> List[WineTypes]:
     return WineTypes.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
         .annotate(variety=Count('wines')) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
         .order_by("-variety")[:limit]
-    # query = """
-    #     SELECT
-    #         t.name
-    #         , sum(coalesce(p.quantity, 1))
-    #         , count(w.id)
-    #         , avg(p.price)
-    #         , t.id
-    #     FROM wine_types t
-    #         LEFT JOIN wines w ON t.id = w.wine_type_id
-    #         LEFT JOIN purchases p ON w.id = p.wine_id
-    #     GROUP BY t.id
-    #     ORDER BY count(w.id) DESC
-    #     LIMIT ?;
-    # """
-    # cursor = conn.cursor()
-    # return [TopPurchaseWineType(*row) for row in cursor.execute(query, (limit, )).fetchall()]
 
 
 @attr.s
@@ -80,88 +55,26 @@ def by_the_numbers_dash(conn: sqlite3.Connection) -> ByTheNumbers:
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
 
 
-@attr.s
-class Region(object):
-    name = attr.ib(type=str)
-    producer_count = attr.ib(type=int)
-    wine_count = attr.ib(type=int)
-    avg_rating = attr.ib(type=float)
-    avg_price = attr.ib(type=float)
+def regions_dash(limit: int) -> List[Regions]:
+    return Regions.objects.annotate(producer_count=Count("producers", distinct=True)) \
+        .annotate(variety=Count("producers__wines", distinct=True)) \
+        .annotate(avg_rating=Avg("producers__wines__rating")) \
+        .annotate(avg_price=Avg("producers__wines__purchases__price")) \
+        .order_by("-variety")[:limit]
 
 
-def regions_dash(conn: sqlite3.Connection, limit: int) -> List[Region]:
-    query = """
-        SELECT
-            r.name
-            , count(DISTINCT pro.id)
-            , count(w.id)
-            , avg(w.rating)
-            , avg(pur.price)
-        FROM regions r
-            LEFT JOIN producers pro ON r.id = pro.region_id
-            LEFT JOIN wines w ON pro.id = w.producer_id
-            LEFT JOIN purchases pur ON w.id = pur.wine_id
-        GROUP BY r.id
-        ORDER BY count(pur.id) DESC
-        LIMIT ?;
-    """
-    cursor = conn.cursor()
-    return [Region(*row) for row in cursor.execute(query, (limit, )).fetchall()]
+def color_dash() -> List[Colors]:
+    return list(Colors.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1)))
+                .annotate(variety=Count("wines", distinct=True))
+                .annotate(avg_price=Avg("wines__purchases__price"))
+                .order_by("-quantity"))
 
 
-@attr.s
-class Type(object):
-    name = attr.ib(type=str)
-    quantity = attr.ib(type=int)
-    variety = attr.ib(type=int)
-    avg_price = attr.ib(type=float)
-
-
-def color_dash(conn: sqlite3.Connection) -> List[Type]:
-    query = """
-        SELECT
-            c.name
-            , sum(coalesce(p.quantity, 1))
-            , count(w.id)
-            , avg(p.price)
-        FROM colors c
-            LEFT JOIN wines w ON c.id = w.color_id
-            LEFT JOIN purchases p ON w.id = p.wine_id
-        GROUP BY c.name
-        ORDER BY count(coalesce(p.quantity, 1)) DESC;
-    """
-    cursor = conn.cursor()
-    return [Type(*row) for row in cursor.execute(query).fetchall()]
-
-
-@attr.s
-class Producer(object):
-    id = attr.ib(type=int)
-    name = attr.ib(type=str)
-    quantity = attr.ib(type=int)
-    avg_rating = attr.ib(type=float)
-    avg_price = attr.ib(type=float)
-
-
-def producers_dash(conn: sqlite3.Connection, limit: int) -> List[Producer]:
-    query = """
-        SELECT 
-            pro.id
-            , pro.name
-            , sum(coalesce(pur.quantity, 1))
-            , avg(w.rating)
-            , avg(pur.price)
-        FROM producers pro
-            LEFT JOIN wines w ON pro.id = w.producer_id
-            LEFT JOIN purchases pur ON w.id = pur.wine_id
-        GROUP BY pro.id
-        ORDER BY 
-            avg(w.rating) DESC
-            , sum(coalesce(pur.quantity, 1)) DESC 
-        LIMIT ?;
-    """
-    cursor = conn.cursor()
-    return [Producer(*row) for row in cursor.execute(query, (limit, )).fetchall()]
+def producers_dash(limit: int) -> List[Producers]:
+    return Producers.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
+        .annotate(avg_rating=Avg("wines__rating")) \
+        .annotate(avg_price=Avg("wines__purchases__price")) \
+        .order_by("-avg_rating", "-quantity")[:limit]
 
 
 @attr.s
@@ -175,6 +88,7 @@ class Year(object):
 
 def purchases_by_year(conn: sqlite3.Connection) -> List[Year]:
     # Convert dates to years by integer division with divisor of 10,000
+
     query = """
         SELECT
             p.date / 10000
@@ -195,13 +109,13 @@ def dashboards(request):
     conn = get_connection()
     context = {
         "btn": by_the_numbers_dash(conn),
-        "colors": color_dash(conn),
-        "regions": regions_dash(conn, 6),
-        "producers": producers_dash(conn, 7),
+        "colors": color_dash(),
+        "regions": regions_dash(6),
+        "producers": producers_dash(7),
         "purchases": recent_purchases_dash(10),
-        "top_wine_types": top_purchase_wine_types_dash(conn, 10),
+        "top_wine_types": top_purchase_wine_types_dash(10),
         "years": purchases_by_year(conn),
-        "page_name": "Home",
+        "page_name": "Dashboards",
     }
     conn.close()
     return render(request, "dashboards.html", context)

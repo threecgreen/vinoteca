@@ -13,7 +13,7 @@
         <tr>
             <td>{{ region.name }}</td>
             <td class="num-col">{{ region.producer_count }}</td>
-            <td class="num-col">{{ region.wine_count }}</td>
+            <td class="num-col">{{ region.variety }}</td>
             {% if region.avg_rating %}
                 <td class="num-col">{{ region.avg_rating|floatformat:"1" }}</td>
             {% else %}
