@@ -18,7 +18,7 @@ def int_to_date(value):
     return vinoteca.utils.int_to_date(value)
 
 
-@register.filter(name="defndash")
+@register.filter(name="defndash", safe=True)
 def def_ndash(value):
     """Equivalent of |default_if_none:&ndash;"""
-    return value if value else "&ndash;"
+    return value if value else "–"

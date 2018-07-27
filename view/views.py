@@ -1,11 +1,11 @@
 import attr
-from datetime import date
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
-from django.db.models import Count, Max
+from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
 from pathlib import Path
+
 from vinoteca import __version__
 from vinoteca.models import Colors, Regions, Grapes, Producers, Purchases, \
     Stores, Wines, WineTypes, WineGrapes, VitiAreas
@@ -112,110 +112,33 @@ def wine_table(request):
 
 
 def wine_profile_base(wine_id: int, do_purchases: bool=True):
-    @attr.s
-    class WineProfile(object):
-        id = attr.ib(type=int)
-        notes = attr.ib(type=str)
-        description = attr.ib(type=str)
-        rating = attr.ib(type=int)
-        name = attr.ib(type=str)
-        color = attr.ib(type=str)
-        wine_type = attr.ib(type=str)
-        producer = attr.ib(type=str)
-        region = attr.ib(type=str)
-        producer_id = attr.ib(type=int)
-        region_id = attr.ib(type=int)
-        inventory = attr.ib(type=int)
-        viti_area = attr.ib(type=str)
-        why = attr.ib(type=str)
-        wine_type_id = attr.ib(type=int)
+    wine = Wines.objects \
+        .prefetch_related("wine_type", "color", "producer", "producer__region",
+                          "viti_area") \
+        .get(id=wine_id)
+    # Get the vintage of the most recent purchase
+    recent_vintage_result = Purchases.objects.filter(wine__id=wine.id) \
+        .values("id") \
+        .annotate(max_date=Max("date"))
 
-    @attr.s
-    class Purchase(object):
-        date = attr.ib(type=date)
-        quantity = attr.ib(type=int)
-        price = attr.ib(type=float)
-        vintage = attr.ib(type=int)
-        store = attr.ib(type=str)
-        memo = attr.ib(type=str)
-        id = attr.ib(type=int)
+    grapes = (WineGrapes.objects
+              .filter(wine__id=wine_id)
+              .order_by("-percent", "grape__name"))
+    has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
 
-    wine = Wines.objects.get(id=wine_id)
-    if wine:
-        wine_query = """
-            SELECT
-                w.notes
-                , w.description
-                , w.rating
-                , w.name
-                , cl.name
-                , t.name
-                , p.name
-                , r.name
-                , p.id
-                , p.region_id
-                , w.inventory
-                , v.name
-                , w.why
-                , t.id
-            FROM wines w
-                LEFT JOIN wine_types t ON w.wine_type_id = t.id
-                LEFT JOIN producers p ON w.producer_id = p.id
-                LEFT JOIN regions r ON p.region_id = r.id
-                LEFT JOIN colors cl ON w.color_id = cl.id
-                LEFT JOIN viti_areas v ON w.viti_area_id = v.id
-            WHERE w.id = ?;
-            """
-        # purchase_query = """
-        #     SELECT
-        #         p.date
-        #         , p.quantity
-        #         , p.price
-        #         , p.vintage
-        #         , s.name
-        #         , p.memo
-        #         , p.id
-        #     FROM purchases p
-        #         LEFT JOIN stores s ON p.store_id = s.id
-        #     WHERE p.wine_id = ?
-        #     ORDER BY p.date DESC;
-        # """
-        # Get the vintage of the most recent purchase
-        recent_vintage_result = Purchases.objects.filter(wine__id=wine.id) \
-            .values("id") \
-            .annotate(max_date=Max("date"))
-
-        conn = get_connection()
-        cursor = conn.cursor()
-        wine_info = cursor.execute(wine_query, (wine_id, )).fetchone()
-        grapes = (WineGrapes.objects
-                  .filter(wine__id=wine_id)
-                  .order_by("-percent", "grape__name"))
-        try:
-            rating = int(wine_info[2])
-        except TypeError:
-            rating = None
-        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
-        wine = WineProfile(wine_id, *wine_info[:2], rating, *wine_info[3:])
-
-        context = {
-            "grapes": list(grapes),
-            "recent_vintage": recent_vintage_result[0].get("max_date") if recent_vintage_result else None,
-            "wine": wine,
-            "has_img": has_img,
-            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
-            "version": __version__,
-        }
-        if do_purchases:
-            context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
-                .prefetch_related("store") \
-                .order_by("-date")
-            # purchases = cursor.execute(purchase_query, (wine_id, )).fetchall()
-            # context["purchases"] = [Purchase(int_to_date(purchase[0]), *purchase[1:])
-            #                         for purchase in purchases]
-        conn.close()
-        return context
-    return None
+    context = {
+        "grapes": list(grapes),
+        "recent_vintage": recent_vintage_result[0].get("max_date") if recent_vintage_result else None,
+        "wine": wine,
+        "has_img": has_img,
+        "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
+        "version": __version__,
+    }
+    if do_purchases:
+        context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
+            .prefetch_related("store") \
+            .order_by("-date")
+    return context
 
 
 def wine_profile(request, wine_id: int):
@@ -294,47 +217,15 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
 
 
 def producer_profile(request, producer_id: int):
-    @attr.s
-    class ProducerProfileWine(object):
-        last_purchased_date = attr.ib(type=str)
-        type = attr.ib(type=str)
-        name = attr.ib(type=str)
-        description = attr.ib(type=str)
-        total_quantity = attr.ib(type=int)
-        avg_price = attr.ib(type=float)
-        rating = attr.ib(type=int)
-        color = attr.ib(type=str)
-        id = attr.ib(type=int)
-        wine_type_id = attr.ib(type=int)
-
     producer = Producers.objects.get(id=producer_id)
-    wines_query = """
-        SELECT
-            max(p2.date)
-            , t.name
-            , w.name
-            , w.description
-            , sum(p2.quantity)
-            , avg(p2.price)
-            , w.rating
-            , c2.name
-            , w.id
-            , t.id
-        FROM wines w
-            INNER JOIN producers p ON w.producer_id = p.id
-            LEFT JOIN purchases p2 ON w.id = p2.wine_id
-            LEFT JOIN wine_types t ON w.wine_type_id = t.id
-            LEFT JOIN colors c2 ON w.color_id = c2.id
-        WHERE p.id = ?
-        GROUP BY w.id
-        ORDER BY max(p2.date) DESC;
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-    wines = cursor.execute(wines_query, (producer_id, )).fetchall()
+    wines = Wines.objects.filter(producer__id=producer.id) \
+        .annotate(total_quantity=Sum("purchases__quantity")) \
+        .annotate(avg_price=Avg("purchases__price")) \
+        .annotate(last_purchased_date=Max("purchases__date")) \
+        .prefetch_related("wine_type", "color")
     context = {
         "producer": producer,
-        "wines": [ProducerProfileWine(int_to_date(wine[0]), *wine[1:]) for wine in wines],
+        "wines": list(wines),
         "page_name": "Producer Profile",
         "version": __version__,
     }
@@ -358,74 +249,22 @@ def edit_producer(request, producer_id: int):
 
 
 def region_profile(request, region_id: int):
-    @attr.s
-    class VitiArea(object):
-        name = attr.ib(type=str)
-        total_quantity = attr.ib(type=int)
-        avg_rating = attr.ib(type=float)
-
-    @attr.s
-    class RegionProfileWine(object):
-        last_purchased_date = attr.ib(type=str)
-        color = attr.ib(type=str)
-        type = attr.ib(type=str)
-        name = attr.ib(type=str)
-        description = attr.ib(type=str)
-        total_quantity = attr.ib(type=int)
-        avg_price = attr.ib(type=float)
-        rating = attr.ib(type=int)
-        producer = attr.ib(type=str)
-        id = attr.ib(type=int)
-        producer_id = attr.ib(type=int)
-        wine_type_id = attr.ib(type=int)
-
     region = Regions.objects.get(id=region_id)
-    viti_area_query = """
-        SELECT
-          va.name
-          , count(w.id)
-          , avg(w.rating)
-        FROM viti_areas va
-        LEFT JOIN wines w ON va.id = w.viti_area_id
-        INNER JOIN regions r ON va.region_id = r.id
-        WHERE r.id = ?
-        GROUP BY va.id
-        ORDER BY va.name;
-    """
-    wines_query = """
-        SELECT
-            max(p2.date)
-            , c2.name
-            , t.name
-            , w.name
-            , w.description
-            , sum(p2.quantity)
-            , avg(p2.price)
-            , w.rating
-            , p.name
-            , w.id
-            , p.id
-            , t.id
-        FROM wines w
-            LEFT JOIN producers p ON w.producer_id = p.id
-            LEFT JOIN purchases p2 ON w.id = p2.wine_id
-            LEFT JOIN wine_types t ON w.wine_type_id = t.id
-            INNER JOIN regions r ON p.region_id = r.id
-            LEFT JOIN colors c2 on w.color_id = c2.id
-        WHERE r.id = ?
-        GROUP BY w.id
-        ORDER BY max(p2.date) DESC;
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-    wines = cursor.execute(wines_query, (region_id,)).fetchall()
-    viti_areas = cursor.execute(viti_area_query, (region_id,)).fetchall()
-    wines_profs = [RegionProfileWine(int_to_date(wine[0]), *wine[1:]) for wine in wines]
+    viti_areas = VitiAreas.objects.filter(region__id=region.id) \
+        .annotate(total_quantity=Count("wines__id")) \
+        .annotate(avg_rating=Avg("wines__rating")) \
+        .order_by("name")
+    wines = Wines.objects.filter(producer__region__id=region.id) \
+        .annotate(last_purchased_date=Max("purchases__date")) \
+        .annotate(total_quantity=Sum("purchases__quantity")) \
+        .annotate(avg_price=Avg("purchases__price")) \
+        .prefetch_related("producer", "wine_type", "color") \
+        .order_by("-last_purchased_date")
     context = {
         "region": region,
         "flag_exists": flag_exists(region.name),
-        "wines": wines_profs,
-        "viti_areas": [VitiArea(*viti_area) for viti_area in viti_areas],
+        "wines": list(wines),
+        "viti_areas": list(viti_areas),
         "page_name": "Region Profile",
         "version": __version__,
     }
@@ -528,52 +367,16 @@ def delete_purchase(request, wine_id: int, purchase_id: int):
 
 
 def wine_type_profile(request, wine_type_id: int):
-    @attr.s
-    class WineTypeProfile(object):
-        last_purchased_date = attr.ib(type=str)
-        color = attr.ib(type=str)
-        name = attr.ib(type=str)
-        description = attr.ib(type=str)
-        total_quantity = attr.ib(type=int)
-        avg_price = attr.ib(type=float)
-        rating = attr.ib(type=int)
-        producer = attr.ib(type=str)
-        region = attr.ib(type=str)
-        id = attr.ib(type=int)
-        producer_id = attr.ib(type=int)
-        region_id = attr.ib(type=int)
-
-    wines_query = """
-        SELECT
-            max(p2.date)
-            , c.name
-            , w.name
-            , w.description
-            , sum(p2.quantity)
-            , avg(p2.price)
-            , w.rating
-            , p.name
-            , r.name
-            , w.id
-            , p.id
-            , r.id
-        FROM wines w
-            LEFT JOIN producers p ON w.producer_id = p.id
-            LEFT JOIN purchases p2 ON w.id = p2.wine_id
-            LEFT JOIN wine_types t ON w.wine_type_id = t.id
-            INNER JOIN regions r ON p.region_id = r.id
-            LEFT JOIN colors c on w.color_id = c.id
-        WHERE t.id = ?
-        GROUP BY w.id
-        ORDER BY max(p2.date) DESC;
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-    wines = cursor.execute(wines_query, (wine_type_id, )).fetchall()
-    wines_profs = [WineTypeProfile(int_to_date(wine[0]), *wine[1:]) for wine in wines]
+    wine_type = WineTypes.objects.get(id=wine_type_id)
+    wines = Wines.objects.filter(wine_type__id=wine_type_id) \
+        .annotate(last_purchased_date=Max("purchases__date")) \
+        .annotate(total_quantity=Sum("purchases__quantity")) \
+        .annotate(avg_price=Avg("purchases__price")) \
+        .prefetch_related("producer", "color", "producer__region") \
+        .order_by("-last_purchased_date")
     context = {
-        "wines": wines_profs,
-        "wine_type": WineTypes.objects.get(id=wine_type_id),
+        "wines": wines,
+        "wine_type": wine_type,
         "page_name": "Wine Type Profile",
         "version": __version__
     }
