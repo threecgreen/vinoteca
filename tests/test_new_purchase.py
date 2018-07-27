@@ -9,12 +9,10 @@ from vinoteca.models import VitiAreas
 @pytest.mark.parametrize("page", [
     reverse("New Purchase Search"),
     reverse("New Purchase First"),
-    reverse("New Purchase Wine"),
+    # reverse("New Purchase Wine"),
     reverse("Get Producer Region JSON"),
     reverse("Get Region Viti Areas JSON"),
     reverse("Search Wines JSON"),
-    "/regions/viti-areas/",
-    "/new/search-wines/"
 ])
 def test_pages(client, page):
     response = client.get(page)

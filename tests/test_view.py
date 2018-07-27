@@ -22,15 +22,15 @@ def upload_file():
 
 
 @pytest.mark.parametrize("url", [
-    reverse("Wine Profile"),
-    reverse("Edit Wine"),
-    reverse("Edit Purchase"),
-    reverse("Producer Profile"),
-    reverse("Edit Producer"),
-    reverse("Region Profile"),
+    # reverse("Wine Profile"),
+    # reverse("Edit Wine"),
+    # reverse("Edit Purchase"),
+    # reverse("Producer Profile"),
+    # reverse("Edit Producer"),
+    # reverse("Region Profile"),
     reverse("Wine Table"),
     reverse("Inventory"),
-    reverse("Wine Type Profile"),
+    # reverse("Wine Type Profile"),
 ])
 @pytest.mark.django_db
 def test_pages(client, url):
