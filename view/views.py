@@ -328,7 +328,7 @@ def inventory(request):
 
 
 def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool=False):
-    assert sign not in ("add", "subtract")
+    assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
         wine.inventory += 1

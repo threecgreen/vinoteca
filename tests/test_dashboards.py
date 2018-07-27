@@ -1,4 +1,4 @@
-from django.urls import resolve
+from django.urls import reverse
 import pytest
 
 from dashboards.views import *
@@ -11,32 +11,16 @@ def connection():
 
 @pytest.mark.django_db
 def test_dash_page(client):
-    response = client.get("/dashboards/")
+    response = client.get(reverse("Dashboards"))
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("url,view_name", [
-    ("/dashboards/", "Dashboards"),
-])
-def test_urls(url, view_name):
-    resolver = resolve(url)
-    assert resolver.view_name == view_name
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
-def test_recent_purchases(connection, limit):
-    recent_purchases = recent_purchases(connection, limit)
-    assert isinstance(recent_purchases[0], RecentPurchase)
-    assert len(recent_purchases) == limit
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize("limit", [5, 10])
-def test_recent_purchases(connection, limit):
-    recent_purchases = recent_purchases(connection, limit)
-    assert isinstance(recent_purchases[0], RecentPurchase)
-    assert len(recent_purchases) == limit
+def test_recent_purchases(limit):
+    result = recent_purchases(limit)
+    assert isinstance(result[0], Purchases)
+    assert len(result) == limit
 
 
 @pytest.mark.django_db
@@ -46,31 +30,31 @@ def test_by_the_numbers(connection):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
-def test_top_purchase_categories(connection, limit):
+def test_top_purchase_categories(limit):
     top_purchase_categories = top_wine_types(limit)
-    assert isinstance(top_purchase_categories[0], TopPurchaseWineType)
+    assert isinstance(top_purchase_categories[0], WineTypes)
     assert len(top_purchase_categories) == limit
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
-def test_regions(connection, limit):
+def test_regions(limit):
     regions = top_regions(limit)
-    assert isinstance(regions[0], Region)
+    assert isinstance(regions[0], Regions)
     assert len(regions) == limit
 
 
 @pytest.mark.django_db
-def test_types(connection):
-    types_ = purchases_by_color()
-    assert isinstance(types_[0], Type)
+def test_types():
+    colors = purchases_by_color()
+    assert isinstance(colors[0], Colors)
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
-def test_producers(connection, limit):
+def test_producers(limit):
     producers = top_producers(limit)
-    assert isinstance(producers[0], Producer)
+    assert isinstance(producers[0], Producers)
     assert len(producers) == limit
 
 
