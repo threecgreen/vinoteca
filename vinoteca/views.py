@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from dashboards.views import recent_purchases_dash, top_purchase_wine_types_dash
+from dashboards.views import recent_purchases, top_wine_types
 from vinoteca.utils import get_connection
 
 
@@ -14,8 +14,8 @@ def simple_page(request, page_name: str):
 def home(request):
     conn = get_connection()
     context = {
-        "purchases": recent_purchases_dash(10),
-        "top_wine_types": top_purchase_wine_types_dash(10),
+        "purchases": recent_purchases(10),
+        "top_wine_types": top_wine_types(10),
         "page_name": "Home",
     }
     conn.close()

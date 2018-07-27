@@ -1,3 +1,5 @@
+/// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
+
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 export interface Dict<T> {
     [key: string]: T;
@@ -21,4 +23,8 @@ export function pipe<T>(val: T): IPipe<T> {
         chain: fn => pipe(fn(val)),
         value: () => val
     };
+}
+
+export function elementExists(elem: JQuery<HTMLElement>): boolean {
+    return typeof(elem) != 'undefined' && elem.length > 0;
 }

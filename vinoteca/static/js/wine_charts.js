@@ -1,5 +1,6 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
+import { pipe, elementExists } from "./utils.js";
 import { setTabAccessibility } from "./widgets.js";
 var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
@@ -26,23 +27,49 @@ function splitData(data) {
     }
     return [chartLabels, chartData];
 }
-/** Helper higher-order function for piping data to a chart function. */
-export function applyChart(chartFn, canvas) {
-    return function (data) { return chartFn(canvas, data); };
+/** Helper function to determine whether to proceed with chart creation. */
+function doChart(canvas, chartData) {
+    // Only create chart if one or more grapes has a non-zero value
+    if (chartData.length == 0 || allZero(chartData)) {
+        console.log("Unable to create grape composition pie chart due to grape \
+                     composition data signature.");
+        console.log("Chart data: " + chartData);
+        return false;
+    }
+    // Only create chart if the canvas element is valid
+    if (!elementExists(canvas)) {
+        console.log("Unable to create chart; canvas element is invalid.");
+        return false;
+    }
+    return true;
 }
-export function setChartAccessibility(chartTab) {
-    return function (success) { return setTabAccessibility(chartTab, success); };
+/** Helper function for creating a chart and enabling/disabling its container tab depending on
+ * success of creating the chart.
+ *
+ * Parameters:
+ *      chartFn: the chart function, e.g. pieChart or barChart
+ *      data: chart data
+ *      chartNamePrefix: prefix of the HTML IDs of the elements associated with the chart.
+ *          The prefix format is `${dashboardName}-${chartName}` and then
+ *              * Canvas is `${dashboardName}-${chartName}-chart`
+ *              * List element controlling the tab is `${dashboardName}-${chartName}-chart-li`
+ *              * Chart div `${dashboardName}-${chartName}-chart-tab`
+ */
+export function applyChart(chartFn, data, chartNamePrefix) {
+    var canvas = $("#" + chartNamePrefix + "-chart");
+    var chartLi = $("#" + chartNamePrefix + "-chart-li");
+    // Debugging:
+    // console.log(canvas);
+    // console.log(chartLi);
+    pipe(chartFn(canvas, data)).chain(function (success) { return setTabAccessibility(chartLi, success); });
 }
 /** Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
 export function pieChart(canvas, data) {
     var _a = splitData(data), chartLabels = _a[0], chartData = _a[1];
-    // Only create chart if one or more grapes has a non-zero value
-    if (chartData.length == 0 || allZero(chartData)) {
-        console.log("Unable to create grape composition pie chart due to grape \
-                     composition data signature.");
-        console.log("Chart data: " + chartData);
+    // Error checking
+    if (!doChart(canvas, chartData)) {
         return false;
     }
     var config = {
@@ -82,8 +109,14 @@ export function pieChart(canvas, data) {
             }
         }
     };
-    // @ts-ignore
-    var pie = new Chart(canvas, config);
+    try {
+        // @ts-ignore
+        var pie = new Chart(canvas, config);
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
     return true;
 }
 /** Creates a horizontal bar chart on the provided canvas using the provided data.
@@ -92,11 +125,8 @@ export function pieChart(canvas, data) {
 export function barChart(canvas, data, whiteText) {
     if (whiteText === void 0) { whiteText = true; }
     var _a = splitData(data), chartLabels = _a[0], chartData = _a[1];
-    // Only create chart if one or more grapes has a non-zero value
-    if (chartData.length == 0 || allZero(chartData)) {
-        console.log("Unable to create grape composition pie chart due to grape \
-                     composition data signature.");
-        console.log("Chart data: " + chartData);
+    // Error checking
+    if (!doChart(canvas, chartData)) {
         return false;
     }
     var config = {
@@ -164,8 +194,14 @@ export function barChart(canvas, data, whiteText) {
             }
         }
     };
-    // @ts-ignore
-    var bar = new Chart(canvas, config);
+    try {
+        // @ts-ignore
+        var pie = new Chart(canvas, config);
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
     return true;
 }
 //# sourceMappingURL=wine_charts.js.map

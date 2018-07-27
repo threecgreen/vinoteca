@@ -31,8 +31,8 @@
                 <div class="col s12 xl5">
                     <div class="card wine-red-card">
                         <div class="card-content">
-                            <h2 class="card-title">Top Purchase Types</h2>
-                            {% include "top_purchase_wine_types.html" %}
+                            <h2 class="card-title">Top Wine Types</h2>
+                            {% include "top_wine_types.html" %}
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
 import {  tabs } from '{% static "js/widgets.js" %}'
-import { barChart, applyChart, setChartAccessibility } from "{% static "js/wine_charts.js" %}";
+import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
 import { pipe } from '{% static "js/utils.js" %}'
 
 $(function(){
@@ -52,33 +52,24 @@ $(function(){
     tabs();
 
     // Top Wine Types
-    pipe({
+    const wineTypePurchases = {
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.wine_type }}": {{ wine_type.quantity|default_if_none:0 }},
+            "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
         {% endfor %}
-    }).chain(
-        applyChart(barChart, $("#top-purchases-chart"))
-    ).chain(
-        setChartAccessibility($("#top-purchases-chart-li"))
-    );
-    pipe({
+    };
+    applyChart(barChart, wineTypePurchases, "top-wt-purchases");
+    const wineTypeVarieties = {
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.wine_type }}": {{ wine_type.variety|default_if_none:0 }},
+            "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
         {% endfor %}
-    }).chain(
-        applyChart(barChart, $("#top-varieties-chart"))
-    ).chain(
-        setChartAccessibility($("#top-varieties-chart-li"))
-    );
-    pipe({
+    };
+    applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
+    const wineTypePrice = {
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.wine_type }}": {{ wine_type.avg_price|floatformat:2 }},
+            "{{ wine_type.name|title }}": {{ wine_type.avg_price|floatformat:2 }},
         {% endfor %}
-    }).chain(
-        applyChart(barChart, ($("#avg-price-chart")))
-    ).chain(
-        setChartAccessibility($("#avg-price-chart-li"))
-    );
+    };
+    applyChart(barChart, wineTypePrice, "top-wt-price");
 });
 </script>
 {% endblock %}

@@ -1,4 +1,6 @@
 {% load humanize %}
+{% load vinoteca %}
+
 <table class="responsive highlight">
     <thead>
         <tr>
@@ -14,7 +16,7 @@
     <tbody>
     {% for purchase in purchases %}
         <tr>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.date|naturalday:"b j"|title }}</a></td>
+            <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.date|inttodate|naturalday:"b j"|title }}</a></td>
             <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.store.name }}</a></td>
             {% if purchase.wine.producer %}
                 <td><a href="{% url "Producer Profile" producer_id=purchase.wine.producer.id %}">{{ purchase.wine.producer.name }}</a></td>

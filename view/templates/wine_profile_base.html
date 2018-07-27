@@ -19,11 +19,11 @@
                 {% if wine.producer %}
                     <a class="text-link" href="{% url "Producer Profile" producer_id=wine.producer.id %}">{{ wine.producer.name }}</a>
                 {% endif %}
-                {% if wine.region and wine.producer %}
+                {% if wine.producer.region and wine.producer %}
                     of
                 {% endif %}
-                {% if wine.region %}
-                    <a class="text-link" href="{% url "Region Profile" region_id=wine.region.id %}">{{ wine.region.name }}</a>
+                {% if wine.producer.region %}
+                    <a class="text-link" href="{% url "Region Profile" region_id=wine.producer.region.id %}">{{ wine.producer.region.name }}</a>
                 {% else %}
                     This producer currently does not have a region, please add one.
                 {% endif %}

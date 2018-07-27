@@ -11,13 +11,13 @@ from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, Produc
 from vinoteca.utils import get_connection, int_to_date
 
 
-def recent_purchases_dash(limit: int) -> List[Purchases]:
+def recent_purchases(limit: int) -> List[Purchases]:
     return Purchases.objects.prefetch_related("wine", "wine__wine_type", "wine__producer",
                                               "wine__producer__region", "store") \
         .order_by("-date")[:limit]
 
 
-def top_purchase_wine_types_dash(limit: int) -> List[WineTypes]:
+def top_wine_types(limit: int) -> List[WineTypes]:
     return WineTypes.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
         .annotate(variety=Count('wines')) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
@@ -32,7 +32,7 @@ class ByTheNumbers(object):
     variety_count = attr.ib(type=int)
 
 
-def by_the_numbers_dash(conn: sqlite3.Connection) -> ByTheNumbers:
+def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
     cursor = conn.cursor()
     query = """
         SELECT 
@@ -55,7 +55,7 @@ def by_the_numbers_dash(conn: sqlite3.Connection) -> ByTheNumbers:
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
 
 
-def regions_dash(limit: int) -> List[Regions]:
+def top_regions(limit: int) -> List[Regions]:
     return Regions.objects.annotate(producer_count=Count("producers", distinct=True)) \
         .annotate(variety=Count("producers__wines", distinct=True)) \
         .annotate(avg_rating=Avg("producers__wines__rating")) \
@@ -63,14 +63,14 @@ def regions_dash(limit: int) -> List[Regions]:
         .order_by("-variety")[:limit]
 
 
-def color_dash() -> List[Colors]:
+def purchases_by_color() -> List[Colors]:
     return list(Colors.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1)))
                 .annotate(variety=Count("wines", distinct=True))
                 .annotate(avg_price=Avg("wines__purchases__price"))
                 .order_by("-quantity"))
 
 
-def producers_dash(limit: int) -> List[Producers]:
+def top_producers(limit: int) -> List[Producers]:
     return Producers.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
         .annotate(avg_rating=Avg("wines__rating")) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
@@ -108,12 +108,12 @@ def purchases_by_year(conn: sqlite3.Connection) -> List[Year]:
 def dashboards(request):
     conn = get_connection()
     context = {
-        "btn": by_the_numbers_dash(conn),
-        "colors": color_dash(),
-        "regions": regions_dash(6),
-        "producers": producers_dash(7),
-        "purchases": recent_purchases_dash(10),
-        "top_wine_types": top_purchase_wine_types_dash(10),
+        "btn": by_the_numbers(conn),
+        "colors": purchases_by_color(),
+        "regions": top_regions(6),
+        "producers": top_producers(7),
+        "purchases": recent_purchases(10),
+        "top_wine_types": top_wine_types(10),
         "years": purchases_by_year(conn),
         "page_name": "Dashboards",
     }

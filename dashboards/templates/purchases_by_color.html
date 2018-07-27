@@ -1,0 +1,37 @@
+<ul class="tabs">
+    <li class="wine-red-tab tab " id="pb-color-table-li" ><a href="#pb-color-table-tab">Table</a> </li>
+    <li class="wine-green-tab tab " id="pb-color-purchases-chart-li"><a href="#pb-color-purchases-chart-tab">Purchases</a> </li>
+    <li class="wine-green-tab tab " id="pb-color-varieties-chart-li"><a href="#pb-color-varieties-chart-tab">Varieties</a> </li>
+    <li class="wine-green-tab tab " id="pb-color-price-chart-li"><a href="#pb-color-price-chart-tab">Avg Price</a> </li>
+</ul>
+<div id="pb-color-table-tab" class="s12">
+    <table class="responsive highlight">
+        <thead>
+        <tr>
+            <th>Color</th>
+            <th class="num-col">Purchases</th>
+            <th class="num-col">Varieties</th>
+            <th class="num-col">Avg Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for color in colors %}
+            <tr>
+                <td>{{ color.name|title }}</td>
+                <td class="num-col">{{ color.quantity }}</td>
+                <td class="num-col">{{ color.variety }}</td>
+                <td class="num-col">{{ color.avg_price|floatformat:"2" }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div id="pb-color-purchases-chart-tab" class="s12">
+    <canvas height="275px" id="pb-color-purchases-chart"></canvas>
+</div>
+<div id="pb-color-varieties-chart-tab" class="s12">
+    <canvas height="275px" id="pb-color-varieties-chart"></canvas>
+</div>
+<div id="pb-color-price-chart-tab" class="s12">
+    <canvas height="275px" id="pb-color-price-chart"></canvas>
+</div>

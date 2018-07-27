@@ -26,7 +26,7 @@ def test_urls(url, view_name):
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_recent_purchases(connection, limit):
-    recent_purchases = recent_purchases_dash(connection, limit)
+    recent_purchases = recent_purchases(connection, limit)
     assert isinstance(recent_purchases[0], RecentPurchase)
     assert len(recent_purchases) == limit
 
@@ -34,20 +34,20 @@ def test_recent_purchases(connection, limit):
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_recent_purchases(connection, limit):
-    recent_purchases = recent_purchases_dash(connection, limit)
+    recent_purchases = recent_purchases(connection, limit)
     assert isinstance(recent_purchases[0], RecentPurchase)
     assert len(recent_purchases) == limit
 
 
 @pytest.mark.django_db
 def test_by_the_numbers(connection):
-    assert isinstance(by_the_numbers_dash(connection), ByTheNumbers)
+    assert isinstance(by_the_numbers(connection), ByTheNumbers)
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_top_purchase_categories(connection, limit):
-    top_purchase_categories = top_purchase_wine_types_dash(limit)
+    top_purchase_categories = top_wine_types(limit)
     assert isinstance(top_purchase_categories[0], TopPurchaseWineType)
     assert len(top_purchase_categories) == limit
 
@@ -55,21 +55,21 @@ def test_top_purchase_categories(connection, limit):
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_regions(connection, limit):
-    regions = regions_dash(limit)
+    regions = top_regions(limit)
     assert isinstance(regions[0], Region)
     assert len(regions) == limit
 
 
 @pytest.mark.django_db
 def test_types(connection):
-    types_ = color_dash()
+    types_ = purchases_by_color()
     assert isinstance(types_[0], Type)
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [5, 10])
 def test_producers(connection, limit):
-    producers = producers_dash(limit)
+    producers = top_producers(limit)
     assert isinstance(producers[0], Producer)
     assert len(producers) == limit
 
