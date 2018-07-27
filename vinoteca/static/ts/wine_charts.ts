@@ -34,9 +34,7 @@ function splitData(data: Dict<number>): [string[], number[]] {
 export function chartHelper(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Dict<number>) => boolean,
     canvas: JQuery<HTMLCanvasElement>) {
 
-    return (data: Dict<number>) => {
-        chartFn(canvas, data)
-    };
+    return (data: Dict<number>) => chartFn(canvas, data);
 }
 
 /** Creates a pie chart on the provided canvas using the provided data.
@@ -48,6 +46,7 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>):
     if (chartData.length == 0 || allZero(chartData)) {
         console.log("Unable to create grape composition pie chart due to grape \
                      composition data signature.")
+        console.log(`Chart data: ${chartData}`);
         return false;
     }
 

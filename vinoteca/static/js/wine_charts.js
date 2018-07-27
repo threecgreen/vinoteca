@@ -27,9 +27,7 @@ function splitData(data) {
 }
 /** Helper higher-order function for piping data to a chart function. */
 export function chartHelper(chartFn, canvas) {
-    return function (data) {
-        chartFn(canvas, data);
-    };
+    return function (data) { return chartFn(canvas, data); };
 }
 /** Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
@@ -40,6 +38,7 @@ export function pieChart(canvas, data) {
     if (chartData.length == 0 || allZero(chartData)) {
         console.log("Unable to create grape composition pie chart due to grape \
                      composition data signature.");
+        console.log("Chart data: " + chartData);
         return false;
     }
     var config = {
