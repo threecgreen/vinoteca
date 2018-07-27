@@ -58,7 +58,7 @@
                         {% endif %}
                         <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color|title }}</a></td>
                         {% if wine.wine_type_id %}
-                            <td><a href="{% url "Wine Type Profile" wine_type_id=wine.wine_type_id %}">{{ wine.name }} {{ wine.type }}</a></td>
+                            <td><a href="{% url "Wine Type Profile" wine_type_id=wine.wine_type_id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
                         {% else %}
                             <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name }} {{ wine.type }}</a></td>
                         {% endif %}

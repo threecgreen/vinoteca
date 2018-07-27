@@ -3,6 +3,7 @@ from datetime import date
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
+from django.db.models import Count, Max
 from django.shortcuts import render, redirect
 from pathlib import Path
 from vinoteca import __version__
@@ -88,15 +89,15 @@ def wine_table(request):
             LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
             LEFT JOIN purchases pu ON pu.wine_id = w.id
             LEFT JOIN (
-                          SELECT
-                              id
-                              , max(date) as recent_purchase
-                          FROM purchases
-                          GROUP BY id
-                      ) as sub on pu.id = sub.id
+                SELECT
+                    id
+                    , max(date) as recent_purchase
+                FROM purchases
+                GROUP BY id
+            ) as sub on pu.id = sub.id
             LEFT JOIN viti_areas v on w.viti_area_id = v.id
         GROUP BY w.id
-        ORDER BY sub.recent_purchase desc ;
+        ORDER BY sub.recent_purchase DESC;
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -128,11 +129,6 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         viti_area = attr.ib(type=str)
         why = attr.ib(type=str)
         wine_type_id = attr.ib(type=int)
-
-    @attr.s
-    class Grape(object):
-        name = attr.ib(type=int)
-        percent = attr.ib(type=int)
 
     @attr.s
     class Purchase(object):
@@ -170,32 +166,25 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                 LEFT JOIN viti_areas v ON w.viti_area_id = v.id
             WHERE w.id = ?;
             """
-        purchase_query = """
-            SELECT
-                p.date
-                , p.quantity
-                , p.price
-                , p.vintage
-                , s.name
-                , p.memo
-                , p.id
-            FROM purchases p
-                LEFT JOIN stores s ON p.store_id = s.id
-            WHERE p.wine_id = ?
-            ORDER BY p.date DESC;
-        """
-        recent_vintage_query = """
-            SELECT
-                p.vintage
-            FROM purchases p
-            INNER JOIN (
-                SELECT
-                    max(date) as max_date
-                FROM purchases
-                WHERE wine_id = ?
-            ) sub ON sub.max_date = p.date
-            WHERE wine_id = ? ;
-        """
+        # purchase_query = """
+        #     SELECT
+        #         p.date
+        #         , p.quantity
+        #         , p.price
+        #         , p.vintage
+        #         , s.name
+        #         , p.memo
+        #         , p.id
+        #     FROM purchases p
+        #         LEFT JOIN stores s ON p.store_id = s.id
+        #     WHERE p.wine_id = ?
+        #     ORDER BY p.date DESC;
+        # """
+        # Get the vintage of the most recent purchase
+        recent_vintage_result = Purchases.objects.filter(wine__id=wine.id) \
+            .values("id") \
+            .annotate(max_date=Max("date"))
+
         conn = get_connection()
         cursor = conn.cursor()
         wine_info = cursor.execute(wine_query, (wine_id, )).fetchone()
@@ -208,20 +197,22 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
             rating = None
         has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
         wine = WineProfile(wine_id, *wine_info[:2], rating, *wine_info[3:])
-        recent_vintage_query = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
 
         context = {
             "grapes": list(grapes),
-            "recent_vintage": recent_vintage_query[0] if recent_vintage_query else None,
+            "recent_vintage": recent_vintage_result[0].get("max_date") if recent_vintage_result else None,
             "wine": wine,
             "has_img": has_img,
             "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
             "version": __version__,
         }
         if do_purchases:
-            purchases = cursor.execute(purchase_query, (wine_id, )).fetchall()
-            context["purchases"] = [Purchase(int_to_date(purchase[0]), *purchase[1:])
-                                    for purchase in purchases]
+            context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
+                .prefetch_related("store") \
+                .order_by("-date")
+            # purchases = cursor.execute(purchase_query, (wine_id, )).fetchall()
+            # context["purchases"] = [Purchase(int_to_date(purchase[0]), *purchase[1:])
+            #                         for purchase in purchases]
         conn.close()
         return context
     return None
@@ -523,24 +514,10 @@ def delete_wine(request, wine_id: int):
     purchases = Purchases.objects.get(wine=wine)
     wine_grapes.delete()
     purchases.delete()
-    wine.delete()
     # Determine if producer was created for this wine
-    query = """
-        SELECT
-            p.id
-        FROM producers p
-            INNER JOIN wines w ON p.id = w.producer_id
-        WHERE w.id = ?
-        GROUP BY p.id
-        HAVING count(w.id) < 2;
-    """
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute(query, (wine_id, ))
-    connection.close()
-    if cursor.rowcount == 1:
-        producer = Producers.objects.get(id=cursor.fetchone()[0])
-        producer.delete()
+    if Wines.objects.filter(producer__id=wine.producer.id).count() == 1:
+        wine.producer.delete()
+    wine.delete()
     return redirect("Wine Table")
 
 

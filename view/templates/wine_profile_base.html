@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load static %}
+{% load vinoteca %}
+
 {% block new-nav %}class="active"{% endblock %}
 {% block body %}
 <div class="container">
@@ -165,14 +167,14 @@
                             <tr>
                                 {% block table-edit-body %}{% endblock %}
                                 {% if purchase.date %}
-                                    <td>{{ purchase.date|naturalday:"b j, Y"|title }}</td>
+                                    <td>{{ purchase.date|inttodate|naturalday:"b j, Y"|title }}</td>
                                 {% else %}
                                     <td>&ndash;</td>
                                 {% endif %}
-                                <td class="num-col">{{ purchase.quantity|default_if_none:"&ndash;" }}</td>
-                                <td class="num-col">{{ purchase.price|floatformat:2|default_if_none:"&ndash;" }}</td>
+                                <td class="num-col">{{ purchase.quantity|defndash }}</td>
+                                <td class="num-col">{{ purchase.price|floatformat:2|defndash }}</td>
                                 <td class="num-col">{{ purchase.vintage|default_if_none:"NV" }}</td>
-                                <td>{{ purchase.store }}</td>
+                                <td>{{ purchase.store.name }}</td>
                                 <td>{{ purchase.memo|default_if_none:"" }}</td>
                             </tr>
                         {% endfor %}
@@ -202,13 +204,13 @@ $(function () {
     {% if grapes %}
         pipe({
             {% for grape in grapes %}
-                "{{ grape.name }}": {{ grape.percent|default_if_none:0 }},
+                "{{ grape.grape.name }}": {{ grape.percent|default_if_none:0 }},
             {% endfor %}
-        }).chain(chartData => {
-            pieChart($("#grape-comp-chart"), chartData)
-        }).chain(success => {
-            setTabAccessibility($("#grape-comp-chart-li"), success);
-        });
+        }).chain(
+            chartData => pieChart($("#grape-comp-chart"), chartData)
+        ).chain(
+            success => setTabAccessibility($("#grape-comp-chart-li"), success)
+        );
     {% else %}
         setTabAccessibility($("#grape-comp-chart-li"), false);
     {% endif %}
