@@ -6,7 +6,6 @@ from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
 from pathlib import Path
 
-from vinoteca import __version__
 from vinoteca.models import Colors, Regions, Grapes, Producers, Purchases, \
     Stores, Wines, WineTypes, WineGrapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
@@ -106,7 +105,6 @@ def wine_table(request):
     context = {
         "wines": wines,
         "page_name": "Wine Table",
-        "version": __version__,
     }
     return render(request, "wines_table.html", context)
 
@@ -132,7 +130,6 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
         "wine": wine,
         "has_img": has_img,
         "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
-        "version": __version__,
     }
     if do_purchases:
         context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
@@ -227,7 +224,6 @@ def producer_profile(request, producer_id: int):
         "producer": producer,
         "wines": list(wines),
         "page_name": "Producer Profile",
-        "version": __version__,
     }
     return render(request, "producer_profile.html", context)
 
@@ -243,7 +239,6 @@ def edit_producer(request, producer_id: int):
     context = {
         "producer": Producers.objects.get(id=producer_id),
         "page_name": "Edit Producer",
-        "version": __version__,
     }
     return render(request, "edit_producer.html", context)
 
@@ -266,7 +261,6 @@ def region_profile(request, region_id: int):
         "wines": list(wines),
         "viti_areas": list(viti_areas),
         "page_name": "Region Profile",
-        "version": __version__,
     }
     return render(request, "region_profile.html", context)
 
@@ -328,7 +322,6 @@ def inventory(request):
     context = {
         "inventory": wine_inventory,
         "page_name": "Inventory",
-        "version": __version__,
     }
     connection.close()
     return render(request, "inventory.html", context)
@@ -378,6 +371,5 @@ def wine_type_profile(request, wine_type_id: int):
         "wines": wines,
         "wine_type": wine_type,
         "page_name": "Wine Type Profile",
-        "version": __version__
     }
     return render(request, "wine_type_profile.html", context)

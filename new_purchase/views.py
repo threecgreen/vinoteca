@@ -5,8 +5,8 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from pathlib import Path
+
 from view.views import wine_profile_base
-from vinoteca import __version__
 from vinoteca.models import Colors, Regions, Stores, VitiAreas, Wines
 from vinoteca.utils import (g_or_c_region, g_or_c_producer, g_or_c_store,
                             g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
@@ -154,7 +154,6 @@ def first_new_purchase(request):
         "colors": Colors.objects.all(),
         "default_vintage": default_vintage_year(),
         "page_name": "New Purchase",
-        "version": __version__,
     }
     return render(request, "first_time_wine.html", context)
 
@@ -163,7 +162,6 @@ def prev_new_purchase_search(request):
     context = {
         "colors": Colors.objects.all(),
         "page_name": "New Purchase",
-        "version": __version__,
     }
     return render(request, "prev_wine_search.html", context)
 

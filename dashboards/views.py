@@ -4,7 +4,6 @@ from datetime import date
 from django.shortcuts import render
 from typing import List
 
-from vinoteca import __version__
 from vinoteca.models import Wines
 from vinoteca.utils import get_connection, int_to_date
 
@@ -240,7 +239,6 @@ def dashboards(request):
         "top_wine_types": top_purchase_wine_types_dash(conn, 10),
         "years": purchases_by_year(conn),
         "page_name": "Home",
-        "version": __version__,
     }
     conn.close()
     return render(request, "dashboards.html", context)
