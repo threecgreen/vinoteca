@@ -14,7 +14,7 @@ def simple_page(request, page_name: str):
 def home(request):
     conn = get_connection()
     context = {
-        "purchases": recent_purchases_dash(conn, 10),
+        "purchases": recent_purchases_dash(10),
         "top_wine_types": top_purchase_wine_types_dash(conn, 10),
         "page_name": "Home",
     }

@@ -72,7 +72,7 @@
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
 import { tabs } from '{% static "js/widgets.js" %}'
-import { barChart, chartHelper } from "{% static "js/wine_charts.js" %}";
+import { barChart, applyChart, setChartAccessibility } from "{% static "js/wine_charts.js" %}";
 import { pipe } from '{% static "js/utils.js" %}'
 
 $(function () {
@@ -83,34 +83,58 @@ $(function () {
         {% for color in colors %}
             "{{ color.name|title }}": {{ color.quantity|default_if_none:0 }},
         {% endfor %}
-    }).chain(chartHelper(barChart, $("#colors-purchases-chart")));
+    }).chain(
+        applyChart(barChart, $("#colors-purchases-chart"))
+    ).chain(
+        setChartAccessibility($("#colors-purchases-chart-li"))
+    );
     pipe({
         {% for color in colors %}
             "{{ color.name|title }}": {{ color.variety|default_if_none:0 }},
         {% endfor %}
-    }).chain(chartHelper(barChart, $("#colors-varieties-chart")));
+    }).chain(
+        applyChart(barChart, $("#colors-varieties-chart"))
+    ).chain(
+        setChartAccessibility($("#colors-varieties-chart-li"))
+    );
     pipe({
         {% for color in colors %}
             "{{ color.name|title }}": {{ color.avg_price|floatformat:2 }},
         {% endfor %}
-    }).chain(chartHelper(barChart, $("#colors-avg-price-chart")));
+    }).chain(
+        applyChart(barChart, $("#colors-avg-price-chart"))
+    ).chain(
+        setChartAccessibility($("#colors-avg-price-chart-li"))
+    );
 
-    // Top Recent Purchases
+    // Top Wine Types
     pipe({
          {% for wine_type in top_wine_types %}
              "{{ wine_type.wine_type }}": {{ wine_type.quantity|default_if_none:0 }},
          {% endfor %}
-    }).chain(chartHelper(barChart, $("#top-purchases-chart")));
+    }).chain(
+        applyChart(barChart, $("#top-purchases-chart"))
+    ).chain(
+        setChartAccessibility($("#top-purchases-chart-li"))
+    );
     pipe({
         {% for wine_type in top_wine_types %}
             "{{ wine_type.wine_type }}": {{ wine_type.variety|default_if_none:0 }},
         {% endfor %}
-    }).chain(chartHelper(barChart, $("#top-varieties-chart")));
+    }).chain(
+        applyChart(barChart, $("#top-varieties-chart"))
+    ).chain(
+        setChartAccessibility($("#top-varieties-chart-li"))
+    );
     pipe({
         {% for wine_type in top_wine_types %}
             "{{ wine_type.wine_type }}": {{ wine_type.avg_price|floatformat:2 }},
         {% endfor %}
-    }).chain(chartHelper(barChart, $("#avg-price-chart")));
+    }).chain(
+        applyChart(barChart, $("#avg-price-chart"))
+    ).chain(
+        setChartAccessibility($("#avg-price-chart-li"))
+    );
 });
 </script>
 {% endblock %}

@@ -2,6 +2,7 @@
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 
 import { Dict } from "./utils.js"
+import { setTabAccessibility } from "./widgets.js"
 
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
@@ -31,10 +32,14 @@ function splitData(data: Dict<number>): [string[], number[]] {
 }
 
 /** Helper higher-order function for piping data to a chart function. */
-export function chartHelper(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Dict<number>) => boolean,
-    canvas: JQuery<HTMLCanvasElement>) {
+export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Dict<number>) => boolean,
+    canvas: JQuery<HTMLCanvasElement>): (data: Dict<number>) => boolean {
 
     return (data: Dict<number>) => chartFn(canvas, data);
+}
+
+export function setChartAccessibility(chartTab: JQuery<HTMLUListElement>): (success: boolean) => void {
+    return (success: boolean) => setTabAccessibility(chartTab, success);
 }
 
 /** Creates a pie chart on the provided canvas using the provided data.
@@ -97,7 +102,16 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>):
  * Returns a boolean indicating whether the chart was created successfully.
  */
 export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, whiteText = true): boolean {
+
     const [chartLabels, chartData] = splitData(data);
+    // Only create chart if one or more grapes has a non-zero value
+    if (chartData.length == 0 || allZero(chartData)) {
+        console.log("Unable to create grape composition pie chart due to grape \
+                     composition data signature.")
+        console.log(`Chart data: ${chartData}`);
+        return false;
+    }
+
 
     const config = {
         type: "horizontalBar",

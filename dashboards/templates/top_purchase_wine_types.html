@@ -17,7 +17,7 @@
         <tbody>
         {% for wine_type in top_wine_types %}
             <tr>
-                <td><a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">{{ wine_type.wine_type }}</a></td>
+                <td><a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">{{ wine_type.name }}</a></td>
                 <td class="num-col"><a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">{{ wine_type.quantity }}</a></td>
                 <td class="num-col"><a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">{{ wine_type.variety }}</a></td>
                 <td class="num-col"><a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">{{ wine_type.avg_price|floatformat:2 }}</a></td>

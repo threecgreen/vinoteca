@@ -1,61 +1,20 @@
 import attr
 import sqlite3
 from datetime import date
+
+from django.db.models import Avg, Count, Sum
+from django.db.models.functions import Coalesce
 from django.shortcuts import render
 from typing import List
 
-from vinoteca.models import Wines
+from vinoteca.models import Purchases, Wines, WineTypes
 from vinoteca.utils import get_connection, int_to_date
 
 
-@attr.s
-class RecentPurchase(object):
-    date = attr.ib(type=date)
-    store = attr.ib(type=str)
-    producer = attr.ib(type=str)
-    region = attr.ib(type=str)
-    type = attr.ib(type=str)
-    name = attr.ib(type=str)
-    price = attr.ib(type=float)
-    quantity = attr.ib(type=int)
-    id = attr.ib(type=int)
-    producer_id = attr.ib(type=int)
-    region_id = attr.ib(type=int)
-    wine_type_id = attr.ib(type=int)
-
-
-def recent_purchases_dash(conn: sqlite3.Connection, limit: int) -> List[RecentPurchase]:
-    query = """
-        SELECT
-            p.date
-            , s.name
-            , p2.name
-            , r.name
-            , t.name
-            , w.name
-            , p.price
-            , p.quantity
-            , w.id
-            , p2.id
-            , r.id
-            , t.id
-        FROM purchases p
-            LEFT JOIN wines w ON p.wine_id = w.id
-            LEFT JOIN wine_types t ON w.wine_type_id = t.id
-            LEFT JOIN producers p2 ON w.producer_id = p2.id
-            LEFT JOIN regions r ON p2.region_id = r.id
-            LEFT JOIN stores s ON p.store_id = s.id
-        ORDER BY p.date DESC
-        LIMIT ?;
-    """
-    cursor = conn.cursor()
-    q_results = cursor.execute(query, (limit, )).fetchall()
-    recent_purchases = []
-    for item in q_results:
-        # Convert YYYYMMDD date format to date object for formatting
-        purchase_date = int_to_date(item[0])
-        recent_purchases.append(RecentPurchase(purchase_date, *item[1:]))
-    return recent_purchases
+def recent_purchases_dash(limit: int) -> List[Purchases]:
+    return Purchases.objects.prefetch_related("wine", "wine__wine_type", "wine__producer",
+                                              "wine__producer__region", "store") \
+        .order_by("-date")[:limit]
 
 
 @attr.s
@@ -68,22 +27,26 @@ class TopPurchaseWineType(object):
 
 
 def top_purchase_wine_types_dash(conn: sqlite3.Connection, limit: int) -> List[TopPurchaseWineType]:
-    query = """
-        SELECT
-            t.name
-            , sum(coalesce(p.quantity, 1))
-            , count(w.id)
-            , avg(p.price)
-            , t.id
-        FROM wine_types t
-            LEFT JOIN wines w ON t.id = w.wine_type_id
-            LEFT JOIN purchases p ON w.id = p.wine_id
-        GROUP BY t.id
-        ORDER BY count(w.id) DESC
-        LIMIT ?;
-    """
-    cursor = conn.cursor()
-    return [TopPurchaseWineType(*row) for row in cursor.execute(query, (limit, )).fetchall()]
+    return WineTypes.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
+        .annotate(variety=Count('wines')) \
+        .annotate(avg_price=Avg("wines__purchases__price")) \
+        .order_by("-variety")[:limit]
+    # query = """
+    #     SELECT
+    #         t.name
+    #         , sum(coalesce(p.quantity, 1))
+    #         , count(w.id)
+    #         , avg(p.price)
+    #         , t.id
+    #     FROM wine_types t
+    #         LEFT JOIN wines w ON t.id = w.wine_type_id
+    #         LEFT JOIN purchases p ON w.id = p.wine_id
+    #     GROUP BY t.id
+    #     ORDER BY count(w.id) DESC
+    #     LIMIT ?;
+    # """
+    # cursor = conn.cursor()
+    # return [TopPurchaseWineType(*row) for row in cursor.execute(query, (limit, )).fetchall()]
 
 
 @attr.s
@@ -235,7 +198,7 @@ def dashboards(request):
         "colors": color_dash(conn),
         "regions": regions_dash(conn, 6),
         "producers": producers_dash(conn, 7),
-        "purchases": recent_purchases_dash(conn, 10),
+        "purchases": recent_purchases_dash(10),
         "top_wine_types": top_purchase_wine_types_dash(conn, 10),
         "years": purchases_by_year(conn),
         "page_name": "Home",

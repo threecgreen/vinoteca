@@ -1,5 +1,6 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
+import { setTabAccessibility } from "./widgets.js";
 var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
 var translucentWhite = "rgba(240, 240, 240, 0.9)";
@@ -26,8 +27,11 @@ function splitData(data) {
     return [chartLabels, chartData];
 }
 /** Helper higher-order function for piping data to a chart function. */
-export function chartHelper(chartFn, canvas) {
+export function applyChart(chartFn, canvas) {
     return function (data) { return chartFn(canvas, data); };
+}
+export function setChartAccessibility(chartTab) {
+    return function (success) { return setTabAccessibility(chartTab, success); };
 }
 /** Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
@@ -88,6 +92,13 @@ export function pieChart(canvas, data) {
 export function barChart(canvas, data, whiteText) {
     if (whiteText === void 0) { whiteText = true; }
     var _a = splitData(data), chartLabels = _a[0], chartData = _a[1];
+    // Only create chart if one or more grapes has a non-zero value
+    if (chartData.length == 0 || allZero(chartData)) {
+        console.log("Unable to create grape composition pie chart due to grape \
+                     composition data signature.");
+        console.log("Chart data: " + chartData);
+        return false;
+    }
     var config = {
         type: "horizontalBar",
         data: {

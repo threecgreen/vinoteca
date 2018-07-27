@@ -43,35 +43,42 @@
 {% block js %}
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
-import { tabs } from '{% static "js/widgets.js" %}'
-import { barChart } from "{% static "js/wine_charts.js" %}";
+import {  tabs } from '{% static "js/widgets.js" %}'
+import { barChart, applyChart, setChartAccessibility } from "{% static "js/wine_charts.js" %}";
 import { pipe } from '{% static "js/utils.js" %}'
 
 $(function(){
     $('.parallax').parallax();
     tabs();
 
+    // Top Wine Types
     pipe({
         {% for wine_type in top_wine_types %}
             "{{ wine_type.wine_type }}": {{ wine_type.quantity|default_if_none:0 }},
         {% endfor %}
-    }).chain(chartData => {
-        barChart($("#top-purchases-chart"), chartData);
-    });
+    }).chain(
+        applyChart(barChart, $("#top-purchases-chart"))
+    ).chain(
+        setChartAccessibility($("#top-purchases-chart-li"))
+    );
     pipe({
         {% for wine_type in top_wine_types %}
             "{{ wine_type.wine_type }}": {{ wine_type.variety|default_if_none:0 }},
         {% endfor %}
-    }).chain(chartData => {
-        barChart($("#top-varieties-chart"), chartData);
-    });
+    }).chain(
+        applyChart(barChart, $("#top-varieties-chart"))
+    ).chain(
+        setChartAccessibility($("#top-varieties-chart-li"))
+    );
     pipe({
         {% for wine_type in top_wine_types %}
             "{{ wine_type.wine_type }}": {{ wine_type.avg_price|floatformat:2 }},
         {% endfor %}
-    }).chain(chartData => {
-        barChart($("#avg-price-chart"), chartData)
-    });
+    }).chain(
+        applyChart(barChart, ($("#avg-price-chart")))
+    ).chain(
+        setChartAccessibility($("#avg-price-chart-li"))
+    );
 });
 </script>
 {% endblock %}
