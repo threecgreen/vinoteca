@@ -2,8 +2,7 @@
 
 source "$(dirname $0)/utils.sh"
 
-find_python_env
-old_ver="$("$py_env/python" -c 'import vinoteca; print(vinoteca.__version__)')"
+old_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==1 {print $3}' | sed 's/\"//g')"
 
 info_text "Updating project source..."
 git stash
@@ -14,6 +13,7 @@ if [ -f $HOME/miniconda/lib/libcrypto.so.1.0.0 ]; then
     execstack -c $HOME/miniconda/lib/libcrypto.so.1.0.0
 fi
 
+find_python_env
 info_text "Updating dependencies..."
 "$conda" update python -y || error_exit "Failed to update Python"
 "$py_env/pip" install -r "$root_dir/requirements.txt" || error_exit "Failed to install dependencies"
@@ -25,7 +25,7 @@ info_text "Running test suite..."
 bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."
 
 echo
-new_ver="$("$py_env/python" -c 'import vinoteca; print(vinoteca.__version__)')"
+new_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==1 {print $3}' | sed 's/\"//g')"
 if [ "$old_ver" != "$new_ver" ]; then
     info_text "Successfully updated vinoteca from version $old_ver to $new_ver"
 fi
