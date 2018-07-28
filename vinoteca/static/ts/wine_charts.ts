@@ -35,14 +35,14 @@ function splitData(data: Dict<number>): [string[], number[]] {
 function doChart(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
     // Only create chart if one or more grapes has a non-zero value
     if (chartData.length == 0 || allZero(chartData)) {
-        console.log("Unable to create grape composition pie chart due to grape \
+        console.error("Unable to create grape composition pie chart due to grape \
                      composition data signature.")
         console.log(`Chart data: ${chartData}`);
         return false;
     }
     // Only create chart if the canvas element is valid
     if (!elementExists(canvas)) {
-        console.log("Unable to create chart; canvas element is invalid.");
+        console.error("Unable to create chart; canvas element is invalid.");
         return false;
     }
     return true;
@@ -212,6 +212,57 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, 
             }
         }
     };
+
+    try {
+        // @ts-ignore
+        const pie = new Chart(canvas, config);
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+    return true;
+}
+
+export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[], seriesLabels: string[]): boolean {
+
+    const [chartLabels, _] = splitData(data[0]);
+    console.log(chartLabels);
+    // Error checking
+    if (!elementExists(canvas)) {
+        console.error("Invalid canvas element.")
+        return false;
+    }
+    if (data.length != seriesLabels.length) {
+        console.error("Series labels and the data have different lengths.")
+        return false;
+    }
+
+    const config = {
+        type: "line",
+        data: {
+            datasets: [],
+            labels: chartLabels,
+        },
+        options: {
+
+        }
+    };
+    const dataValidation = data.map((series, i) => {
+        const [_, chartData] = splitData(data[0]);
+        const label = seriesLabels[i];
+        // Add the series data to the corresponding key in datasetLabels
+        config.data.datasets.push({label: chartData});
+        // Error checking
+        if (allZero(chartData)) {
+            return false;
+        }
+        return true;
+    });
+    if (!dataValidation.every(val => val)) {
+        console.error("Invalid data.")
+        return false;
+    }
+    console.log(config.data);
 
     try {
         // @ts-ignore

@@ -7,7 +7,7 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import render
 from typing import List
 
-from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, Producers
+from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, Producers, Grapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date
 
 
@@ -105,15 +105,32 @@ def purchases_by_year(conn: sqlite3.Connection) -> List[Year]:
     return [Year(*row) for row in cursor.execute(query).fetchall()]
 
 
+def top_grape_varieties(limit: int) -> List[Grapes]:
+    # TODO: possibly rewrite in SQL to better calculate average pct with coalesce and wine-weighted avg price
+    return Grapes.objects.annotate(wine_varieties=Count("winegrapes__wine", distinct=True)) \
+        .annotate(avg_price=Count("winegrapes__wine__purchases__price")) \
+        .annotate(avg_pct=Avg("winegrapes__percent")) \
+        .order_by("-wine_varieties", "-avg_price")[:limit]
+
+
+def top_viti_areas(limit: int) -> List[VitiAreas]:
+    return VitiAreas.objects.annotate(varieties=Count("wines", distinct=True)) \
+        .annotate(producers=Count("wines__producer", distinct=True)) \
+        .annotate(avg_price=Avg("wines__purchases__price")) \
+        .order_by("-varieties", "-producers")[:limit]
+
+
 def dashboards(request):
     conn = get_connection()
     context = {
         "btn": by_the_numbers(conn),
         "colors": purchases_by_color(),
-        "regions": top_regions(6),
-        "producers": top_producers(7),
+        "grapes": top_grape_varieties(6),
+        "regions": top_regions(10),
+        "producers": top_producers(10),
         "purchases": recent_purchases(10),
         "top_wine_types": top_wine_types(10),
+        "viti_areas": top_viti_areas(5),
         "years": purchases_by_year(conn),
         "page_name": "Dashboards",
     }

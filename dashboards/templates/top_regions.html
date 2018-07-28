@@ -2,9 +2,9 @@
     <thead>
         <tr>
             <th>Region</th>
-            <th class="num-col">Producers</th>
             <th class="num-col">Varieties</th>
-            <th class="num-col">Avg Rating</th>
+            <th class="num-col">Producers</th>
+{#            <th class="num-col">Avg Rating</th>#}
             <th class="num-col">Avg Price</th>
         </tr>
     </thead>
@@ -12,13 +12,13 @@
         {% for region in regions %}
         <tr>
             <td>{{ region.name }}</td>
-            <td class="num-col">{{ region.producer_count }}</td>
             <td class="num-col">{{ region.variety }}</td>
-            {% if region.avg_rating %}
-                <td class="num-col">{{ region.avg_rating|floatformat:"1" }}</td>
-            {% else %}
-                <td class="num-col">&ndash;</td>
-            {% endif %}
+            <td class="num-col">{{ region.producer_count }}</td>
+{#            {% if region.avg_rating %}#}
+{#                <td class="num-col">{{ region.avg_rating|floatformat:"1" }}</td>#}
+{#            {% else %}#}
+{#                <td class="num-col">&ndash;</td>#}
+{#            {% endif %}#}
             <td class="num-col">{{ region.avg_price|floatformat:"2" }}</td>
         </tr>
         {% endfor %}

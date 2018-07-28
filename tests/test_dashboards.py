@@ -62,3 +62,11 @@ def test_producers(limit):
 def test_purchase_by_year(connection):
     years = purchases_by_year(connection)
     assert isinstance(years[0], Year)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("limit", [5, 10])
+def test_top_grape_varieties(limit):
+    grapes = top_grape_varieties(limit)
+    assert isinstance(grapes[0], Grapes)
+    assert len(grapes) == limit

@@ -14,11 +14,11 @@
         <div class="col s12 l6 xl4">
             <div class="card wine-red-card">
                 <div class="card-content">
-                    <h2 class="card-title">Purchases by Color</h2>
-                    {% include "purchases_by_color.html" %}
+                    <h2 class="card-title">Top Producers</h2>
+                    {% include "top_producers.html" %}
                 </div>
             </div>
-            <div class="card wine-green-card">
+            <div class="card golden-yellow-card">
                 <div class="card-content">
                     <h2 class="card-title">Top Regions</h2>
                     {% include "top_regions.html" %}
@@ -32,22 +32,46 @@
                     {% include "by_the_numbers.html" %}
                 </div>
             </div>
-            <div class="card wine-red-card">
+            <div class="card wine-green-card">
                 <div class="card-content">
-                    <h2 class="card-title">Top Producers</h2>
-                    {% include "top_producers.html" %}
+                    <h2 class="card-title">Purchases by Color</h2>
+                    {% include "purchases_by_color.html" %}
+                </div>
+            </div>
+            <div class="card wine-red-card card">
+                <div class="card-content">
+                    <h2 class="card-title">Top Grape Varieties</h2>
+                    {% include "top_grape_varieties.html" %}
                 </div>
             </div>
         </div>
         <div class="col s12 l6 xl4">
+            <div class="card wine-red-card">
+                <div class="card-content">
+                    <h2 class="card-title">Purchases by Year | Table</h2>
+                    {% include "purchases_by_year.html" %}
+                </div>
+            </div>
             <div class="card wine-green-card">
                 <div class="card-content">
-                    <h2 class="card-title">Purchases by Year</h2>
-                    {% include "purchases_by_year.html" %}
+                    <h2 class="card-title">Top Viticultural Areas</h2>
+                    {% include "top_viti_areas.html" %}
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="row dashboard-row">
+        <div class="col s12">
+            <div class="card wine-green-card dashboard-top-card">
+                <div class="card-content">
+                    <h2 class="card-title">Purchases by Year | Graph</h2>
+                    <canvas id="pb-year-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row dashboard-row">
         <div class="col s12 xl7">
             <div class="card golden-yellow-card dashboard-top-card">
@@ -72,7 +96,7 @@
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
 import { tabs } from '{% static "js/widgets.js" %}'
-import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
+import { barChart, applyChart, lineChart } from "{% static "js/wine_charts.js" %}";
 
 $(function () {
     tabs();
@@ -116,6 +140,60 @@ $(function () {
         {% endfor %}
     };
     applyChart(barChart, wineTypePrice, "top-wt-price");
+
+    // Top Grape Varieties
+    const grapeVarieties = {
+        {% for grape in grapes  %}
+            "{{ grape.name }}": {{ grape.wine_varieties }},
+        {% endfor %}
+    };
+    applyChart(barChart, grapeVarieties, "grapes-varieties");
+    const grapePrice = {
+        {% for grape in grapes  %}
+            "{{ grape.name }}": {{ grape.avg_price|floatformat:"2" }},
+        {% endfor %}
+    };
+    applyChart(barChart, grapePrice, "grapes-price");
+    const grapePct = {
+        {% for grape in grapes %}
+            "{{ grape.name }}": {{ grape.avg_pct|floatformat:"1" }},
+        {% endfor %}
+    };
+    applyChart(barChart, grapePct, "grapes-pct");
+
+    // Top Viti Areas
+    const vitiAreasVarieties = {
+        {% for viti_area in viti_areas %}
+            "{{ viti_area.name }}": {{ viti_area.varieties|default_if_none:0 }},
+        {% endfor %}
+    };
+    applyChart(barChart, vitiAreasVarieties, "viti-areas-varieties");
+    const vitiAreasProducers = {
+        {% for viti_area in viti_areas %}
+            "{{ viti_area.name }}": {{ viti_area.producers }},
+        {% endfor %}
+    };
+    applyChart(barChart, vitiAreasProducers, "viti-areas-producers");
+    const vitiAreasPrice = {
+        {% for viti_area in viti_areas %}
+            "{{ viti_area.name }}": {{ viti_area.avg_price|default_if_none:0 }},
+        {% endfor %}
+    };
+    applyChart(barChart, vitiAreasPrice, "viti-areas-price");
+
+    // Purchases by Year
+    const purchasesByYearLabels = [
+        "Bottles", "Total Spent", "Avg Price", "Avg Vintage"
+    ];
+    let purchasesByYearData = [{}, {}, {}, {}];
+    {% for year in years %}
+        purchasesByYearData[0][{{ year.year }}] = {{ year.quantity }};
+        purchasesByYearData[1][{{ year.year }}] = {{ year.price }};
+        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price }};
+        purchasesByYearData[3][{{ year.year }}] = {{ year.avg_vintage }};
+    {% endfor %}
+    console.log(purchasesByYearData);
+    lineChart($("#pb-year-chart"), purchasesByYearData, purchasesByYearLabels);
 });
 </script>
 {% endblock %}

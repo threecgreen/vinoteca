@@ -31,14 +31,14 @@ function splitData(data) {
 function doChart(canvas, chartData) {
     // Only create chart if one or more grapes has a non-zero value
     if (chartData.length == 0 || allZero(chartData)) {
-        console.log("Unable to create grape composition pie chart due to grape \
+        console.error("Unable to create grape composition pie chart due to grape \
                      composition data signature.");
         console.log("Chart data: " + chartData);
         return false;
     }
     // Only create chart if the canvas element is valid
     if (!elementExists(canvas)) {
-        console.log("Unable to create chart; canvas element is invalid.");
+        console.error("Unable to create chart; canvas element is invalid.");
         return false;
     }
     return true;
@@ -194,6 +194,52 @@ export function barChart(canvas, data, whiteText) {
             }
         }
     };
+    try {
+        // @ts-ignore
+        var pie = new Chart(canvas, config);
+    }
+    catch (e) {
+        console.log(e);
+        return false;
+    }
+    return true;
+}
+export function lineChart(canvas, data, seriesLabels) {
+    var _a = splitData(data[0]), chartLabels = _a[0], _ = _a[1];
+    console.log(chartLabels);
+    // Error checking
+    if (!elementExists(canvas)) {
+        console.error("Invalid canvas element.");
+        return false;
+    }
+    if (data.length != seriesLabels.length) {
+        console.error("Series labels and the data have different lengths.");
+        return false;
+    }
+    var config = {
+        type: "line",
+        data: {
+            datasets: [],
+            labels: chartLabels,
+        },
+        options: {}
+    };
+    var dataValidation = data.map(function (series, i) {
+        var _a = splitData(data[0]), _ = _a[0], chartData = _a[1];
+        var label = seriesLabels[i];
+        // Add the series data to the corresponding key in datasetLabels
+        config.data.datasets.push({ label: chartData });
+        // Error checking
+        if (allZero(chartData)) {
+            return false;
+        }
+        return true;
+    });
+    if (!dataValidation.every(function (val) { return val; })) {
+        console.error("Invalid data.");
+        return false;
+    }
+    console.log(config.data);
     try {
         // @ts-ignore
         var pie = new Chart(canvas, config);
