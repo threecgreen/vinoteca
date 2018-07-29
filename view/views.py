@@ -115,18 +115,30 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
                           "viti_area") \
         .get(id=wine_id)
     # Get the vintage of the most recent purchase
-    recent_vintage_result = Purchases.objects.filter(wine__id=wine.id) \
-        .values("id") \
-        .annotate(max_date=Max("date"))
-
+    recent_vintage_query = """
+                SELECT
+                    p.vintage
+                FROM purchases p
+                INNER JOIN (
+                    SELECT
+                        max(date) as max_date
+                    FROM purchases
+                    WHERE wine_id = ?
+                ) sub ON sub.max_date = p.date
+                WHERE wine_id = ? ;
+            """
+    conn = get_connection()
+    cursor = conn.cursor()
+    recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
+    conn.close()
     grapes = (WineGrapes.objects
-              .filter(wine__id=wine_id)
+              .filter(wine__id=wine.id)
               .order_by("-percent", "grape__name"))
     has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
 
     context = {
         "grapes": list(grapes),
-        "recent_vintage": recent_vintage_result[0].get("max_date") if recent_vintage_result else None,
+        "recent_vintage": recent_vintage[0],
         "wine": wine,
         "has_img": has_img,
         "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
