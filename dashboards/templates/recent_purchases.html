@@ -33,7 +33,7 @@
             {% else %}
                 <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.wine.name|default_if_none:"" }}</a></td>
             {% endif %}
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.price|default_if_none:"&ndash;"|floatformat:2 }}</a></td>
+            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.price|floatformat:2|defndash }}</a></td>
             <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.quantity }}</a></td>
         </tr>
     {% endfor %}
