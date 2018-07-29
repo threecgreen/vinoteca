@@ -6,6 +6,18 @@ var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
 var translucentWhite = "rgba(240, 240, 240, 0.9)";
 var translucentGray = "rgba(200, 200, 200, 0.9)";
+var tenColorRainbow = [
+    "rgba(230, 25, 75, 0.8)",
+    "rgba(245, 130, 48, 0.8)",
+    "rgba(255, 225, 25, 0.8)",
+    "rgba(210, 245, 60, 0.8)",
+    "rgba(60, 180, 75, 0.8)",
+    "rgba(70, 240, 240, 0.8)",
+    "rgba(0, 130, 200, 0.8)",
+    "rgba(0, 0, 128, 0.8)",
+    "rgba(240, 50, 230, 0.8)",
+    "rgba(145, 30, 180, 0.8)",
+];
 function allZero(array) {
     for (var _i = 0, array_1 = array; _i < array_1.length; _i++) {
         var num = array_1[_i];
@@ -43,6 +55,14 @@ function doChart(canvas, chartData) {
     }
     return true;
 }
+function changeTransparency(color, transparency) {
+    if (transparency <= 0 || transparency >= 1) {
+        throw Error("Transparency must be between 0 and 1");
+    }
+    var fields = color.substr(5, color.length - 7).split(",").map(function (val) { return parseInt(val); });
+    fields[3] = transparency;
+    return "rgba(" + fields[0] + ", " + fields[1] + ", " + fields[2] + ", " + fields[3] + ")";
+}
 /** Helper function for creating a chart and enabling/disabling its container tab depending on
  * success of creating the chart.
  *
@@ -58,9 +78,6 @@ function doChart(canvas, chartData) {
 export function applyChart(chartFn, data, chartNamePrefix) {
     var canvas = $("#" + chartNamePrefix + "-chart");
     var chartLi = $("#" + chartNamePrefix + "-chart-li");
-    // Debugging:
-    // console.log(canvas);
-    // console.log(chartLi);
     pipe(chartFn(canvas, data)).chain(function (success) { return setTabAccessibility(chartLi, success); });
 }
 /** Creates a pie chart on the provided canvas using the provided data.
@@ -134,18 +151,7 @@ export function barChart(canvas, data, whiteText) {
         data: {
             datasets: [{
                     data: chartData,
-                    backgroundColor: [
-                        "rgba(230, 25, 75, 0.8)",
-                        "rgba(245, 130, 48, 0.8)",
-                        "rgba(255, 225, 25, 0.8)",
-                        "rgba(210, 245, 60, 0.8)",
-                        "rgba(60, 180, 75, 0.8)",
-                        "rgba(70, 240, 240, 0.8)",
-                        "rgba(0, 130, 200, 0.8)",
-                        "rgba(0, 0, 128, 0.8)",
-                        "rgba(240, 50, 230, 0.8)",
-                        "rgba(145, 30, 180, 0.8)",
-                    ],
+                    backgroundColor: tenColorRainbow,
                 }],
             labels: chartLabels
         },
@@ -206,7 +212,6 @@ export function barChart(canvas, data, whiteText) {
 }
 export function lineChart(canvas, data, seriesLabels) {
     var _a = splitData(data[0]), chartLabels = _a[0], _ = _a[1];
-    console.log(chartLabels);
     // Error checking
     if (!elementExists(canvas)) {
         console.error("Invalid canvas element.");
@@ -222,13 +227,58 @@ export function lineChart(canvas, data, seriesLabels) {
             datasets: [],
             labels: chartLabels,
         },
-        options: {}
+        options: {
+            responsive: true,
+            layout: {
+                padding: {
+                    top: 15,
+                    bottom: 15
+                }
+            },
+            scales: {
+                yAxes: [{
+                        ticks: {
+                            fontSize: 14,
+                            fontFamily: fontFamily,
+                            fontColor: translucentWhite,
+                        },
+                        gridLines: {
+                            color: translucentGray
+                        },
+                        borderWidth: 40,
+                    }],
+                xAxes: [{
+                        ticks: {
+                            fontSize: 14,
+                            fontFamily: fontFamily,
+                            fontColor: translucentWhite,
+                            beginAtZero: true
+                        },
+                        gridLines: {
+                            color: translucentGray
+                        },
+                        borderWidth: 40,
+                    }]
+            },
+            backgroundColor: white,
+            tooltips: {
+                titleFontFamily: fontFamily,
+                titleFontSize: 14,
+                bodyFontFamily: fontFamily,
+                bodyFontSize: 12,
+                fontColor: white,
+            }
+        }
     };
     var dataValidation = data.map(function (series, i) {
-        var _a = splitData(data[0]), _ = _a[0], chartData = _a[1];
-        var label = seriesLabels[i];
+        var _a = splitData(series), _ = _a[0], chartData = _a[1];
         // Add the series data to the corresponding key in datasetLabels
-        config.data.datasets.push({ label: chartData });
+        config.data.datasets.push({
+            data: chartData,
+            label: seriesLabels[i],
+            borderColor: tenColorRainbow[i],
+            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5)
+        });
         // Error checking
         if (allZero(chartData)) {
             return false;
@@ -239,7 +289,6 @@ export function lineChart(canvas, data, seriesLabels) {
         console.error("Invalid data.");
         return false;
     }
-    console.log(config.data);
     try {
         // @ts-ignore
         var pie = new Chart(canvas, config);

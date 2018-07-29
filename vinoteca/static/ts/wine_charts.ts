@@ -8,6 +8,18 @@ const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
 const translucentWhite = "rgba(240, 240, 240, 0.9)";
 const translucentGray = "rgba(200, 200, 200, 0.9)";
+const tenColorRainbow = [
+    "rgba(230, 25, 75, 0.8)",   // Red
+    "rgba(245, 130, 48, 0.8)",  // Orange
+    "rgba(255, 225, 25, 0.8)",  // Yellow
+    "rgba(210, 245, 60, 0.8)",  // Lime
+    "rgba(60, 180, 75, 0.8)",   // Green
+    "rgba(70, 240, 240, 0.8)",  // Cyan
+    "rgba(0, 130, 200, 0.8)",   // Blue
+    "rgba(0, 0, 128, 0.8)",     // Navy
+    "rgba(240, 50, 230, 0.8)",  // Magenta
+    "rgba(145, 30, 180, 0.8)",  // Purple
+];
 
 function allZero(array: number[]): boolean {
     for (let num of array) {
@@ -48,6 +60,18 @@ function doChart(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
     return true;
 }
 
+function changeTransparency(color: string, transparency: number) {
+    if (transparency <= 0 || transparency >= 1) {
+        throw Error("Transparency must be between 0 and 1");
+    }
+    let fields = color.substr(5, color.length - 7).split(",").map(
+        val => parseInt(val)
+    );
+
+    fields[3] = transparency;
+    return `rgba(${fields[0]}, ${fields[1]}, ${fields[2]}, ${fields[3]})`;
+}
+
 /** Helper function for creating a chart and enabling/disabling its container tab depending on
  * success of creating the chart.
  *
@@ -64,9 +88,6 @@ export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Di
     data: Dict<number>, chartNamePrefix: string) {
     const canvas: JQuery<HTMLCanvasElement> = $(`#${chartNamePrefix}-chart`);
     const chartLi: JQuery<HTMLUListElement> = $(`#${chartNamePrefix}-chart-li`);
-    // Debugging:
-    // console.log(canvas);
-    // console.log(chartLi);
 
     pipe(
         chartFn(canvas, data)
@@ -149,18 +170,7 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, 
         data: {
             datasets: [{
                 data: chartData,
-                backgroundColor: [
-                    "rgba(230, 25, 75, 0.8)",   // Red
-                    "rgba(245, 130, 48, 0.8)",  // Orange
-                    "rgba(255, 225, 25, 0.8)",  // Yellow
-                    "rgba(210, 245, 60, 0.8)",  // Lime
-                    "rgba(60, 180, 75, 0.8)",   // Green
-                    "rgba(70, 240, 240, 0.8)",  // Cyan
-                    "rgba(0, 130, 200, 0.8)",   // Blue
-                    "rgba(0, 0, 128, 0.8)",     // Navy
-                    "rgba(240, 50, 230, 0.8)",  // Magenta
-                    "rgba(145, 30, 180, 0.8)",  // Purple
-                ],
+                backgroundColor: tenColorRainbow,
             }],
             labels: chartLabels
         },
@@ -226,7 +236,6 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, 
 export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[], seriesLabels: string[]): boolean {
 
     const [chartLabels, _] = splitData(data[0]);
-    console.log(chartLabels);
     // Error checking
     if (!elementExists(canvas)) {
         console.error("Invalid canvas element.")
@@ -244,25 +253,71 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[
             labels: chartLabels,
         },
         options: {
-
+            responsive: true,
+            layout: {
+                padding: {
+                    top: 15,
+                    bottom: 15
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontSize: 14,
+                        fontFamily: fontFamily,
+                        fontColor: translucentWhite,
+                    },
+                    gridLines: {
+                        color: translucentGray
+                    },
+                    borderWidth: 40,
+                    // barPercentage: 1.0,
+                    // categoryPercentage: 1.0
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontSize: 14,
+                        fontFamily: fontFamily,
+                        fontColor: translucentWhite,
+                        beginAtZero: true
+                    },
+                    gridLines: {
+                        color: translucentGray
+                    },
+                    borderWidth: 40,
+                    // categoryPercentage: 1.0
+                }]
+            },
+            backgroundColor: white,
+            tooltips: {
+                titleFontFamily: fontFamily,
+                titleFontSize: 14,
+                bodyFontFamily: fontFamily,
+                bodyFontSize: 12,
+                fontColor: white,
+            }
         }
     };
     const dataValidation = data.map((series, i) => {
-        const [_, chartData] = splitData(data[0]);
-        const label = seriesLabels[i];
+        const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
-        config.data.datasets.push({label: chartData});
+        config.data.datasets.push({
+            data: chartData,
+            label: seriesLabels[i],
+            borderColor: tenColorRainbow[i],
+            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5)
+        });
         // Error checking
         if (allZero(chartData)) {
             return false;
         }
         return true;
     });
+
     if (!dataValidation.every(val => val)) {
         console.error("Invalid data.")
         return false;
     }
-    console.log(config.data);
 
     try {
         // @ts-ignore

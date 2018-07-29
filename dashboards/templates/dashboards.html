@@ -183,14 +183,17 @@ $(function () {
 
     // Purchases by Year
     const purchasesByYearLabels = [
-        "Bottles", "Total Spent", "Avg Price", "Avg Vintage"
+        "Bottles",
+        "Total Spent",
+        "Avg Price",
+        {#"Avg Vintage"#}
     ];
-    let purchasesByYearData = [{}, {}, {}, {}];
+    let purchasesByYearData = [{}, {}, {}];
     {% for year in years %}
         purchasesByYearData[0][{{ year.year }}] = {{ year.quantity }};
-        purchasesByYearData[1][{{ year.year }}] = {{ year.price }};
-        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price }};
-        purchasesByYearData[3][{{ year.year }}] = {{ year.avg_vintage }};
+        purchasesByYearData[1][{{ year.year }}] = {{ year.price|floatformat:2 }};
+        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price|floatformat:2 }};
+        {#purchasesByYearData[3][{{ year.year }}] = {{ year.avg_vintage }};#}
     {% endfor %}
     console.log(purchasesByYearData);
     lineChart($("#pb-year-chart"), purchasesByYearData, purchasesByYearLabels);
