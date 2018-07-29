@@ -25,6 +25,8 @@ export function pipe<T>(val: T): IPipe<T> {
     };
 }
 
+/** Determines if a given JQuery selector actually selects an element on the
+ * page. */
 export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) != 'undefined' && elem.length > 0;
 }

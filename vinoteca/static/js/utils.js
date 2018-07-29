@@ -8,6 +8,8 @@ export function pipe(val) {
         value: function () { return val; }
     };
 }
+/** Determines if a given JQuery selector actually selects an element on the
+ * page. */
 export function elementExists(elem) {
     return typeof (elem) != 'undefined' && elem.length > 0;
 }

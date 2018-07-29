@@ -1,8 +1,6 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 
-import { pipe } from "./utils.js";
-
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
     producerRegionURL: string, producersURL: string): void {
@@ -60,9 +58,8 @@ function remGrapePct(lastVisibleId: number): number {
     return sum < 100 ? 100 - sum : 0;
 }
 
+/** Updates a percentage for a given grape id.  */
 function setGrapePct(id: number, pct: number): void {
-    console.log(id);
-    console.log($(`#grape-${id}-pct`).val());
     $(`#grape-${id}-pct`).val(pct);
 }
 

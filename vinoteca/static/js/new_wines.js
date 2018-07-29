@@ -50,9 +50,8 @@ function remGrapePct(lastVisibleId) {
     }
     return sum < 100 ? 100 - sum : 0;
 }
+/** Updates a percentage for a given grape id.  */
 function setGrapePct(id, pct) {
-    console.log(id);
-    console.log($("#grape-" + id + "-pct").val());
     $("#grape-" + id + "-pct").val(pct);
 }
 /** Show additional grape forms with click of + button. */
