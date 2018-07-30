@@ -234,8 +234,7 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, 
 }
 
 export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[], seriesLabels: string[]): boolean {
-
-    const [chartLabels, _] = splitData(data[0]);
+    const chartLabels = splitData(data[0])[0].map(x => parseInt(x));
     // Error checking
     if (!elementExists(canvas)) {
         console.error("Invalid canvas element.")
@@ -298,6 +297,8 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[
             }
         }
     };
+
+    // Validate then add each data series to config
     const dataValidation = data.map((series, i) => {
         const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
