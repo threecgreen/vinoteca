@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        // Needed for project references
+        "composite": true,
+        "module": "es2015",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "js",
+    },
+    "include": [
+        "ts"
+    ],
+}

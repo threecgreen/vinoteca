@@ -1,9 +1,8 @@
 from django.urls import include, path
-from graph.views import *
+from rest.views import *
 
 
-# /graph/rest/...
-rest_patterns = [
+urlpatterns = [
     path("color/", rest, kwargs={"obj_name": "color"}, name="REST Color"),
     path("region/", rest, kwargs={"obj_name": "region"}, name="REST Region"),
     path("producer/", rest, kwargs={"obj_name": "producer"}, name="REST Producer"),
@@ -11,9 +10,4 @@ rest_patterns = [
     path("wine-type/", rest, kwargs={"obj_name": "wine_type"}, name="REST Wine Type"),
     path("wine/", rest, kwargs={"obj_name": "wine"}, name="REST Wine"),
     path("grape/", grape, name="REST Grape")
-]
-
-urlpatterns = [
-    path("wine/<int:id>/", graph, name="Wine Graph"),
-    path("rest/", include(rest_patterns)),
 ]

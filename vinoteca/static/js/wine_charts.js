@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-import { pipe, elementExists } from "./utils.js";
-import { setTabAccessibility } from "./widgets.js";
+import { pipe, elementExists } from "./utils";
+import { setTabAccessibility } from "./widgets";
 var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
 var translucentWhite = "rgba(240, 240, 240, 0.9)";

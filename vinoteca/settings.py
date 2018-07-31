@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'dashboards',
     'new_purchase',
     'view',
-    'graph'
+    'rest',
 ]
 
 MIDDLEWARE = [
@@ -131,6 +131,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "vinoteca/static"),
+    os.path.join(BASE_DIR, "rest/static"),
 ]
 
 # Media files

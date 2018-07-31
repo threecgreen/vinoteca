@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 import vinoteca
-from graph.serializers import *
+from rest.serializers import *
 
 
 def rest(request, obj_name: str) -> JsonResponse:

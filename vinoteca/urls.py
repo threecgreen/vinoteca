@@ -58,8 +58,8 @@ urlpatterns = [
     path("dashboards/", dashboards, name="Dashboards"),
     path("inventory/", inventory, name="Inventory"),
 
-    # Graph URLs
-    path("graph/", include("graph.urls")),
+    # Rest URLs
+    path("rest/", include("rest.urls")),
 
     # Internal URLs
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import generics, serializers
 from vinoteca.models import *
 
 
@@ -23,6 +23,13 @@ class ProducersSerializer(serializers.ModelSerializer):
 class VitiAreasSerializer(serializers.ModelSerializer):
     class Meta:
         model = VitiAreas
+        fields = ("id", "name", "region")
+
+
+# TODO: figure out how to condense many-to-many for serialization
+class WineGrapesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WineGrapes
         fields = ("id", "wine", "grape", "percent")
 
 
