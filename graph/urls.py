@@ -2,6 +2,7 @@ from django.urls import include, path
 from graph.views import *
 
 
+# /graph/rest/...
 rest_patterns = [
     path("color/", rest, kwargs={"obj_name": "color"}, name="REST Color"),
     path("region/", rest, kwargs={"obj_name": "region"}, name="REST Region"),

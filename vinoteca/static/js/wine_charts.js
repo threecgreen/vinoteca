@@ -211,7 +211,7 @@ export function barChart(canvas, data, whiteText) {
     return true;
 }
 export function lineChart(canvas, data, seriesLabels) {
-    var _a = splitData(data[0]), chartLabels = _a[0], _ = _a[1];
+    var chartLabels = splitData(data[0])[0].map(function (x) { return parseInt(x); });
     // Error checking
     if (!elementExists(canvas)) {
         console.error("Invalid canvas element.");
@@ -270,6 +270,7 @@ export function lineChart(canvas, data, seriesLabels) {
             }
         }
     };
+    // Validate then add each data series to config
     var dataValidation = data.map(function (series, i) {
         var _a = splitData(series), _ = _a[0], chartData = _a[1];
         // Add the series data to the corresponding key in datasetLabels
