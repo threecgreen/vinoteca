@@ -1,3 +1,6 @@
+{% if wine_count < 5 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
 <table class="responsive highlight">
     <thead>
         <tr>
@@ -22,3 +25,4 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}

@@ -153,3 +153,7 @@ def convert_to_png(in_file: Union[str, Path]) -> bool:
     except IOError:
         return False
     return True
+
+
+def wine_count() -> int:
+    return Wines.objects.count()

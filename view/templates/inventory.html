@@ -6,6 +6,12 @@
             <div class="col s12">
                 <h3>Current Inventory</h3>
 
+                {% if not inventory %}
+                    <h6 class="bold center-align">
+                        Your inventory is current empty.
+                    </h6>
+                    {% include "add_wine_btn.html" %}
+                {% else %}
                 <table class="responsive highlight condensed">
                     <thead>
                         <tr>
@@ -54,9 +60,11 @@
                                 <td><a href="{% url "Wine Profile" wine_id=wine.wine_id %}">&ndash;</a></td>
                             {% endif %}
                         </tr>
+                    {% empty %}
                     {% endfor %}
                     </tbody>
                 </table>
+                {% endif %}
             </div>
         </div>
     </div>

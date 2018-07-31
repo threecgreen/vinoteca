@@ -11,12 +11,7 @@
                 <div class="col s12">
                     <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
                     <h5 class="center">A wine purchase tracker and review system.</h5>
-                    <p class="center-align">
-                        <a class="waves-effect btn waves-light yellow darken-2" href="{% url "New Purchase First" %}">
-                            <i class="material-icons left">add_circle</i>
-                            add wine
-                        </a>
-                    </p>
+                    {% include "add_wine_btn.html" %}
                 </div>
             </div>
             <div class="row">

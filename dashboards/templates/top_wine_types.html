@@ -1,3 +1,6 @@
+{% if wine_count < 5 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
 <ul class="tabs tabs-fixed-width z-depth-1">
     <li class="wine-red-tab tab " id="top-wt-table-li"><a href="#top-wt-table-tab">Table</a></li>
     <li class="wine-green-tab tab " id="top-wt-purchases-chart-li"><a href="#top-wt-purchases-chart-tab">Purchases</a></li>
@@ -35,3 +38,4 @@
 <div id="top-wt-price-chart-tab" class="s12">
     <canvas height="350px" id="top-wt-price-chart"></canvas>
 </div>
+{% endif %}

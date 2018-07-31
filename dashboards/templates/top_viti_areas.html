@@ -1,5 +1,8 @@
 {% load vinoteca %}
 
+{% if wine_count < 8 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
 <ul class="tabs z-depth-1">
     <li class="wine-green-tab tab" id="viti-areas-table-li"><a href="#viti-areas-table-tab">Table</a></li>
     <li class="wine-green-tab tab" id="viti-areas-varieties-chart-li"><a href="#viti-areas-varieties-chart-tab">Varieties</a></li>
@@ -37,3 +40,4 @@
 <div class="s12" id="viti-areas-price-chart-tab">
     <canvas height="325px" id="viti-areas-price-chart"></canvas>
 </div>
+{% endif %}

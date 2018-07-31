@@ -8,7 +8,7 @@ from django.shortcuts import render
 from typing import List
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, Producers, Grapes, VitiAreas
-from vinoteca.utils import get_connection, int_to_date
+from vinoteca.utils import get_connection, int_to_date, wine_count
 
 
 def recent_purchases(limit: int) -> List[Purchases]:
@@ -50,7 +50,8 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
         ORDER BY count(p.id) DESC
         LIMIT 1;
     """
-    most_common_date = int_to_date(cursor.execute(query).fetchone()[0])
+    mcd_result = cursor.execute(query).fetchone()
+    most_common_date = int_to_date(mcd_result) if mcd_result else None
     variety_count = Wines.objects.all().count()
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
 
@@ -132,6 +133,7 @@ def dashboards(request):
         "top_wine_types": top_wine_types(10),
         "viti_areas": top_viti_areas(5),
         "years": purchases_by_year(conn),
+        "wine_count": wine_count(),
         "page_name": "Dashboards",
     }
     conn.close()

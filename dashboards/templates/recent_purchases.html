@@ -1,6 +1,9 @@
 {% load humanize %}
 {% load vinoteca %}
 
+{% if wine_count == 0 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
 <table class="responsive highlight">
     <thead>
         <tr>
@@ -39,3 +42,4 @@
     {% endfor %}
     </tbody>
 </table>
+{% endif %}
