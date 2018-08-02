@@ -14,15 +14,23 @@
     <tbody>
         {% for region in regions %}
         <tr>
-            <td>{{ region.name }}</td>
-            <td class="num-col">{{ region.variety }}</td>
-            <td class="num-col">{{ region.producer_count }}</td>
+            <td><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.name }}
+            </a></td>
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.variety }}
+            </a></td>
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.producer_count }}
+            </a></td>
 {#            {% if region.avg_rating %}#}
 {#                <td class="num-col">{{ region.avg_rating|floatformat:"1" }}</td>#}
 {#            {% else %}#}
 {#                <td class="num-col">&ndash;</td>#}
 {#            {% endif %}#}
-            <td class="num-col">{{ region.avg_price|floatformat:"2" }}</td>
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.avg_price|floatformat:"2" }}
+            </a></td>
         </tr>
         {% endfor %}
     </tbody>

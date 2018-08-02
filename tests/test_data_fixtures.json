@@ -1,0 +1,158 @@
+[
+    {
+        "model": "vinoteca.colors",
+        "pk": 1,
+        "fields": {
+            "name": "red"
+        }
+    },
+    {
+        "model": "vinoteca.colors",
+        "pk": 2,
+        "fields": {
+            "name": "white"
+        }
+    },
+    {
+        "model": "vinoteca.colors",
+        "pk": 3,
+        "fields": {
+            "name": "rosé"
+        }
+    },
+    {
+        "model": "vinoteca.colors",
+        "pk": 4,
+        "fields": {
+            "name": "sparkling"
+        }
+    },
+    {
+        "model": "vinoteca.regions",
+        "pk": 1,
+        "fields": {
+            "name": "California",
+            "is_us": true
+        }
+    },
+    {
+        "model": "vinoteca.regions",
+        "pk": 2,
+        "fields": {
+            "name": "France",
+            "is_us": false
+        }
+    },
+    {
+        "model": "vinoteca.grapes",
+        "pk": 1,
+        "fields": {
+            "name": "Syrah"
+        }
+    },
+    {
+        "model": "vinoteca.grapes",
+        "pk": 2,
+        "fields": {
+            "name": "Merlot"
+        }
+    },
+    {
+        "model": "vinoteca.producers",
+        "pk": 1,
+        "fields": {
+            "name": "Martinelli",
+            "region": 1
+        }
+    },
+    {
+        "model": "vinoteca.producers",
+        "pk": 2,
+        "fields": {
+            "name": "Le Grand Noir",
+            "region": 2
+        }
+    },
+    {
+        "model": "vinoteca.producers",
+        "pk": 3,
+        "fields": {
+            "name": "Rodney Strong",
+            "region": 1
+        }
+    },
+    {
+        "model": "vinoteca.stores",
+        "pk": 1,
+        "fields": {
+            "name": "gift"
+        }
+    },
+    {
+        "model": "vinoteca.stores",
+        "pk": 2,
+        "fields": {
+            "name": "MGM"
+        }
+    },
+    {
+        "model": "vinoteca.vitiareas",
+        "pk": 1,
+        "fields": {
+            "name": "Napa County",
+            "region": 1
+        }
+    },
+    {
+        "model": "vinoteca.vitiareas",
+        "pk": 2,
+        "fields": {
+            "name": "Sonoma County",
+            "region": 1
+        }
+    },
+    {
+        "model": "vinoteca.vitiareas",
+        "pk": 3,
+        "fields": {
+            "name": "Bordeaux",
+            "region": 2
+        }
+    },
+    {
+        "model": "vinoteca.vitiareas",
+        "pk": 4,
+        "fields": {
+            "name": "Loire",
+            "region": 2
+        }
+    },
+    {
+        "model": "vinoeca.winetypes",
+        "pk": 1,
+        "fields": {
+            "name": "Sauvignon Blanc"
+        }
+    },
+    {
+        "model": "vinoeca.winetypes",
+        "pk": 2,
+        "fields": {
+            "name": "Pinot Noir"
+        }
+    },
+    {
+        "model": "vinoeca.winetypes",
+        "pk": 3,
+        "fields": {
+            "name": "Cabernet Sauvignon"
+        }
+    },
+    {
+        "model": "vinoeca.winetypes",
+        "pk": 4,
+        "fields": {
+            "name": "Chardonnay"
+        }
+    }
+]
