@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-import { pipe, elementExists } from "./utils";
-import { setTabAccessibility } from "./widgets";
+import { pipe, elementExists } from "./utils.js";
+import { setTabAccessibility } from "./widgets.js";
 var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
 var translucentWhite = "rgba(240, 240, 240, 0.9)";
@@ -151,7 +151,7 @@ export function barChart(canvas, data, whiteText) {
         data: {
             datasets: [{
                     data: chartData,
-                    backgroundColor: tenColorRainbow,
+                    backgroundColor: tenColorRainbow
                 }],
             labels: chartLabels
         },
@@ -171,12 +171,12 @@ export function barChart(canvas, data, whiteText) {
                         ticks: {
                             fontSize: 14,
                             fontFamily: fontFamily,
-                            fontColor: translucentWhite,
+                            fontColor: translucentWhite
                         },
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40,
+                        borderWidth: 40
                     }],
                 xAxes: [{
                         ticks: {
@@ -188,7 +188,7 @@ export function barChart(canvas, data, whiteText) {
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40,
+                        borderWidth: 40
                     }]
             },
             tooltips: {
@@ -196,7 +196,7 @@ export function barChart(canvas, data, whiteText) {
                 titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white,
+                fontColor: white
             }
         }
     };
@@ -225,7 +225,7 @@ export function lineChart(canvas, data, seriesLabels) {
         type: "line",
         data: {
             datasets: [],
-            labels: chartLabels,
+            labels: chartLabels
         },
         options: {
             responsive: true,
@@ -240,12 +240,12 @@ export function lineChart(canvas, data, seriesLabels) {
                         ticks: {
                             fontSize: 14,
                             fontFamily: fontFamily,
-                            fontColor: translucentWhite,
+                            fontColor: translucentWhite
                         },
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40,
+                        borderWidth: 40
                     }],
                 xAxes: [{
                         ticks: {
@@ -257,7 +257,7 @@ export function lineChart(canvas, data, seriesLabels) {
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40,
+                        borderWidth: 40
                     }]
             },
             backgroundColor: white,
@@ -266,7 +266,7 @@ export function lineChart(canvas, data, seriesLabels) {
                 titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white,
+                fontColor: white
             }
         }
     };
