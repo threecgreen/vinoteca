@@ -35,7 +35,7 @@ class ByTheNumbers(object):
 def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
     cursor = conn.cursor()
     query = """
-        SELECT 
+        SELECT
             sum(coalesce(p.quantity, 1)) * 0.75,
             count(p.id)
         FROM purchases p;
@@ -50,7 +50,7 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
         ORDER BY count(p.id) DESC
         LIMIT 1;
     """
-    mcd_result = cursor.execute(query).fetchone()
+    mcd_result = cursor.execute(query).fetchone()[0]
     most_common_date = int_to_date(mcd_result) if mcd_result else None
     variety_count = Wines.objects.all().count()
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
