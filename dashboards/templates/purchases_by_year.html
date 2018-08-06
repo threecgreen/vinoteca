@@ -16,8 +16,8 @@
         <tr>
             <td>{{ year.year }}</td>
             <td class="num-col">{{ year.quantity }}</td>
-            <td class="num-col">{{ year.price|default_if_none:0|floatformat:"2" }}</td>
-            <td class="num-col">{{ year.avg_price|default_if_none:0|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.price|floatformat:"2" }}</td>
+            <td class="num-col">{{ year.avg_price|floatformat:"2" }}</td>
             <td class="num-col">{{ year.avg_vintage|floatformat }}</td>
         </tr>
     {% endfor %}

@@ -197,8 +197,8 @@ $(function () {
     let purchasesByYearData = [{}, {}, {}];
     {% for year in years %}
         purchasesByYearData[0][{{ year.year }}] = {{ year.quantity }};
-        purchasesByYearData[1][{{ year.year }}] = {{ year.price|default_if_none:0|floatformat:2 }};
-        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price|default_if_none:0|floatformat:2 }};
+        purchasesByYearData[1][{{ year.year }}] = {{ year.price|floatformat:2 }};
+        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price|floatformat:2 }};
         {#purchasesByYearData[3][{{ year.year }}] = {{ year.avg_vintage }};#}
     {% endfor %}
     console.log(purchasesByYearData);
