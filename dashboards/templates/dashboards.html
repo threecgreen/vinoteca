@@ -66,8 +66,12 @@
         <div class="col s12">
             <div class="card wine-green-card dashboard-top-card">
                 <div class="card-content">
-                    <h2 class="card-title">Purchases by Year | Graph</h2>
-                    <canvas id="pb-year-chart"></canvas>
+                    {% if wine_count == 0 %}
+                        {% include "insufficient_wines.html" %}
+                    {% else %}
+                        <h2 class="card-title">Purchases by Year | Graph</h2>
+                        <canvas id="pb-year-chart"></canvas>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -193,8 +197,8 @@ $(function () {
     let purchasesByYearData = [{}, {}, {}];
     {% for year in years %}
         purchasesByYearData[0][{{ year.year }}] = {{ year.quantity }};
-        purchasesByYearData[1][{{ year.year }}] = {{ year.price|floatformat:2 }};
-        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price|floatformat:2 }};
+        purchasesByYearData[1][{{ year.year }}] = {{ year.price|default_if_none:0|floatformat:2 }};
+        purchasesByYearData[2][{{ year.year }}] = {{ year.avg_price|default_if_none:0|floatformat:2 }};
         {#purchasesByYearData[3][{{ year.year }}] = {{ year.avg_vintage }};#}
     {% endfor %}
     console.log(purchasesByYearData);
