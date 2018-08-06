@@ -172,12 +172,12 @@ def insert_new_purchase(request, wine_id):
     price = empty_to_none(request.POST.get("price"))
     if price:
         price = float(price)
-    why = empty_to_none(request.POST.get("why"))
+    memo = empty_to_none(request.POST.get("memo"))
     vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
     quantity = int(request.POST.get("quantity"))
     store = g_or_c_store(store)
     wine = Wines.objects.get(id=wine_id)
-    c_purchase(wine, store, price, why, purchase_date, vintage, quantity)
+    c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
     return redirect("Wine Profile", wine_id=wine_id)
 
 
