@@ -165,7 +165,7 @@ def edit_wine(request, wine_id: int):
         wine.name = empty_to_none(request.POST.get("name"))
         wine.why = empty_to_none(request.POST.get("why"))
         viti_area = empty_to_none(request.POST.get("viti-area"))
-        if request.POST.get("have-rating"):
+        if request.POST.get("has-rating"):
             wine.rating = int(request.POST.get("rating"))
         else:
             wine.rating = None

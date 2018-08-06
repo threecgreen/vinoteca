@@ -60,14 +60,19 @@
             </ul></li>
             <li>Calculate remaining grape percentage when adding a wine&rsquo;s grape composition</li>
             <li>Improve <abbr title="Command Line Interface">CLI</abbr> by adding optional arguments and better portability</li>
+                <abbr title="Object-Relational Mapping">ORM</abbr></li>
+            <li>Reduce number of colors in color palette</li>
+            <li>Stop testing using production database</li>
+            <li>Add <code>django-js-error-hook</code> for client-side JavaScript error logging</li>
             <li>Extensive internal refactoring of database and data model names (not backwards compatible)</li>
             <li>Convert basic <abbr title="Structured Query Language">SQL</abbr> queries to Django&rsquo;s
-                <abbr title="Object-Relational Mapping">ORM</abbr></li>
-            <li>Add <code>django-js-error-hook</code> for client-side JavaScript error logging</li>
-            <li>Reduce number of colors in color palette</li>
             <li>Bug fixes:<ul class="bullets">
                 <li>Link top regions dashboard to the region profiles</li>
-                <li>Fix bugs associated with having no or few wines stored in vinoteca</li>
+                <li>Fix bugs associated with having no or few wines stored in vinoteca</li><ul class="bullets">
+                    <li>Fix bug where new databases contained no colors</li>
+                </ul>
+                <li>Fix bug where rating slider didn&rsquo;t work when editing a wine</li>
+                <li>Fix bug where rating for new wine wasn&rsquo;t stored</li>
                 <li>Fix float formatting in &ldquo;Top Purchase Types&rdquo; dashboard</li>
                 <li>Fix incorrect disabled wine composition pie chart</li>
                 <li>Remove silent errors</li>

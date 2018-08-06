@@ -106,7 +106,7 @@ def insert_new_purchase_and_wine(request):
     notes = empty_to_none(request.POST.get("notes"))
     name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
-    if request.POST.get("have-rating"):
+    if request.POST.get("has-rating"):
         rating = int(request.POST.get("rating")) if empty_to_none(request.POST.get("rating")) \
             else None
     else:
