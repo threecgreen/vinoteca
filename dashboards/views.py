@@ -65,7 +65,7 @@ def top_regions(limit: int) -> List[Regions]:
 
 
 def purchases_by_color() -> List[Colors]:
-    return list(Colors.objects.annotate(quantity=Sum("wines__purchases__quantity")))
+    return list(Colors.objects.annotate(quantity=Sum("wines__purchases__quantity"))
                 .annotate(variety=Count("wines", distinct=True))
                 .annotate(avg_price=Avg("wines__purchases__price"))
                 .order_by("-quantity"))
