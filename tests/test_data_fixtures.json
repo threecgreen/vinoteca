@@ -1,27 +1,6 @@
 [
     {
         "model": "vinoteca.colors",
-        "pk": 1,
-        "fields": {
-            "name": "red"
-        }
-    },
-    {
-        "model": "vinoteca.colors",
-        "pk": 2,
-        "fields": {
-            "name": "white"
-        }
-    },
-    {
-        "model": "vinoteca.colors",
-        "pk": 3,
-        "fields": {
-            "name": "rosé"
-        }
-    },
-    {
-        "model": "vinoteca.colors",
         "pk": 4,
         "fields": {
             "name": "sparkling"
