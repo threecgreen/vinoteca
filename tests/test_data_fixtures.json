@@ -1,12 +1,5 @@
 [
     {
-        "model": "vinoteca.colors",
-        "pk": 4,
-        "fields": {
-            "name": "sparkling"
-        }
-    },
-    {
         "model": "vinoteca.regions",
         "pk": 1,
         "fields": {
@@ -71,7 +64,7 @@
         "model": "vinoteca.stores",
         "pk": 2,
         "fields": {
-            "name": "MGM"
+            "name": "Costco"
         }
     },
     {
@@ -107,31 +100,138 @@
         }
     },
     {
-        "model": "vinoeca.winetypes",
+        "model": "vinoteca.winetypes",
         "pk": 1,
         "fields": {
             "name": "Sauvignon Blanc"
         }
     },
     {
-        "model": "vinoeca.winetypes",
+        "model": "vinoteca.winetypes",
         "pk": 2,
         "fields": {
             "name": "Pinot Noir"
         }
     },
     {
-        "model": "vinoeca.winetypes",
+        "model": "vinoteca.winetypes",
         "pk": 3,
         "fields": {
             "name": "Cabernet Sauvignon"
         }
     },
     {
-        "model": "vinoeca.winetypes",
+        "model": "vinoteca.winetypes",
         "pk": 4,
         "fields": {
             "name": "Chardonnay"
+        }
+    },
+    {
+        "model": "vinoteca.wines",
+        "pk": 1,
+        "fields": {
+            "notes": "This is a pretty good wine",
+            "producer": 1,
+            "wine_type": 2,
+            "color": 1,
+            "inventory": 1,
+            "viti_area": 2
+        }
+    },
+    {
+        "model": "vinoteca.wines",
+        "pk": 2,
+        "fields": {
+            "notes": "This is a pretty good wine",
+            "producer": 2,
+            "wine_type": 4,
+            "color": 3,
+            "inventory": 3,
+            "viti_area": 1
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 1,
+        "fields": {
+            "store": 1,
+            "wine": 1,
+            "price": 9.99,
+            "quantity": 2,
+            "date": 20180704,
+            "vintage": 2015
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 2,
+        "fields": {
+            "store": 2,
+            "wine": 1,
+            "price": 19.99,
+            "quantity": 1,
+            "date": 20180101,
+            "vintage": 2016
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 3,
+        "fields": {
+            "store": 2,
+            "wine": 2,
+            "price": 7.000,
+            "quantity": 2,
+            "date": 20180101,
+            "vintage": 2012
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 4,
+        "fields": {
+            "store": 2,
+            "wine": 2,
+            "price": 11.52,
+            "quantity": 1,
+            "date": 20180901
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 5,
+        "fields": {
+            "store": 2,
+            "wine": 1,
+            "price": 19.99,
+            "quantity": 1,
+            "date": 20180101,
+            "vintage": 2016
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 6,
+        "fields": {
+            "store": 2,
+            "wine": 1,
+            "price": 19.99,
+            "quantity": 1,
+            "date": 20180101,
+            "vintage": 2016
+        }
+    },
+    {
+        "model": "vinoteca.purchases",
+        "pk": 7,
+        "fields": {
+            "store": 2,
+            "wine": 1,
+            "price": 19.99,
+            "quantity": 1,
+            "date": 20180101,
+            "vintage": 2016
         }
     }
 ]

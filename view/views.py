@@ -138,7 +138,7 @@ def wine_profile_base(wine_id: int, do_purchases: bool=True):
 
     context = {
         "grapes": list(grapes),
-        "recent_vintage": recent_vintage[0],
+        "recent_vintage": recent_vintage[0] if recent_vintage else None,
         "wine": wine,
         "has_img": has_img,
         "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
@@ -355,8 +355,8 @@ def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool
 def delete_wine(request, wine_id: int):
     wine = Wines.objects.get(id=wine_id)
     wine_grapes = WineGrapes.objects.filter(wine=wine)
-    purchases = Purchases.objects.get(wine=wine)
     wine_grapes.delete()
+    purchases = Purchases.objects.filter(wine=wine)
     purchases.delete()
     # Determine if producer was created for this wine
     if Wines.objects.filter(producer__id=wine.producer.id).count() == 1:

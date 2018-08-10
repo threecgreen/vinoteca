@@ -9,6 +9,7 @@ omit =
     */apps.py
     */admin.py
     */test*.py
+    **/migrations/*
 
 [report]
 # Regexes for lines to exclude from consideration
