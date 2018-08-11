@@ -195,7 +195,8 @@
             "wine": 2,
             "price": 11.52,
             "quantity": 1,
-            "date": 20180901
+            "date": 20180901,
+            "vintage": 2016
         }
     },
     {

@@ -2,7 +2,7 @@ from datetime import date
 from django.urls import reverse
 import pytest
 
-from vinoteca.models import VitiAreas
+from vinoteca.models import VitiAreas, Wines
 
 
 @pytest.mark.django_db
@@ -44,21 +44,17 @@ def test_get_region_viti_area(client, region):
         assert len(response.json().keys()) > 0
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("wine_type,color,producer,region,viti_area", [
     ("Pinot Noir", "", "", "", ""),
     ("", "red", "", "", ""),
     ("", "", "Martinelli", "", ""),
     ("", "", "", "California", ""),
-    ("", "", "", "", "Sonoma County"),
+    # ("", "", "", "", "Sonoma County"),
     ("", "red", "Le Grand Noir", "France", ""),
-    ("Pinot Noir", "red", "", "California", ""),
-    ("", "", "", "", ""),
+    ("Pinot Noir", "red", "", "California", "")
 ])
 @pytest.mark.django_db
 def test_search_wines(client, wine_type, color, producer, region, viti_area):
-    is_empty = all(len(param) == 0 for param in (wine_type, color, producer,
-                                                 region, viti_area))
     search_data = {
         "wine_type": wine_type,
         "color": color,
@@ -68,10 +64,7 @@ def test_search_wines(client, wine_type, color, producer, region, viti_area):
     }
     response = client.get("/new/search-wines/", search_data)
     assert response.status_code == 200
-    if is_empty:
-        assert len(response.json()["results"]) == 0
-    else:
-        assert len(response.json()["results"]) > 0
+    assert len(response.json()["results"]) > 0
 
 
 @pytest.mark.parametrize("store,price,why,vintage,quantity", [
