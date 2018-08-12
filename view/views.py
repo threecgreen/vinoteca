@@ -110,10 +110,13 @@ def wine_table(request):
 
 
 def wine_profile_base(wine_id: int, do_purchases: bool=True):
-    wine = Wines.objects \
-        .prefetch_related("wine_type", "color", "producer", "producer__region",
-                          "viti_area") \
-        .get(id=wine_id)
+    try:
+        wine = Wines.objects \
+            .prefetch_related("wine_type", "color", "producer", "producer__region",
+                            "viti_area") \
+            .get(id=wine_id)
+    except Wines.DoesNotExist:
+        raise Http404({"object": "Wine"})
     # Get the vintage of the most recent purchase
     recent_vintage_query = """
                 SELECT

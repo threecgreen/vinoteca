@@ -128,6 +128,20 @@
         }
     },
     {
+        "model": "vinoteca.winetypes",
+        "pk": 5,
+        "fields": {
+            "name": "Verdejo"
+        }
+    },
+    {
+        "model": "vinoteca.winetypes",
+        "pk": 6,
+        "fields": {
+            "name": "Zinfandel"
+        }
+    },
+    {
         "model": "vinoteca.wines",
         "pk": 1,
         "fields": {
@@ -233,6 +247,24 @@
             "quantity": 1,
             "date": 20180101,
             "vintage": 2016
+        }
+    },
+    {
+        "model": "vinoteca.winegrapes",
+        "pk": 1,
+        "fields": {
+            "wine": 2,
+            "grape": 1,
+            "percent": 70
+        }
+    },
+    {
+        "model": "vinoteca.winegrapes",
+        "pk": 2,
+        "fields": {
+            "wine": 2,
+            "grape": 2,
+            "percent": 30
         }
     }
 ]

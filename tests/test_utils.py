@@ -138,13 +138,7 @@ def test_g_or_c_wine_grape(a_wine, grape, pct):
 
 # To fix would need to create WineGrapes
 # TODO: fix or delete
-@pytest.mark.xfail
 @pytest.mark.parametrize("grape", ["Syrah", "Merlot"])
 @pytest.mark.django_db
 def test_g_or_c_wine_grape_existing(a_wine, grape):
     assert c_or_u_wine_grapes(a_wine, grape, 0) is False
-
-
-def test_convert_to_png():
-    # TODO: Create test
-    pass

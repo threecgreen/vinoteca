@@ -28,7 +28,6 @@ def test_by_the_numbers(connection):
     assert isinstance(by_the_numbers(connection), ByTheNumbers)
 
 
-@pytest.mark.xfail
 @pytest.mark.django_db
 @pytest.mark.parametrize("limit", [2, 5])
 def test_top_purchase_categories(limit):
