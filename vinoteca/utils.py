@@ -23,7 +23,6 @@ def g_or_c_store(store: str) -> Union[Stores, None]:
 
 
 def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
-    # TODO: error handling
     if wine_type is None:
         return
     try:
@@ -35,7 +34,6 @@ def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
 
 
 def g_or_c_region(region: str) -> Union[Regions, None]:
-    # TODO: error handling
     if region is None:
         return
     try:
@@ -47,7 +45,6 @@ def g_or_c_region(region: str) -> Union[Regions, None]:
 
 
 def g_or_c_producer(producer: str, region: Regions) -> Producers:
-    # TODO: error handling
     try:
         return Producers.objects.get(name=producer)
     except Producers.DoesNotExist:
@@ -57,7 +54,6 @@ def g_or_c_producer(producer: str, region: Regions) -> Producers:
 
 
 def g_or_c_viti_area(viti_area: str, region: Regions) -> Union[VitiAreas, None]:
-    # TODO: error handling
     if viti_area is None:
         return
     try:
@@ -69,7 +65,6 @@ def g_or_c_viti_area(viti_area: str, region: Regions) -> Union[VitiAreas, None]:
 
 
 def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bool:
-    # TODO: error handling
     if grape is None:
         return False
     try:
