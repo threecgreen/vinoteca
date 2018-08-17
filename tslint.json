@@ -5,7 +5,9 @@
     ],
     "jsRules": {},
     "rules": {
-        "max-line-length": 100,
+        "max-line-length": {
+            "options": [100]
+        },
         "no-consecutive-blank-lines": true
     },
     "rulesDirectory": []
