@@ -140,8 +140,3 @@ def test_g_or_c_wine_grape(a_wine, grape, pct):
 @pytest.mark.django_db
 def test_g_or_c_wine_grape_existing(a_wine, grape):
     assert c_or_u_wine_grapes(a_wine, grape, 0) is False
-
-
-def test_convert_to_png():
-    # TODO: Create test
-    pass
