@@ -136,9 +136,6 @@ def test_g_or_c_wine_grape(a_wine, grape, pct):
     assert WineGrapes.objects.filter(wine=a_wine).count() == start_count + 1
 
 
-# To fix would need to create WineGrapes
-# TODO: fix or delete
-@pytest.mark.xfail
 @pytest.mark.parametrize("grape", ["Syrah", "Merlot"])
 @pytest.mark.django_db
 def test_g_or_c_wine_grape_existing(a_wine, grape):

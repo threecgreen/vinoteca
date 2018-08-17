@@ -16,6 +16,22 @@
         }
     },
     {
+        "model": "vinoteca.regions",
+        "pk": 3,
+        "fields": {
+            "name": "New Zealand",
+            "is_us": true
+        }
+    },
+    {
+        "model": "vinoteca.regions",
+        "pk": 4,
+        "fields": {
+            "name": "Spain",
+            "is_us": false
+        }
+    },
+    {
         "model": "vinoteca.grapes",
         "pk": 1,
         "fields": {
@@ -27,6 +43,20 @@
         "pk": 2,
         "fields": {
             "name": "Merlot"
+        }
+    },
+    {
+        "model": "vinoteca.grapes",
+        "pk": 3,
+        "fields": {
+            "name": "Garnacha"
+        }
+    },
+    {
+        "model": "vinoteca.grapes",
+        "pk": 4,
+        "fields": {
+            "name": "Tempranillo"
         }
     },
     {
@@ -125,6 +155,13 @@
         "pk": 4,
         "fields": {
             "name": "Chardonnay"
+        }
+    },
+    {
+        "model": "vinoteca.winetypes",
+        "pk": 5,
+        "fields": {
+            "name": "Cava"
         }
     },
     {
@@ -233,6 +270,22 @@
             "quantity": 1,
             "date": 20180101,
             "vintage": 2016
+        }
+    },
+    {
+        "model": "vinoteca.winegrapes",
+        "pk": 1,
+        "fields": {
+            "wine": 1,
+            "grape": 1
+        }
+    },
+    {
+        "model": "vinoteca.winegrapes",
+        "pk": 2,
+        "fields": {
+            "wine": 1,
+            "grape": 2
         }
     }
 ]

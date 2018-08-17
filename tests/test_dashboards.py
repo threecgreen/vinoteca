@@ -28,18 +28,16 @@ def test_by_the_numbers(connection):
     assert isinstance(by_the_numbers(connection), ByTheNumbers)
 
 
-@pytest.mark.xfail
 @pytest.mark.django_db
-@pytest.mark.parametrize("limit", [2, 5])
+@pytest.mark.parametrize("limit", [2, 3])
 def test_top_purchase_categories(limit):
     top_purchase_categories = top_wine_types(limit)
     assert isinstance(top_purchase_categories[0], WineTypes)
     assert len(top_purchase_categories) == limit
 
 
-@pytest.mark.xfail
 @pytest.mark.django_db
-@pytest.mark.parametrize("limit", [2, 5])
+@pytest.mark.parametrize("limit", [2, 3])
 def test_regions(limit):
     regions = top_regions(limit)
     assert isinstance(regions[0], Regions)
@@ -52,9 +50,8 @@ def test_types():
     assert isinstance(colors[0], Colors)
 
 
-@pytest.mark.xfail
 @pytest.mark.django_db
-@pytest.mark.parametrize("limit", [2, 5])
+@pytest.mark.parametrize("limit", [2, 3])
 def test_producers(limit):
     producers = top_producers(limit)
     assert isinstance(producers[0], Producers)
@@ -67,9 +64,8 @@ def test_purchase_by_year(connection):
     assert isinstance(years[0], Year)
 
 
-@pytest.mark.xfail
 @pytest.mark.django_db
-@pytest.mark.parametrize("limit", [2, 5])
+@pytest.mark.parametrize("limit", [2, 3])
 def test_top_grape_varieties(limit):
     grapes = top_grape_varieties(limit)
     assert isinstance(grapes[0], Grapes)

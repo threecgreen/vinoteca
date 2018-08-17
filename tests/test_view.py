@@ -5,20 +5,20 @@ from view.views import *
 
 
 @pytest.fixture
-def upload_file():
+def upload_file(a_wine):
     # Rename file if it already exists
-    image_file = Path(settings.BASE_DIR) / "media" / "1.png"
+    image_file = Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png"
     if image_file.is_file():
         existing_file = True
-        image_file.rename(Path(settings.BASE_DIR) / "media" / "1_real.png")
+        image_file.rename(Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png")
     else:
         existing_file = False
     with open(Path(__file__).parent / "test.jpg", "rb") as file:
         yield file
-    (Path(settings.BASE_DIR) / "media" / "1.png").unlink()
+    (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").unlink()
     if existing_file:
-        (Path(settings.BASE_DIR) / "media" / "1_real.png").rename(
-            Path(settings.BASE_DIR) / "media" / "1.png")
+        (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png").rename(
+            Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png")
 
 
 @pytest.mark.parametrize("url", [
@@ -110,9 +110,9 @@ def test_edit_wine(client, wine_and_post_data, attr, val):
     init_val = wine.__getattribute__(attr)
     assert init_val != val
     post_data[attr.replace("_", "-")] = val
-    response = client.post("/wines/1/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/1/", 302) in response.redirect_chain
+    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
     if attr in ("producer", "viti_area", "color") or attr == "viti_area":
         assert Wines.objects.get(id=1).__getattribute__(attr).name == val
     else:
@@ -121,7 +121,10 @@ def test_edit_wine(client, wine_and_post_data, attr, val):
 
 @pytest.mark.django_db
 def test_edit_wine_with_grapes(client, wine_and_post_data):
-    wine, post_data = wine_and_post_data
+    _, post_data = wine_and_post_data
+    # Switch to wine id=2 because wine with id=1 already has grapes for other
+    # tests.
+    wine = Wines.objects.get(id=2)
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     assert len(wine_grapes) == 0
     # Add grape data
@@ -130,9 +133,9 @@ def test_edit_wine_with_grapes(client, wine_and_post_data):
     post_data["grape-2"] = "Syrah"
     post_data["grape-2-pct"] = 50
     # Post
-    response = client.post("/wines/1/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/1/", 302) in response.redirect_chain
+    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     grapes = [wine_grape.grape for wine_grape in wine_grapes]
     malbec = Grapes.objects.get(name="Malbec")
@@ -153,11 +156,11 @@ def test_edit_wine_image(a_wine, client, upload_file):
         "wine-type": a_wine.wine_type.name,
         "wine-image": upload_file
     }
-    response = client.post("/wines/1/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{a_wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/1/", 302) in response.redirect_chain
-    assert (Path(settings.BASE_DIR) / "media" / "1.png").is_file()
-    response = client.get("/media/1.png")
+    assert (f"/wines/{a_wine.id}/", 302) in response.redirect_chain
+    assert (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").is_file()
+    response = client.get(f"/media/{a_wine.id}.png")
     assert response.status_code == 200
 
 
@@ -166,7 +169,7 @@ def test_edit_wine_image(a_wine, client, upload_file):
     ("store", "Costco")
 ])
 @pytest.mark.django_db
-def test_edit_purchases(client, attr, val):
+def test_edit_purchases(client, attr, val, a_wine):
     purchase = Purchases.objects.get(id=1)
     init_val = purchase.__getattribute__(attr)
     assert init_val != val
@@ -178,9 +181,9 @@ def test_edit_purchases(client, attr, val):
         "store": purchase.store
     }
     post_data[attr] = val
-    response = client.post("/wines/1/edit/1/", post_data, follow=True)
+    response = client.post(f"/wines/{a_wine.id}/edit/1/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/1/edit/", 302) in response.redirect_chain
+    assert (f"/wines/{a_wine.id}/edit/", 302) in response.redirect_chain
     if attr == "store":
         assert Purchases.objects.get(id=1).__getattribute__(attr).name == val
     else:
@@ -192,7 +195,7 @@ def test_edit_purchases(client, attr, val):
 def test_change_inventory(a_wine, client, sign):
     a_wine.inventory = 1
     a_wine.save()
-    client.get(f"/wines/1/change/{sign}/inventory/")
+    client.get(f"/wines/{a_wine.id}/change/{sign}/inventory/")
     a_wine = Wines.objects.get(id=1)
     if sign == "add":
         assert a_wine.inventory == 2
@@ -217,9 +220,9 @@ def test_edit_producer(client, attr, val):
         "region": producer.region.name
     }
     post_data[attr] = val
-    response = client.post("/producers/1/edit/", post_data, follow=True)
+    response = client.post(f"/producers/{producer.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/producers/1/", 302) in response.redirect_chain
+    assert (f"/producers/{producer.id}/", 302) in response.redirect_chain
     if attr == "region":
         assert Producers.objects.get(id=1).region.name == val
     else:
@@ -227,16 +230,16 @@ def test_edit_producer(client, attr, val):
 
 
 @pytest.mark.django_db
-def test_delete_wine(client):
-    response = client.get("/wines/1/edit/delete/confirmed/", follow=True)
+def test_delete_wine(client, a_wine):
+    response = client.get(f"/wines/{a_wine.id}/edit/delete/confirmed/", follow=True)
     assert response.status_code == 200
     with pytest.raises(Wines.DoesNotExist):
         Wines.objects.get(id=1)
 
 
 @pytest.mark.django_db
-def test_delete_purchase(client):
-    response = client.get("/wines/1/edit/1/delete/", follow=True)
+def test_delete_purchase(client, a_wine):
+    response = client.get(f"/wines/{a_wine.id}/edit/1/delete/", follow=True)
     assert response.status_code == 200
     with pytest.raises(Purchases.DoesNotExist):
         Purchases.objects.get(id=1)
