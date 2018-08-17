@@ -1,29 +1,38 @@
+r"""Contains views (business logic) for allowing users to create new wines and
+new purchases. Also contains logic for searching existing wines before adding a
+ new purchase and some JSON response functions that may be moved to REST."""
+from pathlib import Path
+
 import attr
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from pathlib import Path
 
 from view.views import wine_profile_base
 from vinoteca.models import Colors, Regions, Stores, VitiAreas, Wines
+from vinoteca.views import get_connection
 from vinoteca.utils import (g_or_c_region, g_or_c_producer, g_or_c_store,
                             g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
                             c_or_u_wine_grapes, default_vintage_year, convert_to_png)
-from vinoteca.views import get_connection
 
 
 def get_producer_region(request) -> JsonResponse:
+    r"""Given a producer, return its region in JSON."""
+    # TODO: Move to Rest?
     producer = request.GET.get("producer")
     region = Regions.objects.filter(producers__name=producer)
     if region:
         return JsonResponse({"region_name": region[0].name
-                            if region else None})
+                                            if region else None})
     return JsonResponse({"region_name": None})
 
 
 def get_region_viti_areas(request) -> JsonResponse:
+    r"""Given a region, retrieve all the region's viticultural areas and return
+    as JSON."""
+    # TODO: Move to Rest?
     region = request.GET.get("region")
     viti_areas = VitiAreas.objects.filter(region__name=region)
     if region:
@@ -32,8 +41,12 @@ def get_region_viti_areas(request) -> JsonResponse:
 
 
 def search_wines(request) -> JsonResponse:
+    r"""Render a search results table inserted into a JSON object for live
+    search results of existing wines."""
     @attr.s
     class WineSearchResult(object):
+        r"""Query result attrs object for wine search results. Makes for easier
+        and clearer access to wine attributes in the template."""
         id = attr.ib(type=int)
         color = attr.ib(type=str)
         name = attr.ib(type=str)
@@ -51,7 +64,7 @@ def search_wines(request) -> JsonResponse:
     viti_area = empty_to_none(request.GET.get("viti_area"))
     params = [color, wine_type, producer, region, viti_area]
     params = [param for param in params if param is not None]
-    if len(params) > 0:
+    if params:
         query = """
             SELECT
                 w.id
@@ -91,6 +104,8 @@ def search_wines(request) -> JsonResponse:
 
 
 def insert_new_purchase_and_wine(request):
+    r"""Handles logic for inserting a wine purchased for the first time and
+    therefore new Wines and Purchases objects are created."""
     store = empty_to_none(request.POST.get("store"))
     purchase_date = empty_to_none(request.POST.get("purchase-date"))
     wine_type = empty_to_none(request.POST.get("wine-type"))
@@ -148,6 +163,8 @@ def insert_new_purchase_and_wine(request):
 
 
 def first_new_purchase(request):
+    r"""General view for inserting a new purchase. If is a post request,
+    delegates to insert_new_purchase_and_wine function."""
     if request.method == "POST":
         return insert_new_purchase_and_wine(request)
     context = {
@@ -159,6 +176,8 @@ def first_new_purchase(request):
 
 
 def prev_new_purchase_search(request):
+    r"""Search page view. Search logic is implemented in search_wines function,
+    not here."""
     context = {
         "colors": Colors.objects.all(),
         "page_name": "New Purchase",
@@ -167,6 +186,8 @@ def prev_new_purchase_search(request):
 
 
 def insert_new_purchase(request, wine_id):
+    r"""Logic for handling a new wine purchase. Creates a new Purchases
+    object."""
     store = empty_to_none(request.POST.get("store"))
     purchase_date = empty_to_none(request.POST.get("purchase-date"))
     price = empty_to_none(request.POST.get("price"))
@@ -182,6 +203,7 @@ def insert_new_purchase(request, wine_id):
 
 
 def prev_purchase(request, wine_id):
+    r"""View for a previously purchased wine with a new purchase to be added."""
     if request.method == "POST":
         return insert_new_purchase(request, wine_id)
     context = wine_profile_base(wine_id)

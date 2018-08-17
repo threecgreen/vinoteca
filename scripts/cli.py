@@ -4,6 +4,7 @@ Script for performing common vinoteca tasks:
     - run: running the local web server
     - test: run test suite
     - update: check and perform updates
+    - lint: run code linters
 
 Should be added to PATH with the update.sh script so that it can be run from
 any directory. It relies on the other bash scripts in this directory (scripts),
@@ -42,6 +43,7 @@ def main():
         "run": (scripts_dir / "run.sh").resolve(),
         "test": (scripts_dir / "test.sh").resolve(),
         "update": (scripts_dir / "update.sh").resolve(),
+        "lint": (scripts_dir / "lint.sh").resolve(),
     }
     if len(sys.argv) == 1:
         print_error("Missing subcommand.\n")

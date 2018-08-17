@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# Run Python tests
 source "$(dirname $0)/utils.sh"
 
 find_python_env
