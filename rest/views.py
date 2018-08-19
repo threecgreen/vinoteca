@@ -5,11 +5,13 @@ file."""
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from vinoteca.models import Colors, Regions, Producers, VitiAreas, WineTypes, \
-        Wines, WineGrapes
-from rest.serializers import ColorsSerializer, RegionsSerializer, \
-        ProducersSerializer, VitiAreasSerializer, WineGrapesSerializer, \
-        WinesSerializer, WineTypesSerializer
+from vinoteca.models import (
+    Colors, Regions, Producers, VitiAreas, WineTypes, Wines, WineGrapes
+)
+from rest.serializers import (
+    ColorsSerializer, RegionsSerializer, ProducersSerializer,
+    VitiAreasSerializer, WineTypesSerializer, WinesSerializer
+)
 
 
 def rest(request, obj_name: str) -> JsonResponse:
@@ -54,11 +56,11 @@ def grape(request):
     return JsonResponse(content, safe=False)
 
 
-def graph(request, id: int):
+def graph(request, id_: int):
     r"""View for starting the wine graph with a wine with the id of the argument
     `id`."""
     context = {
-        "id": id,
+        "id": id_,
         "page_name": "Wine Graph",
     }
     return render(request, "graph.html", context)

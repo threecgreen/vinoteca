@@ -1,11 +1,21 @@
 """vinoteca URL Configuration"""
+# pylint: disable=invalid-name
+from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
 
 from vinoteca.views import simple_page, home
 from dashboards.views import dashboards
-from new_purchase.views import *
-from view.views import *
+from new_purchase.views import (
+    prev_purchase, prev_new_purchase_search, first_new_purchase,
+    get_producer_region, get_region_viti_areas, search_wines
+)
+from view.views import (
+    wine_profile, edit_wine, delete_wine, edit_purchase, delete_purchase,
+    change_inventory, edit_producer, producer_profile, region_profile,
+    wine_type_profile, wine_table, get_colors, get_regions, get_producers,
+    get_stores, get_grapes, get_wine_types, get_viti_areas, inventory
+)
 
 wine_patterns = [
     path("<int:wine_id>/", wine_profile, name="Wine Profile"),

@@ -11,7 +11,7 @@ from django.shortcuts import render
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
-from vinoteca.utils import get_connection, int_to_date, wine_count
+from vinoteca.utils import get_connection, int_to_date
 
 
 def recent_purchases(limit: int) -> List[Purchases]:
@@ -168,7 +168,7 @@ def dashboards(request):
         "top_wine_types": top_wine_types(10),
         "viti_areas": top_viti_areas(5),
         "years": purchases_by_year(conn),
-        "wine_count": wine_count(),
+        "wine_count": Wines.objects.count(),
         "page_name": "Dashboards",
     }
     conn.close()

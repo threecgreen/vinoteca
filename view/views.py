@@ -1,17 +1,24 @@
+r"""Contains views for viewing, interacting and editing wine information."""
+# pylint: disable=unused-argument
+from pathlib import Path
+
 import attr
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
-from pathlib import Path
 
-from vinoteca.models import Colors, Regions, Grapes, Producers, Purchases, \
-    Stores, Wines, WineTypes, WineGrapes, VitiAreas
-from vinoteca.utils import get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,\
-    g_or_c_store, g_or_c_producer, g_or_c_region, flag_exists,\
-    empty_to_none, c_or_u_wine_grapes, g_or_c_viti_area, get_region_flags, \
-    convert_to_png
+from vinoteca.models import (
+    Colors, Regions, Grapes, Producers, Purchases, Stores, Wines, WineTypes,
+    WineGrapes, VitiAreas
+)
+from vinoteca.utils import (
+    get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,
+    g_or_c_store, g_or_c_producer, g_or_c_region, flag_exists,
+    empty_to_none, g_or_c_viti_area, get_region_flags, convert_to_png,
+    handle_grapes
+)
 
 
 # TODO: use rest framework to get rid of boilerplate
@@ -20,10 +27,15 @@ def get_colors(request) -> JsonResponse:
 
 
 def get_regions(request) -> JsonResponse:
+    r"""Return regions in JSON with the following format:
+    {
+        region_name: has_stored_flag
+    }"""
     region_flags = get_region_flags()
     regions = {}
     for region in Regions.objects.all():
-        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name in region_flags else None
+        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name \
+                in region_flags else None
     return JsonResponse(regions)
 
 
@@ -48,8 +60,11 @@ def get_viti_areas(request) -> JsonResponse:
 
 
 def wine_table(request):
+    r"""View for viewing all wines together in a tabular, filterable format."""
     @attr.s
     class WineTableDatum(object):
+        r"""Attrs object for wine table data. Each instance contains the
+        information required about one wine for one row in the table."""
         id = attr.ib(type=int)
         description = attr.ib(type=str)
         rating = attr.ib(type=int)
@@ -109,7 +124,10 @@ def wine_table(request):
     return render(request, "wines_table.html", context)
 
 
-def wine_profile_base(wine_id: int, do_purchases: bool=True):
+def wine_profile_base(wine_id: int, do_purchases: bool = True):
+    r"""Base view used by several other view functions. If `do_purchases` is
+    true, it will also fetch purchases if argument `do_purchases` is true."""
+    # TODO: refactor to class-based view for wines
     wine = Wines.objects \
         .prefetch_related("wine_type", "color", "producer", "producer__region",
                           "viti_area") \
@@ -156,6 +174,7 @@ def wine_profile(request, wine_id: int):
 
 
 def edit_wine(request, wine_id: int):
+    r"""View for editing attributes of a wine."""
     if request.method == "POST":
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
@@ -177,18 +196,7 @@ def edit_wine(request, wine_id: int):
         wine.save()
 
         # Grape composition
-        if request.POST.get("grape-1"):
-            for i in range(1, 6):
-                grape = empty_to_none(request.POST.get(f"grape-{i}"))
-                if request.POST.get(f"grape-{i}-pct"):
-                    percent = int(request.POST.get(f"grape-{i}-pct"))
-                else:
-                    percent = None
-                if grape and (percent is None or 0 < percent <= 100):
-                    c_or_u_wine_grapes(wine, grape, percent)
-                else:
-                    # No more grapes
-                    break
+        handle_grapes(request, wine)
 
         # Wine image changes
         if request.FILES.get("wine-image"):
@@ -196,8 +204,8 @@ def edit_wine(request, wine_id: int):
             # Remove old image if it exists
             if (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file():
                 (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").unlink()
-            fs = FileSystemStorage()
-            fs.save(str(wine.id) + ".png", wine_image)
+            file_sys = FileSystemStorage()
+            file_sys.save(str(wine.id) + ".png", wine_image)
             # Convert to PNG to match extension
             convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
 
@@ -209,13 +217,14 @@ def edit_wine(request, wine_id: int):
 
 
 def edit_purchase(request, wine_id: int, purchase_id: int):
+    r"""View for editing attributes of a particular wine purchase."""
     if request.method == "POST":
         purchase = Purchases.objects.get(id=purchase_id)
         purchase.date = date_str_to_int(request.POST.get("purchase-date"))
-        purchase.quantity = int(request.POST.get("quantity")) if request.POST.get("quantity") else None
-        purchase.price = float(request.POST.get("price")) if request.POST.get("price") else None
-        purchase.vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
-        purchase.memo = request.POST.get("memo") if request.POST.get("memo") else None
+        purchase.quantity = empty_to_none(request.POST.get("quantity"), int)
+        purchase.price = empty_to_none(request.POST.get("price"), float)
+        purchase.vintage = empty_to_none(request.POST.get("vintage"), int)
+        purchase.memo = empty_to_none(request.POST.get("memo"))
         purchase.store = g_or_c_store(request.POST.get("store"))
         purchase.save()
         return redirect("Edit Wine", wine_id=wine_id)
@@ -226,6 +235,7 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
 
 
 def producer_profile(request, producer_id: int):
+    r"""View for wine producer information."""
     producer = Producers.objects.get(id=producer_id)
     wines = Wines.objects.filter(producer__id=producer.id) \
         .annotate(total_quantity=Sum("purchases__quantity")) \
@@ -241,6 +251,7 @@ def producer_profile(request, producer_id: int):
 
 
 def edit_producer(request, producer_id: int):
+    r"""View for editing wine producer information."""
     if request.method == "POST":
         producer = Producers.objects.get(id=producer_id)
         region = request.POST.get("region")
@@ -256,6 +267,8 @@ def edit_producer(request, producer_id: int):
 
 
 def region_profile(request, region_id: int):
+    r"""View for viewing information about the wines, producers and viticultural
+    areas of a particular region."""
     region = Regions.objects.get(id=region_id)
     viti_areas = VitiAreas.objects.filter(region__id=region.id) \
         .annotate(total_quantity=Count("wines__id")) \
@@ -278,8 +291,11 @@ def region_profile(request, region_id: int):
 
 
 def inventory(request):
+    r"""View what wines and how many bottles are in the user's inventory/
+    collection."""
     @attr.s
     class InventoryItem(object):
+        r"""Denotes one row of the table."""
         color = attr.ib(type=str)
         name = attr.ib(type=str)
         type = attr.ib(type=str)
@@ -339,7 +355,9 @@ def inventory(request):
     return render(request, "inventory.html", context)
 
 
-def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool=False):
+def change_inventory(request, wine_id: int, sign: str,
+                     return_to_inventory: bool = False):
+    r"""Change the current inventory number for a wine."""
     assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
@@ -353,6 +371,7 @@ def change_inventory(request, wine_id: int, sign: str, return_to_inventory: bool
 
 
 def delete_wine(request, wine_id: int):
+    r"""View for deleting a wine."""
     wine = Wines.objects.get(id=wine_id)
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     wine_grapes.delete()
@@ -366,12 +385,16 @@ def delete_wine(request, wine_id: int):
 
 
 def delete_purchase(request, wine_id: int, purchase_id: int):
+    r"""View for handling delete purchase request."""
     purchase = Purchases.objects.get(id=purchase_id)
+    if purchase.wine.id != wine_id:
+        raise ValueError("Wine id and purchase id did not match.")
     purchase.delete()
     return redirect("Edit Wine", wine_id=wine_id)
 
 
 def wine_type_profile(request, wine_type_id: int):
+    r"""View for profiles of types of wine or wine types."""
     wine_type = WineTypes.objects.get(id=wine_type_id)
     wines = Wines.objects.filter(wine_type__id=wine_type_id) \
         .annotate(last_purchased_date=Max("purchases__date")) \

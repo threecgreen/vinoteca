@@ -13,9 +13,11 @@ from django.template.loader import render_to_string
 from view.views import wine_profile_base
 from vinoteca.models import Colors, Regions, Stores, VitiAreas, Wines
 from vinoteca.views import get_connection
-from vinoteca.utils import (g_or_c_region, g_or_c_producer, g_or_c_store,
-                            g_or_c_wine_type, c_wine, c_purchase, empty_to_none, g_or_c_viti_area,
-                            c_or_u_wine_grapes, default_vintage_year, convert_to_png)
+from vinoteca.utils import (
+    g_or_c_region, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine,
+    c_purchase, empty_to_none, g_or_c_viti_area, default_vintage_year,
+    convert_to_png, handle_grapes
+)
 
 
 def get_producer_region(request) -> JsonResponse:
@@ -103,6 +105,7 @@ def search_wines(request) -> JsonResponse:
     return JsonResponse({"results": []})
 
 
+#pylint: disable=too-many-locals
 def insert_new_purchase_and_wine(request):
     r"""Handles logic for inserting a wine purchased for the first time and
     therefore new Wines and Purchases objects are created."""
@@ -122,12 +125,11 @@ def insert_new_purchase_and_wine(request):
     name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
     if request.POST.get("has-rating"):
-        rating = int(request.POST.get("rating")) if empty_to_none(request.POST.get("rating")) \
-            else None
+        rating = int(request.POST.get("rating"))
     else:
         rating = None
-    vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
-    quantity = int(request.POST.get("quantity"))
+    vintage = empty_to_none(request.POST.get("vintage"), int)
+    quantity = empty_to_none(request.POST.get("quantity"), int)
     inventory = quantity if request.POST.get("add-to-inventory") else 0
     color = empty_to_none(Colors.objects.get(name=color))
     store = g_or_c_store(store)
@@ -139,23 +141,12 @@ def insert_new_purchase_and_wine(request):
                   inventory, viti_area, why)
     c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
     # Grape composition
-    if request.POST.get("grape-1"):
-        for i in range(1, 6):
-            grape = empty_to_none(request.POST.get(f"grape-{i}"))
-            if request.POST.get(f"grape-{i}-pct"):
-                percent = int(request.POST.get(f"grape-{i}-pct"))
-            else:
-                percent = None
-            if grape and (percent is None or 0 < percent <= 100):
-                c_or_u_wine_grapes(wine, grape, percent)
-            else:
-                # No more grapes
-                break
+    handle_grapes(request, wine)
 
     if request.FILES.get("wine-image"):
         wine_image = request.FILES["wine-image"]
-        fs = FileSystemStorage()
-        fs.save(str(wine.id) + ".png", wine_image)
+        file_sys = FileSystemStorage()
+        file_sys.save(str(wine.id) + ".png", wine_image)
         # Convert to PNG to match extension
         convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine.id}.png").resolve())
 

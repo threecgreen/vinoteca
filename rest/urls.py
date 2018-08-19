@@ -1,5 +1,6 @@
 r"""URL configurations for the REST views which are currently only used to
 GET wine data, not to modify it."""
+# pylint: disable=invalid-name
 from django.urls import path
 
 from rest.views import grape, rest
