@@ -1,8 +1,8 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 
-import { Dict, pipe, elementExists } from "./utils.js"
-import { setTabAccessibility } from "./widgets.js"
+import { elementExists, IDict, pipe } from "./utils.js";
+import { setTabAccessibility } from "./widgets.js";
 
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
@@ -22,21 +22,22 @@ const tenColorRainbow = [
 ];
 
 function allZero(array: number[]): boolean {
-    for (let num of array) {
-        if (num != 0) {
+    for (const num of array) {
+        if (num !== 0) {
             return false;
         }
     }
     return true;
 }
 
-/** Helper function for splitting Dict to seperate label and key arrays for
+/**
+ * Helper function for splitting Dict to seperate label and key arrays for
  * interfacing with Charts.js
  */
-function splitData(data: Dict<number>): [string[], number[]] {
-    let chartData: number[] = [];
-    let chartLabels: string[] = [];
-    for (let key in data) {
+function splitData(data: IDict<number>): [string[], number[]] {
+    const chartData: number[] = [];
+    const chartLabels: string[] = [];
+    for (const key in data) {
         chartData.push(data[key]);
         chartLabels.push(key);
     }
@@ -46,15 +47,11 @@ function splitData(data: Dict<number>): [string[], number[]] {
 /** Helper function to determine whether to proceed with chart creation. */
 function doChart(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
     // Only create chart if one or more grapes has a non-zero value
-    if (chartData.length == 0 || allZero(chartData)) {
-        console.error("Unable to create grape composition pie chart due to grape \
-                     composition data signature.")
-        console.log(`Chart data: ${chartData}`);
+    if (chartData.length === 0 || allZero(chartData)) {
         return false;
     }
     // Only create chart if the canvas element is valid
     if (!elementExists(canvas)) {
-        console.error("Unable to create chart; canvas element is invalid.");
         return false;
     }
     return true;
@@ -64,15 +61,16 @@ function changeTransparency(color: string, transparency: number) {
     if (transparency <= 0 || transparency >= 1) {
         throw Error("Transparency must be between 0 and 1");
     }
-    let fields = color.substr(5, color.length - 7).split(",").map(
-        val => parseInt(val)
+    const fields = color.substr(5, color.length - 7).split(",").map(
+        (val) => parseInt(val, 10),
     );
 
     fields[3] = transparency;
     return `rgba(${fields[0]}, ${fields[1]}, ${fields[2]}, ${fields[3]})`;
 }
 
-/** Helper function for creating a chart and enabling/disabling its container tab depending on
+/**
+ * Helper function for creating a chart and enabling/disabling its container tab depending on
  * success of creating the chart.
  *
  * Parameters:
@@ -84,22 +82,24 @@ function changeTransparency(color: string, transparency: number) {
  *              * List element controlling the tab is `${dashboardName}-${chartName}-chart-li`
  *              * Chart div `${dashboardName}-${chartName}-chart-tab`
  */
-export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>, data: Dict<number>) => boolean,
-    data: Dict<number>, chartNamePrefix: string) {
+export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>,
+                                     data: IDict<number>) => boolean,
+                           data: IDict<number>, chartNamePrefix: string) {
     const canvas: JQuery<HTMLCanvasElement> = $(`#${chartNamePrefix}-chart`);
     const chartLi: JQuery<HTMLUListElement> = $(`#${chartNamePrefix}-chart-li`);
 
     pipe(
-        chartFn(canvas, data)
+        chartFn(canvas, data),
     ).chain(
-        success => setTabAccessibility(chartLi, success)
+        (success) => setTabAccessibility(chartLi, success),
     );
 }
 
-/** Creates a pie chart on the provided canvas using the provided data.
+/**
+ * Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
-export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>): boolean {
+export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!doChart(canvas, chartData)) {
@@ -107,58 +107,57 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>):
     }
 
     const config = {
-        type: 'pie',
         data: {
             datasets: [{
-                data: chartData,
                 backgroundColor: [
-                    'rgba(139, 195, 74)',
-                    'rgba(173, 20, 87)',
-                    'rgba(251, 192, 45)',
+                    "rgba(139, 195, 74)",
+                    "rgba(173, 20, 87)",
+                    "rgba(251, 192, 45)",
                 ],
+                borderWidth: 0,
+                data: chartData,
                 label: "",
-                borderWidth: 0
             }],
-            labels: chartLabels
+            labels: chartLabels,
         },
         options: {
             // Resize chart with its container
-            responsive: true,
             layout: {
                 padding: {
+                    bottom: 15,
                     top: 15,
-                    bottom: 15
-                }
+                },
             },
             legend: {
-                position: "bottom",
                 labels: {
+                    fontFamily,
                     fontSize: 16,
-                    fontFamily: fontFamily
-                }
+                },
+                position: "bottom",
             },
+            responsive: true,
             tooltips: {
                 bodyFontFamily: fontFamily,
-                bodyFontSize: 14
-            }
-        }
+                bodyFontSize: 14,
+            },
+        },
+        type: "pie",
     };
 
     try {
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
-        console.log(e);
         return false;
     }
     return true;
 }
 
-/** Creates a horizontal bar chart on the provided canvas using the provided data.
+/**
+ * Creates a horizontal bar chart on the provided canvas using the provided data.
  * Returns a boolean indicating whether the chart was created successfully.
  */
-export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, whiteText = true): boolean {
-
+export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!doChart(canvas, chartData)) {
@@ -166,136 +165,131 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>, 
     }
 
     const config = {
-        type: "horizontalBar",
         data: {
             datasets: [{
-                data: chartData,
                 backgroundColor: tenColorRainbow,
+                data: chartData,
             }],
-            labels: chartLabels
+            labels: chartLabels,
         },
         options: {
-            responsive: true,
             layout: {
                 padding: {
+                    bottom: 15,
                     top: 15,
-                    bottom: 15
-                }
+                },
             },
             legend: {
-                display: false
+                display: false,
             },
+            responsive: true,
             scales: {
-                yAxes: [{
-                    ticks: {
-                        fontSize: 14,
-                        fontFamily: fontFamily,
-                        fontColor: translucentWhite,
-                    },
-                    gridLines: {
-                        color: translucentGray
-                    },
-                    borderWidth: 40,
-                    // barPercentage: 1.0,
-                    // categoryPercentage: 1.0
-                }],
                 xAxes: [{
-                    ticks: {
-                        fontSize: 14,
-                        fontFamily: fontFamily,
-                        fontColor: translucentWhite,
-                        beginAtZero: true
-                    },
-                    gridLines: {
-                        color: translucentGray
-                    },
                     borderWidth: 40,
-                    // categoryPercentage: 1.0
-                }]
+                    gridLines: {
+                        color: translucentGray,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        fontColor: translucentWhite,
+                        fontFamily,
+                        fontSize: 14,
+                    },
+                }],
+                yAxes: [{
+                    borderWidth: 40,
+                    gridLines: {
+                        color: translucentGray,
+                    },
+                    ticks: {
+                        fontColor: translucentWhite,
+                        fontFamily,
+                        fontSize: 14,
+                    },
+                }],
             },
             tooltips: {
-                titleFontFamily: fontFamily,
-                titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
                 fontColor: white,
-            }
-        }
+                titleFontFamily: fontFamily,
+                titleFontSize: 14,
+            },
+        },
+        type: "horizontalBar",
     };
 
     try {
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
-        console.log(e);
         return false;
     }
     return true;
 }
 
-export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[], seriesLabels: string[]): boolean {
-    const chartLabels = splitData(data[0])[0].map(x => parseInt(x));
+export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Array<IDict<number>>,
+                          seriesLabels: string[]): boolean {
+    const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
     // Error checking
     if (!elementExists(canvas)) {
-        console.error("Invalid canvas element.")
         return false;
     }
-    if (data.length != seriesLabels.length) {
-        console.error("Series labels and the data have different lengths.")
+    if (data.length !== seriesLabels.length) {
         return false;
     }
 
     const config = {
-        type: "line",
         data: {
             datasets: [],
             labels: chartLabels,
         },
         options: {
-            responsive: true,
+            backgroundColor: white,
             layout: {
                 padding: {
+                    bottom: 15,
                     top: 15,
-                    bottom: 15
-                }
+                },
             },
+            responsive: true,
             scales: {
-                yAxes: [{
-                    ticks: {
-                        fontSize: 14,
-                        fontFamily: fontFamily,
-                        fontColor: translucentWhite,
-                    },
-                    gridLines: {
-                        color: translucentGray
-                    },
+                xAxes: [{
                     borderWidth: 40,
+                    gridLines: {
+                        color: translucentGray,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        fontColor: translucentWhite,
+                        fontFamily,
+                        fontSize: 14,
+                    },
+                    // categoryPercentage: 1.0
+                }],
+                yAxes: [{
+                    borderWidth: 40,
+                    gridLines: {
+                        color: translucentGray,
+                    },
+                    ticks: {
+                        fontColor: translucentWhite,
+                        fontFamily,
+                        fontSize: 14,
+                    },
                     // barPercentage: 1.0,
                     // categoryPercentage: 1.0
                 }],
-                xAxes: [{
-                    ticks: {
-                        fontSize: 14,
-                        fontFamily: fontFamily,
-                        fontColor: translucentWhite,
-                        beginAtZero: true
-                    },
-                    gridLines: {
-                        color: translucentGray
-                    },
-                    borderWidth: 40,
-                    // categoryPercentage: 1.0
-                }]
             },
-            backgroundColor: white,
             tooltips: {
-                titleFontFamily: fontFamily,
-                titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
                 fontColor: white,
-            }
-        }
+                titleFontFamily: fontFamily,
+                titleFontSize: 14,
+            },
+        },
+        type: "line",
     };
 
     // Validate then add each data series to config
@@ -303,10 +297,10 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[
         const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
         config.data.datasets.push({
+            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5),
+            borderColor: tenColorRainbow[i],
             data: chartData,
             label: seriesLabels[i],
-            borderColor: tenColorRainbow[i],
-            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5)
         });
         // Error checking
         if (allZero(chartData)) {
@@ -315,8 +309,7 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[
         return true;
     });
 
-    if (!dataValidation.every(val => val)) {
-        console.error("Invalid data.")
+    if (!dataValidation.every((val) => val)) {
         return false;
     }
 
@@ -324,7 +317,6 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Dict<number>[
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
-        console.log(e);
         return false;
     }
     return true;

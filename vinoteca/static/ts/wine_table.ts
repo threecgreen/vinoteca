@@ -2,35 +2,35 @@
 /// <reference path="tablesorter.d.ts" />
 
 /** Set up a tablesorted with paging and cached filter settings. */
-$(function () {
+$(() => {
     $("table").tablesorter({
         theme: "materialize",
-        widthFixed: true,
-        widgets: ["filter"],
         widgetOptions: {
-            filter_reset: ".reset",
+            filter_cssFilter: ["browser-default"],
             filter_ignoreCase: true,
-            filter_cssFilter: ["browser-default"]
-        }
+            filter_reset: ".reset",
+        },
+        widgets: ["filter"],
+        widthFixed: true,
     }).tablesorterPager({
         container: $(".ts-pager"),
         cssGoto: ".pagenum",
         removeRows: false,
-        size: 100
-    }).on("filterInit", function () {
+        size: 100,
+    }).on("filterInit", () => {
         // check that storage ulility is loaded
         if ($.tablesorter.storage) {
             // get saved filters
-            let f = $.tablesorter.storage(this, "tablesorter-filters") || [];
+            const f = $.tablesorter.storage(this, "tablesorter-filters") || [];
             $(this).trigger("search", [f]);
         }
-    }).on("filterEnd", function () {
+    }).on("filterEnd", function() {
         if ($.tablesorter.storage) {
             // save current filters
-            let f = $(this).find(".tablesorter-filter").map(function () {
-                return <string>($(this).val()) || "";
+            const f = $(this).find(".tablesorter-filter").map(() => {
+                return ($(this).val()) as string || "";
             }).get();
-            $.tablesorter.storage(this, "tablesorter-filters", f)
+            $.tablesorter.storage(this, "tablesorter-filters", f);
         }
-    })
+    });
 });

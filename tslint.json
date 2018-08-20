@@ -8,7 +8,17 @@
         "max-line-length": {
             "options": [100]
         },
-        "no-consecutive-blank-lines": true
+        "no-consecutive-blank-lines": true,
+        "no-reference": false,
+        "max-classes-per-file": false,
+        "no-string-literal": false,
+        "forin": false
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "node_modules",
+            "**/*.d.ts"
+        ]
+    }
 }
