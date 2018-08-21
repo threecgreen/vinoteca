@@ -1,0 +1,38 @@
+{% if wine_count < 5 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
+<table class="responsive highlight">
+    <thead>
+        <tr>
+            <th>Region</th>
+            <th class="num-col">Varieties</th>
+            <th class="num-col">Producers</th>
+{#            <th class="num-col">Avg Rating</th>#}
+            <th class="num-col">Avg Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for region in regions %}
+        <tr>
+            <td><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.name }}
+            </a></td>
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.variety }}
+            </a></td>
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.producer_count }}
+            </a></td>
+{#            {% if region.avg_rating %}#}
+{#                <td class="num-col">{{ region.avg_rating|floatformat:"1" }}</td>#}
+{#            {% else %}#}
+{#                <td class="num-col">&ndash;</td>#}
+{#            {% endif %}#}
+            <td class="num-col"><a href="{% url "Region Profile" region_id=region.id %}">
+                {{ region.avg_price|floatformat:"2" }}
+            </a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

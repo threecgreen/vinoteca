@@ -4,9 +4,11 @@
         "module": "es2015",
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
-        "outDir": "vinoteca/static/js"
+        "outDir": "js",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
     },
     "include": [
-        "vinoteca/static/ts"
+        "ts"
     ],
 }

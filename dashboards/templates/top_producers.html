@@ -1,9 +1,12 @@
+{% if wine_count < 5 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
 <table class="responsive highlight">
     <thead>
         <tr>
             <th>Producer</th>
             <th class="num-col">Purchases</th>
-            <th class="num-col">Avg Rating</th>
+{#            <th class="num-col">Avg Rating</th>#}
             <th class="num-col">Avg Price</th>
         </tr>
     </thead>
@@ -12,13 +15,14 @@
             <tr>
                 <td><a href="{% url "Producer Profile" producer_id=producer.id %}">{{ producer.name }}</a></td>
                 <td class="num-col">{{ producer.quantity }}</td>
-                {% if producer.avg_rating %}
-                    <td class="num-col">{{ producer.avg_rating|floatformat:"1" }}</td>
-                {% else %}
-                    <td class="num-col">&ndash;</td>
-                {% endif %}
+{#                {% if producer.avg_rating %}#}
+{#                    <td class="num-col">{{ producer.avg_rating|floatformat:"1" }}</td>#}
+{#                {% else %}#}
+{#                    <td class="num-col">&ndash;</td>#}
+{#                {% endif %}#}
                 <td class="num-col">{{ producer.avg_price|floatformat:"2" }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{% endif %}

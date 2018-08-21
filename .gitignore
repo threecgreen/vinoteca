@@ -22,3 +22,6 @@ tests/.svn/
 # Media files
 media/*.png
 media/*.jpg
+
+# Script cache files
+scripts/*.cache

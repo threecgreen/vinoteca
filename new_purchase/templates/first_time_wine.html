@@ -22,7 +22,7 @@
                         <select id="color" name="color">
                             <option value="" disabled selected>Select the color</option>
                             {% for color in colors %}
-                                <option value="{{ color.color }}">{{ color.color|title }}</option>
+                                <option value="{{ color.name }}">{{ color.name|title }}</option>
                             {% endfor %}
                         </select>
                         <label for="color">Color</label>
@@ -42,7 +42,7 @@
                         <label for="auto-producer">Producer</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input type="text" id="auto-region" name="country" class="autocomplete" required>
+                        <input type="text" id="auto-region" name="region" class="autocomplete" required>
                         <label for="auto-region">Region</label>
                     </div>
                 </div>
@@ -223,8 +223,8 @@ $(function() {
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
 
     const region = $('#auto-region');
-    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
-    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Country Viti Areas JSON" %}");
+    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Region Viti Areas JSON" %}");
 
     toggleRating($('#has-rating')[0], $('#rating')[0]);
 

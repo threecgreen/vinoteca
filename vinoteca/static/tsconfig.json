@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "outDir": "js",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true
+    },
+    "include": [
+        "ts"
+    ],
+}
