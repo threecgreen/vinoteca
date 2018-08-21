@@ -1,6 +1,6 @@
 /// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-import { pipe, elementExists } from "./utils.js";
+import { elementExists, pipe } from "./utils.js";
 import { setTabAccessibility } from "./widgets.js";
 var fontFamily = "'Roboto', sans-serif";
 var white = "#f8f8f8";
@@ -21,13 +21,14 @@ var tenColorRainbow = [
 function allZero(array) {
     for (var _i = 0, array_1 = array; _i < array_1.length; _i++) {
         var num = array_1[_i];
-        if (num != 0) {
+        if (num !== 0) {
             return false;
         }
     }
     return true;
 }
-/** Helper function for splitting Dict to seperate label and key arrays for
+/**
+ * Helper function for splitting Dict to seperate label and key arrays for
  * interfacing with Charts.js
  */
 function splitData(data) {
@@ -42,15 +43,11 @@ function splitData(data) {
 /** Helper function to determine whether to proceed with chart creation. */
 function doChart(canvas, chartData) {
     // Only create chart if one or more grapes has a non-zero value
-    if (chartData.length == 0 || allZero(chartData)) {
-        console.error("Unable to create grape composition pie chart due to grape \
-                     composition data signature.");
-        console.log("Chart data: " + chartData);
+    if (chartData.length === 0 || allZero(chartData)) {
         return false;
     }
     // Only create chart if the canvas element is valid
     if (!elementExists(canvas)) {
-        console.error("Unable to create chart; canvas element is invalid.");
         return false;
     }
     return true;
@@ -59,11 +56,12 @@ function changeTransparency(color, transparency) {
     if (transparency <= 0 || transparency >= 1) {
         throw Error("Transparency must be between 0 and 1");
     }
-    var fields = color.substr(5, color.length - 7).split(",").map(function (val) { return parseInt(val); });
+    var fields = color.substr(5, color.length - 7).split(",").map(function (val) { return parseInt(val, 10); });
     fields[3] = transparency;
     return "rgba(" + fields[0] + ", " + fields[1] + ", " + fields[2] + ", " + fields[3] + ")";
 }
-/** Helper function for creating a chart and enabling/disabling its container tab depending on
+/**
+ * Helper function for creating a chart and enabling/disabling its container tab depending on
  * success of creating the chart.
  *
  * Parameters:
@@ -80,7 +78,8 @@ export function applyChart(chartFn, data, chartNamePrefix) {
     var chartLi = $("#" + chartNamePrefix + "-chart-li");
     pipe(chartFn(canvas, data)).chain(function (success) { return setTabAccessibility(chartLi, success); });
 }
-/** Creates a pie chart on the provided canvas using the provided data.
+/**
+ * Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
 export function pieChart(canvas, data) {
@@ -90,195 +89,192 @@ export function pieChart(canvas, data) {
         return false;
     }
     var config = {
-        type: 'pie',
         data: {
             datasets: [{
-                    data: chartData,
                     backgroundColor: [
-                        'rgba(139, 195, 74)',
-                        'rgba(173, 20, 87)',
-                        'rgba(251, 192, 45)',
+                        "rgba(139, 195, 74)",
+                        "rgba(173, 20, 87)",
+                        "rgba(251, 192, 45)",
                     ],
-                    label: "",
-                    borderWidth: 0
+                    borderWidth: 0,
+                    data: chartData,
+                    label: ""
                 }],
             labels: chartLabels
         },
         options: {
             // Resize chart with its container
-            responsive: true,
             layout: {
                 padding: {
-                    top: 15,
-                    bottom: 15
+                    bottom: 15,
+                    top: 15
                 }
             },
             legend: {
-                position: "bottom",
                 labels: {
-                    fontSize: 16,
-                    fontFamily: fontFamily
-                }
+                    fontFamily: fontFamily,
+                    fontSize: 16
+                },
+                position: "bottom"
             },
+            responsive: true,
             tooltips: {
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 14
             }
-        }
+        },
+        type: "pie"
     };
     try {
         // @ts-ignore
         var pie = new Chart(canvas, config);
     }
     catch (e) {
-        console.log(e);
         return false;
     }
     return true;
 }
-/** Creates a horizontal bar chart on the provided canvas using the provided data.
+/**
+ * Creates a horizontal bar chart on the provided canvas using the provided data.
  * Returns a boolean indicating whether the chart was created successfully.
  */
-export function barChart(canvas, data, whiteText) {
-    if (whiteText === void 0) { whiteText = true; }
+export function barChart(canvas, data) {
     var _a = splitData(data), chartLabels = _a[0], chartData = _a[1];
     // Error checking
     if (!doChart(canvas, chartData)) {
         return false;
     }
     var config = {
-        type: "horizontalBar",
         data: {
             datasets: [{
-                    data: chartData,
-                    backgroundColor: tenColorRainbow
+                    backgroundColor: tenColorRainbow,
+                    data: chartData
                 }],
             labels: chartLabels
         },
         options: {
-            responsive: true,
             layout: {
                 padding: {
-                    top: 15,
-                    bottom: 15
+                    bottom: 15,
+                    top: 15
                 }
             },
             legend: {
                 display: false
             },
+            responsive: true,
             scales: {
-                yAxes: [{
-                        ticks: {
-                            fontSize: 14,
-                            fontFamily: fontFamily,
-                            fontColor: translucentWhite
-                        },
-                        gridLines: {
-                            color: translucentGray
-                        },
-                        borderWidth: 40
-                    }],
                 xAxes: [{
-                        ticks: {
-                            fontSize: 14,
-                            fontFamily: fontFamily,
-                            fontColor: translucentWhite,
-                            beginAtZero: true
-                        },
+                        borderWidth: 40,
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: translucentWhite,
+                            fontFamily: fontFamily,
+                            fontSize: 14
+                        }
+                    }],
+                yAxes: [{
+                        borderWidth: 40,
+                        gridLines: {
+                            color: translucentGray
+                        },
+                        ticks: {
+                            fontColor: translucentWhite,
+                            fontFamily: fontFamily,
+                            fontSize: 14
+                        }
                     }]
             },
             tooltips: {
-                titleFontFamily: fontFamily,
-                titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white
+                fontColor: white,
+                titleFontFamily: fontFamily,
+                titleFontSize: 14
             }
-        }
+        },
+        type: "horizontalBar"
     };
     try {
         // @ts-ignore
         var pie = new Chart(canvas, config);
     }
     catch (e) {
-        console.log(e);
         return false;
     }
     return true;
 }
 export function lineChart(canvas, data, seriesLabels) {
-    var chartLabels = splitData(data[0])[0].map(function (x) { return parseInt(x); });
+    var chartLabels = splitData(data[0])[0].map(function (x) { return parseInt(x, 10); });
     // Error checking
     if (!elementExists(canvas)) {
-        console.error("Invalid canvas element.");
         return false;
     }
-    if (data.length != seriesLabels.length) {
-        console.error("Series labels and the data have different lengths.");
+    if (data.length !== seriesLabels.length) {
         return false;
     }
     var config = {
-        type: "line",
         data: {
             datasets: [],
             labels: chartLabels
         },
         options: {
-            responsive: true,
+            backgroundColor: white,
             layout: {
                 padding: {
-                    top: 15,
-                    bottom: 15
+                    bottom: 15,
+                    top: 15
                 }
             },
+            responsive: true,
             scales: {
-                yAxes: [{
-                        ticks: {
-                            fontSize: 14,
-                            fontFamily: fontFamily,
-                            fontColor: translucentWhite
-                        },
-                        gridLines: {
-                            color: translucentGray
-                        },
-                        borderWidth: 40
-                    }],
                 xAxes: [{
-                        ticks: {
-                            fontSize: 14,
-                            fontFamily: fontFamily,
-                            fontColor: translucentWhite,
-                            beginAtZero: true
-                        },
+                        borderWidth: 40,
                         gridLines: {
                             color: translucentGray
                         },
-                        borderWidth: 40
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: translucentWhite,
+                            fontFamily: fontFamily,
+                            fontSize: 14
+                        }
+                    }],
+                yAxes: [{
+                        borderWidth: 40,
+                        gridLines: {
+                            color: translucentGray
+                        },
+                        ticks: {
+                            fontColor: translucentWhite,
+                            fontFamily: fontFamily,
+                            fontSize: 14
+                        }
                     }]
             },
-            backgroundColor: white,
             tooltips: {
-                titleFontFamily: fontFamily,
-                titleFontSize: 14,
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white
+                fontColor: white,
+                titleFontFamily: fontFamily,
+                titleFontSize: 14
             }
-        }
+        },
+        type: "line"
     };
     // Validate then add each data series to config
     var dataValidation = data.map(function (series, i) {
+        // @ts-ignore
         var _a = splitData(series), _ = _a[0], chartData = _a[1];
         // Add the series data to the corresponding key in datasetLabels
         config.data.datasets.push({
-            data: chartData,
-            label: seriesLabels[i],
+            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5),
             borderColor: tenColorRainbow[i],
-            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5)
+            data: chartData,
+            label: seriesLabels[i]
         });
         // Error checking
         if (allZero(chartData)) {
@@ -287,7 +283,6 @@ export function lineChart(canvas, data, seriesLabels) {
         return true;
     });
     if (!dataValidation.every(function (val) { return val; })) {
-        console.error("Invalid data.");
         return false;
     }
     try {
@@ -295,7 +290,6 @@ export function lineChart(canvas, data, seriesLabels) {
         var pie = new Chart(canvas, config);
     }
     catch (e) {
-        console.log(e);
         return false;
     }
     return true;

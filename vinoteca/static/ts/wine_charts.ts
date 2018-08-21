@@ -294,6 +294,7 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Array<IDict<n
 
     // Validate then add each data series to config
     const dataValidation = data.map((series, i) => {
+        // @ts-ignore
         const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
         config.data.datasets.push({

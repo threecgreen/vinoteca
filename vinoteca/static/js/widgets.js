@@ -5,7 +5,6 @@
 export function autocomplete(modelName, limit, minLength, selector) {
     if (limit === void 0) { limit = 5; }
     if (minLength === void 0) { minLength = 1; }
-    var jqSelector = selector ? selector : "#auto-" + modelName;
     $.getJSON("/" + modelName + "s/all/", function (responseJSON) {
         $(selector ? selector : "#auto-" + modelName).autocomplete({
             data: responseJSON,
@@ -14,18 +13,19 @@ export function autocomplete(modelName, limit, minLength, selector) {
         });
     });
 }
-/** Streamlines the Materialize CSS datepicker widget, whose configuration
+/**
+ * Streamlines the Materialize CSS datepicker widget, whose configuration
  * isn"t changed.
  */
 export function datepicker(selector) {
     if (selector === void 0) { selector = ".datepicker"; }
     $(selector).pickadate({
-        selectMonths: true,
-        selectYears: 15,
-        today: "Today",
         clear: "Clear",
         close: "Ok",
-        closeOnSelect: false // Close upon selecting a date,
+        closeOnSelect: false,
+        selectMonths: true,
+        selectYears: 15,
+        today: "Today"
     });
 }
 /** Streamlines the Materialize CSS tab widget. */
@@ -36,11 +36,9 @@ export function tabs(selector) {
 /** Either enable or disable a Materialize CSS tab. */
 export function setTabAccessibility(tabListElem, ability) {
     if (ability) {
-        console.log("Enabling...");
         $(tabListElem).removeClass("disabled");
     }
     else {
-        console.log("Disabling...");
         $(tabListElem).addClass("disabled");
     }
 }

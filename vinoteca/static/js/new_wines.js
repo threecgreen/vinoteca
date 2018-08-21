@@ -3,11 +3,11 @@
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer, region, producerRegionURL, producersURL) {
     $(producer).on("change", function () {
-        $.getJSON(producersURL, function (responseJSON) {
-            if ($.inArray($(producer).val(), Object.keys(responseJSON)) !== -1) {
-                $.getJSON(producerRegionURL, { "producer": $(producer).val() }, function (responseJSON) {
-                    $(region).val(responseJSON["region_name"]);
-                    $(region).prop('disabled', true);
+        $.getJSON(producersURL, function (producersJSON) {
+            if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
+                $.getJSON(producerRegionURL, { producer: $(producer).val() }, function (regionJSON) {
+                    $(region).val(regionJSON["region_name"]);
+                    $(region).prop("disabled", true);
                     $("label[for='auto-country']").text("");
                     // Update viticulture area autocomplete
                     $(region).trigger("change");
@@ -22,17 +22,16 @@ export function toggleRegion(producer, region, producerRegionURL, producersURL) 
     });
 }
 /** Update viticultural area autocomplete depending on region selection. */
-export function updateVitiAreaSelections(region, viti_area, getJSONURL) {
+export function updateVitiAreaSelections(region, vitiArea, getJSONURL) {
     $(region).on("change", function () {
-        $.get(getJSONURL, { "region": $(this).val() }, function (responseJSON) {
-            $(viti_area).autocomplete({
+        $.get(getJSONURL, { region: $(this).val() }, function (responseJSON) {
+            $(vitiArea).autocomplete({
                 data: responseJSON,
                 limit: 5,
                 minLength: 1
             });
         });
     });
-    ;
 }
 /** Enables/disables a rating slider depending on the state of checkbox. */
 export function toggleRating(hasRatingSelector, ratingSelector, checked) {
@@ -46,7 +45,7 @@ export function toggleRating(hasRatingSelector, ratingSelector, checked) {
 function remGrapePct(lastVisibleId) {
     var sum = 0;
     for (var i = 1; i < lastVisibleId; i++) {
-        sum += parseInt($("#grape-" + i + "-pct").val());
+        sum += parseInt($("#grape-" + i + "-pct").val(), 10);
     }
     return sum < 100 ? 100 - sum : 0;
 }
@@ -59,15 +58,14 @@ export function showNextGrapeInput(grapeBtnSelector) {
     $(grapeBtnSelector).on("click", function () {
         // Hide parent div and thus self
         $(this).parent().hide();
-        console.log(this.id);
-        var id = parseInt(this.id.slice(-1));
+        var id = parseInt(this.id.slice(-1), 10);
         // All elements starting with grape-form-2
         $("[id^=grape-form-" + id + "]").show();
         // Show next plus button if less than 5
         if (id < 5) {
-            var grape_btn_parent = $("#grape-btn-" + (id + 1)).parent();
-            grape_btn_parent.show();
-            grape_btn_parent.parent().show();
+            var grapeBtnParent = $("#grape-btn-" + (id + 1)).parent();
+            grapeBtnParent.show();
+            grapeBtnParent.parent().show();
         }
         // Update wine percentage
         setGrapePct(id, remGrapePct(id));
@@ -88,25 +86,24 @@ export function resetFormBtn() {
 }
 /** Update search results when search fields change */
 export function liveWineSearch(searchParams, searchURL, wineType, color, producer, region, vitiArea) {
-    $(searchParams).on("change", function (e) {
+    $(searchParams).on("change", function (event) {
         // Prevents double event
-        if (e.originalEvent) {
+        if (event.originalEvent) {
             return;
         }
         clearTable();
         // Send search fields data to Search Wines URL
         $.get(searchURL, {
-            "wine_type": wineType.val(),
-            "color": color.val(),
-            "producer": producer.val(),
-            "region": region.val(),
-            "viti_area": vitiArea.val()
-        }, function (responseJSON) {
+            color: color.val(),
+            producer: producer.val(),
+            region: region.val(),
+            viti_area: vitiArea.val(),
+            wine_type: wineType.val()
+        }, function (searchResultsJSON) {
             // Update search results with received data
             // Greater than 1 because spaces count in length
-            console.log(responseJSON);
-            if (responseJSON["results"].length > 1) {
-                $("table tbody").append(responseJSON["results"]);
+            if (searchResultsJSON["results"].length > 1) {
+                $("table tbody").append(searchResultsJSON["results"]);
                 $("table").show();
             }
             else {

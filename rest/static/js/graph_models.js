@@ -3,7 +3,7 @@ var Color = /** @class */ (function () {
     function Color(id) {
         var _this = this;
         this.id = id;
-        $.getJSON("/rest/color/", { "id": id }, function (responseJSON) {
+        $.getJSON("/rest/color/", { id: id }, function (responseJSON) {
             _this.name = responseJSON["name"];
         });
     }
@@ -11,12 +11,12 @@ var Color = /** @class */ (function () {
 }());
 export { Color };
 var Region = /** @class */ (function () {
-    function Region(id, name, is_us) {
+    function Region(id) {
         var _this = this;
         this.id = id;
-        $.getJSON("/rest/region/", { "id": id }, function (responseJSON) {
+        $.getJSON("/rest/region/", { id: id }, function (responseJSON) {
             _this.name = responseJSON["name"];
-            _this.is_us = responseJSON["is_us"];
+            _this.isUS = responseJSON["is_us"];
         });
     }
     return Region;
@@ -26,7 +26,7 @@ var Grape = /** @class */ (function () {
     function Grape(id) {
         var _this = this;
         this.id = id;
-        $.getJSON("/rest/grape/", { "id": id }, function (responseJSON) {
+        $.getJSON("/rest/grape/", { id: id }, function (responseJSON) {
             _this.name = responseJSON["name"];
         });
     }
@@ -37,7 +37,7 @@ var Producer = /** @class */ (function () {
     function Producer(id) {
         var _this = this;
         this.id = id;
-        $.getJSON("/rest/producer/", { "id": id }, function (responseJSON) {
+        $.getJSON("/rest/producer/", { id: id }, function (responseJSON) {
             _this.name = responseJSON["name"];
             _this.region = responseJSON["name"];
         });
@@ -68,7 +68,7 @@ var WineType = /** @class */ (function () {
     function WineType(id) {
         var _this = this;
         this.id = id;
-        $.getJSON("/rest/wine-type/", { "id": id }, function (responseJSON) {
+        $.getJSON("/rest/wine-type/", "{id}", function (responseJSON) {
             _this.name = responseJSON["name"];
         });
     }
@@ -76,20 +76,20 @@ var WineType = /** @class */ (function () {
 }());
 export { WineType };
 var Wine = /** @class */ (function () {
-    function Wine(id, name, producer, wine_type, color, viti_area) {
+    function Wine(id, name, producer, wineType, color, vitiArea) {
         this.id = id;
         this.name = name;
         this.producer = producer;
         // Always fetch wine_type since it is part of the full name (name + type)
-        this.wine_type = new WineType(wine_type);
+        this.wineType = new WineType(wineType);
         this.color = color;
-        this.viti_area = viti_area;
+        this.vitiArea = vitiArea;
     }
-    Wine.prototype.full_name = function () {
-        return this.name ? this.name + " " + this.wine_type.name : this.wine_type.name;
+    Wine.prototype.fullName = function () {
+        return this.name ? this.name + " " + this.wineType.name : this.wineType.name;
     };
-    Wine.prototype.fetch_producer = function () {
-        if (!typeof (this.producer, Producer)) {
+    Wine.prototype.fetchProducer = function () {
+        if (!(this.producer instanceof Producer)) {
             this.producer = new Producer(this.producer);
         }
     };
