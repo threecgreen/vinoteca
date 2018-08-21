@@ -4,7 +4,7 @@
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {
-    $.getJSON(`/${modelName}s/all/`, (responseJSON) => {
+    $.getJSON(`/rest/${modelName}s/all/`, (responseJSON) => {
         $(selector ? selector : `#auto-${modelName}`).autocomplete({
             data: responseJSON,
             limit,

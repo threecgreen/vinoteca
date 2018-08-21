@@ -5,15 +5,17 @@ file."""
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from vinoteca.models import (
-    Colors, Regions, Producers, VitiAreas, WineTypes, Wines, WineGrapes
-)
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
     VitiAreaSerializer, WineTypeSerializer, WineSerializer,
     ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
-    WineTypeNameSerializer, GrapeNameSerializer
+    WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer
 )
+from vinoteca.models import (
+    Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
+    WineGrapes
+)
+from vinoteca.utils import get_region_flags
 
 
 def region_all_names(request) -> JsonResponse:
@@ -37,15 +39,12 @@ def generic_all_names(request, obj_name: str) -> JsonResponse:
         "grape": (Grapes, GrapeNameSerializer),
         "producer": (Producers, ProducerNameSerializer),
         "store": (Stores, StoreNameSerializer),
-        "viti_area": (VitiAreas, VitiAreaNameSerializer),
-        "wine_type": (WineTypes, WineTypeNameSerializer),
+        "viti-area": (VitiAreas, VitiAreaNameSerializer),
+        "wine-type": (WineTypes, WineTypeNameSerializer),
     }
     model, serializer = relations[obj_name]
-    try:
-        obj = model.objects.get(id=obj_id)
-    except model.DoesNotExist:
-        return JsonResponse({})
-    return JsonResponse(serializer(obj).data, safe=False)
+    objs = model.objects.all()
+    return JsonResponse({serializer(obj).data["name"]: None for obj in objs}, safe=False)
 
 
 def generic_serialize(request, obj_name: str) -> JsonResponse:

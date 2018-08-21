@@ -5,7 +5,7 @@
 export function autocomplete(modelName, limit, minLength, selector) {
     if (limit === void 0) { limit = 5; }
     if (minLength === void 0) { minLength = 1; }
-    $.getJSON("/" + modelName + "s/all/", function (responseJSON) {
+    $.getJSON("/rest/" + modelName + "s/all/", function (responseJSON) {
         $(selector ? selector : "#auto-" + modelName).autocomplete({
             data: responseJSON,
             limit: limit,

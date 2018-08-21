@@ -9,7 +9,7 @@ from vinoteca.models import (
 class ColorNamesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Colors
-        fields = ("name")
+        fields = ("name",)
 
 
 class ColorSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class ColorSerializer(serializers.ModelSerializer):
 class GrapeNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grapes
-        fields = ("name")
+        fields = ("name",)
 
 
 class RegionSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class RegionSerializer(serializers.ModelSerializer):
 class ProducerNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producers
-        fields = ("name")
+        fields = ("name",)
 
 
 class ProducerSerializer(serializers.ModelSerializer):
@@ -45,13 +45,13 @@ class ProducerSerializer(serializers.ModelSerializer):
 class StoreNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stores
-        fields = ("name")
+        fields = ("name",)
 
 
 class VitiAreaNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = VitiAreas
-        fields = ("name")
+        fields = ("name",)
 
 
 class VitiAreaSerializer(serializers.ModelSerializer):
@@ -69,7 +69,7 @@ class WineGrapeSerializer(serializers.ModelSerializer):
 class WineTypeNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = WineTypes
-        fields = ("name")
+        fields = ("name",)
 
 
 class WineTypeSerializer(serializers.ModelSerializer):
