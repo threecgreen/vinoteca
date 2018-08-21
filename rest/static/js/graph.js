@@ -1,6 +1,6 @@
 /// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path="../../../node_modules/@types/sigmajs/index.d.ts" />
-/// <reference path="./graph_models.ts" />
+/// <reference path="./models/Wine.ts" />
 // import { Wine } from "./graph_models";
 // export function addWine(sigma: SigmaJs.Sigma, wineId: number) {
 //     // sigma.graph.addNode({

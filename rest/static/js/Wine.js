@@ -35,4 +35,4 @@ var Wine = /** @class */ (function () {
     return Wine;
 }());
 export { Wine };
-//# sourceMappingURL=graph_models.js.map
+//# sourceMappingURL=Wine.js.map
