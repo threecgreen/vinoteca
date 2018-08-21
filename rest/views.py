@@ -9,12 +9,46 @@ from vinoteca.models import (
     Colors, Regions, Producers, VitiAreas, WineTypes, Wines, WineGrapes
 )
 from rest.serializers import (
-    ColorsSerializer, RegionsSerializer, ProducersSerializer,
-    VitiAreasSerializer, WineTypesSerializer, WinesSerializer
+    ColorSerializer, RegionSerializer, ProducerSerializer,
+    VitiAreaSerializer, WineTypeSerializer, WineSerializer,
+    ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
+    WineTypeNameSerializer, GrapeNameSerializer
 )
 
 
-def rest(request, obj_name: str) -> JsonResponse:
+def region_all_names(request) -> JsonResponse:
+    r"""Return regions in JSON with the following format:
+    {
+        region_name: has_stored_flag
+    }"""
+    region_flags = get_region_flags()
+    regions = {}
+    for region in Regions.objects.all():
+        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name \
+                in region_flags else None
+    return JsonResponse(regions)
+
+
+
+def generic_all_names(request, obj_name: str) -> JsonResponse:
+    r"""Generic rest view for serializing the names of all of one object."""
+    relations = {
+        "color": (Colors, ColorNamesSerializer),
+        "grape": (Grapes, GrapeNameSerializer),
+        "producer": (Producers, ProducerNameSerializer),
+        "store": (Stores, StoreNameSerializer),
+        "viti_area": (VitiAreas, VitiAreaNameSerializer),
+        "wine_type": (WineTypes, WineTypeNameSerializer),
+    }
+    model, serializer = relations[obj_name]
+    try:
+        obj = model.objects.get(id=obj_id)
+    except model.DoesNotExist:
+        return JsonResponse({})
+    return JsonResponse(serializer(obj).data, safe=False)
+
+
+def generic_serialize(request, obj_name: str) -> JsonResponse:
     r"""Serializes an object of given an 'id' attribute in the HTTP request
     object and the object name passed as argument `obj_name`. Currently
     supports:
@@ -25,12 +59,12 @@ def rest(request, obj_name: str) -> JsonResponse:
         * WineTypes
         * Wines"""
     relations = {
-        "color": (Colors, ColorsSerializer),
-        "region": (Regions, RegionsSerializer),
-        "producer": (Producers, ProducersSerializer),
-        "viti_area": (VitiAreas, VitiAreasSerializer),
-        "wine_type": (WineTypes, WineTypesSerializer),
-        "wine": (Wines, WinesSerializer),
+        "color": (Colors, ColorSerializer),
+        "region": (Regions, RegionSerializer),
+        "producer": (Producers, ProducerSerializer),
+        "viti_area": (VitiAreas, VitiAreaSerializer),
+        "wine_type": (WineTypes, WineTypeSerializer),
+        "wine": (Wines, WineSerializer),
     }
     obj_id = request.GET.get("id")
     model, serializer = relations[obj_name]

@@ -13,8 +13,7 @@ from new_purchase.views import (
 from view.views import (
     wine_profile, edit_wine, delete_wine, edit_purchase, delete_purchase,
     change_inventory, edit_producer, producer_profile, region_profile,
-    wine_type_profile, wine_table, get_colors, get_regions, get_producers,
-    get_stores, get_grapes, get_wine_types, get_viti_areas, inventory
+    wine_type_profile, wine_table, inventory
 )
 
 wine_patterns = [
@@ -48,13 +47,6 @@ urlpatterns = [
     # JSON patterns
     path("producers/region/", get_producer_region, name="Get Producer Region JSON"),
     path("regions/viti-areas/", get_region_viti_areas, name="Get Region Viti Areas JSON"),
-    path("colors/all/", get_colors, name="Get Colors JSON"),
-    path("regions/all/", get_regions, name="Get Regions JSON"),
-    path("producers/all/", get_producers, name="Get Producers JSON"),
-    path("stores/all/", get_stores, name="Get Stores JSON"),
-    path("grapes/all/", get_grapes, name="Get Grapes JSON"),
-    path("wine-types/all/", get_wine_types, name="Get WineTypes JSON"),
-    path("viti-areas/all/", get_viti_areas, name="Get VitiAreas JSON"),
     path("new/search-wines/", search_wines, name="Search Wines JSON"),
 
     # Other profiles
@@ -69,7 +61,7 @@ urlpatterns = [
     path("inventory/", inventory, name="Inventory"),
 
     # Rest URLs
-    path("rest/", include("rest.urls")),
+    path("rest/", include("rest.urls"), name=""),
 
     # Internal URLs
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

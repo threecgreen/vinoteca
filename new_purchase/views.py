@@ -125,7 +125,7 @@ def insert_new_purchase_and_wine(request):
     name = empty_to_none(request.POST.get("name"))
     color = empty_to_none(request.POST.get("color"))
     if request.POST.get("has-rating"):
-        rating = int(request.POST.get("rating"))
+        rating = empty_to_none(request.POST.get("rating"), int)
     else:
         rating = None
     vintage = empty_to_none(request.POST.get("vintage"), int)

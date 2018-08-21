@@ -38,51 +38,6 @@ def test_pages(client, url):
     assert response.status_code == 200
 
 
-@pytest.mark.django_db
-def test_colors(client):
-    response = client.get("/colors/all/")
-    assert len(Colors.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_regions(client):
-    response = client.get("/regions/all/")
-    assert len(Regions.objects.all()) == len(response.json().keys())
-    # Check for flags
-    assert ".svg" in response.json()["California"]
-    assert ".svg" in response.json()["France"]
-
-
-@pytest.mark.django_db
-def test_get_producers(client):
-    response = client.get("/producers/all/")
-    assert len(Producers.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_stores(client):
-    response = client.get("/stores/all/")
-    assert len(Stores.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_grapes(client):
-    response = client.get("/grapes/all/")
-    assert len(Grapes.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_wine_types(client):
-    response = client.get("/wine-types/all/")
-    assert len(WineTypes.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_viti_areas(client):
-    response = client.get("/viti-areas/all/")
-    assert len(VitiAreas.objects.all()) == len(response.json().keys())
-
-
 @pytest.fixture
 def wine_and_post_data(a_wine):
     post_data = {

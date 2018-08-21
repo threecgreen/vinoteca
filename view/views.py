@@ -21,44 +21,6 @@ from vinoteca.utils import (
 )
 
 
-# TODO: use rest framework to get rid of boilerplate
-def get_colors(request) -> JsonResponse:
-    return JsonResponse({color.name: None for color in Colors.objects.all()})
-
-
-def get_regions(request) -> JsonResponse:
-    r"""Return regions in JSON with the following format:
-    {
-        region_name: has_stored_flag
-    }"""
-    region_flags = get_region_flags()
-    regions = {}
-    for region in Regions.objects.all():
-        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name \
-                in region_flags else None
-    return JsonResponse(regions)
-
-
-def get_producers(request) -> JsonResponse:
-    return JsonResponse({producer.name: None for producer in Producers.objects.all()})
-
-
-def get_stores(request) -> JsonResponse:
-    return JsonResponse({store.name: None for store in Stores.objects.all()})
-
-
-def get_grapes(request) -> JsonResponse:
-    return JsonResponse({grape.name: None for grape in Grapes.objects.all()})
-
-
-def get_wine_types(request) -> JsonResponse:
-    return JsonResponse({wine_type.name: None for wine_type in WineTypes.objects.all()})
-
-
-def get_viti_areas(request) -> JsonResponse:
-    return JsonResponse({viti_area.name: None for viti_area in VitiAreas.objects.all()})
-
-
 def wine_table(request):
     r"""View for viewing all wines together in a tabular, filterable format."""
     @attr.s
@@ -185,7 +147,7 @@ def edit_wine(request, wine_id: int):
         wine.why = empty_to_none(request.POST.get("why"))
         viti_area = empty_to_none(request.POST.get("viti-area"))
         if request.POST.get("has-rating"):
-            wine.rating = int(request.POST.get("rating"))
+            wine.rating = empty_to_none(request.POST.get("rating"), int)
         else:
             wine.rating = None
         wine.color = Colors.objects.get(name=request.POST.get("color"))
