@@ -3,11 +3,16 @@
 import { Grape } from "./Grape";
 import { Wine } from "./Wine";
 
-export class WineGrape extends GraphModel {
+export class WineGrape {
+    private static instances: WineGrape[];
     // Since this class represents an edge rather than a node, all data should have
     // already been retrieved
     constructor(public id: number, public grape: Grape, public wine: Wine,
                 public percent: number) {
-        super();
+        WineGrape.instances.push(this);
+    }
+
+    public getRelatedObjects(): Array<Grape | Wine> {
+
     }
 }

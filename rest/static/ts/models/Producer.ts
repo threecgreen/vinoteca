@@ -2,13 +2,12 @@
 
 import { Region } from "./Region";
 
-export class Producer extends GraphModel {
+export class Producer {
     public id: number;
     public name: string;
     public region: number | Region;
 
     constructor(id: number) {
-        super();
         this.id = id;
         $.getJSON("/rest/producer/", {id}, (responseJSON) => {
             this.name = responseJSON["name"];

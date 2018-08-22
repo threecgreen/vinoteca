@@ -5,7 +5,7 @@ import { Producer } from "./Producer";
 import { VitiArea } from "./VitiArea";
 import { WineType } from "./WineType";
 
-export class Wine extends GraphModel {
+export class Wine {
     public readonly id: number;
     public name: string;
     public producer: number | Producer;
@@ -15,7 +15,6 @@ export class Wine extends GraphModel {
 
     constructor(id: number, name: string, producer: number, wineType: number,
                 color: number, vitiArea: number) {
-        super();
         this.id = id;
         this.name = name;
         this.producer = producer;

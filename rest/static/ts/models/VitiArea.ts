@@ -2,13 +2,12 @@
 
 import { Region } from "./Region";
 
-export class VitiArea extends GraphModel {
+export class VitiArea {
     public id: number;
     public name: string;
     public region: string | Region;
 
     constructor(id: number) {
-        super();
         this.id = id;
     }
 }
