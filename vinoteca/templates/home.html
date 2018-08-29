@@ -38,9 +38,9 @@
 {% block js %}
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
-import {  tabs } from '{% static "js/widgets.js" %}'
+import {  tabs } from '{% static "js/widgets.js" %}';
 import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
-import { pipe } from '{% static "js/utils.js" %}'
+import { pipe } from '{% static "js/utils.js" %}';
 
 $(function(){
     $('.parallax').parallax();
@@ -61,7 +61,7 @@ $(function(){
     applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
     const wineTypePrice = {
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.name|title }}": {{ wine_type.avg_price|floatformat:2 }},
+            "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
         {% endfor %}
     };
     applyChart(barChart, wineTypePrice, "top-wt-price");

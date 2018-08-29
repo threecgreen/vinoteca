@@ -101,7 +101,7 @@
 {% block js %}
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
-import { tabs } from '{% static "js/widgets.js" %}'
+import { tabs } from '{% static "js/widgets.js" %}';
 import { barChart, applyChart, lineChart } from "{% static "js/wine_charts.js" %}";
 
 $(function () {

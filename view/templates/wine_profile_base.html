@@ -194,9 +194,9 @@
 {% block js %}
 <script src="{% static "js/Chart.bundle.min.js" %}"></script>
 <script type="module">
-import { tabs } from '{% static "js/widgets.js" %}'
-import { pieChart, applyChart } from '{% static "js/wine_charts.js" %}'
-import { pipe } from '{% static "js/utils.js" %}'
+import { tabs } from '{% static "js/widgets.js" %}';
+import { pieChart, applyChart } from '{% static "js/wine_charts.js" %}';
+import { pipe } from '{% static "js/utils.js" %}';
 
 $(function () {
     $("#delete-modal").modal();
