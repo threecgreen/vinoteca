@@ -32,7 +32,7 @@ find_python_env()
 # Will exit the program if the environment cannot be found
 {
     # Check cache
-    if [ -f "$scripts_dir/.py_env.cache" ]; then
+    if [ -f "$scripts_dir/.py_env.cache" ] &&  [ -f "$scripts_dir/.conda.cache" ]; then
         py_env="$(cat "$scripts_dir/.py_env.cache")"
         conda="$(cat "$scripts_dir/.conda.cache")"
         return 0
@@ -46,6 +46,10 @@ find_python_env()
         conda="/opt/anaconda/bin/conda"
     else
         error_exit "Failed to find vinoteca Python environment."
+    fi
+    # Handle when env is active
+    if [ "$py_env" = '*/bin' ]; then
+        py_env="$($conda env list | grep vinoteca | awk '{print $3}')/bin"
     fi
     # Test length of environment variable
     if [ ${#py_env} = 0 ]; then
