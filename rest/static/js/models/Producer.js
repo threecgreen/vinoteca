@@ -33,8 +33,9 @@ var Producer = /** @class */ (function (_super) {
         var _this = this;
         if (!(this.region instanceof Region)) {
             $.getJSON("/rest/producer/", { id: this.id }, function (responseJSON) {
-                _this.name = responseJSON["name"];
-                _this.region = responseJSON["region"];
+                var producer = responseJSON.items[0];
+                _this.name = producer["name"];
+                _this.region = producer["region"];
             });
         }
     };

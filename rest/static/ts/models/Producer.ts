@@ -30,8 +30,9 @@ export class Producer extends GraphModel {
     public fetchRegion() {
         if (!(this.region instanceof Region)) {
             $.getJSON("/rest/producer/", {id: this.id}, (responseJSON) => {
-                this.name = responseJSON["name"];
-                this.region = responseJSON["region"];
+                const producer = responseJSON.items[0];
+                this.name = producer["name"];
+                this.region = producer["region"];
             });
         }
     }

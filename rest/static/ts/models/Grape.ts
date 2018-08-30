@@ -17,12 +17,13 @@ export class Grape extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/grape/", {id}, (responseJSON) => {
-            this.name = responseJSON["name"];
+            this.name = responseJSON.items[0]["name"];
         });
         Grape.instances[id] = this;
     }
 
     public getRelatedObjects(): Maybe<WineGrape[]> {
-        return WineGrape.getByGrapeId(this.id);
+        // return WineGrape.getByGrapeId(this.id);
+        return null;
     }
 }

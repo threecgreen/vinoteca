@@ -13,14 +13,13 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { GraphModel } from "./GraphModel";
-import { WineGrape } from "./WineGrape";
 var Grape = /** @class */ (function (_super) {
     __extends(Grape, _super);
     function Grape(id) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/grape/", { id: id }, function (responseJSON) {
-            _this.name = responseJSON["name"];
+            _this.name = responseJSON.items[0]["name"];
         });
         Grape.instances[id] = _this;
         return _this;
@@ -29,7 +28,8 @@ var Grape = /** @class */ (function (_super) {
         return Grape.instances[id];
     };
     Grape.prototype.getRelatedObjects = function () {
-        return WineGrape.getByGrapeId(this.id);
+        // return WineGrape.getByGrapeId(this.id);
+        return null;
     };
     return Grape;
 }(GraphModel));

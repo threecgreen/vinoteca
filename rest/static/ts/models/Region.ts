@@ -20,8 +20,9 @@ export class Region extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/region/", {id}, (responseJSON) => {
-            this.name = responseJSON["name"];
-            this.isUS = responseJSON["is_us"];
+            const region = responseJSON.items[0];
+            this.name = region["name"];
+            this.isUS = region["is_us"] === 1;
         });
         Region.instances[id] = this;
     }

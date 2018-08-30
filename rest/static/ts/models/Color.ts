@@ -20,7 +20,7 @@ export class Color extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/color/", {id}, (responseJSON) => {
-            this.name = responseJSON["name"];
+            this.name = responseJSON.items[0]["name"];
         });
         Color.instances[id] = this;
     }

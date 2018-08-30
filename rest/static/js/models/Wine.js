@@ -39,14 +39,8 @@ var Wine = /** @class */ (function (_super) {
         this.fetchColor();
         this.fetchVitiArea();
         // TODO: fetchWineGrapes
-        var retVal = [];
-        for (var _i = 0, _a = [this.producer, this.color, this.vitiArea, this.wineType]; _i < _a.length; _i++) {
-            var element = _a[_i];
-            if (element) {
-                retVal.push(element);
-            }
-        }
-        return retVal ? retVal : null;
+        return Wine.assembleNonNulled([this.producer, this.color, this.vitiArea,
+            this.wineType]);
     };
     Wine.prototype.fullName = function () {
         return this.name ? this.name + " " + this.wineType.name : this.wineType.name;

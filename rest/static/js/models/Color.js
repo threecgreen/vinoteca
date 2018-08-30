@@ -13,13 +13,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { GraphModel } from "./GraphModel";
+import { Producer } from "./Producer";
 var Color = /** @class */ (function (_super) {
     __extends(Color, _super);
     function Color(id) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/color/", { id: id }, function (responseJSON) {
-            _this.name = responseJSON["name"];
+            _this.name = responseJSON.items[0]["name"];
         });
         Color.instances[id] = _this;
         return _this;
@@ -28,6 +29,9 @@ var Color = /** @class */ (function (_super) {
         return Color.instances[id];
     };
     Color.prototype.getRelatedObjects = function () {
+        return Producer.assembleNonNulled(this.fetchWines());
+    };
+    Color.prototype.fetchWines = function () {
         return null;
     };
     return Color;

@@ -1,6 +1,7 @@
 import { Maybe } from "./typedef";
 
 export abstract class GraphModel {
+    // @ts-ignore
     public static getById(id: number): Maybe<GraphModel> {
         return null;
     }

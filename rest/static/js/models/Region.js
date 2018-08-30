@@ -19,8 +19,9 @@ var Region = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/region/", { id: id }, function (responseJSON) {
-            _this.name = responseJSON["name"];
-            _this.isUS = responseJSON["is_us"];
+            var region = responseJSON.items[0];
+            _this.name = region["name"];
+            _this.isUS = region["is_us"] === 1;
         });
         Region.instances[id] = _this;
         return _this;

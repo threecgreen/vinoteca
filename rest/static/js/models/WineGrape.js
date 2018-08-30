@@ -30,9 +30,6 @@ var WineGrape = /** @class */ (function (_super) {
         return WineGrape.instances[id];
         // TODO: hit database
     };
-    WineGrape.getByGrapeId = function (grapeId) {
-        return null;
-    };
     WineGrape.prototype.getRelatedObjects = function () {
         // TODO: add wine back in
         return [this.grape];

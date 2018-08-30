@@ -11,9 +11,9 @@ export class WineGrape extends GraphModel {
         // TODO: hit database
     }
 
-    public static getByGrapeId(grapeId: number): Maybe<WineGrape[]> {
-        return null;
-    }
+    // public static getByGrapeId(grapeId: number): Maybe<WineGrape[]> {
+    //     return null;
+    // }
 
     private static instances: IDict<WineGrape>;
 

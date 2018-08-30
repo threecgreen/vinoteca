@@ -1,6 +1,7 @@
 var GraphModel = /** @class */ (function () {
     function GraphModel() {
     }
+    // @ts-ignore
     GraphModel.getById = function (id) {
         return null;
     };
