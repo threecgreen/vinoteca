@@ -1,18 +1,53 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import { Color } from "./Color";
+import { GraphModel } from "./GraphModel";
 import { Producer } from "./Producer";
 import { VitiArea } from "./VitiArea";
 import { WineType } from "./WineType";
-var Wine = /** @class */ (function () {
+var Wine = /** @class */ (function (_super) {
+    __extends(Wine, _super);
     function Wine(id, name, producer, wineType, color, vitiArea) {
-        this.id = id;
-        this.name = name;
-        this.producer = producer;
+        var _this = _super.call(this) || this;
+        _this.id = id;
+        _this.name = name;
+        _this.producer = producer;
         // Always fetch wine_type since it is part of the full name (name + type)
-        this.wineType = new WineType(wineType);
-        this.color = color;
-        this.vitiArea = vitiArea;
+        _this.wineType = new WineType(wineType);
+        _this.color = color;
+        _this.vitiArea = vitiArea;
+        return _this;
     }
+    Wine.getById = function (id) {
+        return Wine.instances[id];
+    };
+    Wine.prototype.getRelatedObjects = function () {
+        this.fetchProducer();
+        this.fetchWineType();
+        this.fetchColor();
+        this.fetchVitiArea();
+        // TODO: fetchWineGrapes
+        var retVal = [];
+        for (var _i = 0, _a = [this.producer, this.color, this.vitiArea, this.wineType]; _i < _a.length; _i++) {
+            var element = _a[_i];
+            if (element) {
+                retVal.push(element);
+            }
+        }
+        return retVal ? retVal : null;
+    };
     Wine.prototype.fullName = function () {
         return this.name ? this.name + " " + this.wineType.name : this.wineType.name;
     };
@@ -37,6 +72,6 @@ var Wine = /** @class */ (function () {
         }
     };
     return Wine;
-}());
+}(GraphModel));
 export { Wine };
 //# sourceMappingURL=Wine.js.map

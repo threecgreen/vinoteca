@@ -1,11 +1,22 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
 import { Color } from "./Color";
+import { GraphModel } from "./GraphModel";
 import { Producer } from "./Producer";
+import { IDict, Maybe } from "./typedef";
 import { VitiArea } from "./VitiArea";
+import { WineGrape } from "./WineGrape";
 import { WineType } from "./WineType";
 
-export class Wine {
+type associatedModels = Producer | WineType | Color | VitiArea | WineGrape;
+
+export class Wine extends GraphModel {
+    public static getById(id: number): Maybe<Wine> {
+        return Wine.instances[id];
+    }
+
+    private static instances: IDict<Wine>;
+
     public readonly id: number;
     public name: string;
     public producer: number | Producer;
@@ -15,6 +26,7 @@ export class Wine {
 
     constructor(id: number, name: string, producer: number, wineType: number,
                 color: number, vitiArea: number) {
+        super();
         this.id = id;
         this.name = name;
         this.producer = producer;
@@ -22,6 +34,16 @@ export class Wine {
         this.wineType = new WineType(wineType);
         this.color = color;
         this.vitiArea = vitiArea;
+    }
+
+    public getRelatedObjects(): associatedModels[] {
+        this.fetchProducer();
+        this.fetchWineType();
+        this.fetchColor();
+        this.fetchVitiArea();
+        // TODO: fetchWineGrapes
+        return Wine.assembleNonNulled([this.producer, this.color, this.vitiArea,
+                                       this.wineType]);
     }
 
     public fullName() {

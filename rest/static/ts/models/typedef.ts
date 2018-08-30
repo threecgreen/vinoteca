@@ -6,9 +6,9 @@ import { Wine } from "./Wine";
 import { WineGrape } from "./WineGrape";
 import { WineType } from "./WineType";
 
-type GraphModel = Color | Grape | Producer | Region | Wine | WineGrape | WineType;
+export type Maybe<T> = T | null;
 
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 export interface IDict<T> {
-    [key: string]: T;
+    [key: number]: T;
 }
