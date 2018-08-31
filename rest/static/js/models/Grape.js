@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
+import { GraphModel } from "./GraphModel.js";
 var Grape = /** @class */ (function (_super) {
     __extends(Grape, _super);
     function Grape(id) {
@@ -30,6 +30,9 @@ var Grape = /** @class */ (function (_super) {
     Grape.prototype.getRelatedObjects = function () {
         // return WineGrape.getByGrapeId(this.id);
         return null;
+    };
+    Grape.prototype.fullId = function () {
+        return "g-" + this.id;
     };
     return Grape;
 }(GraphModel));

@@ -1,9 +1,9 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
-import { GraphModel } from "./GraphModel";
-import { Region } from "./Region";
-import { IDict, Maybe } from "./typedef";
-import { Wine } from "./Wine";
+import { GraphModel } from "./GraphModel.js";
+import { Region } from "./Region.js";
+import { IDict, Maybe } from "./typedef.js";
+import { Wine } from "./Wine.js";
 
 export class VitiArea extends GraphModel {
     public static getById(id: number): Maybe<VitiArea> {
@@ -24,5 +24,9 @@ export class VitiArea extends GraphModel {
 
     public getRelatedObjects(): Maybe<Array<Wine | Region>> {
         return null;
+    }
+
+    public fullId(): string {
+        return `va-${this.id}`;
     }
 }

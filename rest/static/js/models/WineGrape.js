@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
+import { GraphModel } from "./GraphModel.js";
 var WineGrape = /** @class */ (function (_super) {
     __extends(WineGrape, _super);
     // Since this class represents an edge rather than a node, all data should have
@@ -33,6 +33,9 @@ var WineGrape = /** @class */ (function (_super) {
     WineGrape.prototype.getRelatedObjects = function () {
         // TODO: add wine back in
         return [this.grape];
+    };
+    WineGrape.prototype.fullId = function () {
+        return "wg-" + this.id;
     };
     return WineGrape;
 }(GraphModel));

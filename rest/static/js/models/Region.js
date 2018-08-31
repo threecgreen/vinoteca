@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
+import { GraphModel } from "./GraphModel.js";
 var Region = /** @class */ (function (_super) {
     __extends(Region, _super);
     function Region(id) {
@@ -31,6 +31,9 @@ var Region = /** @class */ (function (_super) {
     };
     Region.prototype.getRelatedObjects = function () {
         return null;
+    };
+    Region.prototype.fullId = function () {
+        return "r-" + this.id;
     };
     return Region;
 }(GraphModel));

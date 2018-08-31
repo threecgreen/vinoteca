@@ -12,13 +12,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
+import { GraphModel } from "./GraphModel.js";
 var WineType = /** @class */ (function (_super) {
     __extends(WineType, _super);
     function WineType(id) {
         var _this = _super.call(this) || this;
         _this.id = id;
-        $.getJSON("/rest/wine-type/", "{id}", function (responseJSON) {
+        $.getJSON("/rest/wine-type/", { id: id }, function (responseJSON) {
             _this.name = responseJSON.items[0]["name"];
         });
         return _this;
@@ -28,6 +28,9 @@ var WineType = /** @class */ (function (_super) {
     };
     WineType.prototype.getRelatedObjects = function () {
         return null;
+    };
+    WineType.prototype.fullId = function () {
+        return "wt-" + this.id;
     };
     return WineType;
 }(GraphModel));

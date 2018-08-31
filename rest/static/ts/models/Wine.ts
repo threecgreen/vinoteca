@@ -1,12 +1,12 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
-import { Color } from "./Color";
-import { GraphModel } from "./GraphModel";
-import { Producer } from "./Producer";
-import { IDict, Maybe } from "./typedef";
-import { VitiArea } from "./VitiArea";
-import { WineGrape } from "./WineGrape";
-import { WineType } from "./WineType";
+import { Color } from "./Color.js";
+import { GraphModel } from "./GraphModel.js";
+import { Producer } from "./Producer.js";
+import { IDict, Maybe } from "./typedef.js";
+import { VitiArea } from "./VitiArea.js";
+import { WineGrape } from "./WineGrape.js";
+import { WineType } from "./WineType.js";
 
 type associatedModels = Producer | WineType | Color | VitiArea | WineGrape;
 
@@ -24,16 +24,22 @@ export class Wine extends GraphModel {
     public color: number | Color;
     public vitiArea: number | VitiArea;
 
-    constructor(id: number, name: string, producer: number, wineType: number,
-                color: number, vitiArea: number) {
+    constructor(id: number) {
         super();
         this.id = id;
-        this.name = name;
-        this.producer = producer;
-        // Always fetch wine_type since it is part of the full name (name + type)
-        this.wineType = new WineType(wineType);
-        this.color = color;
-        this.vitiArea = vitiArea;
+        $.getJSON("/rest/wine/", {id}, (responseJSON) => {
+            const wine = responseJSON.items[0]["name"];
+            this.name = wine["name"];
+            this.producer = wine["producer"];
+            // Always fetch wine_type since it is part of the full name (name + type)
+            this.wineType = new WineType(wine["producer"]);
+            this.color = wine["color"];
+            this.vitiArea = wine["viti_area"];
+        });
+    }
+
+    public label() {
+        return this.name ? `${this.name} ${this.wineType.name}` : this.wineType.name;
     }
 
     public getRelatedObjects(): associatedModels[] {
@@ -46,8 +52,8 @@ export class Wine extends GraphModel {
                                        this.wineType]);
     }
 
-    public fullName() {
-        return this.name ? `${this.name} ${this.wineType.name}` : this.wineType.name;
+    public fullId(): string {
+        return `w-${this.id}`;
     }
 
     public fetchProducer() {

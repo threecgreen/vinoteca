@@ -12,8 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
-import { Producer } from "./Producer";
+import { GraphModel } from "./GraphModel.js";
+import { Producer } from "./Producer.js";
 var Color = /** @class */ (function (_super) {
     __extends(Color, _super);
     function Color(id) {
@@ -30,6 +30,9 @@ var Color = /** @class */ (function (_super) {
     };
     Color.prototype.getRelatedObjects = function () {
         return Producer.assembleNonNulled(this.fetchWines());
+    };
+    Color.prototype.fullId = function () {
+        return "c-" + this.id;
     };
     Color.prototype.fetchWines = function () {
         return null;

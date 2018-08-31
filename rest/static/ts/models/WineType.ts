@@ -1,8 +1,8 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
-import { GraphModel } from "./GraphModel";
-import { IDict, Maybe } from "./typedef";
-import { Wine } from "./Wine";
+import { GraphModel } from "./GraphModel.js";
+import { IDict, Maybe } from "./typedef.js";
+import { Wine } from "./Wine.js";
 
 export class WineType extends GraphModel {
     public static getById(id: number): Maybe<WineType> {
@@ -17,12 +17,16 @@ export class WineType extends GraphModel {
     constructor(id: number) {
         super();
         this.id = id;
-        $.getJSON("/rest/wine-type/", "{id}", (responseJSON) => {
+        $.getJSON("/rest/wine-type/", {id}, (responseJSON) => {
             this.name = responseJSON.items[0]["name"];
         });
     }
 
     public getRelatedObjects(): Maybe<Wine[]> {
         return null;
+    }
+
+    public fullId(): string {
+        return `wt-${this.id}`;
     }
 }
