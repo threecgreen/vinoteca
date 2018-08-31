@@ -1,9 +1,9 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
-import { GraphModel } from "./GraphModel";
-import { Producer } from "./Producer";
-import { IDict, Maybe } from "./typedef";
-import { Wine } from "./Wine";
+import { GraphModel } from "./GraphModel.js";
+import { Producer } from "./Producer.js";
+import { IDict, Maybe } from "./typedef.js";
+import { Wine } from "./Wine.js";
 
 export class Color extends GraphModel {
 
@@ -27,6 +27,10 @@ export class Color extends GraphModel {
 
     public getRelatedObjects(): Wine[] {
         return Producer.assembleNonNulled(this.fetchWines());
+    }
+
+    public fullId(): string {
+        return `c-${this.id}`;
     }
 
     public fetchWines(): Wine[] {

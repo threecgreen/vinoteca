@@ -12,8 +12,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
-import { Region } from "./Region";
+import { GraphModel } from "./GraphModel.js";
+import { Region } from "./Region.js";
 var Producer = /** @class */ (function (_super) {
     __extends(Producer, _super);
     function Producer(id) {
@@ -28,6 +28,9 @@ var Producer = /** @class */ (function (_super) {
     Producer.prototype.getRelatedObjects = function () {
         this.fetchRegion();
         return Producer.assembleNonNulled([this.region]);
+    };
+    Producer.prototype.fullId = function () {
+        return "p-" + this.id;
     };
     Producer.prototype.fetchRegion = function () {
         var _this = this;

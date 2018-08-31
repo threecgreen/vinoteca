@@ -107,11 +107,11 @@ class WineList(generics.ListAPIView):
                      "wine_type_id")
 
 
-def graph(request, id_: int):
+def graph(request, wine_id: int):
     r"""View for starting the wine graph with a wine with the id of the argument
     `id`."""
     context = {
-        "id": id_,
+        "id": wine_id,
         "page_name": "Wine Graph",
     }
     return render(request, "graph.html", context)

@@ -1,8 +1,8 @@
 /// <reference path="../../../../node_modules/@types/jquery/index.d.ts" />
 
-import { GraphModel } from "./GraphModel";
-import { IDict, Maybe } from "./typedef";
-import { WineGrape } from "./WineGrape";
+import { GraphModel } from "./GraphModel.js";
+import { IDict, Maybe } from "./typedef.js";
+import { WineGrape } from "./WineGrape.js";
 
 export class Grape extends GraphModel {
     public static getById(id: number): Maybe<Grape> {
@@ -25,5 +25,9 @@ export class Grape extends GraphModel {
     public getRelatedObjects(): Maybe<WineGrape[]> {
         // return WineGrape.getByGrapeId(this.id);
         return null;
+    }
+
+    public fullId(): string {
+        return `g-${this.id}`;
     }
 }

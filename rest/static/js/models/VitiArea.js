@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GraphModel } from "./GraphModel";
+import { GraphModel } from "./GraphModel.js";
 var VitiArea = /** @class */ (function (_super) {
     __extends(VitiArea, _super);
     function VitiArea(id) {
@@ -26,6 +26,9 @@ var VitiArea = /** @class */ (function (_super) {
     };
     VitiArea.prototype.getRelatedObjects = function () {
         return null;
+    };
+    VitiArea.prototype.fullId = function () {
+        return "va-" + this.id;
     };
     return VitiArea;
 }(GraphModel));

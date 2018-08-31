@@ -4,7 +4,7 @@ GET wine data, not to modify it."""
 from django.urls import path
 
 from rest.views import (
-    generic_all_names, region_all_names, grape, ColorList, RegionList,
+    generic_all_names, region_all_names, grape, graph, ColorList, RegionList,
     ProducerList, VitiAreaList, WineTypeList, WineList
 )
 
@@ -33,4 +33,7 @@ urlpatterns = [
     path("wine-type/", WineTypeList.as_view(), name="REST Wine Type"),
     path("wine/", WineList.as_view(), name="REST Wine"),
     path("grape/", grape, name="REST Grape"),
+
+    # Graph
+    path("graph/<int:wine_id>/", graph, name="Graph"),
 ]

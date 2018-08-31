@@ -15,6 +15,12 @@ var GraphModel = /** @class */ (function () {
         }
         return nonNulledModels;
     };
+    GraphModel.prototype.label = function () {
+        return this.name;
+    };
+    GraphModel.prototype.displayColor = function () {
+        return "#555";
+    };
     return GraphModel;
 }());
 export { GraphModel };

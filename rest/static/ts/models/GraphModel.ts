@@ -1,4 +1,4 @@
-import { Maybe } from "./typedef";
+import { Maybe } from "./typedef.js";
 
 export abstract class GraphModel {
     // @ts-ignore
@@ -17,6 +17,16 @@ export abstract class GraphModel {
     }
 
     public readonly id: number;
+    public name: string;
+
+    public label(): string {
+        return this.name;
+    }
+
+    public displayColor(): string {
+        return "#555";
+    }
 
     public abstract getRelatedObjects(): GraphModel[];
+    public abstract fullId(): string;
 }
