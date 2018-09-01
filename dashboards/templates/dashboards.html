@@ -122,7 +122,7 @@ $(function () {
     applyChart(barChart, colorVarieties, "pb-color-varieties");
     const colorPrice = {
         {% for color in colors %}
-            "{{ color.name|title }}": {{ color.avg_price|floatformat:2 }},
+            "{{ color.name|title }}": {{ color.avg_price|default_if_none:0|floatformat:2 }},
         {% endfor %}
     };
     applyChart(barChart, colorPrice, "pb-color-price");
@@ -142,7 +142,7 @@ $(function () {
     applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
     const wineTypePrice = {
         {% for wine_type in top_wine_types %}
-            "{{ wine_type.name|title }}": {{ wine_type.avg_price|floatformat:2 }},
+            "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
         {% endfor %}
     };
     applyChart(barChart, wineTypePrice, "top-wt-price");

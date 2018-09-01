@@ -21,8 +21,8 @@
         {% for color in colors %}
             <tr>
                 <td>{{ color.name|title }}</td>
-                <td class="num-col">{{ color.quantity }}</td>
-                <td class="num-col">{{ color.variety }}</td>
+                <td class="num-col">{{ color.quantity|default_if_none:0 }}</td>
+                <td class="num-col">{{ color.variety|default_if_none:0 }}</td>
                 <td class="num-col">{{ color.avg_price|floatformat:"2" }}</td>
             </tr>
         {% endfor %}
