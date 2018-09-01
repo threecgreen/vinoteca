@@ -1,0 +1,43 @@
+{% load vinoteca %}
+
+{% if wine_count < 8 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
+<ul class="tabs z-depth-1">
+    <li class="wine-green-tab tab" id="viti-areas-table-li"><a href="#viti-areas-table-tab">Table</a></li>
+    <li class="wine-green-tab tab" id="viti-areas-varieties-chart-li"><a href="#viti-areas-varieties-chart-tab">Varieties</a></li>
+    <li class="wine-green-tab tab" id="viti-areas-producers-chart-li"><a href="#viti-areas-producers-chart-tab">Producers</a></li>
+    <li class="wine-green-tab tab" id="viti-areas-price-chart-li"><a href="#viti-areas-price-chart-tab">Avg Price</a></li>
+</ul>
+<div class="s12" id="viti-areas-table-tab">
+    <table class="responsive highlight">
+        <thead>
+        <tr>
+            <th>Viti Area</th>
+            <th class="num-col">Varieties</th>
+            <th class="num-col">Producers</th>
+            <th class="num-col">Avg Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for viti_area in viti_areas %}
+            <tr>
+                <td>{{ viti_area.name }}</td>
+                <td class="num-col">{{ viti_area.varieties }}</td>
+                <td class="num-col">{{ viti_area.producers }}</td>
+                <td class="num-col">{{ viti_area.avg_price|floatformat:"2"|defndash }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="s12" id="viti-areas-varieties-chart-tab">
+    <canvas height="325px" id="viti-areas-varieties-chart"></canvas>
+</div>
+<div class="s12" id="viti-areas-producers-chart-tab">
+    <canvas height="325px" id="viti-areas-producers-chart"></canvas>
+</div>
+<div class="s12" id="viti-areas-price-chart-tab">
+    <canvas height="325px" id="viti-areas-price-chart"></canvas>
+</div>
+{% endif %}

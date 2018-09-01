@@ -8,56 +8,39 @@
             <div class="row">
                 <div class="input-field col s4 m2">
                     <select id="color" name="color">
-                        {% for color_op in colors %}
-                            <option value="{{ color_op.color }}" {% if color_op.color == wine.color %}selected{% endif %}>{{ color_op.color|title }}</option>
+                        {% for color in colors %}
+                            <option value="{{ color.name }}" {% if color.name == wine.color.name %}selected{% endif %}>{{ color.name|title }}</option>
                         {% endfor %}
                     </select>
                     <label for="color">Color</label>
                 </div>
                 <div class="input-field col s8 m4">
-                    <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete" value="{{ wine.wine_type }}" required>
+                    <input type="text" id="auto-wine-type" name="wine-type" class="autocomplete" value="{{ wine.wine_type.name }}" required>
                     <label for="auto-wine-type">Type</label>
                 </div>
                 <div class="input-field col s6 m3">
-                    <input type="text" id="auto-producer" name="producer" class="autocomplete" value="{{ wine.producer }}" required>
+                    <input type="text" id="auto-producer" name="producer" class="autocomplete" value="{{ wine.producer.name }}" required>
                     <label for="auto-producer">Producer</label>
                 </div>
                 <div class="input-field col s6 m3">
-                    <input type="text" id="auto-region" name="country" class="autocomplete" value="{{ wine.region }}" disabled>
+                    <input type="text" id="auto-region" name="region" class="autocomplete" value="{{ wine.producer.region.name }}" disabled>
                     <label for="auto-region">Region (edit the producer)</label>
                 </div>
             </div>
             <div class="row">
-{#                Don't allow users to add additional if the wine doesn't already have one #}
-                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                {% else %}
-                <div class="input-field col s12 m6">
-                {% endif %}
                     <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
                     <label for="name">Name</label>
                 </div>
-                {% if wine.additional %}
                 <div class="input-field col s6 m3">
-                    <input id="additional" type="text" name="additional" class="autocomplete" value="{{ wine.additional }}">
-                    <label for="additional">Additional</label>
-                </div>
-                {% endif %}
-                <div class="input-field col s12 m6">
-                    <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
-                    <label for="description">Description</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12 m6">
-                    <input id="notes" name="notes" type="text" class="validate" {% if wine.notes %}value="{{ wine.notes }}"{% endif %}>
-                    <label for="notes">Notes</label>
+                    <input id="why" name="why" type="text" class="validate" {% if wine.why %}value="{{ wine.why }}"{% endif %}>
+                    <label for="why">Why</label>
                 </div>
                 <div class="range-field col s4 m2">
                     <div class="switch">
-                        <label for="have-rating">
+                        <label for="has-rating">
                             Rating
-                            <input type="checkbox" id="have-rating" name="have-rating">
+                            <input type="checkbox" id="has-rating" name="has-rating">
                             <span class="lever"></span>
                         </label>
                     </div>
@@ -67,8 +50,18 @@
                     </p>
                 </div>
                 <div class="input-field col s8 m4">
-                    <input id="auto-viti-area" type="text" name="viti-area" class="autocomplete" {% if wine.viti_area %}value="{{ wine.viti_area }}"{% endif %}>
+                    <input id="auto-viti-area" type="text" name="viti-area" class="autocomplete" {% if wine.viti_area.name %}value="{{ wine.viti_area.name }}"{% endif %}>
                     <label for="auto-viti-area">Viticultural Area</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6">
+                    <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
+                    <label for="description">Description</label>
+                </div>
+                <div class="input-field col s12 m6">
+                    <input id="notes" name="notes" type="text" class="validate" {% if wine.notes %}value="{{ wine.notes }}"{% endif %}>
+                    <label for="notes">Notes</label>
                 </div>
             </div>
 
@@ -89,7 +82,7 @@
                         </div>
                 {% endwith %}
                 {% cycle '' '</div>' %}
-            {% empty %}
+            {% empty %} {% comment %}If no grapes{% endcomment %}
                 <div class="row">
                     <div class="col s12 m6">
                         <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-1">
@@ -147,35 +140,35 @@
             {% endfor %}
             {# Add additional blank rows if this wine already has grapes #}
             {% if grapes %}
-                {% with count=grapes|length %}
+                {% with next_id=grapes|length|add:1 %}
                 {% if not grapes|length|divisibleby:2 %}
                     <div class="col s12 m6">
-                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-{{ count }}">
+                        <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-{{ next_id }}">
                             <i class="material-icons">add</i>
                         </a>
                     </div>
-                    <div class="input-field col s4 m2" hidden id="grape-form-{{ count }}">
-                        <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate">
-                        <label for="grape-{{ count }}-pct">Percentage</label>
+                    <div class="input-field col s4 m2" hidden id="grape-form-{{ next_id }}">
+                        <input id="grape-{{ next_id }}-pct" name="grape-{{ next_id }}-pct" type="number" class="validate">
+                        <label for="grape-{{ next_id }}-pct">Percentage</label>
                     </div>
-                    <div class="input-field col s8 m4" hidden id="grape-form-{{ count }}-name">
-                        <input id="auto-grape-{{ count }}" name="grape-{{ count }}" type="text" class="autocomplete">
-                        <label for="auto-grape-{{ count }}">Grape</label>
+                    <div class="input-field col s8 m4" hidden id="grape-form-{{ next_id }}-name">
+                        <input id="auto-grape-{{ next_id }}" name="grape-{{ next_id }}" type="text" class="autocomplete">
+                        <label for="auto-grape-{{ next_id }}">Grape</label>
                     </div>
                 {% else %}
                     <div class="row">
                         <div class="col s12 m6">
-                            <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-{{ count }}">
+                            <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-{{ next_id }}">
                                 <i class="material-icons">add</i>
                             </a>
                         </div>
-                        <div class="input-field col s4 m2" hidden id="grape-form-{{ count }}-pct">
-                            <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct" type="number" class="validate">
-                            <label for="grape-{{ count }}-pct">Percentage</label>
+                        <div class="input-field col s4 m2" hidden id="grape-form-{{ next_id }}-pct">
+                            <input id="grape-{{ next_id }}-pct" name="grape-{{ next_id }}-pct" type="number" class="validate">
+                            <label for="grape-{{ next_id }}-pct">Percentage</label>
                         </div>
-                        <div class="input-field col s8 m4" hidden id="grape-form-{{ count }}-name">
-                            <input id="auto-grape-{{ count }}" name="grape-{{ count }}" type="text" class="autocomplete">
-                            <label for="auto-grape-{{ count }}">Grape</label>
+                        <div class="input-field col s8 m4" hidden id="grape-form-{{ next_id }}-name">
+                            <input id="auto-grape-{{ next_id }}" name="grape-{{ next_id }}" type="text" class="autocomplete">
+                            <label for="auto-grape-{{ next_id }}">Grape</label>
                         </div>
                     </div>
                 {% endif %}
@@ -222,7 +215,7 @@
 {% block js %}
 <script type="module">
 import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInput } from '{% static "js/new_wines.js" %}';
-import { autocomplete } from "{% static "js/widgets.js" %}"
+import { autocomplete } from "{% static "js/widgets.js" %}";
 
 const region = $("#auto-region");
 
@@ -230,20 +223,20 @@ $(function() {
     $('select').material_select();
     autocomplete("wine-type");
     autocomplete("producer");
-    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Country JSON" %}", "{% url "Get Producers JSON" %}");
+    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
     autocomplete("region");
     {% if rating %}
         toggleRating($("#has-rating")[0], $("#rating")[0], true);
     {% else %}
         toggleRating($("#has-rating")[0], $("#rating")[0], false);
     {% endif %}
-    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Country Viti Areas JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Region Viti Areas JSON" %}");
     showNextGrapeInput($(".grape-btn"));
 });
 {# Gave weird error when in same document ready function #}
 $(function () {
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
-    {# Run first for initial country #}
+    {# Run first for initial region #}
     $(region).trigger("change");
 })
 </script>

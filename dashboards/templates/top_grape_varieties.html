@@ -1,0 +1,45 @@
+{% if wine_count < 5 %}
+    {% include "insufficient_wines.html" %}
+{% else %}
+<ul class="tabs z-depth-1">
+    <li class="wine-red-tab tab" id="grapes-table-li"><a href="#grapes-table-tab">Table</a></li>
+    <li class="wine-green-tab tab" id="grapes-varieties-chart-li"><a href="#grapes-varieties-chart-tab">Varieties</a></li>
+    <li class="wine-green-tab tab" id="grapes-price-chart-li"><a href="#grapes-price-chart-tab">Avg Price</a></li>
+    <li class="wine-green-tab tab" id="grapes-pct-chart-li"><a href="#grapes-pct-chart-tab">Avg Pct</a></li>
+</ul>
+<div id="grapes-table-tab" class="s12">
+    <table class="responsive highlight">
+        <thead>
+        <tr>
+            <th>Grape</th>
+            <th class="num-col">Varieties</th>
+            <th class="num-col">Avg Price</th>
+            <th class="num-col">Avg Pct</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for grape in grapes %}
+            <tr>
+                <td>{{ grape.name }}</td>
+                <td class="num-col">{{ grape.wine_varieties }}</td>
+                {% if grape.avg_price %}
+                    <td class="num-col">{{ grape.avg_price|floatformat:"2" }}</td>
+                {% else %}
+                    <td class="num-col">&ndash;</td>
+                {% endif %}
+                <td class="num-col">{{ grape.avg_pct|floatformat:"1" }}%</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="s12" id="grapes-varieties-chart-tab">
+    <canvas height="300px" id="grapes-varieties-chart"></canvas>
+</div>
+<div class="s12" id="grapes-price-chart-tab">
+    <canvas height="300px" id="grapes-price-chart"></canvas>
+</div>
+<div class="s12" id="grapes-pct-chart-tab">
+    <canvas height="300px" id="grapes-pct-chart"></canvas>
+</div>
+{% endif %}

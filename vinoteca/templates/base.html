@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,8 +30,7 @@
     </ul>
     <nav>
         <div class="nav-wrapper pink darken-4">
-            <div class="container hide-on-med-and-down">
-    {#            <img src="{% static "img/wine-icon.png" %}">#}
+            <div class="container hide-on-sm-and-down">
                 <a href="{% url "Home"  %}" class="brand-logo"><img src="{% static "img/wine-icon.png" %}" id="logo-img">vinoteca</a>
                 <ul class="right">
                     <li {% block new-nav %}{% endblock %}>
@@ -74,6 +74,7 @@
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script type="text/javascript" src="{% url "js-error-handler-js" %}"></script>
     <script type="text/javascript">
     $(function () {
         // For dropdown in navbar

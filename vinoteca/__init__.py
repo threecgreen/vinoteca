@@ -1,2 +1,3 @@
-__version__ = "2.1.0"
+r"""Stores version information about vinoteca."""
+__version__ = "3.0.2"
 VERSION = __version__

@@ -26,7 +26,7 @@ main {
     width: 90%; } }
 .brand-logo {
   font-weight: 300;
-  letter-spacing: -0.1rem; }
+  letter-spacing: -0.1%; }
 
 #logo-img {
   vertical-align: middle;
@@ -61,7 +61,7 @@ main {
   .btn-floating-small i {
     line-height: 30px; }
 
-.country-flag {
+.region-flag {
   width: 50px;
   height: 50px;
   margin-top: 20px; }
@@ -100,17 +100,36 @@ ul.bullets {
         list-style-type: square; }
 
 a:link.text-link {
-  color: #c5e1a5; }
+  color: #8bc34a; }
 
 a:hover.text-link {
-  color: #9ccc65; }
+  color: #b0d683; }
 
 a:visited.text-link {
-  color: #880e4f; }
+  color: #870e4f; }
+
+a:visited:hover.text-link {
+  color: #cc1578; }
 
 table.condensed td, th {
   padding-top: 3px;
   padding-bottom: 3px; }
+
+/* Change tabs colors */
+.tabs .wine-green-tab a {
+  color: #8bc34a !important; }
+.tabs .wine-green-tab a:hover {
+  color: #b0d683 !important; }
+.tabs .wine-green-tab a:active {
+  color: #8bc34a !important; }
+.tabs .wine-red-tab a {
+  color: #870e4f !important; }
+.tabs .wine-red-tab a:hover {
+  color: #cc1578 !important; }
+.tabs .wine-red-tab a:active {
+  color: #870e4f !important; }
+.tabs .indicator {
+  background-color: #f071b5; }
 
 /* For linking to a section of a page */
 .page-link {
@@ -126,5 +145,29 @@ table.condensed td, th {
 
 .footer-link {
   color: pink; }
+
+code {
+  font-size: 14.5px; }
+
+.dashboard-row {
+  margin-bottom: 0; }
+
+.dashboard-top-card {
+  margin-top: 0; }
+
+.wine-red-card {
+  background-color: #9e105d; }
+  .wine-red-card div.card-content {
+    /* White text */
+    color: white; }
+
+.wine-green-card {
+  background-color: #9fcd69; }
+  .wine-green-card div.card-content {
+    /* White text */
+    color: white; }
+
+.golden-yellow-card {
+  background-color: #fbc02d; }
 
 /*# sourceMappingURL=vinoteca-style.css.map */

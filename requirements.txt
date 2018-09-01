@@ -1,5 +1,5 @@
 coverage==4.5.*
-Django==2.0.5
+Django==2.0.7
 py==1.5.*
 pytest==3.5.*
 pytest-cov==2.5.*
@@ -9,3 +9,8 @@ pytz==2018.3
 six==1.11.0
 attrs==17.4.*
 pillow==5.2.*
+djangorestframework==3.8.*
+django-js-error-hook==0.6
+django-filter==2.0.*
+pylint
+pylint-django

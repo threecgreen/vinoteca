@@ -12,24 +12,24 @@
                         <label for="purchase-date">Purchase Date</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input id="quantity" name="quantity" type="number" class="validate" {% if quantity %}value={{ quantity }}{% endif %}>
+                        <input id="quantity" name="quantity" type="number" class="validate" {% if purchase.quantity %}value={{ purchase.quantity }}{% endif %}>
                         <label for="quantity">Quantity</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input id="price" name="price" type="number" class="validate" step="0.01" {% if price %}value={{ price }}{% endif %}>
+                        <input id="price" name="price" type="number" class="validate" step="0.01" min="0" {% if purchase.price %}value={{ purchase.price }}{% endif %}>
                         <label for="price">Price</label>
                     </div>
                     <div class="input-field col s6 m3">
-                        <input id="vintage" name="vintage" type="number" class="validate" value={% if vintage %} {{ vintage }} {% else %} "{% now "Y" %}"{% endif %}>
+                        <input id="vintage" name="vintage" type="number" class="validate" value={% if purchase.vintage %} {{ purchase.vintage }} {% else %} "{% now "Y" %}"{% endif %}>
                         <label for="vintage">Vintage</label>
                     </div>
                     <div class="input-field col s12 m4">
-                        <input type="text" id="auto-store" name="store" class="autocomplete" {% if store %}value="{{ store }}"{% endif %}>
+                        <input type="text" id="auto-store" name="store" class="autocomplete" {% if purchase.store.name %}value="{{ purchase.store.name }}"{% endif %}>
                         <label for="auto-store">Store</label>
                     </div>
                     <div class="input-field col s12 m4">
-                        <input type="text" id="why" name="why" class="validate" {% if why %}value="{{ why }}"{% endif %}>
-                        <label for="why">Why</label>
+                        <input type="text" id="memo" name="memo" class="validate" {% if purchase.memo %}value="{{ purchase.memo }}"{% endif %}>
+                        <label for="memo">Memo</label>
                     </div>
                 </div>
                 <div class="row">
@@ -49,7 +49,7 @@
                         <p>This action is not reversible.</p>
                     </div>
                     <div class="modal-footer">
-                        <a href="{% url "Delete Purchase" wine_id=wine.id purchase_id=purchase_id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this purchase</a>
+                        <a href="{% url "Delete Purchase" wine_id=wine.id purchase_id=purchase.id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this purchase</a>
                         <a href="" class="btn modal-action modal-close light-green darken-2 waves-effect waves-light">No</a>
                     </div>
                 </div>
@@ -63,8 +63,8 @@ import { autocomplete, datepicker } from "{% static 'js/widgets.js' %}";
 
 $(function() {
     datepicker();
-    {% if date %}
-        $(".datepicker").pickadate().pickadate('picker').set('select', "{{ date }}", { format: 'yyyymmdd'});
+    {% if purchase.date %}
+        $(".datepicker").pickadate().pickadate('picker').set('select', "{{ purchase.date }}", { format: 'yyyymmdd'});
     {% endif %}
     autocomplete("store");
     $("#delete-purchase-modal").modal();

@@ -4,6 +4,7 @@ Script for performing common vinoteca tasks:
     - run: running the local web server
     - test: run test suite
     - update: check and perform updates
+    - lint: run code linters
 
 Should be added to PATH with the update.sh script so that it can be run from
 any directory. It relies on the other bash scripts in this directory (scripts),
@@ -31,7 +32,7 @@ def vinoteca_help(options):
     print("vinoteca is a wine purchase tracking system.")
     print()
     print("Perform an action using the following format:")
-    print("    $ vinoteca [subcommand]")
+    print("    $ vinoteca [subcommand] {optional arguments}")
     print_subcommands(options)
 
 
@@ -42,25 +43,22 @@ def main():
         "run": (scripts_dir / "run.sh").resolve(),
         "test": (scripts_dir / "test.sh").resolve(),
         "update": (scripts_dir / "update.sh").resolve(),
+        "lint": (scripts_dir / "lint.sh").resolve(),
     }
     if len(sys.argv) == 1:
         print_error("Missing subcommand.\n")
         print_subcommands(options)
-    elif len(sys.argv) == 2:
-        subcommand = sys.argv[1]
-        if subcommand not in options.keys():
-            # Invalid argument
-            print_error(f"Invalid subcommand '{sys.argv[1]}'.\n")
-            print_subcommands(options)
-        elif subcommand == "help":
-            vinoteca_help(options)
-        else:
-            # Run corresponding bash script
-            call([options[subcommand]], cwd=scripts_dir)
-    else:
-        print_error("Too many arguments.\n")
-        print("Run vinoteca with a subcommand.\n", file=sys.stdout)
+        return
+    subcommand = sys.argv[1]
+    if subcommand not in options.keys():
+        # Invalid argument
+        print_error(f"Invalid subcommand '{sys.argv[1]}'.\n")
         print_subcommands(options)
+    elif subcommand == "help":
+        vinoteca_help(options)
+    else:
+        # Run corresponding bash script
+        call([options[subcommand], *sys.argv[2:]], cwd=scripts_dir)
 
 
 if __name__ == '__main__':

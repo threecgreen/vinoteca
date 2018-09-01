@@ -1,4 +1,5 @@
 import pytest
+from django.db.utils import IntegrityError
 
 from vinoteca.utils import *
 
@@ -6,7 +7,7 @@ from vinoteca.utils import *
 @pytest.fixture
 @pytest.mark.django_db
 def california():
-    return Countries.objects.get(name="California")
+    return Regions.objects.get(name="California")
 
 
 @pytest.mark.parametrize("store", [
@@ -20,7 +21,7 @@ def test_g_or_c_store(store):
 
 
 @pytest.mark.parametrize("wine_type", [
-    "Shiraz",
+    "Pinot Noir",
     "A New Type"
 ])
 @pytest.mark.django_db
@@ -29,42 +30,46 @@ def test_g_or_c_wine_type(wine_type):
     assert isinstance(type_obj, WineTypes)
 
 
-@pytest.mark.parametrize("country", [
-    "New Zealand",
+@pytest.mark.parametrize("region", [
+    "France",
     "Antarctica"
 ])
 @pytest.mark.django_db
-def test_g_or_c_country(country):
-    country = g_or_c_country(country)
-    assert isinstance(country, Countries)
+def test_g_or_c_region(region):
+    region = g_or_c_region(region)
+    assert isinstance(region, Regions)
 
 
-@pytest.mark.parametrize("producer,country", [
-    ("Inagery", True),
+@pytest.mark.parametrize("producer,region", [
+    ("Martinelli", True),
     ("New Producer", True),
-    ("No Country Producer", False)
+    ("No Region Producer", False)
 ])
 @pytest.mark.django_db
-def test_g_or_c_producer(producer, country):
-    country = california() if country else None
-    producer = g_or_c_producer(producer, country)
+def test_g_or_c_producer(producer, region):
+    region = california() if region else None
+    producer = g_or_c_producer(producer, region)
     assert isinstance(producer, Producers)
-    if country:
-        assert producer.country == california()
+    if region:
+        assert producer.region == california()
 
 
-@pytest.mark.parametrize("viti_area,country", [
+@pytest.mark.parametrize("viti_area,region", [
     ("Sonoma County", True),
     ("New VA", True),
-    ("No Country VA", False)
+    ("No Region VA", False)
 ])
 @pytest.mark.django_db
-def test_g_or_c_viti_area(viti_area, country):
-    country = california() if country else None
-    viti_area = g_or_c_viti_area(viti_area, country)
-    assert isinstance(viti_area, VitiAreas)
-    if country:
-        assert viti_area.region == country
+def test_g_or_c_viti_area(viti_area, region):
+    region = california() if region else None
+    if region:
+        viti_area = g_or_c_viti_area(viti_area, region)
+        assert isinstance(viti_area, VitiAreas)
+        assert viti_area.region == region
+    else:
+        # No Viticultural areas without a region
+        with pytest.raises(IntegrityError):
+            g_or_c_viti_area(viti_area, region)
 
 
 @pytest.mark.parametrize("item,result", [
@@ -99,47 +104,39 @@ def test_int_to_date(yyyymmdd, date):
     assert int_to_date(yyyymmdd) == date
 
 
-@pytest.mark.parametrize("country_name,result", [
+@pytest.mark.parametrize("region,result", [
     ("California", True),
     ("New Zealand", True),
     ("Antarctica", False)
 ])
-def test_flag_exists(country_name, result):
-    assert flag_exists(country_name) == result
+def test_flag_exists(region, result):
+    assert flag_exists(region) == result
 
 
-@pytest.mark.parametrize("country_name,result", [
+@pytest.mark.parametrize("region,result", [
     ("California", True),
     ("New Zealand", True),
     ("Antarctica", False)
 ])
-def test_get_flag_countries(country_name, result):
+def test_get_region_flags(region, result):
     if result:
-        assert country_name in get_flag_countries()
+        assert region in get_region_flags()
     else:
-        assert country_name not in get_flag_countries()
+        assert region not in get_region_flags()
 
 
 @pytest.mark.parametrize("grape,pct", [
-    ("Sauvignon Blanc", 50),
     ("A new grape", 25),
     ("No pct grape", None)
 ])
 @pytest.mark.django_db
-def test_g_or_c_wine_grape(grape, pct):
-    wine = Wines.objects.get(id=850)
-    start_count = WineGrapes.objects.filter(wine=wine).count()
-    assert c_or_u_wine_grapes(wine, grape, pct)
-    assert WineGrapes.objects.filter(wine=wine).count() == start_count + 1
+def test_g_or_c_wine_grape(a_wine, grape, pct):
+    start_count = WineGrapes.objects.filter(wine=a_wine).count()
+    assert c_or_u_wine_grapes(a_wine, grape, pct)
+    assert WineGrapes.objects.filter(wine=a_wine).count() == start_count + 1
 
 
-@pytest.mark.parametrize("grape", ["Negroamaro", "Primitivo"])
+@pytest.mark.parametrize("grape", ["Syrah", "Merlot"])
 @pytest.mark.django_db
-def test_g_or_c_wine_grape_existing(grape):
-    wine = Wines.objects.get(id=732)
-    assert c_or_u_wine_grapes(wine, grape, 0) is False
-
-
-def test_convert_to_png():
-    # TODO: Create test
-    pass
+def test_g_or_c_wine_grape_existing(a_wine, grape):
+    assert c_or_u_wine_grapes(a_wine, grape, 0) is False

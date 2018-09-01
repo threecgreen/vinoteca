@@ -1,40 +1,36 @@
-from django.urls import resolve
-from django.conf import settings
-from pathlib import Path
+from django.urls import reverse
 import pytest
 
-from vinoteca.models import Grapes, Producers, Purchases, Wines, WineGrapes
 from view.views import *
 
 
 @pytest.fixture
-def upload_file():
+def upload_file(a_wine):
     # Rename file if it already exists
-    image_file = Path(settings.BASE_DIR) / "media" / "800.png"
+    image_file = Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png"
     if image_file.is_file():
         existing_file = True
-        image_file.rename(Path(settings.BASE_DIR) / "media" / "800_real.png")
+        image_file.rename(Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png")
     else:
         existing_file = False
     with open(Path(__file__).parent / "test.jpg", "rb") as file:
         yield file
-    (Path(settings.BASE_DIR) / "media" / "800.png").unlink()
+    (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").unlink()
     if existing_file:
-        (Path(settings.BASE_DIR) / "media" / "800_real.png").rename(
-            Path(settings.BASE_DIR) / "media" / "800.png")
+        (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png").rename(
+            Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png")
 
 
 @pytest.mark.parametrize("url", [
-    "/wines/800/",
-    "/wines/800/new-purchase/",
-    "/wines/800/edit/",
-    "/wines/752/edit/1/",
-    "/producers/75/",
-    "/producers/75/edit/",
-    "/regions/3/",
-    "/wines/table/",
-    "/inventory/",
-    "/wine-types/30/",
+    reverse("Wine Profile", kwargs={"wine_id": 1}),
+    reverse("Edit Wine", kwargs={"wine_id": 1}),
+    reverse("Edit Purchase", kwargs={"wine_id": 1, "purchase_id": 1}),
+    reverse("Producer Profile", kwargs={"producer_id": 2}),
+    reverse("Edit Producer", kwargs={"producer_id": 2}),
+    reverse("Region Profile", kwargs={"region_id": 1}),
+    reverse("Wine Table"),
+    reverse("Inventory"),
+    reverse("Wine Type Profile", kwargs={"wine_type_id": 1}),
 ])
 @pytest.mark.django_db
 def test_pages(client, url):
@@ -42,89 +38,26 @@ def test_pages(client, url):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("url,view_name", [
-    ("/wines/800/", "Wine Profile"),
-    ("/wines/800/new-purchase/", "New Purchase Wine"),
-    ("/wines/800/edit/", "Edit Wine"),
-    ("/wines/752/edit/1/", "Edit Purchase"),
-    ("/producers/75/", "Producer Profile"),
-    ("/producers/75/edit/", "Edit Producer"),
-    ("/regions/3/", "Country Profile"),
-    ("/wines/table/", "Wine Table"),
-    ("/inventory/", "Inventory"),
-    ("/wine-types/30/", "Wine Type Profile"),
-])
-@pytest.mark.django_db
-def test_urls(url, view_name):
-    resolver = resolve(url)
-    assert resolver.view_name == view_name
-
-
-@pytest.mark.django_db
-def test_colors(client):
-    response = client.get("/colors/all/")
-    assert len(Colors.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_regions(client):
-    response = client.get("/regions/all/")
-    assert len(Countries.objects.all()) == len(response.json().keys())
-    # Check for flags
-    assert ".svg" in response.json()["California"]
-    assert ".svg" in response.json()["France"]
-
-
-@pytest.mark.django_db
-def test_get_producers(client):
-    response = client.get("/producers/all/")
-    assert len(Producers.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_stores(client):
-    response = client.get("/stores/all/")
-    assert len(Stores.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_grapes(client):
-    response = client.get("/grapes/all/")
-    assert len(Grapes.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_wine_types(client):
-    response = client.get("/wine-types/all/")
-    assert len(WineTypes.objects.all()) == len(response.json().keys())
-
-
-@pytest.mark.django_db
-def test_get_viti_areas(client):
-    response = client.get("/viti-areas/all/")
-    assert len(VitiAreas.objects.all()) == len(response.json().keys())
-
-
 @pytest.fixture
-def wine_and_post_data():
-    wine = Wines.objects.get(id=800)
+def wine_and_post_data(a_wine):
     post_data = {
-        "producer": wine.producer.name,
-        "country": wine.producer.country.name,
-        "description": wine.description,
-        "notes": wine.notes,
-        "rating": wine.rating,
-        "color": wine.color.color,
-        "wine-type": wine.wine_type.type_name,
-        "viti-area": wine.viti_area.name if wine.viti_area else None,
+        "producer": a_wine.producer.name,
+        "region": a_wine.producer.region.name,
+        "description": a_wine.description,
+        "notes": a_wine.notes,
+        "rating": a_wine.rating,
+        "color": a_wine.color.name,
+        "wine-type": a_wine.wine_type.name,
+        "viti-area": a_wine.viti_area.name if a_wine.viti_area else None,
     }
-    return wine, post_data
+    return a_wine, post_data
+
 
 @pytest.mark.parametrize("attr,val", [
     ("description", "Test"),
     ("producer", "A new producer"),
     ("color", "white"),
-    ("viti_area", "Mendocino County")
+    ("viti_area", "Loire")
 ])
 @pytest.mark.django_db
 def test_edit_wine(client, wine_and_post_data, attr, val):
@@ -132,20 +65,21 @@ def test_edit_wine(client, wine_and_post_data, attr, val):
     init_val = wine.__getattribute__(attr)
     assert init_val != val
     post_data[attr.replace("_", "-")] = val
-    response = client.post("/wines/800/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/800/", 302) in response.redirect_chain
-    if attr == "color":
-        assert Wines.objects.get(id=800).__getattribute__(attr).color == val
-    elif attr == "producer" or attr == "viti_area":
-        assert Wines.objects.get(id=800).__getattribute__(attr).name == val
+    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
+    if attr in ("producer", "viti_area", "color") or attr == "viti_area":
+        assert Wines.objects.get(id=1).__getattribute__(attr).name == val
     else:
-        assert Wines.objects.get(id=800).__getattribute__(attr) == val
+        assert Wines.objects.get(id=1).__getattribute__(attr) == val
 
 
 @pytest.mark.django_db
 def test_edit_wine_with_grapes(client, wine_and_post_data):
-    wine, post_data = wine_and_post_data
+    _, post_data = wine_and_post_data
+    # Switch to wine id=2 because wine with id=1 already has grapes for other
+    # tests.
+    wine = Wines.objects.get(id=2)
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     assert len(wine_grapes) == 0
     # Add grape data
@@ -154,9 +88,9 @@ def test_edit_wine_with_grapes(client, wine_and_post_data):
     post_data["grape-2"] = "Syrah"
     post_data["grape-2-pct"] = 50
     # Post
-    response = client.post("/wines/800/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/800/", 302) in response.redirect_chain
+    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     grapes = [wine_grape.grape for wine_grape in wine_grapes]
     malbec = Grapes.objects.get(name="Malbec")
@@ -166,32 +100,31 @@ def test_edit_wine_with_grapes(client, wine_and_post_data):
 
 
 @pytest.mark.django_db
-def test_edit_wine_image(client, upload_file):
-    wine = Wines.objects.get(id=800)
+def test_edit_wine_image(a_wine, client, upload_file):
     post_data = {
-        "producer": wine.producer.name,
-        "country": wine.producer.country.name,
-        "description": wine.description,
-        "notes": wine.notes,
-        "rating": wine.rating,
-        "color": wine.color.color,
-        "wine-type": wine.wine_type.type_name,
+        "producer": a_wine.producer.name,
+        "region": a_wine.producer.region.name,
+        "description": a_wine.description,
+        "notes": a_wine.notes,
+        "rating": a_wine.rating,
+        "color": a_wine.color.name,
+        "wine-type": a_wine.wine_type.name,
         "wine-image": upload_file
     }
-    response = client.post("/wines/800/edit/", post_data, follow=True)
+    response = client.post(f"/wines/{a_wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/800/", 302) in response.redirect_chain
-    assert (Path(settings.BASE_DIR) / "media" / "800.png").is_file()
-    response = client.get("/media/800.png")
+    assert (f"/wines/{a_wine.id}/", 302) in response.redirect_chain
+    assert (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").is_file()
+    response = client.get(f"/media/{a_wine.id}.png")
     assert response.status_code == 200
 
 
 @pytest.mark.parametrize("attr,val", [
     ("price", 1.23),
-    ("store", "Big Top")
+    ("store", "Costco")
 ])
 @pytest.mark.django_db
-def test_edit_purchases(client, attr, val):
+def test_edit_purchases(client, attr, val, a_wine):
     purchase = Purchases.objects.get(id=1)
     init_val = purchase.__getattribute__(attr)
     assert init_val != val
@@ -199,13 +132,13 @@ def test_edit_purchases(client, attr, val):
         "quantity": purchase.quantity,
         "price": purchase.price,
         "vintage": purchase.vintage,
-        "why": purchase.why,
+        "memo": purchase.memo,
         "store": purchase.store
     }
     post_data[attr] = val
-    response = client.post("/wines/752/edit/1/", post_data, follow=True)
+    response = client.post(f"/wines/{a_wine.id}/edit/1/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/wines/752/edit/", 302) in response.redirect_chain
+    assert (f"/wines/{a_wine.id}/edit/", 302) in response.redirect_chain
     if attr == "store":
         assert Purchases.objects.get(id=1).__getattribute__(attr).name == val
     else:
@@ -214,55 +147,54 @@ def test_edit_purchases(client, attr, val):
 
 @pytest.mark.parametrize("sign", ["add", "subtract"])
 @pytest.mark.django_db
-def test_change_inventory(client, sign):
-    wine = Wines.objects.get(id=800)
-    wine.inventory = 1
-    wine.save()
-    client.get(f"/wines/800/change/{sign}/inventory/")
-    wine = Wines.objects.get(id=800)
+def test_change_inventory(a_wine, client, sign):
+    a_wine.inventory = 1
+    a_wine.save()
+    client.get(f"/wines/{a_wine.id}/change/{sign}/inventory/")
+    a_wine = Wines.objects.get(id=1)
     if sign == "add":
-        assert wine.inventory == 2
+        assert a_wine.inventory == 2
     else:
-        assert wine.inventory == 0
+        assert a_wine.inventory == 0
 
 
 @pytest.mark.parametrize("attr,val", [
-    ("country", "France"),
-    ("producer", "Yalumbaaaa")
+    ("region", "France"),
+    ("producer", "A new prod")
 ])
 @pytest.mark.django_db
 def test_edit_producer(client, attr, val):
     producer = Producers.objects.get(id=1)
-    if attr == "country":
-        init_val = producer.country.name
+    if attr == "region":
+        init_val = producer.region.name
     else:
         init_val = producer.name
     assert init_val != val
     post_data = {
         "producer": producer.name,
-        "country": producer.country.name
+        "region": producer.region.name
     }
     post_data[attr] = val
-    response = client.post("/producers/1/edit/", post_data, follow=True)
+    response = client.post(f"/producers/{producer.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
-    assert ("/producers/1/", 302) in response.redirect_chain
-    if attr == "country":
-        assert Producers.objects.get(id=1).country.name == val
+    assert (f"/producers/{producer.id}/", 302) in response.redirect_chain
+    if attr == "region":
+        assert Producers.objects.get(id=1).region.name == val
     else:
         assert Producers.objects.get(id=1).name == val
 
 
 @pytest.mark.django_db
-def test_delete_wine(client):
-    response = client.get("/wines/850/edit/delete/confirmed/", follow=True)
+def test_delete_wine(client, a_wine):
+    response = client.get(f"/wines/{a_wine.id}/edit/delete/confirmed/", follow=True)
     assert response.status_code == 200
     with pytest.raises(Wines.DoesNotExist):
-        Wines.objects.get(id=850)
+        Wines.objects.get(id=1)
 
 
 @pytest.mark.django_db
-def test_delete_purchase(client):
-    response = client.get("/wines/850/edit/119/delete/", follow=True)
+def test_delete_purchase(client, a_wine):
+    response = client.get(f"/wines/{a_wine.id}/edit/1/delete/", follow=True)
     assert response.status_code == 200
     with pytest.raises(Purchases.DoesNotExist):
-        Purchases.objects.get(id=119)
+        Purchases.objects.get(id=1)
