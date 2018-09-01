@@ -53,12 +53,9 @@ $(function () {
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  <div id="graph-container"></div>
   <script src="/static/js/sigma.min.js"></script>
-  <script type="module">
-  import { GraphContainer } from "{% static "js/GraphContainer.js" %}"
-    // Let's first initialize sigma:
-    const container = new GraphContainer({{ id }});
-  </script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="module" src="/static/js/GraphContainer.js"></script>
 </body>
 </html>
