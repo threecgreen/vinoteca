@@ -28,7 +28,8 @@ export class Wine extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/wine/", {id}, (responseJSON) => {
-            const wine = responseJSON.items[0]["name"];
+
+            const wine = responseJSON[0];
             this.name = wine["name"];
             this.producer = wine["producer"];
             // Always fetch wine_type since it is part of the full name (name + type)
@@ -39,6 +40,9 @@ export class Wine extends GraphModel {
     }
 
     public label() {
+        if (this.wineType === null) {
+            setTimeout(this.label(), 500);
+        }
         return this.name ? `${this.name} ${this.wineType.name}` : this.wineType.name;
     }
 

@@ -4,11 +4,10 @@
 import { GraphModel } from "./models/GraphModel.js";
 import { Wine } from "./models/Wine.js";
 
-export class GraphContainer {
+class GraphContainer {
     private container: SigmaJs.Sigma;
 
     constructor(wineId: number) {
-        console.log("hello");
         this.container = new sigma("graph-container");
         const wine = new Wine(wineId);
         this.addNode(wine);
@@ -42,3 +41,6 @@ export class GraphContainer {
         this.container.refresh();
     }
 }
+
+// @ts-ignore
+const container = new GraphContainer(800);

@@ -19,7 +19,7 @@ var Grape = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/grape/", { id: id }, function (responseJSON) {
-            _this.name = responseJSON.items[0]["name"];
+            _this.name = responseJSON[0]["name"];
         });
         Grape.instances[id] = _this;
         return _this;

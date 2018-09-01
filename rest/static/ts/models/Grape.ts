@@ -17,7 +17,7 @@ export class Grape extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/grape/", {id}, (responseJSON) => {
-            this.name = responseJSON.items[0]["name"];
+            this.name = responseJSON[0]["name"];
         });
         Grape.instances[id] = this;
     }
