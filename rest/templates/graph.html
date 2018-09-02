@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% comment %} {% extends "base.html" %}
 {% load static %}
 
 {% block head %}
@@ -19,19 +19,43 @@
     <div class="row">
         <div id="graph-container">
         </div>
-    </div>
+    {% comment %} </div>
 </div>
 {% endblock %}
 
 {% block js %}
 <script src="{% static "js/sigma.min.js" %}"></script>
 <script type="module">
-import { addWine } from "{% static "js/graph.js" %}"
+import { GraphContainer } from "{% static "js/GraphContainer.js" %}"
 
 $(function () {
-    // Let's first initialize sigma:
-    let s = new sigma('graph-container');
-    addWine(s, {{ id }})
+  const container = new GraphContainer({{ id }});
 });
 </script>
-{% endblock %}
+{% endblock %} {% endcomment %}
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic sigma.js example</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+    }
+    #container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="graph-container"></div>
+  <script src="/static/js/sigma.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="module" src="/static/js/GraphContainer.js"></script>
+</body>
+</html>

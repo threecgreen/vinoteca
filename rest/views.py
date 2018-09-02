@@ -4,6 +4,7 @@ out there. May also move most or all other JSON methods over to this views
 file."""
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework import generics
 
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
@@ -47,33 +48,6 @@ def generic_all_names(request, obj_name: str) -> JsonResponse:
     return JsonResponse({serializer(obj).data["name"]: None for obj in objs}, safe=False)
 
 
-def generic_serialize(request, obj_name: str) -> JsonResponse:
-    r"""Serializes an object of given an 'id' attribute in the HTTP request
-    object and the object name passed as argument `obj_name`. Currently
-    supports:
-        * Colors
-        * Regions
-        * Producers
-        * VitiAreas
-        * WineTypes
-        * Wines"""
-    relations = {
-        "color": (Colors, ColorSerializer),
-        "region": (Regions, RegionSerializer),
-        "producer": (Producers, ProducerSerializer),
-        "viti_area": (VitiAreas, VitiAreaSerializer),
-        "wine_type": (WineTypes, WineTypeSerializer),
-        "wine": (Wines, WineSerializer),
-    }
-    obj_id = request.GET.get("id")
-    model, serializer = relations[obj_name]
-    try:
-        obj = model.objects.get(id=obj_id)
-    except model.DoesNotExist:
-        return JsonResponse({})
-    return JsonResponse(serializer(obj).data, safe=False)
-
-
 def grape(request):
     r"""Creates combined serialization of WineGrapes and Grapes objects
     given a wine id as a HTTP request argument 'id'."""
@@ -89,11 +63,55 @@ def grape(request):
     return JsonResponse(content, safe=False)
 
 
-def graph(request, id_: int):
+class ColorList(generics.ListAPIView):
+    r"""Allows queries about Colors based on their id."""
+    queryset = Colors.objects.all()
+    serializer_class = ColorSerializer
+    filter_fields = ("id",)
+
+
+class ProducerList(generics.ListAPIView):
+    r"""Allows queries about Producers based on their Region and id."""
+    queryset = Producers.objects.all()
+    serializer_class = ProducerSerializer
+    filter_fields = ("id", "region_id")
+
+
+class RegionList(generics.ListAPIView):
+    r"""Allow queries about Regions based on their id."""
+    queryset = Regions.objects.all()
+    serializer_class = RegionSerializer
+    filter_fields = ("id",)
+
+
+class VitiAreaList(generics.ListAPIView):
+    r"""Allow queries about VitiAreas based on their id and Region."""
+    queryset = VitiAreas.objects.all()
+    serializer_class = VitiAreaSerializer
+    filter_fields = ("id", "region_id")
+
+
+class WineTypeList(generics.ListAPIView):
+    r"""Allow queries about WineTypes based on their id."""
+    queryset = WineTypes.objects.all()
+    serializer_class = WineTypeSerializer
+    filter_fields = ("id",)
+
+
+class WineList(generics.ListAPIView):
+    r"""Allow queries about Wines based on their id, Color, Producer, VitiArea,
+    and WineType."""
+    queryset = Wines.objects.all()
+    serializer_class = WineSerializer
+    filter_fields = ("id", "color_id", "producer_id", "viti_area_id",
+                     "wine_type_id")
+
+
+def graph(request, wine_id: int):
     r"""View for starting the wine graph with a wine with the id of the argument
     `id`."""
     context = {
-        "id": id_,
+        "id": wine_id,
         "page_name": "Wine Graph",
     }
     return render(request, "graph.html", context)

@@ -3,18 +3,14 @@ GET wine data, not to modify it."""
 # pylint: disable=invalid-name
 from django.urls import path
 
-from rest.views import grape, generic_serialize, generic_all_names, region_all_names
+from rest.views import (
+    generic_all_names, region_all_names, grape, graph, ColorList, RegionList,
+    ProducerList, VitiAreaList, WineTypeList, WineList
+)
 
 
 urlpatterns = [
-    path("color/", generic_serialize, kwargs={"obj_name": "color"}, name="REST Color"),
-    path("region/", generic_serialize, kwargs={"obj_name": "region"}, name="REST Region"),
-    path("producer/", generic_serialize, kwargs={"obj_name": "producer"}, name="REST Producer"),
-    path("viti-area/", generic_serialize, kwargs={"obj_name": "viti_area"}, name="REST Viti Area"),
-    path("wine-type/", generic_serialize, kwargs={"obj_name": "wine_type"}, name="REST Wine Type"),
-    path("wine/", generic_serialize, kwargs={"obj_name": "wine"}, name="REST Wine"),
-    path("grape/", grape, name="REST Grape"),
-    # Name serializers
+    # Name serializers primarily used for autocomplete
     path("colors/all/", generic_all_names, kwargs={"obj_name": "color"},
          name="Get Colors JSON"),
     path("regions/all/", region_all_names, name="Get Regions JSON"),
@@ -28,4 +24,16 @@ urlpatterns = [
          name="Get WineTypes JSON"),
     path("viti-areas/all/", generic_all_names, kwargs={"obj_name": "viti-area"},
          name="Get VitiAreas JSON"),
+
+    # Graph related views
+    path("color/", ColorList.as_view(), name="REST Color"),
+    path("region/", RegionList.as_view(), name="REST Region"),
+    path("producer/", ProducerList.as_view(), name="REST Producer"),
+    path("viti-area/", VitiAreaList.as_view(), name="REST Viti Area"),
+    path("wine-type/", WineTypeList.as_view(), name="REST Wine Type"),
+    path("wine/", WineList.as_view(), name="REST Wine"),
+    path("grape/", grape, name="REST Grape"),
+
+    # Graph
+    path("graph/<int:wine_id>/", graph, name="Graph"),
 ]
