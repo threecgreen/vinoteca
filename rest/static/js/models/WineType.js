@@ -19,7 +19,7 @@ var WineType = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/wine-type/", { id: id }, function (responseJSON) {
-            _this.name = responseJSON.items[0]["name"];
+            _this.name = responseJSON[0]["name"];
         });
         return _this;
     }

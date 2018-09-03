@@ -18,7 +18,7 @@ export class WineType extends GraphModel {
         super();
         this.id = id;
         $.getJSON("/rest/wine-type/", {id}, (responseJSON) => {
-            this.name = responseJSON.items[0]["name"];
+            this.name = responseJSON[0]["name"];
         });
     }
 

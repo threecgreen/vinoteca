@@ -3,7 +3,6 @@
 import { Wine } from "./models/Wine.js";
 var GraphContainer = /** @class */ (function () {
     function GraphContainer(wineId) {
-        console.log("hello");
         this.container = new sigma("graph-container");
         var wine = new Wine(wineId);
         this.addNode(wine);
@@ -35,5 +34,6 @@ var GraphContainer = /** @class */ (function () {
     };
     return GraphContainer;
 }());
-export { GraphContainer };
+// @ts-ignore
+var container = new GraphContainer(800);
 //# sourceMappingURL=GraphContainer.js.map

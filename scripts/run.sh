@@ -28,7 +28,7 @@ parse_args()
 parse_args $@
 
 # Only backup db if --backup-db arg passed
-if [ BACKUP_DB = "true" ]; then
+if [ $BACKUP_DB = "true" ]; then
     info_text "Backing up database..."
     cp -a "$root_dir/data/wine.db" "$root_dir/data/wine_$(date +"%y%m%d_%H%M%S").db"
 fi
@@ -36,7 +36,7 @@ fi
 find_python_env
 
 # Run browser if the user didn't pass --no-tab/-n
-if [ NO_TAB = "false" ]; then
+if [ $NO_TAB == "false" ]; then
     info_text "Attempting to open browser..."
     cmd=false
     case `uname -a` in
@@ -49,10 +49,12 @@ if [ NO_TAB = "false" ]; then
         *) info_text "Don't know how to open URLs on "`uname`;;
     esac
     if [ "$cmd" == "windows" ] ; then
-        (sleep 4; cmd.exe /c "start http://localhost:8000")&
+        (sleep 2; cmd.exe /c "start http://localhost:8000")&
     elif [ "$cmd" != "false" ] ; then
-        (sleep 4;$(cmd) http://localhost:8000)&
+        (sleep 2;$cmd http://localhost:8000)&
     fi
+else
+    echo "What happened?"
 fi
 
 # Run django server

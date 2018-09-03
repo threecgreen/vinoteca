@@ -19,7 +19,7 @@ var Region = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/region/", { id: id }, function (responseJSON) {
-            var region = responseJSON.items[0];
+            var region = responseJSON[0];
             _this.name = region["name"];
             _this.isUS = region["is_us"] === 1;
         });

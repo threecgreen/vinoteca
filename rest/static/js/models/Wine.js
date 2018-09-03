@@ -23,7 +23,7 @@ var Wine = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.id = id;
         $.getJSON("/rest/wine/", { id: id }, function (responseJSON) {
-            var wine = responseJSON.items[0]["name"];
+            var wine = responseJSON[0];
             _this.name = wine["name"];
             _this.producer = wine["producer"];
             // Always fetch wine_type since it is part of the full name (name + type)
@@ -37,6 +37,9 @@ var Wine = /** @class */ (function (_super) {
         return Wine.instances[id];
     };
     Wine.prototype.label = function () {
+        if (this.wineType === null) {
+            setTimeout(this.label(), 500);
+        }
         return this.name ? this.name + " " + this.wineType.name : this.wineType.name;
     };
     Wine.prototype.getRelatedObjects = function () {
