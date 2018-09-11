@@ -81,14 +81,14 @@ class RegionList(generics.ListAPIView):
     r"""Allow queries about Regions based on their id."""
     queryset = Regions.objects.all()
     serializer_class = RegionSerializer
-    filter_fields = ("id",)
+    filter_fields = ("id", "producers__name")
 
 
 class VitiAreaList(generics.ListAPIView):
     r"""Allow queries about VitiAreas based on their id and Region."""
     queryset = VitiAreas.objects.all()
     serializer_class = VitiAreaSerializer
-    filter_fields = ("id", "region_id")
+    filter_fields = ("id", "region__name")
 
 
 class WineTypeList(generics.ListAPIView):

@@ -5,8 +5,8 @@ export function toggleRegion(producer, region, producerRegionURL, producersURL) 
     $(producer).on("change", function () {
         $.getJSON(producersURL, function (producersJSON) {
             if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
-                $.getJSON(producerRegionURL, { producer: $(producer).val() }, function (regionJSON) {
-                    $(region).val(regionJSON["region_name"]);
+                $.getJSON(producerRegionURL, { producers__name: $(producer).val() }, function (regionJSON) {
+                    $(region).val(regionJSON[0]["name"]);
                     $(region).prop("disabled", true);
                     $("label[for='auto-country']").text("");
                     // Update viticulture area autocomplete
