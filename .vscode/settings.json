@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
+    "python.linting.pylintEnabled": true,
+    "cSpell.words": [
+        "vinoteca"
+    ],
+    "python.linting.enabled": true
+}
