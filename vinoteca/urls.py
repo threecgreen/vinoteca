@@ -7,8 +7,7 @@ from django.views.static import serve
 from vinoteca.views import simple_page, home
 from dashboards.views import dashboards
 from new_purchase.views import (
-    prev_purchase, prev_new_purchase_search, first_new_purchase,
-    get_producer_region, get_region_viti_areas, search_wines
+    prev_purchase, prev_new_purchase_search, first_new_purchase, search_wines
 )
 from view.views import (
     wine_profile, edit_wine, delete_wine, edit_purchase, delete_purchase,
@@ -44,9 +43,7 @@ urlpatterns = [
     path("new/first-time/", first_new_purchase, name="New Purchase First"),
     path("new/prev-purchased/", prev_new_purchase_search, name="New Purchase Search"),
 
-    # JSON patterns
-    path("producers/region/", get_producer_region, name="Get Producer Region JSON"),
-    path("regions/viti-areas/", get_region_viti_areas, name="Get Region Viti Areas JSON"),
+    # Search
     path("new/search-wines/", search_wines, name="Search Wines JSON"),
 
     # Other profiles

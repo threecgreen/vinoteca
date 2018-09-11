@@ -20,28 +20,6 @@ from vinoteca.utils import (
 )
 
 
-def get_producer_region(request) -> JsonResponse:
-    r"""Given a producer, return its region in JSON."""
-    # TODO: Move to Rest?
-    producer = request.GET.get("producer")
-    region = Regions.objects.filter(producers__name=producer)
-    if region:
-        return JsonResponse({"region_name": region[0].name
-                                            if region else None})
-    return JsonResponse({"region_name": None})
-
-
-def get_region_viti_areas(request) -> JsonResponse:
-    r"""Given a region, retrieve all the region's viticultural areas and return
-    as JSON."""
-    # TODO: Move to Rest?
-    region = request.GET.get("region")
-    viti_areas = VitiAreas.objects.filter(region__name=region)
-    if region:
-        return JsonResponse({area.name: None for area in viti_areas})
-    return JsonResponse({})
-
-
 def search_wines(request) -> JsonResponse:
     r"""Render a search results table inserted into a JSON object for live
     search results of existing wines."""

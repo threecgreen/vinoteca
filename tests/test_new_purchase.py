@@ -10,8 +10,6 @@ from vinoteca.models import VitiAreas, Wines
     reverse("New Purchase Search"),
     reverse("New Purchase First"),
     # reverse("New Purchase Wine"),
-    reverse("Get Producer Region JSON"),
-    reverse("Get Region Viti Areas JSON"),
     reverse("Search Wines JSON"),
 ])
 def test_pages(client, page):
