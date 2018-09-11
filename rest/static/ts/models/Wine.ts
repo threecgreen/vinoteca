@@ -22,7 +22,7 @@ export class Wine extends GraphModel {
     public producer: number | Producer;
     public wineType: WineType;
     public color: number | Color;
-    public vitiArea: number | VitiArea;
+    public vitiArea: Maybe<number | VitiArea>;
 
     constructor(id: number) {
         super();
@@ -79,7 +79,7 @@ export class Wine extends GraphModel {
     }
 
     public fetchVitiArea() {
-        if (!(this.vitiArea instanceof VitiArea)) {
+        if (this.vitiArea && !(this.vitiArea instanceof VitiArea)) {
             this.vitiArea = new VitiArea(this.vitiArea as number);
         }
     }

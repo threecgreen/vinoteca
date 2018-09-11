@@ -70,7 +70,7 @@ var Wine = /** @class */ (function (_super) {
         }
     };
     Wine.prototype.fetchVitiArea = function () {
-        if (!(this.vitiArea instanceof VitiArea)) {
+        if (this.vitiArea && !(this.vitiArea instanceof VitiArea)) {
             this.vitiArea = new VitiArea(this.vitiArea);
         }
     };
