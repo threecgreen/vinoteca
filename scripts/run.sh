@@ -53,8 +53,6 @@ if [ $NO_TAB == "false" ]; then
     elif [ "$cmd" != "false" ] ; then
         (sleep 2;$cmd http://localhost:8000)&
     fi
-else
-    echo "What happened?"
 fi
 
 # Run django server

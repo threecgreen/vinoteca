@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from view.views import wine_profile_base
-from vinoteca.models import Colors, Regions, Stores, VitiAreas, Wines
+from vinoteca.models import Colors, Stores, Wines
 from vinoteca.views import get_connection
 from vinoteca.utils import (
     g_or_c_region, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine,
