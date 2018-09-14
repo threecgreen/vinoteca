@@ -16,4 +16,11 @@ export function pipe(val) {
 export function elementExists(elem) {
     return typeof (elem) !== "undefined" && elem.length > 0;
 }
+export function flattenToDict(objects) {
+    var dict = {};
+    objects.map(function (obj) {
+        dict[obj.name] = null;
+    });
+    return dict;
+}
 //# sourceMappingURL=utils.js.map

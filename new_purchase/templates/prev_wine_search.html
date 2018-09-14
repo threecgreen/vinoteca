@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block new-nav %}class="active"{% endblock %}
 {% block body %}
     <div class="container">
@@ -72,8 +73,6 @@ $(function(){
     autocomplete("producer");
     autocomplete("region");
     autocomplete("viti-area");
-
-    toggleRegion(producer, region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
 
     resetFormBtn();
     liveWineSearch($(".input-field"), "{% url "Search Wines JSON" %}", $("#auto-wine-type"), $("#color"), producer,
