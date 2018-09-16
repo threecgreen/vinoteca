@@ -1,7 +1,7 @@
 {% extends 'wine_profile_base.html' %}
 {% load static %}
 {% block wine-title %}
-    <h2 class="pink-text text-darken-3">Edit wine information</h2>
+    <h3 class="page-title">Edit wine information</h3>
     <div class="row">
         <form class="col s12" action="" method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
@@ -223,14 +223,14 @@ $(function() {
     $('select').material_select();
     autocomplete("wine-type");
     autocomplete("producer");
-    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
+    toggleRegion($('#auto-producer'), region, "{% url "REST Region" %}", "{% url "Get Producers JSON" %}");
     autocomplete("region");
     {% if rating %}
         toggleRating($("#has-rating")[0], $("#rating")[0], true);
     {% else %}
         toggleRating($("#has-rating")[0], $("#rating")[0], false);
     {% endif %}
-    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Region Viti Areas JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "REST Viti Area" %}");
     showNextGrapeInput($(".grape-btn"));
 });
 {# Gave weird error when in same document ready function #}
