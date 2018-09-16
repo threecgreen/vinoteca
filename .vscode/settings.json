@@ -4,5 +4,11 @@
     "cSpell.words": [
         "vinoteca"
     ],
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.unitTest.pyTestArgs": [
+        "tests"
+    ],
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.pyTestEnabled": true
 }
