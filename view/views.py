@@ -182,7 +182,7 @@ class EditWineView(WineProfileView):
 
 
 class EditPurchaseView(WineProfileView):
-    template_name = "edit_purchases.html"
+    template_name = "edit_purchase.html"
 
     def get(self, request, wine_id: int, purchase_id: int):
         context = self.get_base_context(wine_id, do_purchases=False)
