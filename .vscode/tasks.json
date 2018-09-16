@@ -73,7 +73,7 @@
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": false
-            },
+            }
         },
         {
             "label": "Tslint",
@@ -89,7 +89,25 @@
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": false
+            }
+        },
+        {
+            "label": "SASS",
+            "type": "shell",
+            "command": "sass",
+            "args": [
+                "--watch",
+                "${workspaceRoot}/vinoteca/static/css/vinoteca-style.sass"
+            ],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "never",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false
             },
+            "problemMatcher": []
         },
         {
             "label": "Pytest",
@@ -102,7 +120,7 @@
                 "focus": false,
                 "panel": "dedicated",
                 "showReuseMessage": false
-            },
-        },
+            }
+        }
     ],
 }
