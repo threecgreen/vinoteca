@@ -10,8 +10,6 @@ from vinoteca.models import VitiAreas, Wines
     reverse("New Purchase Search"),
     reverse("New Purchase First"),
     # reverse("New Purchase Wine"),
-    reverse("Get Producer Region JSON"),
-    reverse("Get Region Viti Areas JSON"),
     reverse("Search Wines JSON"),
 ])
 def test_pages(client, page):
@@ -25,23 +23,20 @@ def test_pages(client, page):
 ])
 @pytest.mark.django_db
 def test_get_producer_region(client, producer, region):
-    response = client.get("/producers/region/", {"producer": producer})
+    response = client.get(reverse("REST Region"), {"producers__name": producer})
     assert response.status_code == 200
     if region:
-        assert response.json()["region_name"] == region
+        assert response.json()[0]["name"] == region
     else:
-        assert response.json()["region_name"] is None
+        assert len(response.json()) == 0
 
 
-@pytest.mark.parametrize("region", ["France", "California", ""])
+@pytest.mark.parametrize("region", ["France", "California"])
 @pytest.mark.django_db
 def test_get_region_viti_area(client, region):
-    response = client.get("/regions/viti-areas/", {"region": region})
+    response = client.get(reverse("REST Viti Area"), {"region__name": region})
     assert response.status_code == 200
-    if len(region) == 0:
-        assert len(response.json().keys()) == 0
-    else:
-        assert len(response.json().keys()) > 0
+    assert len(response.json()) == VitiAreas.objects.filter(region__name=region).count()
 
 
 @pytest.mark.parametrize("wine_type,color,producer,region,viti_area", [

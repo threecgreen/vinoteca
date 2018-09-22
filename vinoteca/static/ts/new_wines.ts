@@ -1,6 +1,8 @@
 /// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
 /// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
 
+import { flattenToDict, IRESTObject } from "./utils.js";
+
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
                              producerRegionURL: string, producersURL: string): void {
@@ -8,8 +10,10 @@ export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<
     $(producer).on("change", () => {
         $.getJSON(producersURL, (producersJSON) => {
             if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
-                $.getJSON(producerRegionURL, { producer: $(producer).val() }, (regionJSON) => {
-                    $(region).val(regionJSON["region_name"]);
+                $.getJSON(producerRegionURL,
+                          { producers__name: $(producer).val() },
+                          (regionJSON) => {
+                    $(region).val(regionJSON[0]["name"]);
                     $(region).prop("disabled", true);
                     $("label[for='auto-country']").text("");
                     // Update viticulture area autocomplete
@@ -29,9 +33,11 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
                                          vitiArea: JQuery<HTMLInputElement>,
                                          getJSONURL: string): void {
     $(region).on("change", function() {
-        $.get(getJSONURL, { region: $(this).val() }, (responseJSON) => {
+        $.get(getJSONURL, { region__name: $(this).val() }, (responseJSON) => {
+            // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
+            // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
-                data: responseJSON,
+                data: flattenToDict(responseJSON as IRESTObject[]),
                 limit: 5,
                 minLength: 1,
             });
@@ -108,7 +114,6 @@ export function liveWineSearch(searchParams: Array<JQuery<HTMLInputElement>>, se
         if (event.originalEvent) {
             return;
         }
-        clearTable();
         // Send search fields data to Search Wines URL
         $.get(searchURL, {
             color: color.val(),
@@ -117,6 +122,7 @@ export function liveWineSearch(searchParams: Array<JQuery<HTMLInputElement>>, se
             viti_area: vitiArea.val(),
             wine_type: wineType.val(),
         }, (searchResultsJSON) => {
+            clearTable();
             // Update search results with received data
             // Greater than 1 because spaces count in length
             if (searchResultsJSON["results"].length > 1) {

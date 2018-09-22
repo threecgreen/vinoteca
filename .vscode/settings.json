@@ -1,0 +1,14 @@
+{
+    "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
+    "python.linting.pylintEnabled": true,
+    "cSpell.words": [
+        "vinoteca"
+    ],
+    "python.linting.enabled": true,
+    "python.unitTest.pyTestArgs": [
+        "tests"
+    ],
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.pyTestEnabled": true
+}

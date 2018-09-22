@@ -46,12 +46,12 @@ def test_g_or_c_region(region):
     ("No Region Producer", False)
 ])
 @pytest.mark.django_db
-def test_g_or_c_producer(producer, region):
-    region = california() if region else None
+def test_g_or_c_producer(producer, region, california):
+    region = california if region else None
     producer = g_or_c_producer(producer, region)
     assert isinstance(producer, Producers)
     if region:
-        assert producer.region == california()
+        assert producer.region == california
 
 
 @pytest.mark.parametrize("viti_area,region", [
@@ -60,8 +60,8 @@ def test_g_or_c_producer(producer, region):
     ("No Region VA", False)
 ])
 @pytest.mark.django_db
-def test_g_or_c_viti_area(viti_area, region):
-    region = california() if region else None
+def test_g_or_c_viti_area(viti_area, region, california):
+    region = california if region else None
     if region:
         viti_area = g_or_c_viti_area(viti_area, region)
         assert isinstance(viti_area, VitiAreas)

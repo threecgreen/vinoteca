@@ -10,36 +10,14 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
-from view.views import wine_profile_base
-from vinoteca.models import Colors, Regions, Stores, VitiAreas, Wines
+from view.views import WineProfileView
+from vinoteca.models import Colors, Stores, Wines
 from vinoteca.views import get_connection
 from vinoteca.utils import (
     g_or_c_region, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine,
     c_purchase, empty_to_none, g_or_c_viti_area, default_vintage_year,
     convert_to_png, handle_grapes
 )
-
-
-def get_producer_region(request) -> JsonResponse:
-    r"""Given a producer, return its region in JSON."""
-    # TODO: Move to Rest?
-    producer = request.GET.get("producer")
-    region = Regions.objects.filter(producers__name=producer)
-    if region:
-        return JsonResponse({"region_name": region[0].name
-                                            if region else None})
-    return JsonResponse({"region_name": None})
-
-
-def get_region_viti_areas(request) -> JsonResponse:
-    r"""Given a region, retrieve all the region's viticultural areas and return
-    as JSON."""
-    # TODO: Move to Rest?
-    region = request.GET.get("region")
-    viti_areas = VitiAreas.objects.filter(region__name=region)
-    if region:
-        return JsonResponse({area.name: None for area in viti_areas})
-    return JsonResponse({})
 
 
 def search_wines(request) -> JsonResponse:
@@ -176,28 +154,27 @@ def prev_new_purchase_search(request):
     return render(request, "prev_wine_search.html", context)
 
 
-def insert_new_purchase(request, wine_id):
-    r"""Logic for handling a new wine purchase. Creates a new Purchases
-    object."""
-    store = empty_to_none(request.POST.get("store"))
-    purchase_date = empty_to_none(request.POST.get("purchase-date"))
-    price = empty_to_none(request.POST.get("price"))
-    if price:
-        price = float(price)
-    memo = empty_to_none(request.POST.get("memo"))
-    vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
-    quantity = int(request.POST.get("quantity"))
-    store = g_or_c_store(store)
-    wine = Wines.objects.get(id=wine_id)
-    c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
-    return redirect("Wine Profile", wine_id=wine_id)
+class NewPurchaseExistingWineView(WineProfileView):
+    template_name = "prev_wine.html"
 
+    def post(self, request, wine_id: int):
+        r"""Logic for handling a new wine purchase. Creates a new Purchases
+        object."""
+        store = empty_to_none(request.POST.get("store"))
+        purchase_date = empty_to_none(request.POST.get("purchase-date"))
+        price = empty_to_none(request.POST.get("price"))
+        if price:
+            price = float(price)
+        memo = empty_to_none(request.POST.get("memo"))
+        vintage = int(request.POST.get("vintage")) if request.POST.get("vintage") else None
+        quantity = int(request.POST.get("quantity"))
+        store = g_or_c_store(store)
+        wine = Wines.objects.get(id=wine_id)
+        c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
+        return redirect("Wine Profile", wine_id=wine_id)
 
-def prev_purchase(request, wine_id):
-    r"""View for a previously purchased wine with a new purchase to be added."""
-    if request.method == "POST":
-        return insert_new_purchase(request, wine_id)
-    context = wine_profile_base(wine_id)
-    context["stores"] = Stores.objects.all()
-    context["default_vintage"] = default_vintage_year()
-    return render(request, "prev_wine.html", context)
+    def get(self, request, wine_id: int):
+        context = self.get_base_context(wine_id)
+        context["stores"] = Stores.objects.all()
+        context["default_vintage"] = default_vintage_year()
+        return render(request, self.template_name, context)

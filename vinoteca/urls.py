@@ -7,21 +7,22 @@ from django.views.static import serve
 from vinoteca.views import simple_page, home
 from dashboards.views import dashboards
 from new_purchase.views import (
-    prev_purchase, prev_new_purchase_search, first_new_purchase,
-    get_producer_region, get_region_viti_areas, search_wines
+    prev_new_purchase_search, first_new_purchase, search_wines,
+    NewPurchaseExistingWineView
 )
 from view.views import (
-    wine_profile, edit_wine, delete_wine, edit_purchase, delete_purchase,
-    change_inventory, edit_producer, producer_profile, region_profile,
-    wine_type_profile, wine_table, inventory
+    delete_wine, delete_purchase, EditPurchaseView, change_inventory,
+    edit_producer, producer_profile, region_profile, wine_type_profile,
+    wine_table, inventory, WineProfileView, EditWineView
 )
 
 wine_patterns = [
-    path("<int:wine_id>/", wine_profile, name="Wine Profile"),
-    path("<int:wine_id>/new-purchase/", prev_purchase, name="New Purchase Wine"),
-    path("<int:wine_id>/edit/", edit_wine, name="Edit Wine"),
+    path("<int:wine_id>/", WineProfileView.as_view(), name="Wine Profile"),
+    path("<int:wine_id>/new-purchase/", NewPurchaseExistingWineView.as_view(),
+         name="New Purchase Wine"),
+    path("<int:wine_id>/edit/", EditWineView.as_view(), name="Edit Wine"),
     path("<int:wine_id>/edit/delete/confirmed/", delete_wine, name="Delete Wine"),
-    path("<int:wine_id>/edit/<int:purchase_id>/", edit_purchase, name="Edit Purchase"),
+    path("<int:wine_id>/edit/<int:purchase_id>/", EditPurchaseView.as_view(), name="Edit Purchase"),
     path("<int:wine_id>/edit/<int:purchase_id>/delete/", delete_purchase,
          name="Delete Purchase"),
     path("<int:wine_id>/change/<slug:sign>/", change_inventory, name="Change Inventory"),
@@ -44,9 +45,7 @@ urlpatterns = [
     path("new/first-time/", first_new_purchase, name="New Purchase First"),
     path("new/prev-purchased/", prev_new_purchase_search, name="New Purchase Search"),
 
-    # JSON patterns
-    path("producers/region/", get_producer_region, name="Get Producer Region JSON"),
-    path("regions/viti-areas/", get_region_viti_areas, name="Get Region Viti Areas JSON"),
+    # Search
     path("new/search-wines/", search_wines, name="Search Wines JSON"),
 
     # Other profiles

@@ -3,7 +3,7 @@
 {% block new-nav %}class="active"{% endblock %}
 {% block body %}
     <div class="container">
-        <h2 class="pink-text text-darken-3">Enter new wine information</h2>
+        <h3 class="page-title">Enter new wine information</h3>
 
         <div class="row">
             {# enctype for multimedia upload #}
@@ -223,8 +223,8 @@ $(function() {
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
 
     const region = $('#auto-region');
-    toggleRegion($('#auto-producer'), region, "{% url "Get Producer Region JSON" %}", "{% url "Get Producers JSON" %}");
-    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "Get Region Viti Areas JSON" %}");
+    toggleRegion($('#auto-producer'), region, "{% url "REST Region" %}", "{% url "Get Producers JSON" %}");
+    updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "REST Viti Area" %}");
 
     toggleRating($('#has-rating')[0], $('#rating')[0]);
 

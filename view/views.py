@@ -8,6 +8,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
+from django.views import View
 
 from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, Wines, WineTypes,
@@ -86,58 +87,64 @@ def wine_table(request):
     return render(request, "wines_table.html", context)
 
 
-def wine_profile_base(wine_id: int, do_purchases: bool = True):
-    r"""Base view used by several other view functions. If `do_purchases` is
-    true, it will also fetch purchases if argument `do_purchases` is true."""
-    # TODO: refactor to class-based view for wines
-    wine = Wines.objects \
-        .prefetch_related("wine_type", "color", "producer", "producer__region",
-                          "viti_area") \
-        .get(id=wine_id)
-    # Get the vintage of the most recent purchase
-    recent_vintage_query = """
-                SELECT
-                    p.vintage
-                FROM purchases p
-                INNER JOIN (
+class WineProfileView(View):
+    template_name = "wine_profile_base.html"
+
+    def get_base_context(self, wine_id: int, do_purchases: bool = True):
+        wine = Wines.objects \
+            .prefetch_related("wine_type", "color", "producer", "producer__region",
+                            "viti_area") \
+            .get(id=wine_id)
+        # Get the vintage of the most recent purchase
+        recent_vintage_query = """
                     SELECT
-                        max(date) as max_date
-                    FROM purchases
-                    WHERE wine_id = ?
-                ) sub ON sub.max_date = p.date
-                WHERE wine_id = ? ;
-            """
-    conn = get_connection()
-    cursor = conn.cursor()
-    recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
-    conn.close()
-    grapes = (WineGrapes.objects
-              .filter(wine__id=wine.id)
-              .order_by("-percent", "grape__name"))
-    has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
+                        p.vintage
+                    FROM purchases p
+                    INNER JOIN (
+                        SELECT
+                            max(date) as max_date
+                        FROM purchases
+                        WHERE wine_id = ?
+                    ) sub ON sub.max_date = p.date
+                    WHERE wine_id = ? ;
+                """
+        conn = get_connection()
+        cursor = conn.cursor()
+        recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
+        conn.close()
+        grapes = (WineGrapes.objects
+                .filter(wine__id=wine.id)
+                .order_by("-percent", "grape__name"))
+        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
 
-    context = {
-        "grapes": list(grapes),
-        "recent_vintage": recent_vintage[0] if recent_vintage else None,
-        "wine": wine,
-        "has_img": has_img,
-        "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
-    }
-    if do_purchases:
-        context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
-            .prefetch_related("store") \
-            .order_by("-date")
-    return context
+        context = {
+            "grapes": list(grapes),
+            "recent_vintage": recent_vintage[0] if recent_vintage else None,
+            "wine": wine,
+            "has_img": has_img,
+            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
+        }
+        if do_purchases:
+            context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
+                .prefetch_related("store") \
+                .order_by("-date")
+        return context
+
+    def get(self, request, wine_id: int):
+        context = self.get_base_context(wine_id)
+        return render(request, self.template_name, context)
 
 
-def wine_profile(request, wine_id: int):
-    context = wine_profile_base(wine_id)
-    return render(request, "wine_profile_base.html", context)
+class EditWineView(WineProfileView):
+    template_name = "edit_wine.html"
 
+    def get(self, request, wine_id: int):
+        r"""View for editing attributes of a wine."""
+        context = self.get_base_context(wine_id)
+        context["colors"] = Colors.objects.all()
+        return render(request, self.template_name, context)
 
-def edit_wine(request, wine_id: int):
-    r"""View for editing attributes of a wine."""
-    if request.method == "POST":
+    def post(self, request, wine_id: int):
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
         region = empty_to_none(request.POST.get("region"))
@@ -172,15 +179,18 @@ def edit_wine(request, wine_id: int):
             convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
 
         return redirect("Wine Profile", wine_id=wine_id)
-    else:
-        context = wine_profile_base(wine_id)
-        context["colors"] = Colors.objects.all()
-        return render(request, "edit_wine.html", context)
 
 
-def edit_purchase(request, wine_id: int, purchase_id: int):
-    r"""View for editing attributes of a particular wine purchase."""
-    if request.method == "POST":
+class EditPurchaseView(WineProfileView):
+    template_name = "edit_purchase.html"
+
+    def get(self, request, wine_id: int, purchase_id: int):
+        context = self.get_base_context(wine_id, do_purchases=False)
+        purchase = Purchases.objects.get(id=purchase_id)
+        context["purchase"] = purchase
+        return render(request, self.template_name, context)
+
+    def post(self, request, wine_id: int, purchase_id: int):
         purchase = Purchases.objects.get(id=purchase_id)
         purchase.date = date_str_to_int(request.POST.get("purchase-date"))
         purchase.quantity = empty_to_none(request.POST.get("quantity"), int)
@@ -190,10 +200,6 @@ def edit_purchase(request, wine_id: int, purchase_id: int):
         purchase.store = g_or_c_store(request.POST.get("store"))
         purchase.save()
         return redirect("Edit Wine", wine_id=wine_id)
-    context = wine_profile_base(wine_id, do_purchases=False)
-    purchase = Purchases.objects.get(id=purchase_id)
-    context["purchase"] = purchase
-    return render(request, "edit_purchase.html", context)
 
 
 def producer_profile(request, producer_id: int):

@@ -67,35 +67,35 @@ class ColorList(generics.ListAPIView):
     r"""Allows queries about Colors based on their id."""
     queryset = Colors.objects.all()
     serializer_class = ColorSerializer
-    filter_fields = ("id",)
+    filterset_fields = ("id",)
 
 
 class ProducerList(generics.ListAPIView):
     r"""Allows queries about Producers based on their Region and id."""
     queryset = Producers.objects.all()
     serializer_class = ProducerSerializer
-    filter_fields = ("id", "region_id")
+    filterset_fields = ("id", "region_id")
 
 
 class RegionList(generics.ListAPIView):
     r"""Allow queries about Regions based on their id."""
     queryset = Regions.objects.all()
     serializer_class = RegionSerializer
-    filter_fields = ("id",)
+    filterset_fields = ("id", "producers__name")
 
 
 class VitiAreaList(generics.ListAPIView):
     r"""Allow queries about VitiAreas based on their id and Region."""
     queryset = VitiAreas.objects.all()
     serializer_class = VitiAreaSerializer
-    filter_fields = ("id", "region_id")
+    filterset_fields = ("id", "region__name")
 
 
 class WineTypeList(generics.ListAPIView):
     r"""Allow queries about WineTypes based on their id."""
     queryset = WineTypes.objects.all()
     serializer_class = WineTypeSerializer
-    filter_fields = ("id",)
+    filterset_fields = ("id",)
 
 
 class WineList(generics.ListAPIView):
@@ -103,7 +103,7 @@ class WineList(generics.ListAPIView):
     and WineType."""
     queryset = Wines.objects.all()
     serializer_class = WineSerializer
-    filter_fields = ("id", "color_id", "producer_id", "viti_area_id",
+    filterset_fields = ("id", "color_id", "producer_id", "viti_area_id",
                      "wine_type_id")
 
 

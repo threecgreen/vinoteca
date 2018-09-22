@@ -34,3 +34,16 @@ export function pipe<T>(val: T): IPipe<T> {
 export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) !== "undefined" && elem.length > 0;
 }
+
+export interface IRESTObject {
+    id: number;
+    name: string;
+}
+
+export function flattenToDict(objects: IRESTObject[]) {
+    const dict: IDict<string> = {};
+    objects.map((obj) => {
+        dict[obj.name] = null;
+    });
+    return dict;
+}
