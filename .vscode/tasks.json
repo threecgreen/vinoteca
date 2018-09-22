@@ -21,25 +21,6 @@
             }
         },
         {
-            "type": "typescript",
-            "tsconfig": "rest/static/tsconfig.json",
-            "option": "watch",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
             "label": "Run Server",
             "type": "shell",
             "command": "${workspaceRoot}/scripts/run.sh",

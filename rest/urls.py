@@ -33,7 +33,4 @@ urlpatterns = [
     path("wine-type/", WineTypeList.as_view(), name="REST Wine Type"),
     path("wine/", WineList.as_view(), name="REST Wine"),
     path("grape/", grape, name="REST Grape"),
-
-    # Graph
-    path("graph/<int:wine_id>/", graph, name="Graph"),
 ]
