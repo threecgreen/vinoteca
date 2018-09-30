@@ -56,17 +56,3 @@ new_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==1 {print $3}' | sed '
 if [ "$old_ver" != "$new_ver" ]; then
     info_text "Successfully updated vinoteca from version $old_ver to $new_ver"
 fi
-
-#read -rp "Would you like to add an alias for vinoteca to your .bashrc? [y/N] " response
-#case "$response" in
-#    [yY][eE][yY])_
-#        # Add to .bashrc
-#        echo -e "alias vinoteca=\"$scripts_dir/cli.py\"" >> $HOME/.bashrc
-#        echo "Successfully added vinoteca alias..."
-#        echo "Bash configuration will need to be reloaded to work."
-#        echo "Either restart the terminal or run: "
-#        echo "$ source ~/.bashrc"
-#        ;;
-#    *)
-#        ;;
-#esac
