@@ -11,12 +11,13 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from view.views import WineProfileView
+from vinoteca.image import UserImage
 from vinoteca.models import Colors, Stores, Wines
 from vinoteca.views import get_connection
 from vinoteca.utils import (
     g_or_c_region, g_or_c_producer, g_or_c_store, g_or_c_wine_type, c_wine,
     c_purchase, empty_to_none, g_or_c_viti_area, default_vintage_year,
-    convert_to_png, handle_grapes
+    handle_grapes
 )
 
 
@@ -126,7 +127,8 @@ def insert_new_purchase_and_wine(request):
         file_sys = FileSystemStorage()
         file_sys.save(str(wine.id) + ".png", wine_image)
         # Convert to PNG to match extension
-        convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine.id}.png").resolve())
+        img = UserImage((Path(settings.MEDIA_ROOT) / f"{wine.id}.png").resolve())
+        img.convert_to_png()
 
     return redirect("Wine Profile", wine_id=wine.id)
 

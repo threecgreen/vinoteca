@@ -10,6 +10,7 @@ from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
 from django.views import View
 
+from vinoteca.image import UserImage
 from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, Wines, WineTypes,
     WineGrapes, VitiAreas
@@ -17,8 +18,7 @@ from vinoteca.models import (
 from vinoteca.utils import (
     get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,
     g_or_c_store, g_or_c_producer, g_or_c_region, flag_exists,
-    empty_to_none, g_or_c_viti_area, get_region_flags, convert_to_png,
-    handle_grapes
+    empty_to_none, g_or_c_viti_area, get_region_flags, handle_grapes
 )
 
 
@@ -176,7 +176,8 @@ class EditWineView(WineProfileView):
             file_sys = FileSystemStorage()
             file_sys.save(str(wine.id) + ".png", wine_image)
             # Convert to PNG to match extension
-            convert_to_png((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
+            img = UserImage((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
+            img.convert_to_png()
 
         return redirect("Wine Profile", wine_id=wine_id)
 

@@ -4,7 +4,7 @@
 from django.conf import settings
 from django.db import migrations
 from pathlib import Path
-from vinoteca.utils import convert_to_png
+from vinoteca.image import UserImage
 
 
 def convert_all_images(apps, schema_editor):
@@ -13,7 +13,7 @@ def convert_all_images(apps, schema_editor):
     # Iterate through image files and ignore '.gitignore'
     for file in media_folder.iterdir():
         if file.is_file() and file.name != ".gitignore":
-            convert_to_png(file.resolve())
+            UserImage(file).convert_to_png()
 
 
 class Migration(migrations.Migration):

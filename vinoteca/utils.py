@@ -1,13 +1,11 @@
 r"""Assorted functions used accross vinoteca. Many are database related or deal
 with parsing POST requests."""
-import os
 import sqlite3
 from datetime import date, datetime
 from pathlib import Path
 from typing import List, Type, Union
 
 from dateutil.relativedelta import relativedelta
-from PIL import Image, ExifTags
 
 from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, VitiAreas,
@@ -164,36 +162,6 @@ def default_vintage_year() -> int:
     r"""Returns the default vintage year, which is two years prior to the
     current year."""
     return (datetime.now() - relativedelta(years=2)).year
-
-
-def convert_to_png(in_file: Union[str, Path]) -> bool:
-    r"""Converts the image file at the given path to a PNG file if it isn't one
-    already."""
-    file_name, _ = os.path.splitext(in_file)
-    out_file = file_name + ".png"
-    try:
-        image = Image.open(in_file)
-    except IOError:
-        return False
-    # Rotate the image if has EXIF orientation flag
-    orientation = None
-    for tag, val in ExifTags.TAGS.items():
-        if val == "Orientation":
-            orientation = tag
-            break
-    if orientation is not None:
-        exif = dict(image._getexif().items())
-        if exif[orientation] == 3:
-            image = image.rotate(180, expand=True)
-        elif exif[orientation] == 6:
-            image = image.rotate(270, expand=True)
-        elif exif[orientation] == 8:
-            image = image.rotate(90, expand=True)
-    try:
-        image.save(out_file)
-    except IOError:
-        return False
-    return True
 
 
 def handle_grapes(request, wine) -> None:
