@@ -115,7 +115,7 @@ def insert_new_purchase_and_wine(request):
     wine_type = g_or_c_wine_type(wine_type)
     region = g_or_c_region(region)
     producer = g_or_c_producer(producer, region)
-    viti_area = g_or_c_viti_area(viti_area, region)
+    viti_area = g_or_c_viti_area(viti_area, producer.region)
     wine = c_wine(description, notes, name, producer, wine_type, color, rating,
                   inventory, viti_area, why)
     c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)

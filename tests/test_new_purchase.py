@@ -82,11 +82,14 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
 
 @pytest.mark.parametrize("store,wine_type,producer,region,description,price,viti_area,why,notes,color,rating,"
                          "vintage,quantity,add_to_inventory,grapes", [
+
     ("Costco", "Sauvignon Blanc", "Rodney Strong", "California", None, "", "", "", "", "red", 8, 2020, 2, True, None),
     ("ABC", "Pinot Noir", "Francais", "France", "desc", 12.23, "Loire", "why", "notes", "white", 2, 2020, 1, False, [
         ("Grape 1", 50),
         ("Grape 2", 50)
-    ])
+    ]),
+    # No region because with autocomplete, the region isn't actually submitted
+    ("Costco", "Sauvignon Blanc", "Rodney Strong", None, None, "", "", "", "", "red", 8, 2020, 2, True, None),
 ])
 @pytest.mark.django_db
 def test_insert_new_purchase(client, store, wine_type, producer, region, description, price, viti_area, why,
