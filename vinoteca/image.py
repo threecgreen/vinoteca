@@ -1,5 +1,6 @@
 r"""Module containing utilities for manipulating and storing user-uploaded
 image files."""
+# pylint: disable=protected-access
 import os
 from pathlib import Path
 from typing import Union
@@ -38,7 +39,8 @@ class UserImage(object):
                 if val == "Orientation":
                     orientation = tag
                     break
-            if orientation is not None and self.image._getexif() is not None:
+            if orientation is not None and hasattr(self.image, "_getexif") \
+                    and  self.image._getexif() is not None:
                 exif = dict(self.image._getexif().items())
                 if exif[orientation] == 3:
                     image = self.image.rotate(180, expand=True)
