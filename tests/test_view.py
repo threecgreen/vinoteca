@@ -2,6 +2,7 @@ from django.urls import reverse
 import pytest
 
 from view.views import *
+from vinoteca.models import Grapes
 
 
 @pytest.fixture

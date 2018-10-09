@@ -5,20 +5,19 @@ from pathlib import Path
 import attr
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from django.http import JsonResponse
 from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render, redirect
 from django.views import View
 
 from vinoteca.image import UserImage
 from vinoteca.models import (
-    Colors, Regions, Grapes, Producers, Purchases, Stores, Wines, WineTypes,
-    WineGrapes, VitiAreas
+    Colors, Regions, Producers, Purchases, Wines, WineTypes, WineGrapes,
+    VitiAreas
 )
 from vinoteca.utils import (
     get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,
     g_or_c_store, g_or_c_producer, g_or_c_region, flag_exists,
-    empty_to_none, g_or_c_viti_area, get_region_flags, handle_grapes
+    empty_to_none, g_or_c_viti_area, handle_grapes
 )
 
 
@@ -88,12 +87,15 @@ def wine_table(request):
 
 
 class WineProfileView(View):
+    r"""Contains views for interacting with a particular wine."""
     template_name = "wine_profile_base.html"
 
-    def get_base_context(self, wine_id: int, do_purchases: bool = True):
+    @staticmethod
+    def get_base_context(wine_id: int, do_purchases: bool = True):
+        r"""Fetches wine data used in several views into context."""
         wine = Wines.objects \
             .prefetch_related("wine_type", "color", "producer", "producer__region",
-                            "viti_area") \
+                              "viti_area") \
             .get(id=wine_id)
         # Get the vintage of the most recent purchase
         recent_vintage_query = """
@@ -113,8 +115,8 @@ class WineProfileView(View):
         recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
         conn.close()
         grapes = (WineGrapes.objects
-                .filter(wine__id=wine.id)
-                .order_by("-percent", "grape__name"))
+                  .filter(wine__id=wine.id)
+                  .order_by("-percent", "grape__name"))
         has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
 
         context = {
@@ -136,6 +138,8 @@ class WineProfileView(View):
 
 
 class EditWineView(WineProfileView):
+    r"""View for editing a particular wine. Inherits from WineProfileView to
+    access get_base_context."""
     template_name = "edit_wine.html"
 
     def get(self, request, wine_id: int):
@@ -144,7 +148,9 @@ class EditWineView(WineProfileView):
         context["colors"] = Colors.objects.all()
         return render(request, self.template_name, context)
 
-    def post(self, request, wine_id: int):
+    @staticmethod
+    def post(request, wine_id: int):
+        r"""View for posting edits to a wine."""
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
         region = empty_to_none(request.POST.get("region"))
@@ -183,15 +189,20 @@ class EditWineView(WineProfileView):
 
 
 class EditPurchaseView(WineProfileView):
+    r"""View for editing the purchase of a wine."""
     template_name = "edit_purchase.html"
 
+    # pylint: disable=arguments-differ
     def get(self, request, wine_id: int, purchase_id: int):
+        r"""Get the edit page."""
         context = self.get_base_context(wine_id, do_purchases=False)
         purchase = Purchases.objects.get(id=purchase_id)
         context["purchase"] = purchase
         return render(request, self.template_name, context)
 
-    def post(self, request, wine_id: int, purchase_id: int):
+    @staticmethod
+    def post(request, wine_id: int, purchase_id: int):
+        r"""Post edits to the purchase."""
         purchase = Purchases.objects.get(id=purchase_id)
         purchase.date = date_str_to_int(request.POST.get("purchase-date"))
         purchase.quantity = empty_to_none(request.POST.get("quantity"), int)

@@ -4,7 +4,7 @@ GET wine data, not to modify it."""
 from django.urls import path
 
 from rest.views import (
-    generic_all_names, region_all_names, grape, graph, ColorList, RegionList,
+    generic_all_names, region_all_names, grape, ColorList, RegionList,
     ProducerList, VitiAreaList, WineTypeList, WineList
 )
 
