@@ -3,7 +3,6 @@ ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
 from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework import generics
 
 from rest.serializers import (
@@ -19,7 +18,7 @@ from vinoteca.models import (
 from vinoteca.utils import get_region_flags
 
 
-def region_all_names(request) -> JsonResponse:
+def region_all_names(_) -> JsonResponse:
     r"""Return regions in JSON with the following format:
     {
         region_name: has_stored_flag
@@ -33,7 +32,7 @@ def region_all_names(request) -> JsonResponse:
 
 
 
-def generic_all_names(request, obj_name: str) -> JsonResponse:
+def generic_all_names(_, obj_name: str) -> JsonResponse:
     r"""Generic rest view for serializing the names of all of one object."""
     relations = {
         "color": (Colors, ColorNamesSerializer),
@@ -104,14 +103,4 @@ class WineList(generics.ListAPIView):
     queryset = Wines.objects.all()
     serializer_class = WineSerializer
     filterset_fields = ("id", "color_id", "producer_id", "viti_area_id",
-                     "wine_type_id")
-
-
-def graph(request, wine_id: int):
-    r"""View for starting the wine graph with a wine with the id of the argument
-    `id`."""
-    context = {
-        "id": wine_id,
-        "page_name": "Wine Graph",
-    }
-    return render(request, "graph.html", context)
+                        "wine_type_id")

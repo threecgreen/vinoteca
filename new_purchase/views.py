@@ -157,9 +157,11 @@ def prev_new_purchase_search(request):
 
 
 class NewPurchaseExistingWineView(WineProfileView):
+    r"""Purchase for viewing a purchase of wine."""
     template_name = "prev_wine.html"
 
-    def post(self, request, wine_id: int):
+    @staticmethod
+    def post(request, wine_id: int):
         r"""Logic for handling a new wine purchase. Creates a new Purchases
         object."""
         store = empty_to_none(request.POST.get("store"))
