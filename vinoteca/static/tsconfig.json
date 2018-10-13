@@ -1,9 +1,11 @@
 {
     "compilerOptions": {
-        "module": "es2015",
+        "module": "commonjs",
+        "target": "es5",
         "sourceMap": true,
+        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "outDir": "js",
+        // "outDir": "js",
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },

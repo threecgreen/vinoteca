@@ -1,5 +1,4 @@
-/// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-/// <reference path="tablesorter.d.ts" />
+import "tablesorter";
 
 /** Set up a tablesorted with paging and cached filter settings. */
 $(() => {

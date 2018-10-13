@@ -26,3 +26,6 @@ media/*.jpg
 scripts/*.cache
 .vscode/.ropeproject/
 .vscode/launch.json
+
+# Node
+node_modules

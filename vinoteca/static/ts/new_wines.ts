@@ -1,7 +1,5 @@
-/// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
-/// <reference path ="../../../node_modules/@types/materialize-css/index.d.ts" />
-
-import { flattenToDict, IRESTObject } from "./utils.js";
+import $ = require("jquery");
+import { flattenToDict, IRESTObject } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,

@@ -1,6 +1,4 @@
-/// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-/// <reference path="../../../node_modules/@types/materialize-css/index.d.ts" />
-/// <reference path="../../../node_modules/@types/pickadate/index.d.ts" />
+import $ = require("jquery");
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {

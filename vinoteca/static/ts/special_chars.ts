@@ -1,8 +1,8 @@
-/// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
+import $ = require("jquery");
 
 const specialCharBtns: JQuery<HTMLLinkElement> = $(".spec-chars");
 const shiftBtn: JQuery<HTMLLinkElement> = $("#shift");
-let textInputs: JQuery<HTMLInputElement> = $("[type=text]");
+const textInputs: JQuery<HTMLInputElement> = $("[type=text]");
 /* Keep track of last active text element */
 let lastInput: string = null;
 

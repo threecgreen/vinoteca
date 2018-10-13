@@ -1,5 +1,3 @@
-/// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 export interface IDict<T> {
     [key: string]: T;

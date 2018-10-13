@@ -1,8 +1,6 @@
-/// <reference path="../../../node_modules/@types/chart.js/index.d.ts" />
-/// <reference path="../../../node_modules/@types/jquery/index.d.ts" />
-
-import { elementExists, IDict, pipe } from "./utils.js";
-import { setTabAccessibility } from "./widgets.js";
+import $ = require("jquery");
+import { elementExists, IDict, pipe } from "./utils";
+import { setTabAccessibility } from "./widgets";
 
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
