@@ -8,6 +8,16 @@
     "python.unitTest.pyTestArgs": [
         "tests"
     ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**cache": true,
+        "**/.coverage": true,
+        ".coveragerc": false,
+    },
     "python.unitTest.unittestEnabled": false,
     "python.unitTest.nosetestsEnabled": false,
     "python.unitTest.pyTestEnabled": true

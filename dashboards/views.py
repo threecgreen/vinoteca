@@ -7,7 +7,7 @@ from typing import List
 import attr
 from django.db.models import Avg, Count, Sum
 from django.db.models.functions import Coalesce
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
@@ -173,3 +173,83 @@ def dashboards(request):
     }
     conn.close()
     return render(request, "dashboards.html", context)
+
+
+def inventory(request):
+    r"""View what wines and how many bottles are in the user's inventory/
+    collection."""
+    @attr.s
+    class InventoryItem(object):
+        r"""Denotes one row of the table."""
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        type = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        vintage = attr.ib(type=int)
+        last_purchase_date = attr.ib(type=str)
+        inventory_cnt = attr.ib(type=int)
+        wine_id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
+
+    query = """
+        SELECT
+            c.name
+            , w.name
+            , wt.name
+            , p.name
+            , r.name
+            , p3.vintage
+            , sub.last_purchase_date
+            , w.inventory
+            , w.id
+            , p.id
+            , r.id
+            , wt.id
+        FROM wines w
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN regions r ON p.region_id = r.id
+            LEFT JOIN colors c ON w.color_id = c.id
+            LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+            LEFT JOIN (
+                SELECT
+                    w2.id
+                    , max(p2.date) as last_purchase_date
+                FROM wines w2
+                    INNER JOIN purchases p2 ON w2.id = p2.wine_id
+                GROUP BY w2.id
+            ) AS sub ON sub.id = w.id
+            LEFT JOIN purchases p3 ON w.id = p3.wine_id AND p3.date = sub.last_purchase_date
+        WHERE w.inventory > 0
+        ORDER BY sub.last_purchase_date DESC;
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+    wine_inventory = []
+    for item in cursor.execute(query).fetchall():
+        # Convert YYYYMMDD date format to date object for formatting
+        purchase_date = int_to_date(item[6])
+        wine_inventory.append(InventoryItem(*item[:6], purchase_date, *item[7:]))
+    context = {
+        "inventory": wine_inventory,
+        "page_name": "Inventory",
+    }
+    connection.close()
+    return render(request, "inventory.html", context)
+
+
+def change_inventory(request, wine_id: int, sign: str,
+                     return_to_inventory: bool = False):
+    r"""Change the current inventory number for a wine."""
+    assert sign in ("add", "subtract")
+    wine = Wines.objects.get(id=wine_id)
+    if sign == "add":
+        wine.inventory += 1
+    else:
+        wine.inventory -= 1
+    wine.save()
+    if return_to_inventory:
+        return redirect("Inventory")
+    return redirect("Wine Profile", wine_id=wine.id)

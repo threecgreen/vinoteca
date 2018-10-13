@@ -36,9 +36,11 @@ INSTALLED_APPS = [
     # Internal apps
     'vinoteca',
     'dashboards',
-    'new_purchase',
-    'view',
     'rest',
+    'places',
+    'producers',
+    'wine_attrs',
+    'wines',
 ]
 
 MIDDLEWARE = [
