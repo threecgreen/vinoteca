@@ -29,3 +29,6 @@ scripts/*.cache
 
 # Node
 node_modules
+
+# Ctags
+tags
