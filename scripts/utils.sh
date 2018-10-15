@@ -60,3 +60,7 @@ find_python_env()
     echo $conda > "$scripts_dir/.conda.cache"
 }
 
+find_vinoteca_version()
+{
+    vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')"
+}

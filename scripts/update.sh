@@ -24,7 +24,8 @@ parse_args()
 }
 
 parse_args $@
-old_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==1 {print $3}' | sed 's/\"//g')"
+find_vinoteca_version
+old_ver="$vinoteca_ver"
 find_python_env
 
 if [ "$GIT_PULL" = "true" ]; then
@@ -52,7 +53,7 @@ info_text "Running test suite..."
 bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."
 
 echo
-new_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==1 {print $3}' | sed 's/\"//g')"
-if [ "$old_ver" != "$new_ver" ]; then
-    info_text "Successfully updated vinoteca from version $old_ver to $new_ver"
+find_vinoteca_version
+if [ "$old_ver" != "$vinoteca_ver" ]; then
+    info_text "Successfully updated vinoteca from version $old_ver to $vinoteca_ver"
 fi

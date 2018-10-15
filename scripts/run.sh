@@ -27,6 +27,9 @@ parse_args()
 
 parse_args $@
 
+find_vinoteca_version
+info_text "Running vinoteca $vinoteca_ver"
+
 # Only backup db if --backup-db arg passed
 if [ $BACKUP_DB = "true" ]; then
     info_text "Backing up database..."
