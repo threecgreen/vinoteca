@@ -8,7 +8,7 @@ from wines.read import (
 from wines.update import EditPurchaseView, EditWineView
 from wines.delete import delete_purchase, delete_wine
 
-wine_patterns = [
+urlpatterns = [
     path("new/", NewWineView.as_view(), name="New Wine"),
     path("<int:wine_id>/new-purchase/", NewPurchaseView.as_view(), name="New Purchase"),
 

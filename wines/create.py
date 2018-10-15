@@ -3,6 +3,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import redirect, render
+from django.views import View
 
 from vinoteca.image import UserImage
 from vinoteca.models import Colors, Stores, Wines
@@ -14,7 +15,7 @@ from vinoteca.utils import (
 from wines.read import WineProfileView
 
 
-class NewWineView(object):
+class NewWineView(View):
     #pylint: disable=too-many-locals
     def get(self, request):
         r"""Handles logic for inserting a wine purchased for the first time and

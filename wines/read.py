@@ -12,6 +12,57 @@ from vinoteca.models import Colors, Purchases, Wines, WineGrapes
 from vinoteca.utils import get_connection, empty_to_none
 
 
+class WineProfileView(View):
+    r"""Contains views for interacting with a particular wine."""
+    template_name = "wine_profile.html"
+
+    @staticmethod
+    def get_base_context(wine_id: int, do_purchases: bool = True):
+        r"""Fetches wine data used in several views into context."""
+        wine = Wines.objects \
+            .prefetch_related("wine_type", "color", "producer", "producer__region",
+                              "viti_area") \
+            .get(id=wine_id)
+        # Get the vintage of the most recent purchase
+        recent_vintage_query = """
+                    SELECT
+                        p.vintage
+                    FROM purchases p
+                    INNER JOIN (
+                        SELECT
+                            max(date) as max_date
+                        FROM purchases
+                        WHERE wine_id = ?
+                    ) sub ON sub.max_date = p.date
+                    WHERE wine_id = ? ;
+                """
+        conn = get_connection()
+        cursor = conn.cursor()
+        recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
+        conn.close()
+        grapes = (WineGrapes.objects
+                  .filter(wine__id=wine.id)
+                  .order_by("-percent", "grape__name"))
+        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
+
+        context = {
+            "grapes": list(grapes),
+            "recent_vintage": recent_vintage[0] if recent_vintage else None,
+            "wine": wine,
+            "has_img": has_img,
+            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
+        }
+        if do_purchases:
+            context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
+                .prefetch_related("store") \
+                .order_by("-date")
+        return context
+
+    def get(self, request, wine_id: int):
+        context = self.get_base_context(wine_id)
+        return render(request, self.template_name, context)
+
+
 def search_wines_view(request):
     r"""Search page view. Search logic is implemented in search_wines function,
     not here."""
@@ -148,54 +199,3 @@ def wines_view(request):
         "page_name": "Wine Table",
     }
     return render(request, "wines.html", context)
-
-
-class WineProfileView(View):
-    r"""Contains views for interacting with a particular wine."""
-    template_name = "wine_profile.html"
-
-    @staticmethod
-    def get_base_context(wine_id: int, do_purchases: bool = True):
-        r"""Fetches wine data used in several views into context."""
-        wine = Wines.objects \
-            .prefetch_related("wine_type", "color", "producer", "producer__region",
-                              "viti_area") \
-            .get(id=wine_id)
-        # Get the vintage of the most recent purchase
-        recent_vintage_query = """
-                    SELECT
-                        p.vintage
-                    FROM purchases p
-                    INNER JOIN (
-                        SELECT
-                            max(date) as max_date
-                        FROM purchases
-                        WHERE wine_id = ?
-                    ) sub ON sub.max_date = p.date
-                    WHERE wine_id = ? ;
-                """
-        conn = get_connection()
-        cursor = conn.cursor()
-        recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
-        conn.close()
-        grapes = (WineGrapes.objects
-                  .filter(wine__id=wine.id)
-                  .order_by("-percent", "grape__name"))
-        has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
-
-        context = {
-            "grapes": list(grapes),
-            "recent_vintage": recent_vintage[0] if recent_vintage else None,
-            "wine": wine,
-            "has_img": has_img,
-            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
-        }
-        if do_purchases:
-            context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \
-                .prefetch_related("store") \
-                .order_by("-date")
-        return context
-
-    def get(self, request, wine_id: int):
-        context = self.get_base_context(wine_id)
-        return render(request, self.template_name, context)
