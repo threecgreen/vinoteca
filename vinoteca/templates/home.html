@@ -2,69 +2,70 @@
 {% load static %}
 
 {% block body %}
-    <div class="parallax-container">
-        <div class="parallax"><img src="{% static "img/bourgogne.jpg" %}"></div>
-    </div>
-    <div class="section white">
-        <div class="container">
-            <div class="row">
-                <div class="col s12">
-                    <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
-                    <h5 class="center">A wine purchase tracker and review system.</h5>
-                    {% include "add_wine_btn.html" %}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 xl7">
-                    <div class="card wine-green-card">
-                        <div class="card-content">
-                            <h2 class="card-title">Recent Purchases</h2>
-                            {% include "recent_purchases.html" %}
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 xl5">
-                    <div class="card wine-red-card">
-                        <div class="card-content">
-                            <h2 class="card-title">Top Wine Types</h2>
-                            {% include "top_wine_types.html" %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="parallax-container">
+    <div class="parallax"><img src="{% static "img/bourgogne.jpg" %}"></div>
+  </div>
+  <div class="section white">
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
+          <h5 class="center">A wine purchase tracker and review system.</h5>
+          {% include "add_wine_btn.html" %}
         </div>
+      </div>
+      <div class="row">
+        <div class="col s12 xl7">
+            <div class="card wine-green-card">
+              <div class="card-content">
+                <h2 class="card-title">Recent Purchases</h2>
+                {% include "recent_purchases.html" %}
+              </div>
+            </div>
+          </div>
+          <div class="col s12 xl5">
+            <div class="card wine-red-card">
+              <div class="card-content">
+                <h2 class="card-title">Top Wine Types</h2>
+                {% include "top_wine_types.html" %}
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
+
 {% block js %}
-<script src="{% static "js/Chart.bundle.min.js" %}"></script>
-<script type="module">
-import {  tabs } from '{% static "js/widgets.js" %}';
-import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
-import { pipe } from '{% static "js/utils.js" %}';
+  <script src="{% static "js/Chart.bundle.min.js" %}"></script>
+  <script type="module">
+  import {  tabs } from '{% static "js/widgets.js" %}';
+  import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
+  import { pipe } from '{% static "js/utils.js" %}';
 
-$(function(){
-    $('.parallax').parallax();
-    tabs();
+  $(function(){
+      $('.parallax').parallax();
+      tabs();
 
-    // Top Wine Types
-    const wineTypePurchases = {
-        {% for wine_type in top_wine_types %}
-            "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
-        {% endfor %}
-    };
-    applyChart(barChart, wineTypePurchases, "top-wt-purchases");
-    const wineTypeVarieties = {
-        {% for wine_type in top_wine_types %}
-            "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
-        {% endfor %}
-    };
-    applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
-    const wineTypePrice = {
-        {% for wine_type in top_wine_types %}
-            "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
-        {% endfor %}
-    };
-    applyChart(barChart, wineTypePrice, "top-wt-price");
-});
+      // Top Wine Types
+      const wineTypePurchases = {
+          {% for wine_type in top_wine_types %}
+              "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
+          {% endfor %}
+      };
+      applyChart(barChart, wineTypePurchases, "top-wt-purchases");
+      const wineTypeVarieties = {
+          {% for wine_type in top_wine_types %}
+              "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
+          {% endfor %}
+      };
+      applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
+      const wineTypePrice = {
+          {% for wine_type in top_wine_types %}
+              "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
+          {% endfor %}
+      };
+      applyChart(barChart, wineTypePrice, "top-wt-price");
+  });
 </script>
 {% endblock %}
