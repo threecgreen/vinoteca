@@ -27,8 +27,9 @@ scripts/*.cache
 .vscode/.ropeproject/
 .vscode/launch.json
 
-# Node
+# Javascript
 node_modules
+vinoteca/static/*bundle*
 
 # Ctags
 tags

@@ -60,7 +60,7 @@ module.exports = {
             MaterializeCsss: 'materialize-css',
         }),
         new MiniCssExtractPlugin({
-            filename: "[name].css"
+            filename: "[name].bundle.css"
         })
     ],
     resolve: {
