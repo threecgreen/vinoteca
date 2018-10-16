@@ -8,13 +8,14 @@ from wines.read import (
 from wines.update import EditPurchaseView, EditWineView
 from wines.delete import delete_purchase, delete_wine
 
+app_name = "Wines"
 urlpatterns = [
     path("new/", NewWineView.as_view(), name="New Wine"),
     path("<int:wine_id>/new-purchase/", NewPurchaseView.as_view(), name="New Purchase"),
 
     path("", wines_view, name="Wines"),
     path("search/", search_wines_view, name="Search Wines"),
-    path("search/json-results/", search_wines_results_view, name="Search Wines JSON"),
+    path("search/json-results/", search_wines_results_view, name="Search Wines Results JSON"),
     path("<int:wine_id>/", WineProfileView.as_view(), name="Wine Profile"),
 
     path("<int:wine_id>/edit/", EditWineView.as_view(), name="Edit Wine"),

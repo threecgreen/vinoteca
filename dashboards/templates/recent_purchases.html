@@ -2,44 +2,46 @@
 {% load vinoteca %}
 
 {% if wine_count == 0 %}
-    {% include "insufficient_wines.html" %}
+  {% include "insufficient_wines.html" %}
 {% else %}
 <table class="responsive highlight">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Store</th>
-            <th>Producer</th>
-            <th>Region</th>
-            <th>Name and Type</th>
-            <th class="num-col">Price</th>
-            <th class="num-col">Quantity</th>
-        </tr>
-    </thead>
-    <tbody>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Store</th>
+      <th>Producer</th>
+      <th>Region</th>
+      <th>Name and Type</th>
+      <th class="num-col">Price</th>
+      <th class="num-col">Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for purchase in purchases %}
-        <tr>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.date|inttodate|naturalday:"b j"|title }}</a></td>
-            <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.store.name }}</a></td>
-            {% if purchase.wine.producer %}
-                <td><a href="{% url "Producer Profile" producer_id=purchase.wine.producer.id %}">{{ purchase.wine.producer.name }}</a></td>
-            {% else %}
-                <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}"></a></td>
-            {% endif %}
-            {% if purchase.wine.producer.region %}
-                <td><a href="{% url "Region Profile" region_id=purchase.wine.producer.region.id %}">{{ purchase.wine.producer.region.name }}</a></td>
-            {% else %}
-                <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.wine.producer.region.name }}</a></td>
-            {% endif %}
-            {% if purchase.wine.wine_type %}
-                <td><a href="{% url "Wine Type Profile" wine_type_id=purchase.wine.wine_type.id %}">{{ purchase.wine.name|default_if_none:"" }} {{ purchase.wine.wine_type.name }}</a></td>
-            {% else %}
-                <td><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.wine.name|default_if_none:"" }}</a></td>
-            {% endif %}
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.price|floatformat:2|defndash }}</a></td>
-            <td class="num-col"><a href="{% url "Wine Profile" wine_id=purchase.wine.id %}">{{ purchase.quantity }}</a></td>
-        </tr>
+      <tr>
+        <td>{{ purchase.date|inttodate|naturalday:"b j"|title }}</td>
+        <td>{{ purchase.store.name }}</td>
+        <td>
+          {% if purchase.wine.producer %}
+            <a href="{% url "Producers:Producer Profile" producer_id=purchase.wine.producer.id %}">
+              {{ purchase.wine.producer.name }}
+            </a>
+          {% endif %}
+        </td>
+        <td>
+          {% if purchase.wine.producer.region %}
+            <a href="{% url "Region Profile" region_id=purchase.wine.producer.region.id %}">{{ purchase.wine.producer.region.name }}</a>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url "Wines:Wine Profile" wine_id=purchase.wine.id %}">
+            {{ purchase.wine.name|default_if_none:"" }}
+          </a>
+        </td>
+        <td class="num-col">{{ purchase.price|floatformat:2|defndash }}</td>
+        <td class="num-col">{{ purchase.quantity }}</td>
+      </tr>
     {% endfor %}
-    </tbody>
+  </tbody>
 </table>
 {% endif %}

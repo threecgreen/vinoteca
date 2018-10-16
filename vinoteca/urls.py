@@ -5,7 +5,9 @@ from django.urls import include, path, re_path
 from django.views.static import serve
 
 from dashboards.views import dashboards
+from places.views import region_profile
 from vinoteca.views import simple_page, home
+from wine_attrs.views import wine_type_profile
 
 
 urlpatterns = [
@@ -18,21 +20,22 @@ urlpatterns = [
 
     # path("<int:wine_id>/change/<slug:sign>/", change_inventory, name="Change Inventory"),
     # path("<int:wine_id>/change/<slug:sign>/inventory/", change_inventory,
-        #  name="Change Inventory from Inventory", kwargs={"return_to_inventory": True}),
+    #  name="Change Inventory from Inventory", kwargs={"return_to_inventory": True}),
 
-    # Other profiles
-    # path("producers/<int:producer_id>/", producer_profile, name="Producer Profile"),
-    # path("producers/<int:producer_id>/edit/", edit_producer, name="Edit Producer"),
-    # path("regions/<int:region_id>/", region_profile, name="Region Profile"),
-    # path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
+    # Places URLs
+    path("regions/<int:region_id>/", region_profile, name="Region Profile"),
+
+    # Wine attrs URLs
+    path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
 
     # Other pages
     path("dashboards/", dashboards, name="Dashboards"),
     # path("inventory/", inventory, name="Inventory"),
 
-    # Rest URLs
-    path("rest/", include("rest.urls"), name=""),
-    path("wines/", include("wines.urls"), name=""),
+    # Namespace URLs
+    path("rest/", include("rest.urls", namespace="REST")),
+    path("wines/", include("wines.urls", namespace="Wines")),
+    path("producers/", include("producers.urls", namespace="Producers")),
 
     # Internal URLs
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),

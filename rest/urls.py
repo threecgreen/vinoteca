@@ -9,6 +9,7 @@ from rest.views import (
 )
 
 
+app_name = "REST"
 urlpatterns = [
     # Name serializers primarily used for autocomplete
     path("colors/all/", generic_all_names, kwargs={"obj_name": "color"},
