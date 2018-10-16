@@ -16,7 +16,12 @@
         "@types/materialize-css": "^1.0.4",
         "@types/node": "^10.11.7",
         "@types/pickadate": "^3.5.31",
-        "@types/webpack": "^4.4.16"
+        "@types/webpack": "^4.4.16",
+        "css-loader": "^1.0.0",
+        "mini-css-extract-plugin": "^0.4.4",
+        "node-sass": "^4.9.4",
+        "postcss-loader": "^3.0.0",
+        "sass-loader": "^7.1.0"
     },
     "dependencies": {
         "chart.js": "^2.7.2",

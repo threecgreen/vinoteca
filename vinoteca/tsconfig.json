@@ -6,10 +6,9 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         // "outDir": "js",
-        "noUnusedLocals": true,
         "noUnusedParameters": true
     },
     "include": [
-        "ts"
+        "front_end", "lib/special_chars.ts"
     ],
 }

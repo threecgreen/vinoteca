@@ -1,17 +1,15 @@
-import $ = require("jquery");
-
-const specialCharBtns: JQuery<HTMLLinkElement> = $(".spec-chars");
-const shiftBtn: JQuery<HTMLLinkElement> = $("#shift");
-const textInputs: JQuery<HTMLInputElement> = $("[type=text]");
-/* Keep track of last active text element */
-let lastInput: string = null;
-
 /**
  * Sets up special character buttons to insert their respective character
  * into the last input field that was in focus. Also defines a function that
  * allows for changing between capital and miniscule special characters.
  */
-$(() => {
+export function specialChars() {
+    const specialCharBtns: JQuery<HTMLLinkElement> = $(".spec-chars");
+    const shiftBtn: JQuery<HTMLLinkElement> = $("#shift");
+    const textInputs: JQuery<HTMLInputElement> = $("[type=text]");
+    /* Keep track of last active text element */
+    let lastInput: string = null;
+
     /* Add special character to last input field */
     $(specialCharBtns).on("click", function() {
         $(lastInput).val($(lastInput).val() + $(this).text());
@@ -38,4 +36,4 @@ $(() => {
     $(textInputs).on("focusout", function() {
         lastInput = "#" + this.id;
     });
-});
+}
