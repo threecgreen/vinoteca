@@ -11,7 +11,13 @@
         <div class="col s12">
           <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
           <h5 class="center">A wine purchase tracker and review system.</h5>
-          {% include "add_wine_btn.html" %}
+          <p class="center-align">
+            <a class="waves-effect btn waves-light yellow darken-2"
+               href="{% url "Wines:New Wine" %}">
+                <i class="material-icons left">add_circle</i>
+                add wine
+            </a>
+          </p>
         </div>
       </div>
       <div class="row">
@@ -37,35 +43,22 @@
 {% endblock %}
 
 {% block js %}
-  <script src="{% static "js/Chart.bundle.min.js" %}"></script>
   <script type="module">
-  import {  tabs } from '{% static "js/widgets.js" %}';
-  import { barChart, applyChart } from "{% static "js/wine_charts.js" %}";
-  import { pipe } from '{% static "js/utils.js" %}';
-
-  $(function(){
-      $('.parallax').parallax();
-      tabs();
-
-      // Top Wine Types
-      const wineTypePurchases = {
-          {% for wine_type in top_wine_types %}
-              "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
-          {% endfor %}
-      };
-      applyChart(barChart, wineTypePurchases, "top-wt-purchases");
-      const wineTypeVarieties = {
-          {% for wine_type in top_wine_types %}
-              "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
-          {% endfor %}
-      };
-      applyChart(barChart, wineTypeVarieties, "top-wt-varieties");
-      const wineTypePrice = {
-          {% for wine_type in top_wine_types %}
-              "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
-          {% endfor %}
-      };
-      applyChart(barChart, wineTypePrice, "top-wt-price");
-  });
-</script>
+    const wineTypePurchases = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
+        {% endfor %}
+    };
+    const wineTypeVarieties = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
+        {% endfor %}
+    };
+    const wineTypePrice = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
+        {% endfor %}
+    };
+  </script>
+  <script src="{% static 'home.bundle.js' %">
 {% endblock %}
