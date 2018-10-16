@@ -211,29 +211,5 @@
 {% endblock %}
 
 {% block js %}
-  <script type="module">
-    import { toggleRegion, updateVitiAreaSelections, toggleRating,
-             showNextGrapeInput } from '{% static "js/new_wines.js" %}';
-    import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
-
-    $(function() {
-        datepicker();
-        $('select').material_select();
-
-        autocomplete("store");
-        autocomplete("wine-type");
-        autocomplete("producer");
-        autocomplete("region");
-        autocomplete("grape", 5, 1, "[id^=auto-grape-]");
-
-        const region = $('#auto-region');
-        toggleRegion($('#auto-producer'), region, "{% url "REST Region" %}", "{% url "Get Producers JSON" %}");
-        updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "REST Viti Area" %}");
-
-        toggleRating($('#has-rating')[0], $('#rating')[0]);
-
-        showNextGrapeInput($(".grape-btn"));
-    });
-  </script>
-  <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+  <script src="{% static 'new_wine.bundle.js' %}"></script>
 {% endblock %}

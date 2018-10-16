@@ -10,7 +10,9 @@ module.exports = {
     devtool: "inline-source-map",
     entry: {
         global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass" ],
-        home: [inputPath + "home/home.ts", inputPath + "vinoteca-style.sass" ],
+        home: [inputPath + "home/home.ts" ],
+        // Wines
+        new_wine: [inputPath + "new_wine/new_wine.ts"]
     },
     mode: "production",
     module: {
@@ -47,7 +49,13 @@ module.exports = {
     },
     optimization: {
         splitChunks: {
-            chunks: "all",
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: "vendors",
+                    chunks: "all",
+                },
+            },
         },
     },
     output: {
@@ -56,8 +64,10 @@ module.exports = {
     },
     plugins: [
         new webpack.ProvidePlugin({
-            $: 'jquery',
-            MaterializeCsss: 'materialize-css',
+            $: "jquery",
+            jQuery: "jquery",
+            "window.$": "jquery",
+            "window.jQuery": "jquery",
         }),
         new MiniCssExtractPlugin({
             filename: "[name].bundle.css"

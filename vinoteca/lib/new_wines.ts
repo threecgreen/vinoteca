@@ -2,13 +2,12 @@ import $ = require("jquery");
 import { flattenToDict, IRESTObject } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
-export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
-                             producerRegionURL: string, producersURL: string): void {
-
+export function toggleRegion(producer: JQuery<HTMLInputElement>,
+                             region: JQuery<HTMLInputElement>): void {
     $(producer).on("change", () => {
-        $.getJSON(producersURL, (producersJSON) => {
+        $.getJSON("/rest/producers/all/", (producersJSON) => {
             if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
-                $.getJSON(producerRegionURL,
+                $.getJSON("/rest/regions/",
                           { producers__name: $(producer).val() },
                           (regionJSON) => {
                     $(region).val(regionJSON[0]["name"]);
@@ -28,10 +27,9 @@ export function toggleRegion(producer: JQuery<HTMLInputElement>, region: JQuery<
 
 /** Update viticultural area autocomplete depending on region selection. */
 export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
-                                         vitiArea: JQuery<HTMLInputElement>,
-                                         getJSONURL: string): void {
+                                         vitiArea: JQuery<HTMLInputElement>): void {
     $(region).on("change", function() {
-        $.get(getJSONURL, { region__name: $(this).val() }, (responseJSON) => {
+        $.get("/rest/viti-areas/", { region__name: $(this).val() }, (responseJSON) => {
             // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
             // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
@@ -44,8 +42,8 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
 }
 
 /** Enables/disables a rating slider depending on the state of checkbox. */
-export function toggleRating(hasRatingSelector: JQuery<HTMLInputElement>,
-                             ratingSelector: JQuery<HTMLInputElement>,
+export function toggleRating(hasRatingSelector: HTMLInputElement,
+                             ratingSelector: HTMLInputElement,
                              checked = false): void {
     $(hasRatingSelector).prop("checked", checked);
     $(hasRatingSelector).on("click", function() {

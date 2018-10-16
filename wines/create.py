@@ -18,6 +18,14 @@ from wines.read import WineProfileView
 class NewWineView(View):
     #pylint: disable=too-many-locals
     def get(self, request):
+        context = {
+            "colors": Colors.objects.all(),
+            "default_vintage": default_vintage_year(),
+            "page_name": "New Wine",
+        }
+        return render(request, "new_wine.html", context)
+
+    def post(self, request):
         r"""Handles logic for inserting a wine purchased for the first time and
         therefore new Wines and Purchases objects are created."""
         store = empty_to_none(request.POST.get("store"))
@@ -63,14 +71,6 @@ class NewWineView(View):
             img.convert_to_png()
 
         return redirect("Wine Profile", wine_id=wine.id)
-
-    def post(self, request):
-        context = {
-            "colors": Colors.objects.all(),
-            "default_vintage": default_vintage_year(),
-            "page_name": "New Wine",
-        }
-        return render(request, "first_time_wine.html", context)
 
 
 class NewPurchaseView(WineProfileView):
