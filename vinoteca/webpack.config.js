@@ -14,7 +14,7 @@ module.exports = {
         // Wines
         new_wine: [inputPath + "new_wine/new_wine.ts"]
     },
-    mode: "production",
+    mode: "development",
     module: {
         rules: [
             {

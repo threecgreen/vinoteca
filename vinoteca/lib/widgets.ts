@@ -1,4 +1,4 @@
-import $ = require("jquery");
+import "materialize-css";
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {
@@ -16,13 +16,9 @@ export function autocomplete(modelName: string, limit = 5, minLength = 1, select
  * isn"t changed.
  */
 export function datepicker(selector = ".datepicker"): void {
-    $(selector).pickadate({
-        clear: "Clear",
-        close: "Ok",
-        closeOnSelect: false,            // Close upon selecting a date,
-        selectMonths: true,              // Creates a dropdown to control month
-        selectYears: 15,                 // Creates a dropdown of 5 years to control year,
-        today: "Today",
+    $(selector).datepicker({
+        autoClose: false,            // Close upon selecting a date,
+        yearRange: 15,               // Creates a dropdown of 5 years to control year,
     });
 }
 

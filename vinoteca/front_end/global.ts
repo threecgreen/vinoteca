@@ -2,8 +2,8 @@
 import "materialize-css";
 
 export function navbar() {
-    $(".button-collapse").sidenav();
-    $(".dropdown-button").dropdown();
+    // $(".button-collapse").sidenav();
+    $(".dropdown-trigger").dropdown();
     // const sidenav = new Sidenav([0]);
     // const dropdown = new Dropdown($(".dropdown-button")[0]);
 }

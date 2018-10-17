@@ -12,8 +12,8 @@
     "license": "MIT",
     "devDependencies": {
         "@types/chart.js": "^2.7.37",
-        "@types/jquery": "^3.3.17",
-        "@types/materialize-css": "^1.0.4",
+        "@types/jquery": "^3.3.1",
+        "@types/materialize-css": "^1.0.0",
         "@types/node": "^10.11.7",
         "@types/pickadate": "^3.5.31",
         "@types/webpack": "^4.4.16",
@@ -36,6 +36,7 @@
         "webpack-cli": "^3.1.2"
     },
     "scripts": {
-        "build": "./node_modules/.bin/webpack"
+        "build": "./node_modules/.bin/webpack",
+        "watch": "./node_modules/.bin/webpack --watch"
     }
 }
