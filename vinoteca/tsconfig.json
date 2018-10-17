@@ -5,10 +5,11 @@
         "sourceMap": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        // "outDir": "js",
         "noUnusedParameters": true
     },
     "include": [
-        "front_end", "lib/special_chars.ts"
+        "front_end",
+        "lib",
+        "node_modules/@types",
     ],
 }
