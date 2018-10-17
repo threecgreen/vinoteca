@@ -68,9 +68,9 @@ def search_wines_view(request):
     not here."""
     context = {
         "colors": Colors.objects.all(),
-        "page_name": "New Purchase",
+        "page_name": "Search Wines",
     }
-    return render(request, "prev_wine_search.html", context)
+    return render(request, "search_wines.html", context)
 
 
 def search_wines_results_view(request) -> JsonResponse:
@@ -130,7 +130,7 @@ def search_wines_results_view(request) -> JsonResponse:
         if context["wine_results"] is not None:
             conn.close()
             return JsonResponse({
-                "results": render_to_string("search_results.html", context)
+                "results": render_to_string("search_wines_results.html", context)
             })
     conn.close()
     return JsonResponse({"results": []})

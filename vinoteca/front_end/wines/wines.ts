@@ -1,7 +1,15 @@
-import "tablesorter";
+/// <reference path="../../@types/tablesorter.d.ts" />
 
-/** Set up a tablesorted with paging and cached filter settings. */
+import "materialize-css";
+import "tablesorter";
+import { navbar } from "../../lib/widgets";
+import "./jquery.tablesorter.pager";
+import "./jquery.tablesorter.widgets";
+
 $(() => {
+    navbar();
+    $("select").formSelect();
+
     $("table").tablesorter({
         theme: "materialize",
         widgetOptions: {
@@ -15,7 +23,7 @@ $(() => {
         container: $(".ts-pager"),
         cssGoto: ".pagenum",
         removeRows: false,
-        size: 100,
+        size: 50,
     }).on("filterInit", () => {
         // check that storage ulility is loaded
         if ($.tablesorter.storage) {
@@ -32,4 +40,7 @@ $(() => {
             $.tablesorter.storage(this, "tablesorter-filters", f);
         }
     });
+
+    // 50 needs to be quoted
+    $("#pagesize-sel").val("50");
 });

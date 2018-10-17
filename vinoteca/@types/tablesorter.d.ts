@@ -2,7 +2,7 @@
 // GitHub repo: https://github.com/Mottie/tablesorter
 // These definitions are incomplete
 
-/// <reference path ="../../../node_modules/@types/jquery/index.d.ts" />
+/// <reference path="../node_modules/@types/jquery/index.d.ts" />
 
 declare namespace Tablesorter {
     /** Options passed to tablesorter widgets. */
@@ -31,7 +31,7 @@ declare namespace Tablesorter {
     /** Options passed to tablesorterPager property. */
     export interface PagerOptions {
         /** Target the pager markup. */
-        container: JQuery<HTMLElement>;
+        container: JQuery;
         /** Target the pager page select dropdown used to choose a page. */
         cssGoto: string;
         /** remove rows from the table to speed up the sort of large tables.

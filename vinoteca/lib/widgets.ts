@@ -22,6 +22,11 @@ export function datepicker(selector = ".datepicker"): void {
     });
 }
 
+export function navbar() {
+    // $(".button-collapse").sidenav();
+    $(".dropdown-trigger").dropdown();
+}
+
 /** Streamlines the Materialize CSS tab widget. */
 export function tabs(selector = ".tabs"): void {
     $(selector).tabs();

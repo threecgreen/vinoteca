@@ -1,7 +1,6 @@
 import { IDict } from "../../lib/utils";
-import { tabs } from "../../lib/widgets";
+import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart } from "../../lib/wine_charts";
-import { navbar } from "../global";
 
 declare const wineTypePurchases: IDict<number>;
 declare const wineTypeVarieties: IDict<number>;

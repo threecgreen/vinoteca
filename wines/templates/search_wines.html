@@ -60,26 +60,5 @@
 {% endblock %}
 
 {% block js %}
-  <script type="module">
-    import { toggleRegion, updateVitiAreaSelections, toggleRating,
-             showNextGrapeInput, resetFormBtn, liveWineSearch } from '{% static "js/new_wines.js" %}';
-    import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
-
-    const producer = $('#auto-producer');
-    const region = $('#auto-region');
-
-    $(function(){
-        $('select').material_select();
-        {# Search fields autocomplete #}
-        autocomplete("wine-type");
-        autocomplete("producer");
-        autocomplete("region");
-        autocomplete("viti-area");
-
-        resetFormBtn();
-        liveWineSearch($(".input-field"), "{% url "Search Wines JSON" %}", $("#auto-wine-type"), $("#color"), producer,
-            region, $("#auto-viti-area"));
-    });
-  </script>
-  <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+  <script src="{% static 'search_wines.bundle.js' %}"></script>
 {% endblock %}

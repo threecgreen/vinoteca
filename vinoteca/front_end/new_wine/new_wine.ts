@@ -1,12 +1,13 @@
-import { FormSelect } from "materialize-css";
+import "materialize-css";
 import { showNextGrapeInput, toggleRating, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
-import { autocomplete, datepicker } from "../../lib/widgets" ;
+import { autocomplete, datepicker, navbar } from "../../lib/widgets" ;
 
 $(() => {
+    navbar();
     datepicker();
-    const select = new FormSelect($("select")[0]);
+    $("select").formSelect();
 
     autocomplete("store");
     autocomplete("wine-type");

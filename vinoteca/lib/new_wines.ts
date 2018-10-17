@@ -1,4 +1,3 @@
-import $ = require("jquery");
 import { flattenToDict, IRESTObject } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
@@ -85,7 +84,7 @@ export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>):
 }
 
 /** Helper function for clearing table */
-function clearTable() {
+export function clearTable() {
     $("table").hide();
     $("#no-results").hide();
     $("table tbody").empty();
@@ -99,34 +98,3 @@ export function resetFormBtn(): void {
     });
 }
 
-/** Update search results when search fields change */
-export function liveWineSearch(searchParams: Array<JQuery<HTMLInputElement>>, searchURL: string,
-                               wineType: JQuery<HTMLInputElement>, color: JQuery<HTMLInputElement>,
-                               producer: JQuery<HTMLInputElement>, region: JQuery<HTMLInputElement>,
-                               vitiArea: JQuery<HTMLInputElement>) {
-
-    $(searchParams).on("change", (event) => {
-        // Prevents double event
-        if (event.originalEvent) {
-            return;
-        }
-        // Send search fields data to Search Wines URL
-        $.get(searchURL, {
-            color: color.val(),
-            producer: producer.val(),
-            region: region.val(),
-            viti_area: vitiArea.val(),
-            wine_type: wineType.val(),
-        }, (searchResultsJSON) => {
-            clearTable();
-            // Update search results with received data
-            // Greater than 1 because spaces count in length
-            if (searchResultsJSON["results"].length > 1) {
-                $("table tbody").append(searchResultsJSON["results"]);
-                $("table").show();
-            } else {
-                $("#no-results").show();
-            }
-        });
-    });
-}
