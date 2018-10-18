@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const inputPath = "./front_end/";
+const inputPath = __dirname + "/front_end/";
 const outputPath = __dirname + "/static";
 
 
