@@ -48,7 +48,7 @@
               <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
                 Submit<i class="material-icons right">send</i>
               </button>
-              <a class="waves-effect waves-light btn pink darken-3" href={% url "Wine Profile" wine_id=wine.id %}>cancel</a>
+              <a class="waves-effect waves-light btn pink darken-3" href={% url "Wines:Wine Profile" wine_id=wine.id %}>cancel</a>
             </div>
           </div>
         </form>
@@ -58,12 +58,5 @@
 {% endblock %}
 
 {% block js %}
-  <script type="module">
-    import { autocomplete, datepicker } from "{% static "js/widgets.js" %}";
-
-    $(function() {
-        datepicker();
-        autocomplete("store");
-    });
-  </script>
+  <script src={% static 'new_purchases.js' %}></script>
 {% endblock %}

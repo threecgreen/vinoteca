@@ -61,6 +61,8 @@ class VitiAreaSerializer(serializers.ModelSerializer):
 
 
 class WineGrapeSerializer(serializers.ModelSerializer):
+    grape = serializers.StringRelatedField()
+
     class Meta:
         model = WineGrapes
         fields = ("id", "wine", "grape", "percent")

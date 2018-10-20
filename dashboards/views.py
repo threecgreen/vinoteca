@@ -238,18 +238,3 @@ def inventory(request):
     }
     connection.close()
     return render(request, "inventory.html", context)
-
-
-def change_inventory(request, wine_id: int, sign: str,
-                     return_to_inventory: bool = False):
-    r"""Change the current inventory number for a wine."""
-    assert sign in ("add", "subtract")
-    wine = Wines.objects.get(id=wine_id)
-    if sign == "add":
-        wine.inventory += 1
-    else:
-        wine.inventory -= 1
-    wine.save()
-    if return_to_inventory:
-        return redirect("Inventory")
-    return redirect("Wine Profile", wine_id=wine.id)

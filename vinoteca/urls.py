@@ -18,10 +18,6 @@ urlpatterns = [
     path("help/", simple_page, name="Help", kwargs={"page_name": "help"}),
     path("changelog/", simple_page, name="Changelog", kwargs={"page_name": "changelog"}),
 
-    # path("<int:wine_id>/change/<slug:sign>/", change_inventory, name="Change Inventory"),
-    # path("<int:wine_id>/change/<slug:sign>/inventory/", change_inventory,
-    #  name="Change Inventory from Inventory", kwargs={"return_to_inventory": True}),
-
     # Places URLs
     path("regions/<int:region_id>/", region_profile, name="Region Profile"),
 

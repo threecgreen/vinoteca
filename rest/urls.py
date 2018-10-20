@@ -5,7 +5,8 @@ from django.urls import path
 
 from rest.views import (
     generic_all_names, region_all_names, grape, ColorList, RegionList,
-    ProducerList, VitiAreaList, WineTypeList, WineList
+    ProducerList, VitiAreaList, WineTypeList, WineList,
+    GrapeList
 )
 
 
@@ -33,5 +34,5 @@ urlpatterns = [
     path("viti-areas/", VitiAreaList.as_view(), name="Viti Area"),
     path("wine-types/", WineTypeList.as_view(), name="Wine Type"),
     path("wines/", WineList.as_view(), name="Wine"),
-    path("grapes/", grape, name="Grape"),
+    path("grapes/", GrapeList.as_view(), name="Grape"),
 ]

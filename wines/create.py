@@ -75,7 +75,7 @@ class NewWineView(View):
 
 class NewPurchaseView(WineProfileView):
     r"""Purchase for viewing a purchase of wine."""
-    template_name = "prev_wine.html"
+    template_name = "new_purchase.html"
 
     @staticmethod
     def post(request, wine_id: int):

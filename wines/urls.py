@@ -5,7 +5,7 @@ from wines.create import NewPurchaseView, NewWineView
 from wines.read import (
     search_wines_view, search_wines_results_view, WineProfileView, wines_view
 )
-from wines.update import EditPurchaseView, EditWineView
+from wines.update import EditPurchaseView, EditWineView, change_inventory
 from wines.delete import delete_purchase, delete_wine
 
 app_name = "Wines"
@@ -21,6 +21,9 @@ urlpatterns = [
     path("<int:wine_id>/edit/", EditWineView.as_view(), name="Edit Wine"),
     path("<int:wine_id>/purchases/<int:purchase_id>/edit/", EditPurchaseView.as_view(),
          name="Edit Purchase"),
+    path("<int:wine_id>/change/<slug:sign>/", change_inventory, name="Change Inventory"),
+    path("<int:wine_id>/change/<slug:sign>/inventory/", change_inventory,
+         name="Change Inventory from Inventory", kwargs={"return_to_inventory": True}),
 
     path("<int:wine_id>/purchases/<int:purchase_id>/delete/", delete_purchase,
          name="Delete Purchase"),

@@ -31,6 +31,9 @@ class Grapes(models.Model):
     class Meta:
         db_table = 'grapes'
 
+    def __str__(self):
+        return self.name
+
 
 class Producers(models.Model):
     r"""Wine producers."""
