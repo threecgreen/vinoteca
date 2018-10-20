@@ -204,7 +204,7 @@
             Confirm Edits<i class="material-icons right">send</i>
           </button>
           <a class="waves-effect waves-light btn pink darken-3"
-             href={% url "Wine Profile" wine_id=wine.id %}>cancel</a>
+             href={% url "Wines:Wine Profile" wine_id=wine.id %}>cancel</a>
         </div>
       </div>
     </form>
@@ -217,39 +217,19 @@
 
 {% block table-edit-body %}
     <td>
-        <a class="btn-floating waves-effect waves-light yellow darken-2" href="{% url "Edit Purchase" wine_id=wine.id purchase_id=purchase.id %}">
+        <a class="btn-floating waves-effect waves-light yellow darken-2" href="{% url "Wines:Edit Purchase" wine_id=wine.id purchase_id=purchase.id %}">
             <i class="material-icons">edit</i>
         </a>
     </td>
 {% endblock %}
 
 {% block js %}
-  <script type="module">
-    import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInput } from '{% static "js/new_wines.js" %}';
-    import { autocomplete } from "{% static "js/widgets.js" %}";
-
-    const region = $("#auto-region");
-
-    $(function() {
-        $('select').material_select();
-        autocomplete("wine-type");
-        autocomplete("producer");
-        toggleRegion($('#auto-producer'), region, "{% url "REST Region" %}", "{% url "Get Producers JSON" %}");
-        autocomplete("region");
-        {% if rating %}
-            toggleRating($("#has-rating")[0], $("#rating")[0], true);
-        {% else %}
-            toggleRating($("#has-rating")[0], $("#rating")[0], false);
-        {% endif %}
-        updateVitiAreaSelections(region, $('#auto-viti-area'), "{% url "REST Viti Area" %}");
-        showNextGrapeInput($(".grape-btn"));
-    });
-    {# Gave weird error when in same document ready function #}
-    $(function () {
-        autocomplete("grape", 5, 1, "[id^=auto-grape-]");
-        {# Run first for initial region #}
-        $(region).trigger("change");
-    })
+  <script type="text/javascript" >
+    {% if wine.rating %}
+      const hasRating = true;
+    {% else %}
+      const hasRating = false;
+    {% endif %}
   </script>
-  <script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+  <script type="text/javascript" src="{% static 'edit_wine.bundle.js' %}"></script>
 {% endblock %}
