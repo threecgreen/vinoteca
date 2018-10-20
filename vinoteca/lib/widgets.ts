@@ -22,6 +22,7 @@ export function datepicker(selector = ".datepicker"): void {
     });
 }
 
+/** Enables navbar menus. Should be called on every page. */
 export function navbar() {
     // $(".button-collapse").sidenav();
     $(".dropdown-trigger").dropdown();
@@ -39,4 +40,9 @@ export function setTabAccessibility(tabListElem: JQuery<HTMLUListElement>, abili
     } else {
         $(tabListElem).addClass("disabled");
     }
+}
+
+/** Activates all horizontal floating action buttons in class fixed-action-btn.  */
+export function hFloatingActnBtn() {
+    $(".fixed-action-btn").floatingActionButton({direction: "left"});
 }
