@@ -1,4 +1,4 @@
-import { ChartTuple, IChartObject } from "./wine_charts";
+import { IChartInput } from "./wine_charts";
 
 /** Implement interfaces to interact with the vinoteca REST API. */
 
@@ -36,7 +36,7 @@ export interface IGrapeJSON {
     percent: number | undefined;
 }
 
-export class Grape implements IChartObject {
+export class Grape implements IChartInput {
     public static fromArray(jsonArray: IGrapeJSON[]) {
         return jsonArray.map((grapeJ) => {
             return new Grape(grapeJ);
@@ -53,11 +53,11 @@ export class Grape implements IChartObject {
         this.percent = json["percent"];
     }
 
-    public key(): string {
+    public label(): string {
         return this.grape;
     }
 
-    public value(): number {
+    public datum(): number {
         return this.percent;
     }
 }
@@ -65,6 +65,31 @@ export class Grape implements IChartObject {
 export interface IWineTypeJSON {
     id: number;
     name: string;
+}
+
+export interface IWineTypesDictJSON {
+    [name: string]: number;
+}
+
+export class WineTypeStat implements IChartInput {
+    public static fromDict(dict: IWineTypesDictJSON) {
+        const wineTypes: WineTypeStat[] = [];
+        Object.keys(dict).forEach((key) => {
+            wineTypes.push(new WineTypeStat(key, dict[key]));
+        });
+        return wineTypes;
+    }
+
+    constructor(private name: string, private stat: number) {
+    }
+
+    public label(): string {
+        return this.name;
+    }
+
+    public datum(): number {
+        return this.stat;
+    }
 }
 
 export interface IWineJSON {

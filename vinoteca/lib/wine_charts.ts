@@ -1,10 +1,10 @@
-import $ = require("jquery");
-import { elementExists, IDict, pipe } from "./utils";
+import { Chart } from "chart.js";
+import { elementExists, pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";
 
-export interface IChartObject {
-    key(): string;
-    value(): number;
+export interface IChartInput {
+    label(): string;
+    datum(): number;
 }
 
 const fontFamily = "'Roboto', sans-serif";
@@ -37,12 +37,12 @@ function allZero(array: number[]): boolean {
  * Helper function for splitting Dict to seperate label and key arrays for
  * interfacing with Charts.js
  */
-function splitData(data: IChartObject[]): [string[], number[]] {
+function splitData(data: IChartInput[]): [string[], number[]] {
     const chartData: number[] = [];
     const chartLabels: string[] = [];
     data.forEach((co) => {
-        chartData.push(co.value());
-        chartLabels.push(co.key());
+        chartData.push(co.datum());
+        chartLabels.push(co.label());
     });
     return [chartLabels, chartData];
 }
@@ -86,8 +86,8 @@ function changeTransparency(color: string, transparency: number) {
  *              * Chart div `${dashboardName}-${chartName}-chart-tab`
  */
 export function applyChart(
-        chartFn: (canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]) => boolean,
-        data: IChartObject[], chartNamePrefix: string,
+        chartFn: (canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]) => boolean,
+        data: IChartInput[], chartNamePrefix: string,
     ) {
     const canvas: JQuery<HTMLCanvasElement> = $(`#${chartNamePrefix}-chart`);
     const chartLi: JQuery<HTMLUListElement> = $(`#${chartNamePrefix}-chart-li`);
@@ -103,7 +103,7 @@ export function applyChart(
  * Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
-export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]): boolean {
+export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!validateChartInput(canvas, chartData)) {
@@ -152,6 +152,7 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
+        console.warn(e);
         return false;
     }
     return true;
@@ -161,7 +162,7 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]
  * Creates a horizontal bar chart on the provided canvas using the provided data.
  * Returns a boolean indicating whether the chart was created successfully.
  */
-export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject): boolean {
+export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!validateChartInput(canvas, chartData)) {
@@ -227,12 +228,13 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject):
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
+        console.warn(e);
         return false;
     }
     return true;
 }
 
-export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[][],
+export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[][],
                           seriesLabels: string[]): boolean {
     const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
     // Error checking
@@ -322,6 +324,7 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[
         // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
+        console.warn(e);
         return false;
     }
     return true;
