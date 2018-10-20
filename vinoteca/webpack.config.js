@@ -12,12 +12,14 @@ module.exports = {
         global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass" ],
         home: [inputPath + "home/home.ts" ],
         // Wines
+        new_purchase: [inputPath + "new_purchase/new_purchase.ts"],
         new_wine: [inputPath + "new_wine/new_wine.ts"],
         search_wines: [inputPath + "search_wines/search_wines.ts"],
         wines: [inputPath + "wines/wines.ts",
                 inputPath + "wines/jquery.tablesorter.pager.js",
                 inputPath + "wines/jquery.tablesorter.widgets.js",
                 inputPath + "wines/jquery.tablesorter.pager.css"],
+        wine_profile: [inputPath + "wine_profile/wine_profile.ts"],
     },
     mode: "development",
     module: {

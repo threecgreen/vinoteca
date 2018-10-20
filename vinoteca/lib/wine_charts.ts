@@ -2,6 +2,11 @@ import $ = require("jquery");
 import { elementExists, IDict, pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";
 
+export interface IChartObject {
+    key(): string;
+    value(): number;
+}
+
 const fontFamily = "'Roboto', sans-serif";
 const white = "#f8f8f8";
 const translucentWhite = "rgba(240, 240, 240, 0.9)";
@@ -32,18 +37,18 @@ function allZero(array: number[]): boolean {
  * Helper function for splitting Dict to seperate label and key arrays for
  * interfacing with Charts.js
  */
-function splitData(data: IDict<number>): [string[], number[]] {
+function splitData(data: IChartObject[]): [string[], number[]] {
     const chartData: number[] = [];
     const chartLabels: string[] = [];
-    for (const key in data) {
-        chartData.push(data[key]);
-        chartLabels.push(key);
-    }
+    data.forEach((co) => {
+        chartData.push(co.value());
+        chartLabels.push(co.key());
+    });
     return [chartLabels, chartData];
 }
 
 /** Helper function to determine whether to proceed with chart creation. */
-function doChart(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
+function validateChartInput(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
     // Only create chart if one or more grapes has a non-zero value
     if (chartData.length === 0 || allZero(chartData)) {
         return false;
@@ -80,9 +85,10 @@ function changeTransparency(color: string, transparency: number) {
  *              * List element controlling the tab is `${dashboardName}-${chartName}-chart-li`
  *              * Chart div `${dashboardName}-${chartName}-chart-tab`
  */
-export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>,
-                                     data: IDict<number>) => boolean,
-                           data: IDict<number>, chartNamePrefix: string) {
+export function applyChart(
+        chartFn: (canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]) => boolean,
+        data: IChartObject[], chartNamePrefix: string,
+    ) {
     const canvas: JQuery<HTMLCanvasElement> = $(`#${chartNamePrefix}-chart`);
     const chartLi: JQuery<HTMLUListElement> = $(`#${chartNamePrefix}-chart-li`);
 
@@ -97,10 +103,10 @@ export function applyChart(chartFn: (canvas: JQuery<HTMLCanvasElement>,
  * Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
-export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>): boolean {
+export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[]): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
-    if (!doChart(canvas, chartData)) {
+    if (!validateChartInput(canvas, chartData)) {
         return false;
     }
 
@@ -155,10 +161,10 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>)
  * Creates a horizontal bar chart on the provided canvas using the provided data.
  * Returns a boolean indicating whether the chart was created successfully.
  */
-export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>): boolean {
+export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
-    if (!doChart(canvas, chartData)) {
+    if (!validateChartInput(canvas, chartData)) {
         return false;
     }
 
@@ -226,7 +232,7 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IDict<number>)
     return true;
 }
 
-export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: Array<IDict<number>>,
+export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartObject[][],
                           seriesLabels: string[]): boolean {
     const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
     // Error checking

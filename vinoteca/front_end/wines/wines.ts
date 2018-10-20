@@ -16,6 +16,7 @@ $(() => {
             filter_cssFilter: ["browser-default"],
             filter_ignoreCase: true,
             filter_reset: ".reset",
+            filter_saveFilter: true,
         },
         widgets: ["filter"],
         widthFixed: true,
@@ -24,22 +25,24 @@ $(() => {
         cssGoto: ".pagenum",
         removeRows: false,
         size: 50,
-    }).on("filterInit", () => {
-        // check that storage ulility is loaded
-        if ($.tablesorter.storage) {
-            // get saved filters
-            const f = $.tablesorter.storage(this, "tablesorter-filters") || [];
-            $(this).trigger("search", [f]);
-        }
-    }).on("filterEnd", function() {
-        if ($.tablesorter.storage) {
-            // save current filters
-            const f = $(this).find(".tablesorter-filter").map(() => {
-                return ($(this).val()) as string || "";
-            }).get();
-            $.tablesorter.storage(this, "tablesorter-filters", f);
-        }
-    });
+    })
+    // .on("filterInit", () => {
+    //     // check that storage utility is loaded
+    //     if ($.tablesorter.storage) {
+    //         // get saved filters
+    //         const f = $.tablesorter.storage(this, "tablesorter-filters") || [];
+    //         $(this).trigger("search", [f]);
+    //     }
+    // }).on("filterEnd", function() {
+    //     if ($.tablesorter.storage) {
+    //         // save current filters
+    //         const f = $(this).find(".tablesorter-filter").map(() => {
+    //             return ($(this).val()) as string || "";
+    //         }).get();
+    //         $.tablesorter.storage(this, "tablesorter-filters", f);
+    //     }
+    // });
+    ;
 
     // 50 needs to be quoted
     $("#pagesize-sel").val("50");

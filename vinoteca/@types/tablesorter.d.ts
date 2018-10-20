@@ -7,13 +7,15 @@
 declare namespace Tablesorter {
     /** Options passed to tablesorter widgets. */
     interface WidgetOptions {
-        /** Reset filters button */
-        filter_reset: string;
-        filter_ignoreCase: boolean;
         /** extra css class name (string or array) added to the filter element (input or select)
          *  select needs a "browser-default" class or it gets hidden
         */
         filter_cssFilter: string[];
+        filter_ignoreCase: boolean;
+        /** Reset filters button */
+        filter_reset: string;
+        /** Save most recent filters in cookies between refreshes. */
+        filter_saveFilter: boolean;
     }
 
     /** Options passed to tablesorter property. */
