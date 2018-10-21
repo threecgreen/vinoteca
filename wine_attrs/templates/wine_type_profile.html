@@ -3,58 +3,80 @@
 {% load vinoteca %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col s12">
-                <h3 class="bold">{{ wine_type.name }}</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col s12">
-                <h5>Wines</h5>
-                <table class="highlight responsive condensed">
-                    <thead>
-                    <tr>
-                        <th>Last Purchased</th>
-                        <th>Color</th>
-                        <th>Name</th>
-                        <th>Producer</th>
-                        <th>Region</th>
-                        <th>Description</th>
-                        <th class="num-col">Total Quantity</th>
-                        <th class="num-col">Avg. Price</th>
-                        <th class="num-col">Rating</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for wine in wines %}
-                        <tr>
-                            {% if wine.last_purchased_date %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.last_purchased_date|inttodate|naturalday:"b j, Y"|title }}</a></td>
-                            {% else %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}">&ndash;</a></td>
-                            {% endif %}
-                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.color.name|title }}</a></td>
-                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }}</a></td>
-                            {% if wine.producer %}
-                                <td><a href="{% url "Producer Profile" producer_id=wine.producer.id %}">{{ wine.producer.name }}</a></td>
-                            {% else %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}"></a></td>
-                            {% endif %}
-                            {% if wine.producer.region %}
-                                <td><a href="{% url "Region Profile" region_id=wine.producer.region.id %}">{{ wine.producer.region.name }}</a></td>
-                            {% else %}
-                                <td><a href="{% url "Wine Profile" wine_id=wine.id %}"></a></td>
-                            {% endif %}
-                            <td><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.description|default_if_none:"" }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.total_quantity|defndash }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.avg_price|floatformat:"2" }}</a></td>
-                            <td class="num-col"><a href="{% url "Wine Profile" wine_id=wine.id %}">{{ wine.rating|defndash }}</a></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h3 class="bold">{{ wine_type.name }}</h3>
+      </div>
     </div>
+    <div class="row">
+      <div class="col s12">
+        <h5>Wines</h5>
+        <table class="highlight responsive condensed">
+          <thead>
+            <tr>
+              <th>Last Purchased</th>
+              <th>Color</th>
+              <th>Name</th>
+              <th>Producer</th>
+              <th>Region</th>
+              <th>Description</th>
+              <th class="num-col">Total Quantity</th>
+              <th class="num-col">Avg. Price</th>
+              <th class="num-col">Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for wine in wines %}
+              <tr>
+                <td>
+                  {% if wine.last_purchased_date %}
+                    {{ wine.last_purchased_date|inttodate|naturalday:"b j, Y"|title }}
+                  {% else %}
+                    &ndash;
+                  {% endif %}
+                </td>
+                <td>
+                  {{ wine.color.name|title }}
+                </td>
+                <td>
+                  <a href="{% url "Wines:Wine Profile" wine_id=wine.id %}">
+                    {{ wine.name|default_if_none:"&ndash;" }}
+                  </a>
+                </td>
+                <td>
+                  {% if wine.producer %}
+                    <a href="{% url "Producers:Producer Profile" producer_id=wine.producer.id %}">
+                      {{ wine.producer.name }}
+                    </a>
+                  {% else %}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if wine.producer.region %}
+                    <a href="{% url "Region Profile" region_id=wine.producer.region.id %}">
+                      {{ wine.producer.region.name }}
+                    </a>
+                  {% else %}
+                  {% endif %}
+                </td>
+                <td>
+                  {{ wine.description|default_if_none:"" }}
+                </td>
+                <td class="num-col">
+                  {{ wine.total_quantity|defndash }}
+                </td>
+                <td class="num-col">
+                  {{ wine.avg_price|floatformat:"2" }}
+                </td>
+                <td class="num-col">
+                  {{ wine.rating|defndash }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 {% endblock %}
