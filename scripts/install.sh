@@ -7,7 +7,7 @@ sudo echo
 echo "Updating system..."
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get -y install git execstack
+sudo apt-get -y install git execstack nodejs
 
 # Download Python
 echo "Downloading Miniconda Python distribution..."

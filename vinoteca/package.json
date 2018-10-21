@@ -22,7 +22,8 @@
         "node-sass": "^4.9.4",
         "postcss-loader": "^3.0.0",
         "sass-loader": "^7.1.0",
-        "ts-loader": "^5.2.2"
+        "ts-loader": "^5.2.2",
+        "webpack-merge": "^4.1.4"
     },
     "dependencies": {
         "chart.js": "^2.7.2",
@@ -37,6 +38,7 @@
     },
     "scripts": {
         "build": "./node_modules/.bin/webpack",
-        "watch": "./node_modules/.bin/webpack --watch"
+        "watch": "./node_modules/.bin/webpack --watch",
+        "profile": "./node_modules/.bin/webpack --profile --json > webpack.stats.json"
     }
 }

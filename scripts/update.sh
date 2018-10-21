@@ -48,6 +48,13 @@ fi
 
 "$py_env/python" "$root_dir/manage.py" migrate || error_exit "Failed to migrate database"
 
+# Javascript
+check_for_node
+cd vinoteca
+npm install --save-dev --no-optional
+npm run-script build
+cd "$root_dir"
+
 echo
 info_text "Running test suite..."
 bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."

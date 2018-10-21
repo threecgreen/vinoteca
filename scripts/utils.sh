@@ -44,6 +44,9 @@ find_python_env()
     elif [ -f "/opt/anaconda/bin/conda" ]; then
         py_env="$(/opt/anaconda/bin/conda env list | grep vinoteca | awk '{print $2}')/bin"
         conda="/opt/anaconda/bin/conda"
+    elif [ "$CI" = true ]; then
+        py_env="/root/miniconda/envs/vinoteca/bin"
+        conda="/root/miniconda/bin/conda"
     else
         error_exit "Failed to find vinoteca Python environment."
     fi
@@ -63,4 +66,12 @@ find_python_env()
 find_vinoteca_version()
 {
     vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')"
+}
+
+check_for_node()
+{
+    command -v npm
+    if [ $? != 0 ]; then
+        error_exit "Node is not installed."
+    fi
 }
