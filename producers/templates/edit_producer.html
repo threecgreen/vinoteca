@@ -1,43 +1,41 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col s12">
-                <h3>Edit Producer</h3>
-                <form action="" method="post" autocomplete="off">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="input-field col s12 m6">
-                            <input type="text" id="producer" name="producer" required value="{{ producer.name }}">
-                            <label for="producer">Producer</label>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input type="text" id="auto-region" name="region" class="autocomplete" required {% if producer.region %}value="{{ producer.region.name }}"{% endif %}>
-                            <label for="auto-region">Region</label>
-                        </div>
-                    </div>
-                    {% include "special_chars.html" %}
-                    <div class="row">
-                        <div class="col s12">
-                            <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
-                                Confirm Changes<i class="material-icons right">send</i>
-                            </button>
-                            <a class="waves-effect waves-light btn pink darken-3" href="{% url "Producer Profile" producer_id=producer.id %}">cancel</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-{% block js %}
-<script type="module">
-import { autocomplete} from "{% static "js/widgets.js" %}";
 
-$(function () {
-    autocomplete("region");
-});
-</script>
-<script type="text/javascript" src="{% static "js/special_chars.js" %}"></script>
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h3>Edit Producer</h3>
+        <form action="" method="post" autocomplete="off">
+          {% csrf_token %}
+          <div class="row">
+            <div class="input-field col s12 m6">
+              <input type="text" id="producer" name="producer" required value="{{ producer.name }}">
+              <label for="producer">Producer</label>
+            </div>
+            <div class="input-field col s12 m6">
+              <input type="text" id="auto-region" name="region" class="autocomplete" required {% if producer.region %}value="{{ producer.region.name }}"{% endif %}>
+              <label for="auto-region">Region</label>
+            </div>
+          </div>
+          {% include "special_chars.html" %}
+          <div class="row">
+            <div class="col s12">
+              <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
+                  Confirm Changes<i class="material-icons right">send</i>
+              </button>
+              <a class="waves-effect waves-light btn pink darken-3"
+                 href="{% url "Producers:Producer Profile" producer_id=producer.id %}">
+                cancel
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'edit_producer.bundle.js' %}"></script>
 {% endblock %}
