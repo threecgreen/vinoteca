@@ -5,6 +5,7 @@
 # will pylint, the Python linter.
 source "$(dirname $0)/utils.sh"
 find_python_env
+find_tslint
 
 pylint()
 # Runs Python linter called pylint
@@ -19,7 +20,7 @@ typescript()
 # Runs typescript linter called tslint
 {
     info_text "Running Typescript linter."
-    tslint -c "$root_dir/tslint.json" "$root_dir/vinoteca/static/ts/*.ts" \
+    "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/static/ts/*.ts" \
             "$root_dir/rest/static/ts/*.ts" --format codeFrame
 }
 

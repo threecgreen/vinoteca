@@ -75,3 +75,13 @@ check_for_node()
         error_exit "Node is not installed."
     fi
 }
+
+find_tslint()
+{
+    command -v tslint
+    if [ $? = 0 ]; then
+        tslint="tslint"
+    else
+        tslint="$root_dir/vinoteca/node_modules/.bin/tslint"
+    fi
+}
