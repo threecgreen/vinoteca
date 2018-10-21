@@ -11,8 +11,8 @@ pylint()
 # Runs Python linter called pylint
 {
     info_text "Running Python linter."
-    "$py_env/pylint" "$root_dir/dashboards" "$root_dir/new_purchase" "$root_dir/rest" \
-        "$root_dir/view" "$root_dir/vinoteca" \
+    "$py_env/pylint" "$root_dir/dashboards" "$root_dir/places" "$root_dir/producers" \
+        "$root_dir/rest" "$root_dir/vinoteca" "$root_dir/wine_attrs" "$root_dir/wines" \
         --rcfile="$root_dir/.pylintrc" --output-format=colorized
 }
 
@@ -20,8 +20,9 @@ typescript()
 # Runs typescript linter called tslint
 {
     info_text "Running Typescript linter."
-    "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/static/ts/*.ts" \
-            "$root_dir/rest/static/ts/*.ts" --format codeFrame
+    "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/front_end/**/*.ts" \
+            "$root_dir/vinoteca/lib/**/*.ts" "$root_dir/vinoteca/@types/**/*.ts" \
+            --format codeFrame
 }
 
 case $# in

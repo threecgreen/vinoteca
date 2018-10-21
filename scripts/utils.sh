@@ -12,7 +12,11 @@ error_exit()
 # Accepts one argument:
 #   string containing error message
 {
-    echo -e "\033[1;31mERROR: $1\033[0m" 1>&2
+    if [ "$CI" != "true" ]; then
+        echo -e "\033[1;31mERROR: $1\033[0m" 1>&2
+    else
+        echo -e "\033[1;31mERROR: $1\033[0m"
+    fi
     exit 1
 }
 
@@ -22,6 +26,10 @@ info_text()
 #
 # Accepts one argument:
 #   string containing text
+if [ $CI == "true" ]; then
+    set -x
+fi
+
 {
     echo -e "\033[1;34m$1\033[0m"
 }
@@ -38,13 +46,13 @@ find_python_env()
         return 0
     fi
     command -v conda
-    if [ $? = 0 ]; then
+    if [ $? == 0 ]; then
         py_env="$(conda env list | grep vinoteca | awk '{print $2}')/bin"
         conda="conda"
     elif [ -f "/opt/anaconda/bin/conda" ]; then
-        py_env="$(/opt/anaconda/bin/conda env list | grep vinoteca | awk '{print $2}')/bin"
         conda="/opt/anaconda/bin/conda"
-    elif [ "$CI" = true ]; then
+        py_env="$($conda env list | grep vinoteca | awk '{print $2}')/bin"
+    elif [ "$CI" == true ]; then
         py_env="/root/miniconda/envs/vinoteca/bin"
         conda="/root/miniconda/bin/conda"
     else

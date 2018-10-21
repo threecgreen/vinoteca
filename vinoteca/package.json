@@ -10,7 +10,7 @@
     },
     "description": "A wine purchase tracker",
     "license": "MIT",
-    "devDependencies": {
+    "dependencies": {
         "@types/chart.js": "^2.7.37",
         "@types/jquery": "^3.3.1",
         "@types/materialize-css": "^1.0.0",
@@ -24,9 +24,7 @@
         "sass-loader": "^7.1.0",
         "ts-loader": "^5.2.2",
         "tslint": "^5.11.0",
-        "webpack-merge": "^4.1.4"
-    },
-    "dependencies": {
+        "webpack-merge": "^4.1.4",
         "chart.js": "^2.7.2",
         "jquery": "^3.3.1",
         "materialize-css": "^1.0.0",
