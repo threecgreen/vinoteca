@@ -1,6 +1,30 @@
+/** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
 
-/** Implement interfaces to interact with the vinoteca REST API. */
+export interface IGenericStatJSON {
+    [name: string]: number;
+}
+
+export class GenericStat implements IChartInput {
+    public static fromJSON(json: IGenericStatJSON) {
+        const stats: GenericStat[] = [];
+        Object.keys(json).forEach((key) => {
+            stats.push(new GenericStat(key, json[key]));
+        });
+        return stats;
+    }
+
+    constructor(private name: string, private stat: number) {
+    }
+
+    public label(): string {
+        return this.name;
+    }
+
+    public datum(): number {
+        return this.stat;
+    }
+}
 
 export interface INameJSON {
     name: string;
@@ -65,31 +89,6 @@ export class Grape implements IChartInput {
 export interface IWineTypeJSON {
     id: number;
     name: string;
-}
-
-export interface IWineTypesDictJSON {
-    [name: string]: number;
-}
-
-export class WineTypeStat implements IChartInput {
-    public static fromDict(dict: IWineTypesDictJSON) {
-        const wineTypes: WineTypeStat[] = [];
-        Object.keys(dict).forEach((key) => {
-            wineTypes.push(new WineTypeStat(key, dict[key]));
-        });
-        return wineTypes;
-    }
-
-    constructor(private name: string, private stat: number) {
-    }
-
-    public label(): string {
-        return this.name;
-    }
-
-    public datum(): number {
-        return this.stat;
-    }
 }
 
 export interface IWineJSON {

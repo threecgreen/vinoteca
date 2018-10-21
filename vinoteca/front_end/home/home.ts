@@ -1,17 +1,17 @@
-import { IWineTypesDictJSON, WineTypeStat } from "../../lib/rest";
+import { IGenericStatJSON, GenericStat } from "../../lib/rest";
 import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart } from "../../lib/wine_charts";
 
-declare const wineTypePurchases: IWineTypesDictJSON;
-declare const wineTypeVarieties: IWineTypesDictJSON;
-declare const wineTypePrice: IWineTypesDictJSON;
+declare const wineTypePurchases: IGenericStatJSON;
+declare const wineTypeVarieties: IGenericStatJSON;
+declare const wineTypePrice: IGenericStatJSON;
 
 $(() => {
     navbar();
     $(".parallax").parallax();
     tabs();
 
-    applyChart(barChart, WineTypeStat.fromDict(wineTypePurchases), "top-wt-purchases");
-    applyChart(barChart, WineTypeStat.fromDict(wineTypeVarieties), "top-wt-varieties");
-    applyChart(barChart, WineTypeStat.fromDict(wineTypePrice), "top-wt-price");
+    applyChart(barChart, GenericStat.fromJSON(wineTypePurchases), "top-wt-purchases");
+    applyChart(barChart, GenericStat.fromJSON(wineTypeVarieties), "top-wt-varieties");
+    applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");
 });

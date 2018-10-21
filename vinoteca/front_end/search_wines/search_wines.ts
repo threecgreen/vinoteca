@@ -1,6 +1,6 @@
 import { clearTable, resetFormBtn, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
-import { autocomplete, datepicker } from "../../lib/widgets";
+import { autocomplete, datepicker, navbar } from "../../lib/widgets";
 
 /** Update search results when search fields change */
 function liveWineSearch(searchParams: JQuery<HTMLInputElement>,
@@ -34,6 +34,7 @@ function liveWineSearch(searchParams: JQuery<HTMLInputElement>,
 }
 
 $(() => {
+    navbar();
     const producer: JQuery<HTMLInputElement> = $("#auto-producer");
     const region: JQuery<HTMLInputElement> = $("#auto-region");
 

@@ -11,6 +11,10 @@ module.exports = {
     entry: {
         global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass" ],
         home: [inputPath + "home/home.ts" ],
+        // Dashboards
+        dashboards: [inputPath + "dashboards/dashboards.ts"],
+        // Producers
+        producer_profile: [inputPath + "producer_profile/producer_profile.ts"],
         // Wines
         edit_wine: [inputPath + "edit_wine/edit_wine.ts"],
         new_purchase: [inputPath + "new_purchase/new_purchase.ts"],
