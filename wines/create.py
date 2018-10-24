@@ -70,7 +70,7 @@ class NewWineView(View):
             img = UserImage((Path(settings.MEDIA_ROOT) / f"{wine.id}.png").resolve())
             img.convert_to_png()
 
-        return redirect("Wine Profile", wine_id=wine.id)
+        return redirect("Wines:Wine Profile", wine_id=wine.id)
 
 
 class NewPurchaseView(WineProfileView):
@@ -92,7 +92,7 @@ class NewPurchaseView(WineProfileView):
         store = g_or_c_store(store)
         wine = Wines.objects.get(id=wine_id)
         c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
-        return redirect("Wine Profile", wine_id=wine_id)
+        return redirect("Wines:Wine Profile", wine_id=wine_id)
 
     def get(self, request, wine_id: int):
         context = self.get_base_context(wine_id)

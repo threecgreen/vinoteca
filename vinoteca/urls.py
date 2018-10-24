@@ -4,7 +4,7 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
 
-from dashboards.views import dashboards
+from dashboards.views import dashboards, inventory
 from places.views import region_profile
 from vinoteca.views import simple_page, home
 from wine_attrs.views import wine_type_profile
@@ -26,7 +26,7 @@ urlpatterns = [
 
     # Other pages
     path("dashboards/", dashboards, name="Dashboards"),
-    # path("inventory/", inventory, name="Inventory"),
+    path("inventory/", inventory, name="Inventory"),
 
     # Namespace URLs
     path("rest/", include("rest.urls", namespace="REST")),

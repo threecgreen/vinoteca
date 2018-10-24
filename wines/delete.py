@@ -15,7 +15,7 @@ def delete_wine(request, wine_id: int):
     if Wines.objects.filter(producer__id=wine.producer.id).count() == 1:
         wine.producer.delete()
     wine.delete()
-    return redirect("Wine Table")
+    return redirect("Wines:Wines")
 
 
 def delete_purchase(request, wine_id: int, purchase_id: int):
@@ -24,4 +24,4 @@ def delete_purchase(request, wine_id: int, purchase_id: int):
     if purchase.wine.id != wine_id:
         raise ValueError("Wine id and purchase id did not match.")
     purchase.delete()
-    return redirect("Edit Wine", wine_id=wine_id)
+    return redirect("Wines:Edit Wine", wine_id=wine_id)

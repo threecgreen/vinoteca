@@ -49,6 +49,7 @@ fi
 "$py_env/python" "$root_dir/manage.py" migrate || error_exit "Failed to migrate database"
 
 # Javascript
+info_text "Installing NPM dependencies..."
 check_for_node
 cd vinoteca
 npm install --save-dev --no-optional

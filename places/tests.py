@@ -8,7 +8,7 @@ from vinoteca.models import VitiAreas
 @pytest.mark.parametrize("region", ["France", "California"])
 @pytest.mark.django_db
 def test_get_region_viti_area(client, region):
-    response = client.get(reverse("REST Viti Area"), {"region__name": region})
+    response = client.get(reverse("REST:Viti Area"), {"region__name": region})
     assert response.status_code == 200
     assert len(response.json()) == VitiAreas.objects.filter(region__name=region).count()
 
@@ -33,10 +33,10 @@ def test_no_duplicate_viti_area(client):
     }
     # First make sure no wines in the viti area 'Rueda2' exist
     assert VitiAreas.objects.filter(name="Rueda2").count() == 0
-    response = client.post("/new/first-time/", post_data)
+    response = client.post(reverse("Wines:New Wine"), post_data)
     assert response.status_code == 302
     # Change producer that shouldn't matter
     post_data["producer"] = "A second producer"
-    response = client.post("/new/first-time/", post_data)
+    response = client.post(reverse("Wines:New Wine"), post_data)
     assert response.status_code == 302
     assert VitiAreas.objects.filter(name="Rueda2").count() == 1

@@ -25,6 +25,3 @@ exclude_lines =
     if settings.DEBUG
 
 ignore_errors = True
-
-[html]
-directory = tests/cov

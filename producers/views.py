@@ -35,7 +35,7 @@ def edit_producer(request, producer_id: int):
         producer.name = request.POST.get("producer")
         producer.region = g_or_c_region(region)
         producer.save()
-        return redirect("Producer Profile", producer_id=producer_id)
+        return redirect("Producers:Producer Profile", producer_id=producer_id)
     context = {
         "producer": Producers.objects.get(id=producer_id),
         "page_name": "Edit Producer",

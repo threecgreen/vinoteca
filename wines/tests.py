@@ -8,7 +8,7 @@ import pytest
 
 from vinoteca.models import Grapes, Purchases, WineGrapes, Wines
 
-
+@pytest.fixture
 def wine_and_post_data(a_wine):
     post_data = {
         "producer": a_wine.producer.name,
@@ -25,10 +25,10 @@ def wine_and_post_data(a_wine):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("page", [
-    reverse("New Purchase Search"),
-    reverse("New Purchase First"),
+    reverse("Wines:Search Wines"),
+    reverse("Wines:New Wine"),
     # reverse("New Purchase Wine"),
-    reverse("Search Wines JSON"),
+    reverse("Wines:Search Wines Results JSON"),
 ])
 def test_pages(client, page):
     response = client.get(page)
@@ -53,7 +53,7 @@ def test_search_wines(client, wine_type, color, producer, region, viti_area):
         "region": region,
         "viti_area": viti_area
     }
-    response = client.get("/new/search-wines/", search_data)
+    response = client.get(reverse("Wines:Search Wines Results JSON"), search_data)
     assert response.status_code == 200
     assert len(response.json()["results"]) > 0
 
@@ -88,8 +88,8 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     ("Costco", "Sauvignon Blanc", "Rodney Strong", None, None, "", "", "", "", "red", 8, 2020, 2, True, None),
 ])
 @pytest.mark.django_db
-def test_insert_new_purchase(client, store, wine_type, producer, region, description, price, viti_area, why,
-                             notes, color, rating, vintage, quantity, add_to_inventory, grapes):
+def test_insert_new_wine(client, store, wine_type, producer, region, description,                     price, viti_area, why, notes, color, rating, vintage,
+                         quantity, add_to_inventory, grapes):
     post_data = {
         "store": store,
         "purchase-date": date.today().strftime("%d %B, %Y"),
@@ -114,7 +114,7 @@ def test_insert_new_purchase(client, store, wine_type, producer, region, descrip
             post_data[f"grape-{i + 1}-pct"] = grape[1]
         # Need to include additional blank grape pct to simulate empty row
         post_data[f"grape-{len(grapes)}-pct"] = 100
-    response = client.post("/new/first-time/", post_data)
+    response = client.post(reverse("Wines:New Wine"), post_data)
     assert response.status_code == 302
 
 
@@ -127,7 +127,7 @@ def upload_file(a_wine):
         image_file.rename(Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png")
     else:
         existing_file = False
-    with open(Path(__file__).parent / "test.jpg", "rb") as file:
+    with open(Path(__file__).parent.parent / "vinoteca" / "test_data" / "test.jpg", "rb") as file:
         yield file
     (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").unlink()
     if existing_file:
@@ -148,9 +148,9 @@ def test_edit_wine(client, wine_and_post_data, attr, val):
     init_val = wine.__getattribute__(attr)
     assert init_val != val
     post_data[attr.replace("_", "-")] = val
-    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
+    response = client.post(reverse("Wines:Edit Wine", kwargs={"wine_id": wine.id}), post_data, follow=True)
     assert response.status_code == 200
-    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
+    assert (reverse("Wines:Wine Profile", kwargs={"wine_id": wine.id}), 302) in response.redirect_chain
     if attr in ("producer", "viti_area", "color") or attr == "viti_area":
         assert Wines.objects.get(id=1).__getattribute__(attr).name == val
     else:
@@ -171,9 +171,9 @@ def test_edit_wine_with_grapes(client, wine_and_post_data):
     post_data["grape-2"] = "Syrah"
     post_data["grape-2-pct"] = 50
     # Post
-    response = client.post(f"/wines/{wine.id}/edit/", post_data, follow=True)
+    response = client.post(reverse("Wines:Edit Wine", kwargs={"wine_id": wine.id}), post_data, follow=True)
     assert response.status_code == 200
-    assert (f"/wines/{wine.id}/", 302) in response.redirect_chain
+    assert (reverse("Wines:Wine Profile", kwargs={"wine_id": wine.id}), 302) in response.redirect_chain
     wine_grapes = WineGrapes.objects.filter(wine=wine)
     grapes = [wine_grape.grape for wine_grape in wine_grapes]
     malbec = Grapes.objects.get(name="Malbec")
@@ -219,7 +219,9 @@ def test_edit_purchases(client, attr, val, a_wine):
         "store": purchase.store
     }
     post_data[attr] = val
-    response = client.post(f"/wines/{a_wine.id}/edit/1/", post_data, follow=True)
+    response = client.post(reverse("Wines:Edit Purchase",
+                                   kwargs={"wine_id": a_wine.id, "purchase_id": 1}),
+                           post_data, follow=True)
     assert response.status_code == 200
     assert (f"/wines/{a_wine.id}/edit/", 302) in response.redirect_chain
     if attr == "store":
@@ -243,7 +245,8 @@ def test_change_inventory(a_wine, client, sign):
 
 @pytest.mark.django_db
 def test_delete_wine(client, a_wine):
-    response = client.get(f"/wines/{a_wine.id}/edit/delete/confirmed/", follow=True)
+    response = client.get(reverse("Wines:Delete Wine", kwargs={"wine_id": a_wine.id}),
+                          follow=True)
     assert response.status_code == 200
     with pytest.raises(Wines.DoesNotExist):
         Wines.objects.get(id=1)
@@ -251,7 +254,9 @@ def test_delete_wine(client, a_wine):
 
 @pytest.mark.django_db
 def test_delete_purchase(client, a_wine):
-    response = client.get(f"/wines/{a_wine.id}/edit/1/delete/", follow=True)
+    response = client.get(reverse("Wines:Delete Purchase",
+                          kwargs={"wine_id":a_wine.id, "purchase_id": 1}),
+                          follow=True)
     assert response.status_code == 200
     with pytest.raises(Purchases.DoesNotExist):
         Purchases.objects.get(id=1)

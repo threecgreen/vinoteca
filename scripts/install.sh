@@ -8,7 +8,7 @@ sudo echo
 info_text "Updating system..."
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get -y install git execstack nodejs
+sudo apt-get -y install git execstack nodejs sqlite3
 
 # Download Python
 info_text "Downloading Miniconda Python distribution..."
@@ -30,6 +30,8 @@ $bin/conda create -n vinoteca -y python=3.6
 find_python_env
 info_text "Installing vinoteca dependencies..."
 $py_env/pip install -r requirements.txt
+info_text "Creating database..."
+$py_env/python "$root_dir/manage.py" migrate
 
 # Javascript
 info_text "Installing NPM dependencies..."

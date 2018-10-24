@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Contains utility functions for vinoteca bash scripts
 
+# Print each line in continuous integration
+if [ "$CI" == "true" ]; then
+    set -x
+fi
+
 # Important filesystem locations
 scripts_dir="$(cd "$(dirname "$0")" ; pwd -P )"
 root_dir="$(dirname "$scripts_dir")"
@@ -26,10 +31,6 @@ info_text()
 #
 # Accepts one argument:
 #   string containing text
-if [ $CI == "true" ]; then
-    set -x
-fi
-
 {
     echo -e "\033[1;34m$1\033[0m"
 }

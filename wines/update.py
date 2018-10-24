@@ -61,7 +61,7 @@ class EditWineView(WineProfileView):
             img = UserImage((Path(settings.MEDIA_ROOT) / f"{wine_id}.png").resolve())
             img.convert_to_png()
 
-        return redirect("Wine Profile", wine_id=wine_id)
+        return redirect("Wines:Wine Profile", wine_id=wine_id)
 
 
 class EditPurchaseView(WineProfileView):
@@ -87,7 +87,7 @@ class EditPurchaseView(WineProfileView):
         purchase.memo = empty_to_none(request.POST.get("memo"))
         purchase.store = g_or_c_store(request.POST.get("store"))
         purchase.save()
-        return redirect("Edit Wine", wine_id=wine_id)
+        return redirect("Wines:Edit Wine", wine_id=wine_id)
 
 
 def change_inventory(request, wine_id: int, sign: str,
@@ -102,4 +102,4 @@ def change_inventory(request, wine_id: int, sign: str,
     wine.save()
     if return_to_inventory:
         return redirect("Inventory")
-    return redirect("Wine Profile", wine_id=wine.id)
+    return redirect("Wines:Wine Profile", wine_id=wine.id)
