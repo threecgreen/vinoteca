@@ -1,6 +1,6 @@
-import { tabs, navbar } from "../../lib/widgets";
-import { barChart, applyChart, lineChart, IChartInput } from "../../lib/wine_charts";
-import { IGenericStatJSON, GenericStat } from "../../lib/rest";
+import { GenericStat, IGenericStatJSON } from "../../lib/rest";
+import { navbar, tabs  } from "../../lib/widgets";
+import { applyChart, barChart, IChartInput, lineChart } from "../../lib/wine_charts";
 
 declare const colorPurchases: IGenericStatJSON;
 declare const colorVarieties: IGenericStatJSON;
@@ -50,8 +50,8 @@ $(() => {
         "Avg Price",
     ];
 
-    if(doPurchasesByYear) {
-        lineChart($("#pb-year-chart"), purchasesByYearData.map(j => GenericStat.fromJSON(j)),
+    if (doPurchasesByYear) {
+        lineChart($("#pb-year-chart"), purchasesByYearData.map((j) => GenericStat.fromJSON(j)),
                   purchasesByYearLabels);
     }
 });

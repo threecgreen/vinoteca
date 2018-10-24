@@ -9,15 +9,15 @@ const region: JQuery<HTMLInputElement> = $("#auto-region");
 $(() => {
     navbar();
     specialChars();
-    $('select').formSelect();
+    $("select").formSelect();
 
     autocomplete("wine-type");
     autocomplete("producer");
-    toggleRegion($('#auto-producer'), region);
+    toggleRegion($("#auto-producer"), region);
     autocomplete("region");
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement,
                  hasRating);
-    updateVitiAreaSelections(region, $('#auto-viti-area'));
+    updateVitiAreaSelections(region, $("#auto-viti-area"));
     showNextGrapeInput($(".grape-btn"));
 });
 

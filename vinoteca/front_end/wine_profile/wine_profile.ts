@@ -1,7 +1,7 @@
 import "chart.js";
 import "materialize-css";
 import { Grape, IGrapeJSON } from "../../lib/rest";
-import { navbar, tabs, hFloatingActnBtn } from "../../lib/widgets";
+import { hFloatingActnBtn, navbar, tabs } from "../../lib/widgets";
 import { applyChart, pieChart  } from "../../lib/wine_charts";
 
 declare const wineId: number;
