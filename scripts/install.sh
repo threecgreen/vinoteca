@@ -28,12 +28,6 @@ if [ "$CI" != "true" ]; then
 fi
 $bin/conda create -n vinoteca -y python=3.6
 find_python_env
-echo "$py_env"
-echo
-info_text "$(ls /root/miniconda/envs/vinoteca/bin) -al"
-echo
-info_text "$(ls /root/miniconda/bin -al)"
-echo
 info_text "Installing vinoteca dependencies..."
 $py_env/pip install -r requirements.txt
 

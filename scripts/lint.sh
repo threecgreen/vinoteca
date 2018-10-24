@@ -43,3 +43,4 @@ case $# in
         error_exit "Invalid number of arguments."
         ;;
 esac
+exit 0
