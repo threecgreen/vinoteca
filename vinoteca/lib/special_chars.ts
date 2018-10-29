@@ -19,6 +19,7 @@ export function specialChars() {
 
     /* Change special character buttons between upper and lowercase */
     $(shiftBtn).on("click", () => {
+        console.log("Click shift button");
         if ($(shiftBtn).text() === "↑") {
             $(specialCharBtns).each(function() {
                 $(this).text($(this).text().toUpperCase());
