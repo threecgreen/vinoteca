@@ -1,3 +1,4 @@
+"""Views for creating new wine and wine purchase data."""
 from pathlib import Path
 
 from django.conf import settings
@@ -16,8 +17,11 @@ from wines.read import WineProfileView
 
 
 class NewWineView(View):
-    #pylint: disable=too-many-locals
-    def get(self, request):
+    r"""View for getting the form and processsing the submitted form for creating
+    a new wine."""
+    @staticmethod
+    def get(request):
+        r"""Get the data for the new wine form."""
         context = {
             "colors": Colors.objects.all(),
             "default_vintage": default_vintage_year(),
@@ -25,7 +29,9 @@ class NewWineView(View):
         }
         return render(request, "new_wine.html", context)
 
-    def post(self, request):
+    #pylint: disable=too-many-locals
+    @staticmethod
+    def post(request):
         r"""Handles logic for inserting a wine purchased for the first time and
         therefore new Wines and Purchases objects are created."""
         store = empty_to_none(request.POST.get("store"))
@@ -57,7 +63,7 @@ class NewWineView(View):
         producer = g_or_c_producer(producer, region)
         viti_area = g_or_c_viti_area(viti_area, producer.region)
         wine = c_wine(description, notes, name, producer, wine_type, color, rating,
-                    inventory, viti_area, why)
+                      inventory, viti_area, why)
         c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
         # Grape composition
         handle_grapes(request, wine)

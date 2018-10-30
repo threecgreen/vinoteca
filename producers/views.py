@@ -1,15 +1,11 @@
-from django.db.models import Count, Max, Sum, Avg
+"""Contains views for interacting with data regarding wine producers."""
+from django.db.models import Max, Sum, Avg
 from django.shortcuts import render, redirect
 
 from vinoteca.models import (
-    Colors, Regions, Producers, Purchases, Wines, WineTypes, WineGrapes,
-    VitiAreas
+    Producers, Wines
 )
-from vinoteca.utils import (
-    get_connection, int_to_date, date_str_to_int, g_or_c_wine_type,
-    g_or_c_store, g_or_c_producer, g_or_c_region, flag_exists,
-    empty_to_none, g_or_c_viti_area, handle_grapes
-)
+from vinoteca.utils import g_or_c_region
 
 def producer_profile(request, producer_id: int):
     r"""View for wine producer information."""
@@ -41,4 +37,3 @@ def edit_producer(request, producer_id: int):
         "page_name": "Edit Producer",
     }
     return render(request, "edit_producer.html", context)
-

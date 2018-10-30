@@ -1,3 +1,5 @@
+"""Contains views for interacting with Places: ie, regions, viticultural areas,
+and stores."""
 from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render
 

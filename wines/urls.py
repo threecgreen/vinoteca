@@ -1,3 +1,4 @@
+"""URL configuration for wine views."""
 # pylint: disable=invalid-name
 from django.urls import path
 

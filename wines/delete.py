@@ -1,3 +1,4 @@
+"""Views for deleting wines and purchases."""
 # pylint: disable=unused-argument
 from django.shortcuts import redirect
 

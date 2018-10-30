@@ -7,7 +7,7 @@ from typing import List
 import attr
 from django.db.models import Avg, Count, Sum
 from django.db.models.functions import Coalesce
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
@@ -138,7 +138,7 @@ def top_grape_varieties(limit: int) -> List[Grapes]:
     # TODO: possibly rewrite in SQL to better calculate average pct with
     # coalesce and wine-weighted avg price
     return Grapes.objects.annotate(wine_varieties=Count("winegrapes__wine", distinct=True)) \
-        .annotate(avg_price=Count("winegrapes__wine__purchases__price")) \
+        .annotate(avg_price=Avg("winegrapes__wine__purchases__price")) \
         .annotate(avg_pct=Avg("winegrapes__percent")) \
         .order_by("-wine_varieties", "-avg_price")[:limit]
 

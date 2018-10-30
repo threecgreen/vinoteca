@@ -1,3 +1,4 @@
+"""Views for updating or editing wine and wine purchase data."""
 from pathlib import Path
 
 from django.conf import settings
@@ -90,6 +91,7 @@ class EditPurchaseView(WineProfileView):
         return redirect("Wines:Edit Wine", wine_id=wine_id)
 
 
+# pylint: disable=unused-argument
 def change_inventory(request, wine_id: int, sign: str,
                      return_to_inventory: bool = False):
     r"""Change the current inventory number for a wine."""
