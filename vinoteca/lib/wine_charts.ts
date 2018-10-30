@@ -8,22 +8,79 @@ export interface IChartInput {
 }
 
 const fontFamily = "'Roboto', sans-serif";
-const white = "#f8f8f8";
-const translucentWhite = "rgba(240, 240, 240, 0.9)";
-const translucentGray = "rgba(200, 200, 200, 0.9)";
-const tenColorRainbow = [
-    "rgba(230, 25, 75, 0.8)",   // Red
-    "rgba(245, 130, 48, 0.8)",  // Orange
-    "rgba(255, 225, 25, 0.8)",  // Yellow
-    "rgba(210, 245, 60, 0.8)",  // Lime
-    "rgba(60, 180, 75, 0.8)",   // Green
-    "rgba(70, 240, 240, 0.8)",  // Cyan
-    "rgba(0, 130, 200, 0.8)",   // Blue
-    "rgba(0, 0, 128, 0.8)",     // Navy
-    "rgba(240, 50, 230, 0.8)",  // Magenta
-    "rgba(145, 30, 180, 0.8)",  // Purple
-];
 
+class Colors {
+    public static red(): string {
+        return Colors.TEN_COLOR_RAINBOW[0];
+    }
+    public static orange(): string {
+        return Colors.TEN_COLOR_RAINBOW[1];
+    }
+    public static yellow(): string {
+        return Colors.TEN_COLOR_RAINBOW[2];
+    }
+    public static lime(): string {
+        return Colors.TEN_COLOR_RAINBOW[3];
+    }
+    public static green(): string {
+        return Colors.TEN_COLOR_RAINBOW[4];
+    }
+    public static cyan(): string {
+        return Colors.TEN_COLOR_RAINBOW[5];
+    }
+    public static blue(): string {
+        return Colors.TEN_COLOR_RAINBOW[6];
+    }
+    public static navy(): string {
+        return Colors.TEN_COLOR_RAINBOW[7];
+    }
+    public static magenta(): string {
+        return Colors.TEN_COLOR_RAINBOW[8];
+    }
+    public static purple(): string {
+        return Colors.TEN_COLOR_RAINBOW[9];
+    }
+    public static all(): string[] {
+        return Colors.TEN_COLOR_RAINBOW;
+    }
+    public static rainbow(colorCount: number): string[] {
+        return Colors.TEN_COLOR_RAINBOW.slice(colorCount);
+    }
+    public static index(index: number): string {
+        return Colors.TEN_COLOR_RAINBOW[index];
+    }
+    public static white(): string {
+        return Colors.WHITE;
+    }
+    public static translucentWhite(): string {
+        return Colors.TRANSLUCENT_WHITE;
+    }
+    public static translucentGray(): string {
+        return Colors.TRANSLUCENT_GRAY;
+    }
+
+    private static readonly TEN_COLOR_RAINBOW = [
+        "rgba(230, 25, 75, 0.8)",   // Red
+        "rgba(245, 130, 48, 0.8)",  // Orange
+        "rgba(255, 225, 25, 0.8)",  // Yellow
+        "rgba(210, 245, 60, 0.8)",  // Lime
+        "rgba(60, 180, 75, 0.8)",   // Green
+        "rgba(70, 240, 240, 0.8)",  // Cyan
+        "rgba(0, 130, 200, 0.8)",   // Blue
+        "rgba(0, 0, 128, 0.8)",     // Navy
+        "rgba(240, 50, 230, 0.8)",  // Magenta
+        "rgba(145, 30, 180, 0.8)",  // Purple
+    ];
+    private static readonly WHITE = "#f8f8f8";
+    private static readonly TRANSLUCENT_WHITE = "rgba(240, 240, 240, 0.9)";
+    private static readonly TRANSLUCENT_GRAY = "rgba(200, 200, 200, 0.9)";
+}
+
+/**
+ * Predicate function that checks whether every element of a given array is
+ * equal to 0.
+ * @param array the array that will be checked
+ */
 function allZero(array: number[]): boolean {
     for (const num of array) {
         if (num !== 0) {
@@ -60,6 +117,10 @@ function validateChartInput(canvas: JQuery<HTMLCanvasElement>, chartData: number
     return true;
 }
 
+/**
+ * Helper function that dates in a rgb color string and transparency value, and
+ * creates a rgba string.
+ */
 function changeTransparency(color: string, transparency: number) {
     if (transparency <= 0 || transparency >= 1) {
         throw Error("Transparency must be between 0 and 1");
@@ -76,14 +137,13 @@ function changeTransparency(color: string, transparency: number) {
  * Helper function for creating a chart and enabling/disabling its container tab depending on
  * success of creating the chart.
  *
- * Parameters:
- *      chartFn: the chart function, e.g. pieChart or barChart
- *      data: chart data
- *      chartNamePrefix: prefix of the HTML IDs of the elements associated with the chart.
- *          The prefix format is `${dashboardName}-${chartName}` and then
- *              * Canvas is `${dashboardName}-${chartName}-chart`
- *              * List element controlling the tab is `${dashboardName}-${chartName}-chart-li`
- *              * Chart div `${dashboardName}-${chartName}-chart-tab`
+ * @param chartFn the chart function, e.g. pieChart or barChart
+ * @param data chart data
+ * @param chartNamePrefix prefix of the HTML IDs of the elements associated with the chart.
+ * The prefix format is `"${dashboardName}-${chartName}"` and then
+ *  * Canvas is `"${dashboardName}-${chartName}-chart"`
+ *  * List element controlling the tab is `${dashboardName}-${chartName}-chart-li`
+ *  * Chart div `${dashboardName}-${chartName}-chart-tab`
  */
 export function applyChart(
         chartFn: (canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]) => boolean,
@@ -110,13 +170,17 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
         return false;
     }
 
-    const config = {
+    const config: Chart.ChartConfiguration = {
         data: {
             datasets: [{
                 backgroundColor: [
                     "rgba(139, 195, 74)",
                     "rgba(173, 20, 87)",
                     "rgba(251, 192, 45)",
+                    Colors.blue(),
+                    Colors.purple(),
+                    Colors.orange(),
+
                 ],
                 borderWidth: 0,
                 data: chartData,
@@ -169,10 +233,10 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
         return false;
     }
 
-    const config = {
+    const config: Chart.ChartConfiguration = {
         data: {
             datasets: [{
-                backgroundColor: tenColorRainbow,
+                backgroundColor: Colors.all(),
                 data: chartData,
             }],
             labels: chartLabels,
@@ -190,24 +254,22 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
             responsive: true,
             scales: {
                 xAxes: [{
-                    borderWidth: 40,
                     gridLines: {
-                        color: translucentGray,
+                        color: Colors.translucentGray(),
                     },
                     ticks: {
                         beginAtZero: true,
-                        fontColor: translucentWhite,
+                        fontColor: Colors.translucentWhite(),
                         fontFamily,
                         fontSize: 14,
                     },
                 }],
                 yAxes: [{
-                    borderWidth: 40,
                     gridLines: {
-                        color: translucentGray,
+                        color: Colors.translucentGray(),
                     },
                     ticks: {
-                        fontColor: translucentWhite,
+                        fontColor: Colors.translucentWhite(),
                         fontFamily,
                         fontSize: 14,
                     },
@@ -216,7 +278,6 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
             tooltips: {
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white,
                 titleFontFamily: fontFamily,
                 titleFontSize: 14,
             },
@@ -234,9 +295,16 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
     return true;
 }
 
+/**
+ * Function that creates a new chart.js line chart on the page.
+ * @param canvas location where the line chart will be placed on the page
+ * @param data chart data
+ * @param seriesLabels labels of each series or line present on the chart
+ */
 export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[][],
                           seriesLabels: string[]): boolean {
-    const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
+    // const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
+    const chartLabels = splitData(data[0])[0];
     // Error checking
     if (!elementExists(canvas)) {
         return false;
@@ -245,13 +313,12 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
         return false;
     }
 
-    const config = {
+    const config: Chart.ChartConfiguration = {
         data: {
             datasets: [],
             labels: chartLabels,
         },
         options: {
-            backgroundColor: white,
             layout: {
                 padding: {
                     bottom: 15,
@@ -261,36 +328,30 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
             responsive: true,
             scales: {
                 xAxes: [{
-                    borderWidth: 40,
                     gridLines: {
-                        color: translucentGray,
+                        color: Colors.translucentGray(),
                     },
                     ticks: {
                         beginAtZero: true,
-                        fontColor: translucentWhite,
+                        fontColor: Colors.translucentWhite(),
                         fontFamily,
                         fontSize: 14,
                     },
-                    // categoryPercentage: 1.0
                 }],
                 yAxes: [{
-                    borderWidth: 40,
                     gridLines: {
-                        color: translucentGray,
+                        color: Colors.translucentGray(),
                     },
                     ticks: {
-                        fontColor: translucentWhite,
+                        fontColor: Colors.translucentWhite(),
                         fontFamily,
                         fontSize: 14,
                     },
-                    // barPercentage: 1.0,
-                    // categoryPercentage: 1.0
                 }],
             },
             tooltips: {
                 bodyFontFamily: fontFamily,
                 bodyFontSize: 12,
-                fontColor: white,
                 titleFontFamily: fontFamily,
                 titleFontSize: 14,
             },
@@ -304,8 +365,8 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
         const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
         config.data.datasets.push({
-            backgroundColor: changeTransparency(tenColorRainbow[i], 0.5),
-            borderColor: tenColorRainbow[i],
+            backgroundColor: changeTransparency(Colors.index(i), 0.5),
+            borderColor: Colors.index(i),
             data: chartData,
             label: seriesLabels[i],
         });

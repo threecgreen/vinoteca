@@ -1,6 +1,7 @@
-import { toggleRegion, updateVitiAreaSelections, toggleRating, showNextGrapeInput } from "../../lib/new_wines";
-import { autocomplete, navbar } from "../../lib/widgets";
+import { showNextGrapeInput, toggleRating, toggleRegion,
+         updateVitiAreaSelections} from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
+import { autocomplete, navbar } from "../../lib/widgets";
 
 declare const hasRating: boolean;
 
@@ -26,4 +27,4 @@ $(() => {
     autocomplete("grape", 5, 1, "[id^=auto-grape-]");
     // Run first for initial region
     $(region).trigger("change");
-})
+});

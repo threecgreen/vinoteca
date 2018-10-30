@@ -143,12 +143,12 @@
     };
     const grapePrice = {
         {% for grape in grapes  %}
-            "{{ grape.name }}": {{ grape.avg_price|floatformat:"2" }},
+            "{{ grape.name }}": {{ grape.avg_price|default_if_none:0|floatformat:2 }},
         {% endfor %}
     };
     const grapePct = {
         {% for grape in grapes %}
-            "{{ grape.name }}": {{ grape.avg_pct|floatformat:"1" }},
+            "{{ grape.name }}": {{ grape.avg_pct|default_if_none:0|floatformat:1 }},
         {% endfor %}
     };
 

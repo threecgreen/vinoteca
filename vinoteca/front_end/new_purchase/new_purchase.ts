@@ -1,7 +1,7 @@
-    import { autocomplete, datepicker, navbar } from "../../lib/widgets";
+import { autocomplete, datepicker, navbar } from "../../lib/widgets";
 
-    $(() => {
-        navbar();
-        datepicker();
-        autocomplete("store");
-    });
+$(() => {
+    navbar();
+    datepicker();
+    autocomplete("store");
+});

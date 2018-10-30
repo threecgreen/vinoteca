@@ -1,4 +1,4 @@
-import { IGenericStatJSON, GenericStat } from "../../lib/rest";
+import { GenericStat, IGenericStatJSON } from "../../lib/rest";
 import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart } from "../../lib/wine_charts";
 

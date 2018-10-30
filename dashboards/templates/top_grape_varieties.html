@@ -23,11 +23,11 @@
                 <td>{{ grape.name }}</td>
                 <td class="num-col">{{ grape.wine_varieties }}</td>
                 {% if grape.avg_price %}
-                    <td class="num-col">{{ grape.avg_price|floatformat:"2" }}</td>
+                    <td class="num-col">{{ grape.avg_price|floatformat:2 }}</td>
                 {% else %}
                     <td class="num-col">&ndash;</td>
                 {% endif %}
-                <td class="num-col">{{ grape.avg_pct|floatformat:"1" }}%</td>
+                <td class="num-col">{{ grape.avg_pct|floatformat:1 }}%</td>
             </tr>
         {% endfor %}
         </tbody>
