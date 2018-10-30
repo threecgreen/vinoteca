@@ -17,11 +17,7 @@ error_exit()
 # Accepts one argument:
 #   string containing error message
 {
-    if [ "$CI" != "true" ]; then
-        echo -e "\033[1;31mERROR: $1\033[0m" 1>&2
-    else
-        echo -e "\033[1;31mERROR: $1\033[0m"
-    fi
+    echo -e "\033[1;31mERROR: $1\033[0m" 1>&2
     exit 1
 }
 
@@ -46,7 +42,7 @@ find_python_env()
         conda="$(cat "$scripts_dir/.conda.cache")"
         return 0
     fi
-    command -v conda
+    command -v conda > /dev/null 2>&1
     if [ $? == 0 ]; then
         py_env="$(conda env list | grep vinoteca | awk '{print $2}')/bin"
         conda="conda"
@@ -74,12 +70,13 @@ find_python_env()
 
 find_vinoteca_version()
 {
-    vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')"
+    local git_ver="$(git --git-dir="$root_dir/.git" --work-tree="$root_dir" branch | grep \* | cut -d' ' -f2)"
+    vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')-$git_ver"
 }
 
 check_for_node()
 {
-    command -v npm
+    command -v npm > /dev/null 2>&1
     if [ $? != 0 ]; then
         error_exit "Node is not installed."
     fi
@@ -87,7 +84,7 @@ check_for_node()
 
 find_tslint()
 {
-    command -v tslint
+    command -v tslint > /dev/null 2>&1
     if [ $? = 0 ]; then
         tslint="tslint"
     else
