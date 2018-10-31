@@ -1,0 +1,6 @@
+{% include 'row_link.html' with profil_name='Region Profile' id_name='region_id'  %}
+<td>
+  <a href="{% url 'Region Profile' region_id=region_id %}">
+    {{ region_name }}
+  </a>
+</td>

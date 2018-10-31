@@ -30,14 +30,13 @@
   <nav>
     <div class="nav-wrapper pink darken-4">
       <div class="container">
-        {% comment %} <div class="container hide-on-sm-and-down"> {% endcomment %}
         <a href="{% url "Home"  %}" class="brand-logo"><img src="{% static "img/wine-icon.png" %}" id="logo-img">vinoteca</a>
         <a href="#" data-target="mobile" class="sidenav-trigger left hide-on-large-and-up">
           <i class="material-icons">menu</i>
         </a>
         <ul class="right hide-on-med-and-down">
 
-          {% include 'menu_items.html' %}
+          {% include 'menu_items.html' with id='top-dropdown' %}
 
         </ul>
       </div>
@@ -45,7 +44,7 @@
   </nav>
   <ul class="sidenav" id="mobile">
 
-    {% include 'menu_items.html' %}
+    {% include 'menu_items.html' with id='sidebar-dropdown' %}
 
   </ul>
   <main>

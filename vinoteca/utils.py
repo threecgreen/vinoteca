@@ -5,6 +5,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import List, Type, Union
 
+import attr
 from dateutil.relativedelta import relativedelta
 
 from vinoteca.models import (
@@ -12,6 +13,11 @@ from vinoteca.models import (
     WineGrapes, Wines, WineTypes
 )
 from vinoteca.settings import BASE_DIR
+
+
+class TableColumnHeader(object):
+    name = attr.ib(type=str)
+    is_num_col = attr.ib(default=False)
 
 
 def g_or_c_store(store: str) -> Union[Stores, None]:
