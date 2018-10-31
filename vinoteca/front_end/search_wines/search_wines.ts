@@ -1,6 +1,6 @@
 import { clearTable, resetFormBtn, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
-import { autocomplete, datepicker, navbar } from "../../lib/widgets";
+import { autocomplete, navbar } from "../../lib/widgets";
 
 /** Update search results when search fields change */
 function liveWineSearch(searchParams: JQuery<HTMLInputElement>,
