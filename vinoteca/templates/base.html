@@ -29,28 +29,25 @@
 <body>
   <nav>
     <div class="nav-wrapper pink darken-4">
-      <div class="container hide-on-sm-and-down">
+      <div class="container">
+        {% comment %} <div class="container hide-on-sm-and-down"> {% endcomment %}
         <a href="{% url "Home"  %}" class="brand-logo"><img src="{% static "img/wine-icon.png" %}" id="logo-img">vinoteca</a>
-        <ul class="right">
-          <li {% block new-nav %}{% endblock %}>
-            <ul id="new-purchase-dropdown" class="dropdown-content">
-              <li><a href="{% url "Wines:New Wine" %}">First-time Purchase</a></li>
-              <li><a href="{% url "Wines:Search Wines" %}">Previously Purchased</a></li>
-            </ul>
-            <a href="#!" class="dropdown-trigger"
-               data-target="new-purchase-dropdown">
-              <i class="material-icons left">add_circle</i>
-              New
-              <i class="material-icons right">arrow_drop_down</i>
-            </a>
-          </li>
-          <li {% block view-nav %}{% endblock %}><a href="{% url "Wines:Wines" %}"><i class="material-icons left">reorder</i>Wines</a></li>
-          <li {% block dashboard-nav %}{% endblock %}><a href="{% url "Dashboards" %}"><i class="material-icons left">dashboard</i>Dashboards</a></li>
-          {% comment %} <li {% block inventory-nav %}{% endblock %}><a href="{% url "Inventory" %}"><i class="material-icons left">view_comfy</i>Inventory</a> </li> {% endcomment %}
+        <a href="#" data-target="mobile" class="sidenav-trigger left hide-on-large-and-up">
+          <i class="material-icons">menu</i>
+        </a>
+        <ul class="right hide-on-med-and-down">
+
+          {% include 'menu_items.html' %}
+
         </ul>
       </div>
     </div>
   </nav>
+  <ul class="sidenav" id="mobile">
+
+    {% include 'menu_items.html' %}
+
+  </ul>
   <main>
     {% block body %}{% endblock %}
   </main>

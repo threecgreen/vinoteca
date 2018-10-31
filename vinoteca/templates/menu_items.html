@@ -1,0 +1,14 @@
+<li {% block new-nav %}{% endblock %}>
+  <ul id="new-purchase-dropdown" class="dropdown-content">
+    <li><a href="{% url "Wines:New Wine" %}">First-time Purchase</a></li>
+    <li><a href="{% url "Wines:Search Wines" %}">Previously Purchased</a></li>
+  </ul>
+  <a href="#!" class="dropdown-trigger"
+      data-target="new-purchase-dropdown">
+    <i class="material-icons left">add_circle</i>
+    New
+    <i class="material-icons right">arrow_drop_down</i>
+  </a>
+</li>
+<li {% block view-nav %}{% endblock %}><a href="{% url "Wines:Wines" %}"><i class="material-icons left">reorder</i>Wines</a></li>
+<li {% block dashboard-nav %}{% endblock %}><a href="{% url "Dashboards" %}"><i class="material-icons left">dashboard</i>Dashboards</a></li>

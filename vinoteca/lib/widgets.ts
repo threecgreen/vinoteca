@@ -24,7 +24,7 @@ export function datepicker(selector = ".datepicker"): void {
 
 /** Enables navbar menus. Should be called on every page. */
 export function navbar() {
-    // $(".button-collapse").sidenav();
+    $(".sidenav").sidenav();
     $(".dropdown-trigger").dropdown();
 }
 
