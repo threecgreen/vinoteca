@@ -27,7 +27,6 @@ module.exports = {
                 inputPath + "wines/jquery.tablesorter.widgets.js",
                 inputPath + "wines/jquery.tablesorter.pager.css"],
     },
-    mode: "development",
     module: {
         rules: [
             {
@@ -70,6 +69,9 @@ module.exports = {
                 },
             },
         },
+    },
+    performance: {
+        hints: false
     },
     output: {
         filename: "[name].bundle.js",

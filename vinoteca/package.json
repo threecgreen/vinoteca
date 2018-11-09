@@ -36,8 +36,8 @@
         "webpack-cli": "^3.1.2"
     },
     "scripts": {
-        "build": "./node_modules/.bin/webpack",
-        "watch": "./node_modules/.bin/webpack --watch",
+        "build": "./node_modules/.bin/webpack --mode production",
+        "watch": "./node_modules/.bin/webpack --watch --mode development",
         "profile": "./node_modules/.bin/webpack --profile --json > webpack.stats.json"
     }
 }
