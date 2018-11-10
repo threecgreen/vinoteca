@@ -4,6 +4,9 @@
 # Compiled
 *.pyc
 
+# Configuration files
+vinoteca/config.json
+
 # Data files
 data/*.csv
 data/*.db

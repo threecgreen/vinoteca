@@ -1,12 +1,11 @@
 r"""Django settings for vinoteca project."""
-import os
+from pathlib import Path
+
+from .config import ConfigurationManager
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'd@xx^f(9^&kr3ur@@t(fzbfrwie6#o0(ar+#68a!@vory(+_+h'
@@ -16,6 +15,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Configuration file
+CONFIG_MAN = ConfigurationManager(BASE_DIR / "vinoteca" / "config.json",
+                                  BASE_DIR / "data" / "wine.db",
+                                  BASE_DIR / "media")
 
 # Application definition
 
@@ -58,7 +61,7 @@ ROOT_URLCONF = 'vinoteca.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "vinoteca/templates")],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,7 +82,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'data/wine.db'),
+        'NAME': CONFIG_MAN.database_path
     }
 }
 
@@ -122,13 +125,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "vinoteca/static"),
-    os.path.join(BASE_DIR, "rest/static"),
+    BASE_DIR / "vinoteca" / "static",
+    BASE_DIR / "rest" / "static"
 ]
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = CONFIG_MAN.media_folder_path
 
 # Django rest
 
