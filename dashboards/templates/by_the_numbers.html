@@ -1,10 +1,16 @@
 {% load humanize %}
+{% load vinoteca %}
+
 <p>
-    <span class="by-the-numbers">{{ btn.liters_of_wine|intcomma }}</span>
+    {% if btn.liters_of_wine %}
+        <span class="by-the-numbers">{{ btn.liters_of_wine|intcomma }}</span>
+    {% else %}
+        <span class="by-the-numbers">0</span>
+    {% endif %}
     Liters of Wine
 </p>
 <p>
-    <span class="by-the-numbers">{{ btn.most_common_date|date:"F j" }}</span>
+    <span class="by-the-numbers">{{ btn.most_common_date|date:"F j"|defndash }}</span>
     Most Common Purchase Date
 </p>
 <p>

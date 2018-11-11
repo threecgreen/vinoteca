@@ -2,48 +2,57 @@
 {% load static %}
 
 {% block body %}
-    <div class="parallax-container">
-        <div class="parallax"><img src="{% static "img/bourgogne.jpg" %}"></div>
-    </div>
-    <div class="section white">
-        <div class="container">
-            <div class="row">
-                <div class="col s12">
-                    <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
-                    <h5 class="center">A wine purchase tracker and review system.</h5>
-                    <p class="center-align">
-                        <a class="waves-effect btn waves-light yellow darken-2" href="{% url "New Purchase First" %}">
-                            <i class="material-icons left">add_circle</i>
-                            add wine
-                        </a>
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 xl7">
-                    <div class="card light-green lighten-3">
-                        <div class="card-content">
-                            <h2 class="card-title">Recent Purchases</h2>
-                            {% include "recent_purchases.html" %}
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 xl5">
-                    <div class="card pink darken-4">
-                        <div class="card-content white-text">
-                            <h2 class="card-title">Top Purchase Types</h2>
-                            {% include "top_purchase_wine_types.html" %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+  {% comment %} <div class="parallax-container">
+    <div class="parallax"><img src="{% static "img/bourgogne.jpg" %}"></div>
+  </div> {% endcomment %}
+  <div class="section white">
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <h1 class="center bold">Welcome to <span class="brand-logo">vinoteca</span></h1>
+          <h5 class="center">A wine purchase tracker and review system.</h5>
         </div>
+        {% include "add_wine_btn.html" %}
+      </div>
+      <div class="row">
+        <div class="col s12 xl7">
+            <div class="card wine-green-card">
+              <div class="card-content">
+                <h2 class="card-title">Recent Purchases</h2>
+                {% include "recent_purchases.html" %}
+              </div>
+            </div>
+          </div>
+          <div class="col s12 xl5">
+            <div class="card wine-red-card">
+              <div class="card-content">
+                <h2 class="card-title">Top Wine Types</h2>
+                {% include "top_wine_types.html" %}
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
+
 {% block js %}
-<script type="text/javascript">
-$(function(){
-    $('.parallax').parallax();
-});
-</script>
+  <script type="text/javascript">
+    const wineTypePurchases = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.quantity|default_if_none:0 }},
+        {% endfor %}
+    };
+    const wineTypeVarieties = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.variety|default_if_none:0 }},
+        {% endfor %}
+    };
+    const wineTypePrice = {
+        {% for wine_type in top_wine_types %}
+            "{{ wine_type.name|title }}": {{ wine_type.avg_price|default_if_none:0|floatformat:2 }},
+        {% endfor %}
+    };
+  </script>
+  <script src="{% static 'home.bundle.js' %}"></script>
 {% endblock %}

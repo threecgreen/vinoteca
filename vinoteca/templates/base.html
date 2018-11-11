@@ -1,87 +1,84 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-    <meta content="text/html">
-	<title>vinoteca | {{ page_name }}</title>
+  <meta charset="UTF-8">
+  <meta content="text/html">
+  <title>vinoteca | {{ page_name }}</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/apple-touch-icon.png" %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/favicon-32x32.png" %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/favicon-16x16.png" %}">
-    <link rel="manifest" href="{% static "img/manifest.json" %}">
-    <link rel="mask-icon" href="{% static "img/safari-pinned-tab.svg" %}" color="#5bbad5">
-    <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static "img/apple-touch-icon.png" %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static "img/favicon-32x32.png" %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static "img/favicon-16x16.png" %}">
+  <link rel="manifest" href="{% static "img/manifest.json" %}">
+  <link rel="mask-icon" href="{% static "img/safari-pinned-tab.svg" %}" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
 {#    Materialize CSS Links#}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link rel="stylesheet" href="{% static "css/vinoteca-style.css" %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 {#    Google Icon font#}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {#    Let browser know website is optimized for mobile#}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	{% block head %}{% endblock %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  {% block head %}
+    <link rel="stylesheet" href="{% static "global.bundle.css" %}">
+  {% endblock %}
+
 </head>
 
 <body>
-    <ul id="new-purchase-dropdown" class="dropdown-content">
-        <li><a href="{% url "New Purchase First" %}">First-time Purchase</a></li>
-        <li><a href="{% url "New Purchase Search" %}">Previously Purchased</a></li>
-    </ul>
-    <nav>
-        <div class="nav-wrapper pink darken-4">
-            <div class="container hide-on-med-and-down">
-    {#            <img src="{% static "img/wine-icon.png" %}">#}
-                <a href="{% url "Home"  %}" class="brand-logo"><img src="{% static "img/wine-icon.png" %}" id="logo-img">vinoteca</a>
-                <ul class="right">
-                    <li {% block new-nav %}{% endblock %}>
-                        <a href="#!" class="dropdown-button" data-activates="new-purchase-dropdown">
-                            <i class="material-icons left">add_circle</i>
-                            New
-                            <i class="material-icons right">arrow_drop_down</i>
-                        </a>
-                    </li>
-                    <li {% block view-nav %}{% endblock %}><a href="{% url "Wine Table" %}"><i class="material-icons left">reorder</i>Wines</a></li>
-                    <li {% block dashboard-nav %}{% endblock %}><a href="{% url "Dashboards" %}"><i class="material-icons left">dashboard</i>Dashboards</a></li>
-                    <li {% block inventory-nav %}{% endblock %}><a href="{% url "Inventory" %}"><i class="material-icons left">view_comfy</i>Inventory</a> </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <main>
-        {% block body %}{% endblock %}
-    </main>
+  <nav>
+    <div class="nav-wrapper pink darken-4">
+      <div class="container">
+        <a href="{% url "Home"  %}" class="brand-logo"><img src="{% static "img/wine-icon.png" %}" id="logo-img">vinoteca</a>
+        <a href="#" data-target="mobile" class="sidenav-trigger left hide-on-large-and-up">
+          <i class="material-icons">menu</i>
+        </a>
+        <ul class="right hide-on-med-and-down">
+
+          {% include 'menu_items.html' with id='top-dropdown' %}
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <ul class="sidenav" id="mobile">
+
+    {% include 'menu_items.html' with id='sidebar-dropdown' %}
+
+  </ul>
+  <main>
+    {% block body %}{% endblock %}
+  </main>
 
 
-    <footer class="page-footer pink darken-4 footer-copyright">
-        <div class="container">
-            <div class="row">
-                <u><a class="footer-link" href="{% url "About" %}">About</a></u>
-                <u><a class="footer-link" href="{% url "About" %}#changelog">Changelog</a></u>
-                <u><a class="footer-link" href="{% url "About" %}#help">Help</a></u>
-            </div>
+  <footer class="page-footer pink darken-4 footer-copyright">
+    <div class="container">
+      <div class="row">
+        <u><a class="footer-link" href="{% url "About" %}">About</a></u>
+        <u><a class="footer-link" href="{% url "About" %}#changelog">Changelog</a></u>
+        <u><a class="footer-link" href="{% url "About" %}#help">Help</a></u>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col s12 l4">
+            <p>© {% now "Y" %} Carter Green<p>
+          </div>
+          <div class="col s12 l4">
+            <p class="center">This software and its source code are distributed under the MIT License.</p>
+          </div>
+          <div class="col s12 l4">
+            <p class="right no-indent">Version {{ version }}</p>
+          </div>
         </div>
-        <div class="footer-copyright">
-            <div class="container">
-                <div class="row">
-                    <div class="col s12">
-                        © {% now "Y" %} Carter Green
-                        <span class="grey-text right">Version {{ version }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+      </div>
+    </div>
+  </footer>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    <script type="text/javascript">
-    $(function () {
-        // For dropdown in navbar
-        $(".dropdown-button").dropdown();
-        $(".button-collapse").sideNav();
-    });
-    </script>
-    {% comment %} For additional Javascript. Not inside a script tag to allow for intellisense {% endcomment %}
-    {% block js %}{% endblock %}
+  <script src="{% static 'vendors.bundle.js' %}"></script>
+  {% block js %}
+    <script src="{% static 'global.bundle.js' %}"></script>
+  {% endblock %}
 </body>
-

@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "noUnusedParameters": true,
+    },
+    "include": [
+        "front_end",
+        "lib",
+        "node_modules/@types",
+    ],
+}

@@ -1,0 +1,25 @@
+{
+    "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
+    "python.linting.pylintEnabled": true,
+    "cSpell.words": [
+        "vinoteca"
+    ],
+    "python.linting.enabled": true,
+    "python.unitTest.pyTestArgs": [
+        "tests"
+    ],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/*cache": true,
+        "**/.coverage": true,
+        ".coveragerc": false,
+        "tags": true,
+    },
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.pyTestEnabled": true
+}

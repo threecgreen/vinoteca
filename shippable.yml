@@ -1,0 +1,16 @@
+language: python
+python:
+  - 3.6
+
+build:
+  ci:
+    - ./scripts/install.sh
+    - ./scripts/lint.sh
+    - ./scripts/test.sh
+integrations:
+  notifications:
+    - integrationName: email
+      type: email
+      on_failure: always
+      on_success: change
+      on_pull_request: never

@@ -1,9 +1,0 @@
-{% for wine in wine_results %}
-<tr>
-    <td><a href="{% url "New Purchase Wine" wine_id=wine.id %}">{{ wine.color|title }}</a></td>
-    <td><a href="{% url "New Purchase Wine" wine_id=wine.id %}">{{ wine.name|default_if_none:"" }} {{ wine.type }}</a></td>
-    <td><a href="{% url "New Purchase Wine" wine_id=wine.id %}">{{ wine.producer|default_if_none:"" }}</a></td>
-    <td><a href="{% url "New Purchase Wine" wine_id=wine.id %}">{{ wine.region|default_if_none:"" }}</a></td>
-    <td><a href="{% url "New Purchase Wine" wine_id=wine.id %}">{{ wine.viti_area|default_if_none:"" }}</a></td>
-</tr>
-{% endfor %}
