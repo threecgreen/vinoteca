@@ -16,19 +16,7 @@
         {% else %}
         <button class="btn reset yellow darken-2">Reset Filters</button>
         <table class="highlight responsive sortable tablesorter condensed">
-          <thead>
-            <tr>
-              <th class="filter-select filter-exact" data-placeholder="Select a color">Color</th>
-              <th class="num-col">Inventory</th>
-              <th>Name and Type</th>
-              <th>Producer</th>
-              <th>Region</th>
-              <th>Viticultural Area</th>
-              <th class="num-col">Vintage</th>
-              <th>Description</th>
-              <th class="num-col">Rating</th>
-            </tr>
-          </thead>
+          {% include "table_header.html" with columns=columns %}
           <tfoot>
             <tr class="tablesorter-ignoreRow">
               <th colspan="9" class="ts-pager form-horizontal center">
@@ -106,16 +94,5 @@
   {% block js %}
     <script src="{% static 'wines.bundle.js' %}"></script>
     <link rel="stylesheet" href="{% static 'wines.bundle.css' %}">
-  {% comment %} <script src="{% static "js/jquery.tablesorter.js" %}"></script>
-  <script src="{% static "js/jquery.tablesorter.widgets.js" %}"></script>
-  <link rel="stylesheet" href="{% static "css/jquery.tablesorter.pager.css" %}">
-  <script src="{% static "js/jquery.tablesorter.pager.js" %}"></script>
-  <script src="{% static "js/wine_table.js" %}"></script>
-  <script type="module">
-    $(function () {
-        $('select').material_select();
-        $('#pagesize-sel').val("50");
-    });
-  </script> {% endcomment %}
   {% endblock %}
 {% endif %}

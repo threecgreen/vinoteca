@@ -136,6 +136,23 @@ def search_wines_results_view(request) -> JsonResponse:
     return JsonResponse({"results": []})
 
 
+class Col(object):
+    def __init__(self, name: str, placeholder="", num_col=False):
+        self.name = name
+        self.placeholder = placeholder
+        self.num_col = num_col
+
+    @classmethod
+    def from_list(cls, col_list):
+        output = []
+        for col in col_list:
+            if isinstance(col, cls):
+                output.append(col)
+            else:
+                output.append(cls(col))
+        return output
+
+
 def wines_view(request):
     r"""View for viewing all wines together in a tabular, filterable format."""
     @attr.s
@@ -194,7 +211,13 @@ def wines_view(request):
     cursor = conn.cursor()
     wines_ = [WineTableDatum(*row) for row in cursor.execute(wine_query).fetchall()]
     conn.close()
+    columns = Col.from_list([
+        Col("Color", placeholder="Select a color"), "Inventory", "Name and Type",
+        "Producer", "Region", "Viticultural Area", Col("Vintage", num_col=True),
+        "Description", Col("Rating", num_col=True) ]
+    )
     context = {
+        "columns": columns,
         "wines": wines_,
         "page_name": "Wine Table",
     }

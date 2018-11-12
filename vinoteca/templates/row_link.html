@@ -1,5 +1,9 @@
 <td>
-  <a href="{% url '{{ profile_name }}' {{ id_name }}={{ id }} %}">
+  {% if id %}
+    <a href="{% url '{{ profile_name }}' {{ id_name }}={{ id }} %}">
+      {{ name }}
+    </a>
+  {% else %}
     {{ name }}
-  </a>
+  {% endif %}
 </td>

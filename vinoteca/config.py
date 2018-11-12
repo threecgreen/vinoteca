@@ -16,10 +16,10 @@ class ConfigurationManager(object):
 
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
-            config = json.loads(fin)
+            config = json.loads(fin.read())
             # Iterate through attributes and set them
             # TODO: logging here!
             for setting, _ in self.__dict__.items():
-                val = config.get("setting")
+                val = config.get(setting, "")
                 if Path(val):
                     setattr(self, setting, val)
