@@ -1,4 +1,5 @@
 import "materialize-css";
+import { format } from "url";
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {
@@ -15,10 +16,17 @@ export function autocomplete(modelName: string, limit = 5, minLength = 1, select
  * Streamlines the Materialize CSS datepicker widget, whose configuration
  * isn"t changed.
  */
-export function datepicker(selector = ".datepicker"): void {
-    $(selector).datepicker({
+export function datepicker(value?: number, selector = ".datepicker"): void {
+    const options = {
         autoClose: false,            // Close upon selecting a date,
         yearRange: 15,               // Creates a dropdown of 5 years to control year,
+    };
+    if (value !== undefined && value > 0) {
+        options["defaultDate"] = "yyyymmdd";
+
+    }
+    // $(selector).datepicker(options);
+    $(selector).datepicker({
     });
 }
 

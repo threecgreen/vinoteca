@@ -14,6 +14,10 @@ class ConfigurationManager(object):
         if Path(path).exists():
             self._load_or_default(path)
 
+    def __repr__(self):
+        return (f"<ConfigurationManager(database_path={self.database_path},"
+                f" media_folder_path={self.media_folder_path})>")
+
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
             config = json.loads(fin.read())
@@ -21,5 +25,5 @@ class ConfigurationManager(object):
             # TODO: logging here!
             for setting, _ in self.__dict__.items():
                 val = config.get(setting, "")
-                if Path(val):
+                if val and Path(val).exists():
                     setattr(self, setting, val)

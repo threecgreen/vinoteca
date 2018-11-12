@@ -17,6 +17,7 @@ module.exports = {
         edit_producer: [inputPath + "edit_producer/edit_producer.ts"],
         producer_profile: [inputPath + "producer_profile/producer_profile.ts"],
         // Wines
+        edit_purchase: [inputPath + "edit_purchase/edit_purchase.ts"],
         edit_wine: [inputPath + "edit_wine/edit_wine.ts"],
         new_purchase: [inputPath + "new_purchase/new_purchase.ts"],
         new_wine: [inputPath + "new_wine/new_wine.ts"],

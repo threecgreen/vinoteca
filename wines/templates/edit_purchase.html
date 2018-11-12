@@ -65,16 +65,8 @@
 {% endblock %}
 
 {% block js %}
-  <script type="module">
-    import { autocomplete, datepicker } from "{% static 'js/widgets.js' %}";
-
-    $(function() {
-        datepicker();
-        {% if purchase.date %}
-            $(".datepicker").pickadate().pickadate('picker').set('select', "{{ purchase.date }}", { format: 'yyyymmdd'});
-        {% endif %}
-        autocomplete("store");
-        $("#delete-purchase-modal").modal();
-    });
+  <script type="text/javascript">
+    const purchaseDate = {{ purchase.date|default_if_none:0 }};
   </script>
+  <script src="{% static 'edit_purchase.bundle.js' %}"></script>
 {% endblock %}

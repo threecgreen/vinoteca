@@ -1,0 +1,5 @@
+<td>
+  <a href="{% url "Wines:Wine Profile" wine_id=id %}">
+    {{ name|default_if_none:"" }} {{ wine_type }}
+  </a>
+</td>
