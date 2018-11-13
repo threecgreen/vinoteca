@@ -1,0 +1,41 @@
+{% load vinoteca %}
+
+<div class="row">
+  <div class="input-field col s6 m3">
+    <input id="purchase-date" name="purchase-date" type="text" class="datepicker"
+            {% if purchase.date %}value="{{ purchase.date|inttodate }}"{% endif %} required>
+    <label for="purchase-date">Purchase Date</label>
+  </div>
+  {% if include_inventory %}
+    <div class="input-field col s3 m2">
+  {% else %}
+    <div class="input-field col s6 m3">
+  {% endif %}
+      <input id="quantity" name="quantity" type="number" class="validate"
+              {% if purchase.quantity %}value={{ purchase.quantity }}{% endif %}>
+      <label for="quantity">Quantity</label>
+    </div>
+  {% if include_inventory %}
+    {% include "inventory_input.html" %}
+  {% endif %}
+  <div class="input-field col s6 m3">
+    <input id="price" name="price" type="number" class="validate" step="0.01" min="0"
+            {% if purchase.price %}value={{ purchase.price }}{% endif %}>
+    <label for="price">Price</label>
+  </div>
+  <div class="input-field col s6 m3">
+    <input id="vintage" name="vintage" type="number" class="validate"
+            value={% if purchase.vintage %} {{ purchase.vintage }} {% else %} "{% now "Y" %}"{% endif %}>
+    <label for="vintage">Vintage</label>
+  </div>
+  <div class="input-field col s6 m3">
+    <input type="text" id="auto-store" name="store" class="autocomplete"
+            {% if purchase.store.name %}value="{{ purchase.store.name }}"{% endif %}>
+    <label for="auto-store">Store</label>
+  </div>
+  <div class="input-field col s6 m3">
+    <input type="text" id="memo" name="memo" class="validate"
+            {% if purchase.memo %}value="{{ purchase.memo }}"{% endif %}>
+    <label for="memo">Memo</label>
+  </div>
+</div>

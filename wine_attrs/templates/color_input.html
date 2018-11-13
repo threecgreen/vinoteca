@@ -1,0 +1,8 @@
+<div class="input-field col s4 m2">
+  <select id="color" name="color">
+    {% for color in colors %}
+      <option value="{{ color.name }}" {% if color.name == wine_color %}selected{% endif %}>{{ color.name|title }}</option>
+    {% endfor %}
+  </select>
+  <label for="color">Color</label>
+</div>

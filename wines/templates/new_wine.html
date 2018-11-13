@@ -11,6 +11,8 @@
       {# enctype for multimedia upload #}
       <form class="col s12" action="" method="post" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token %}
+        {% include "purchase_inputs.html" with include_inventory=True %}
+        {% include "wine_inputs.html" %}
         <div class="row">
           <div class="input-field col s12 m6">
             <input type="text" id="auto-store" name="store" class="autocomplete">

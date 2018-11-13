@@ -1,6 +1,4 @@
 import "materialize-css";
-import { format } from "url";
-import { numToDate } from "./utils";
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {
