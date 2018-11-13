@@ -1,5 +1,6 @@
 {% extends 'wine_profile.html' %}
 {% load static %}
+{% load vinoteca %}
 
 {% block prev_purchases %}
   <div class="row">
@@ -9,7 +10,8 @@
         {% csrf_token %}
         <div class="row">
           <div class="input-field col s6 m3">
-            <input id="purchase-date" name="purchase-date" type="text" class="datepicker">
+            <input id="purchase-date" name="purchase-date" type="text" class="datepicker"
+                   {% if purchase.date %}value="{{ purchase.date|inttodate }}"{% endif %}>
             <label for="purchase-date">Purchase Date</label>
           </div>
           <div class="input-field col s6 m3">
@@ -67,6 +69,7 @@
 {% block js %}
   <script type="text/javascript">
     const purchaseDate = {{ purchase.date|default_if_none:0 }};
+    const wineId = {{ wine.id }};
   </script>
   <script src="{% static 'edit_purchase.bundle.js' %}"></script>
 {% endblock %}

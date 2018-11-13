@@ -45,3 +45,18 @@ export function flattenToDict(objects: IRESTObject[]) {
     });
     return dict;
 }
+
+/**
+ * Converts an 8-digit number of format 'yyyymmdd' to a Date object.
+ * @param num a date number of format 'yyyymmdd'
+ */
+export function numToDate(num: number): Date {
+    const strNum = `${num}`;
+    if (strNum.length !== 8) {
+        console.warn(`Invalid date number '${strNum}'`);
+    }
+    const year = strNum.substr(0, 4);
+    const month = strNum.substr(4, 2);
+    const day = strNum.substr(6, 2);
+    return new Date(`${year}-${month}-${day}`);
+}

@@ -1,9 +1,19 @@
-import { autocomplete, datepicker } from "../../lib/widgets";
+import { Grape, IGrapeJSON } from "../../lib/rest";
+import { autocomplete, datepicker, navbar, tabs } from "../../lib/widgets";
+import { applyChart, pieChart } from "../../lib/wine_charts";
 
-declare const purchaseDate: number;
+declare const wineId: number;
 
 $(() => {
-    datepicker(purchaseDate);
+    // Wine profile stuff
+    navbar();
+    tabs();
+    // Grape chart
+    $.getJSON("/rest/grapes/", {wine: wineId}, (grapesJSON) => {
+        applyChart(pieChart, Grape.fromArray(grapesJSON as IGrapeJSON[]), "grape-comp");
+    });
+    // Edit purchase stuff
+    datepicker();
     autocomplete("store");
     $("#delete-purchase-modal").modal();
 });
