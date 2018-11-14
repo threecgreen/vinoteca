@@ -1,3 +1,5 @@
+[![Run Status](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/badge?branch=master)]()
+[![Coverage Badge](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/coverageBadge?branch=master)]()
 # vinoteca
 A wine purchase tracker and review system in a Django web app.
 I created this project to give my dad a better way to track his wine purchases than the Excel spreadsheet he was using.
@@ -23,7 +25,7 @@ As such, vinoteca is designed with one specific user in mind and it shows.
     ```bash
     $ python manage.py migrate
     ```
-   
+
 **NB: Many of the tests currently rely on specific data in the database.
 I haven't gotten around to creating test data.**
 
