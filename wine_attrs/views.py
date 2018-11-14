@@ -4,6 +4,7 @@ from django.db.models import Avg, Max, Sum
 from django.shortcuts import render
 
 from vinoteca.models import Wines, WineTypes
+from vinoteca.utils import TableColumn
 
 
 def wine_type_profile(request, wine_type_id: int):
@@ -13,10 +14,16 @@ def wine_type_profile(request, wine_type_id: int):
         .annotate(last_purchased_date=Max("purchases__date")) \
         .annotate(total_quantity=Sum("purchases__quantity")) \
         .annotate(avg_price=Avg("purchases__price")) \
-        .prefetch_related("producer", "color", "producer__region") \
+        .prefetch_related("producer", "color", "producer__region", "viti_area") \
         .order_by("-last_purchased_date")
+    columns = TableColumn.from_list([
+        "Last Purchased", "Color", "Name", "Producer", "Region",
+        "Viticultural Area", TableColumn("Total Quantity", num_col=True),
+        TableColumn("Avg Price", num_col=True), TableColumn("Rating", num_col=True)
+    ])
     context = {
         "wines": wines,
+        "columns": columns,
         "wine_type": wine_type,
         "page_name": "Wine Type Profile",
     }

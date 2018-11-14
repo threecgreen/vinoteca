@@ -15,9 +15,21 @@ from vinoteca.models import (
 from vinoteca.settings import BASE_DIR
 
 
-class TableColumnHeader(object):
-    name = attr.ib(type=str)
-    is_num_col = attr.ib(default=False)
+class TableColumn(object):
+    def __init__(self, name: str, placeholder="", num_col=False):
+        self.name = name
+        self.placeholder = placeholder
+        self.num_col = num_col
+
+    @classmethod
+    def from_list(cls, col_list):
+        output = []
+        for col in col_list:
+            if isinstance(col, cls):
+                output.append(col)
+            else:
+                output.append(cls(col))
+        return output
 
 
 def g_or_c_store(store: str) -> Union[Stores, None]:

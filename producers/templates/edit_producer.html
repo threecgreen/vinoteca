@@ -9,14 +9,8 @@
         <form action="" method="post" autocomplete="off">
           {% csrf_token %}
           <div class="row">
-            <div class="input-field col s12 m6">
-              <input type="text" id="producer" name="producer" required value="{{ producer.name }}">
-              <label for="producer">Producer</label>
-            </div>
-            <div class="input-field col s12 m6">
-              <input type="text" id="auto-region" name="region" class="autocomplete" required {% if producer.region %}value="{{ producer.region.name }}"{% endif %}>
-              <label for="auto-region">Region</label>
-            </div>
+            {% include "producer_input.html" with producer=producer.name %}
+            {% include "region_input.html" with region=region.name %}
           </div>
           {% include "special_chars.html" %}
           <div class="row">

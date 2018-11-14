@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from vinoteca.models import (
     Producers, Wines
 )
-from vinoteca.utils import g_or_c_region
+from vinoteca.utils import g_or_c_region, TableColumn
 
 def producer_profile(request, producer_id: int):
     r"""View for wine producer information."""
@@ -14,8 +14,14 @@ def producer_profile(request, producer_id: int):
         .annotate(total_quantity=Sum("purchases__quantity")) \
         .annotate(avg_price=Avg("purchases__price")) \
         .annotate(last_purchased_date=Max("purchases__date")) \
-        .prefetch_related("wine_type", "color")
+        .prefetch_related("wine_type", "color", "viti_area")
+    columns = TableColumn.from_list([
+        "Last Purchased", "Color", "Name and Type", "Viticultural Area",
+        TableColumn("Total Quantity", num_col=True), TableColumn("Avg Price", num_col=True),
+        TableColumn("Rating", num_col=True)
+    ])
     context = {
+        "columns": columns,
         "producer": producer,
         "wines": list(wines),
         "page_name": "Producer Profile",

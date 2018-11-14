@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load humanize %}
 {% load vinoteca %}
 
 {% block body %}
@@ -13,65 +12,23 @@
       <div class="col s12">
         <h5>Wines</h5>
         <table class="highlight responsive condensed">
-          <thead>
-            <tr>
-              <th>Last Purchased</th>
-              <th>Color</th>
-              <th>Name</th>
-              <th>Producer</th>
-              <th>Region</th>
-              <th>Description</th>
-              <th class="num-col">Total Quantity</th>
-              <th class="num-col">Avg. Price</th>
-              <th class="num-col">Rating</th>
-            </tr>
-          </thead>
+          {% include "table_header.html" %}
           <tbody>
             {% for wine in wines %}
               <tr>
-                <td>
-                  {% if wine.last_purchased_date %}
-                    {{ wine.last_purchased_date|inttodate|naturalday:"b j, Y"|title }}
-                  {% else %}
-                    &ndash;
-                  {% endif %}
-                </td>
-                <td>
-                  {{ wine.color.name|title }}
-                </td>
+                {% include "date_cell.html" with date=wine.last_purchased_date %}
+                {% include "color_cell.html" with color=wine.color.name %}
                 <td>
                   <a href="{% url "Wines:Wine Profile" wine_id=wine.id %}">
-                    {{ wine.name|default_if_none:"&ndash;" }}
+                    {{ wine.name|defndash }}
                   </a>
                 </td>
-                <td>
-                  {% if wine.producer %}
-                    <a href="{% url "Producers:Producer Profile" producer_id=wine.producer.id %}">
-                      {{ wine.producer.name }}
-                    </a>
-                  {% else %}
-                  {% endif %}
-                </td>
-                <td>
-                  {% if wine.producer.region %}
-                    <a href="{% url "Region Profile" region_id=wine.producer.region.id %}">
-                      {{ wine.producer.region.name }}
-                    </a>
-                  {% else %}
-                  {% endif %}
-                </td>
-                <td>
-                  {{ wine.description|default_if_none:"" }}
-                </td>
-                <td class="num-col">
-                  {{ wine.total_quantity|defndash }}
-                </td>
-                <td class="num-col">
-                  {{ wine.avg_price|floatformat:"2" }}
-                </td>
-                <td class="num-col">
-                  {{ wine.rating|defndash }}
-                </td>
+                {% include "producer_cell.html" with name=wine.producer.name id=wine.producer.id %}
+                {% include "region_cell.html" with name=wine.producer.region.name id=wine.producer.region.id %}
+                {% include "basic_cell.html" with name=wine.viti_area.name %}
+                {% include "number_cell.html" with number=wine.total_quantity  %}
+                {% include "number_cell.html" with number=wine.avg_price decpoint=True  %}
+                {% include "number_cell.html" with number=wine.rating  %}
               </tr>
             {% endfor %}
           </tbody>
