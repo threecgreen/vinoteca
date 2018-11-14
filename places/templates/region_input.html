@@ -4,5 +4,9 @@
       value="{{ region }}"
     {% endif %}
          disabled>
-  <label for="auto-region">Region (edit the producer)</label>
+  <label for="auto-region">Region
+    {% if edit_wine %}
+      (edit the producer)
+    {% endif %}
+  </label>
 </div>

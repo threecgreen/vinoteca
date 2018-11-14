@@ -38,4 +38,6 @@
             {% if purchase.memo %}value="{{ purchase.memo }}"{% endif %}>
     <label for="memo">Memo</label>
   </div>
-</div>
+{% if not continue_row %}
+  </div>
+{% endif %}

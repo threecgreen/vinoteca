@@ -1,10 +1,10 @@
-<div class="row">
+{% if not continue_row %}
+  <div class="row">
+{% endif %}
   {% include "color_input.html" with wine_color=wine.color.name %}
   {% include "wine_type_input.html" with wine_type=wine.wine_type.name %}
   {% include "producer_input.html" with producer=wine.producer.name %}
   {% include "region_input.html" with region=wine.producer.region.name %}
-</div>
-<div class="row">
   <div class="input-field col s6 m3">
     <input id="name" name="name" type="text" class="validate" {% if wine.name %}value="{{ wine.name }}"{% endif %}>
     <label for="name">Name</label>
@@ -22,13 +22,11 @@
       </label>
     </div>
     <label for="rating"></label>
-    <p class="range-field">
+    <p class="range-field" id="rating-slider">
       <input type="range" id="rating" name="rating" min="0" max="10" step="1" {% if wine.rating %}value="{{ wine.rating }}" {% else %} disabled {% endif %}>
     </p>
   </div>
   {% include "viti_area_input.html" with viti_area=wine.viti_area.name %}
-</div>
-<div class="row">
   <div class="input-field col s12 m6">
     <input id="description" name="description" type="text" class="validate" {% if wine.description %}value="{{ wine.description }}"{% endif %}>
     <label for="description">Description</label>

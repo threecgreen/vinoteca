@@ -6,7 +6,9 @@
   <div class="row">
     <form class="col s12" action="" method="post" enctype="multipart/form-data" autocomplete="off">
       {% csrf_token %}
-      {% include "wine_inputs.html" %}
+      {% with edit_wine=True  %}
+        {% include "wine_inputs.html" %}
+      {% endwith %}
       {# Submit #}
       <div class="row">
         <div class="col s12">
