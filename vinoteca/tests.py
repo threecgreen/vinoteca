@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.db import IntegrityError
 import pytest
 
 from vinoteca.utils import *

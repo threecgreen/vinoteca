@@ -183,11 +183,11 @@ def inventory(request):
         r"""Denotes one row of the table."""
         color = attr.ib(type=str)
         name = attr.ib(type=str)
-        type = attr.ib(type=str)
+        wine_type = attr.ib(type=str)
         producer = attr.ib(type=str)
         region = attr.ib(type=str)
         vintage = attr.ib(type=int)
-        last_purchase_date = attr.ib(type=str)
+        last_purchase_date = attr.ib(type=int)
         inventory_cnt = attr.ib(type=int)
         wine_id = attr.ib(type=int)
         producer_id = attr.ib(type=int)
@@ -231,8 +231,7 @@ def inventory(request):
     wine_inventory = []
     for item in cursor.execute(query).fetchall():
         # Convert YYYYMMDD date format to date object for formatting
-        purchase_date = int_to_date(item[6])
-        wine_inventory.append(InventoryItem(*item[:6], purchase_date, *item[7:]))
+        wine_inventory.append(InventoryItem(*item))
     context = {
         "inventory": wine_inventory,
         "page_name": "Inventory",
