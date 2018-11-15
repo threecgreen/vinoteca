@@ -11,7 +11,7 @@ from django.shortcuts import render
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
-from vinoteca.utils import get_connection, int_to_date
+from vinoteca.utils import get_connection, int_to_date, TableColumn
 
 
 def recent_purchases(limit: int) -> List[Purchases]:
@@ -193,6 +193,7 @@ def inventory(request):
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
         wine_type_id = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
 
     query = """
         SELECT
@@ -208,11 +209,13 @@ def inventory(request):
             , p.id
             , r.id
             , wt.id
+            , avg(pu.price)
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN regions r ON p.region_id = r.id
             LEFT JOIN colors c ON w.color_id = c.id
             LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+            LEFT JOIN purchases pu ON w.id = pu.wine_id
             LEFT JOIN (
                 SELECT
                     w2.id
@@ -224,6 +227,7 @@ def inventory(request):
             ) AS sub ON sub.id = w.id
             LEFT JOIN purchases p3 ON w.id = p3.wine_id AND p3.date = sub.last_purchase_date
         WHERE w.inventory > 0
+        GROUP BY w.id
         ORDER BY sub.last_purchase_date DESC;
     """
     connection = get_connection()
@@ -232,8 +236,14 @@ def inventory(request):
     for item in cursor.execute(query).fetchall():
         # Convert YYYYMMDD date format to date object for formatting
         wine_inventory.append(InventoryItem(*item))
+    columns = TableColumn.from_list([
+        "Modify", TableColumn("Quantity", num_col=True), "Color", "Name and Type",
+        "Producer", "Region", TableColumn("Vintage", num_col=True),
+        TableColumn("Purchase Date", num_col=True), TableColumn("Avg Price", num_col=True)
+    ])
     context = {
         "inventory": wine_inventory,
+        "columns": columns,
         "page_name": "Inventory",
     }
     connection.close()

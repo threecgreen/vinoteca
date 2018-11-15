@@ -13,39 +13,29 @@
           {% include "add_wine_btn.html" %}
         {% else %}
         <table class="responsive highlight condensed">
-          <thead>
-            <tr>
-              <th>Modify</th>
-              <th class="num-col">Quantity</th>
-              <th>Color</th>
-              <th>Name and Type</th>
-              <th>Producer</th>
-              <th>Region</th>
-              <th class="num-col">Vintage</th>
-              <th class="num-col">Purchase Date</th>
-            </tr>
-          </thead>
+          {% include "table_header.html" %}
           <tbody>
-          {% for wine in inventory %}
-            <tr>
-              <td>
-                <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Wines:Change Inventory from Inventory" wine_id=wine.wine_id sign="add" %}">
-                  <i class="material-icons">add_circle</i>
-                </a>
-                <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Wines:Change Inventory from Inventory" wine_id=wine.wine_id sign="subtract" %}">
-                  <i class="material-icons">do_not_disturb_on</i>
-                </a>
-              </td>
-              {% include "number_cell.html" with number=wine.inventory_cnt %}
-              {% include "color_cell.html" with color=wine.color %}
-              {% include "name_and_type_cell.html" with name=wine.name wine_type=wine.wine_type id=wine.wine_id %}
-              {% include "producer_cell.html" with name=wine.producer id=wine.producer_id %}
-              {% include "region_cell.html" with name=wine.region id=wine.region_id %}
-              {% include "vintage_cell.html" with vintage=wine.vintage %}
-              {% include "date_cell.html" with date=wine.last_purchase_date %}
-            </tr>
-          {% empty %}
-          {% endfor %}
+            {% for wine in inventory %}
+              <tr>
+                <td>
+                  <a class="waves-effect waves-light btn-floating btn-floating-small light-green lighten-2" href="{% url "Wines:Change Inventory from Inventory" wine_id=wine.wine_id sign="add" %}">
+                    <i class="material-icons">add_circle</i>
+                  </a>
+                  <a class="waves-effect waves-light btn-floating btn-floating-small pink darken-3" href="{% url "Wines:Change Inventory from Inventory" wine_id=wine.wine_id sign="subtract" %}">
+                    <i class="material-icons">do_not_disturb_on</i>
+                  </a>
+                </td>
+                {% include "number_cell.html" with number=wine.inventory_cnt %}
+                {% include "color_cell.html" with color=wine.color %}
+                {% include "name_and_type_cell.html" with name=wine.name wine_type=wine.wine_type id=wine.wine_id %}
+                {% include "producer_cell.html" with name=wine.producer id=wine.producer_id %}
+                {% include "region_cell.html" with name=wine.region id=wine.region_id %}
+                {% include "vintage_cell.html" with vintage=wine.vintage %}
+                {% include "date_cell.html" with date=wine.last_purchase_date %}
+                {% include "number_cell.html" with number=wine.avg_price decpoint=True %}
+              </tr>
+            {% empty %}
+            {% endfor %}
           </tbody>
         </table>
         {% endif %}
