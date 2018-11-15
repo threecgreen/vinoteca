@@ -20,14 +20,14 @@
     </tr>
     </thead>
     <tbody>
-    {% for viti_area in viti_areas %}
-      <tr>
-        <td>{{ viti_area.name }}</td>
-        <td class="num-col">{{ viti_area.varieties }}</td>
-        <td class="num-col">{{ viti_area.producers }}</td>
-        <td class="num-col">{{ viti_area.avg_price|floatformat:"2"|defndash }}</td>
-      </tr>
-    {% endfor %}
+      {% for viti_area in viti_areas %}
+        <tr>
+          {% include "basic_cell.html" with name=viti_area.name %}
+          {% include "number_cell.html" with number=viti_area.variety %}
+          {% include "number_cell.html" with number=viti_area.producers %}
+          {% include "number_cell.html" with number=viti_area.avg_price decpoint=True %}
+        </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>

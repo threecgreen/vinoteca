@@ -1,26 +1,26 @@
 {% if wine_count == 0 %}
-    {% include "insufficient_wines.html" %}
+  {% include "insufficient_wines.html" %}
 {% else %}
-<table class="responsive highlight">
+  <table class="responsive highlight">
     <thead>
-        <tr>
-            <th>Year</th>
-            <th class="num-col">Bottles</th>
-            <th class="num-col">Total Spent</th>
-            <th class="num-col">Avg Price</th>
-            <th class="num-col">Avg Vintage</th>
-        </tr>
+      <tr>
+        <th>Year</th>
+        <th class="num-col">Bottles</th>
+        <th class="num-col">Total Spent</th>
+        <th class="num-col">Avg Price</th>
+        <th class="num-col">Avg Vintage</th>
+      </tr>
     </thead>
     <tbody>
     {% for year in years %}
-        <tr>
-            <td>{{ year.year }}</td>
-            <td class="num-col">{{ year.quantity }}</td>
-            <td class="num-col">{{ year.price|floatformat:"2" }}</td>
-            <td class="num-col">{{ year.avg_price|floatformat:"2" }}</td>
-            <td class="num-col">{{ year.avg_vintage|floatformat }}</td>
-        </tr>
+      <tr>
+        {% include "basic_cell.html" with name=year.year %}
+        {% include "number_cell.html" with number=year.quantity %}
+        {% include "number_cell.html" with number=year.quantity decpoint=True %}
+        {% include "number_cell.html" with number=year.quantity decpoint=True %}
+        {% include "number_cell.html" with number=year.quantity decpoint=True %}
+      </tr>
     {% endfor %}
     </tbody>
-</table>
+  </table>
 {% endif %}

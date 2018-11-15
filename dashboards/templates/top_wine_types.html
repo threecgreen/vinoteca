@@ -36,20 +36,10 @@
       <tbody>
         {% for wine_type in top_wine_types %}
           <tr>
-            <td>
-              <a href="{% url "Wine Type Profile" wine_type_id=wine_type.id %}">
-                {{ wine_type.name }}
-              </a>
-            </td>
-            <td class="num-col">
-              {{ wine_type.quantity }}
-            </td>
-            <td class="num-col">
-              {{ wine_type.variety }}
-            </td>
-            <td class="num-col">
-              {{ wine_type.avg_price|floatformat:2 }}
-            </td>
+            {% include "wine_type_cell.html" with wine_type=wine_type.name id=wine_type.id %}
+            {% include "number_cell.html" with number=wine_type.quantity %}
+            {% include "number_cell.html" with number=wine_type.variety %}
+            {% include "number_cell.html" with number=wine_type.avg_price decpoint=True %}
           </tr>
         {% endfor %}
       </tbody>

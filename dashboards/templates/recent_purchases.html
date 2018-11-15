@@ -20,26 +20,12 @@
     {% for purchase in purchases %}
       <tr>
         <td>{{ purchase.date|inttodate|naturalday:"b j"|title }}</td>
-        <td>{{ purchase.store.name }}</td>
-        <td>
-          {% if purchase.wine.producer %}
-            <a href="{% url "Producers:Producer Profile" producer_id=purchase.wine.producer.id %}">
-              {{ purchase.wine.producer.name }}
-            </a>
-          {% endif %}
-        </td>
-        <td>
-          {% if purchase.wine.producer.region %}
-            <a href="{% url "Region Profile" region_id=purchase.wine.producer.region.id %}">{{ purchase.wine.producer.region.name }}</a>
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url "Wines:Wine Profile" wine_id=purchase.wine.id %}">
-            {{ purchase.wine.name|default_if_none:"" }}
-          </a>
-        </td>
-        <td class="num-col">{{ purchase.price|floatformat:2|defndash }}</td>
-        <td class="num-col">{{ purchase.quantity }}</td>
+        {% include "basic_cell.html" with name=purchase.store.name %}
+        {% include "producer_cell.html" with name=purchase.wine.producer.name id=purchase.wine.producer.id %}
+        {% include "region_cell.html" with name=purchase.wine.producer.region.name id=purchase.wine.producer.region.id %}
+        {% include "name_and_type_cell.html" with name=purchase.wine.name wine_type=purchase.wine.wine_type.name id=purchase.wine.id %}
+        {% include "number_cell.html" with number=purchase.price decpoint=True %}
+        {% include "number_cell.html" with number=purchase.quantity %}
       </tr>
     {% endfor %}
   </tbody>
