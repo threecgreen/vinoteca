@@ -2,7 +2,7 @@
 # Contains utility functions for vinoteca bash scripts
 
 # Print each line in continuous integration
-if [ "$CI" == "true" ]; then
+if [ $CI ]; then
     set -x
 fi
 
@@ -43,13 +43,13 @@ find_python_env()
         return 0
     fi
     command -v conda > /dev/null 2>&1
-    if [ $? == 0 ]; then
+    if [ $? = 0 ]; then
         py_env="$(conda env list | grep vinoteca | awk '{print $2}')/bin"
         conda="conda"
     elif [ -f "/opt/anaconda/bin/conda" ]; then
         conda="/opt/anaconda/bin/conda"
         py_env="$($conda env list | grep vinoteca | awk '{print $2}')/bin"
-    elif [ "$CI" == true ]; then
+    elif [ $CI ]; then
         py_env="/root/miniconda/envs/vinoteca/bin"
         conda="/root/miniconda/bin/conda"
     else
@@ -76,7 +76,7 @@ find_vinoteca_version()
 
 check_for_node()
 {
-    command -v npm > /dev/null 2>&1
+    command -v "$py_env/npm" > /dev/null 2>&1
     if [ $? != 0 ]; then
         error_exit "Node is not installed."
     fi
@@ -89,5 +89,18 @@ find_tslint()
         tslint="tslint"
     else
         tslint="$root_dir/vinoteca/node_modules/.bin/tslint"
+    fi
+}
+
+check_for_install()
+{
+    command -v vinoteca > /dev/null 2>&1
+    if [ $? != 0 ]; then
+        info_text "Adding vinoteca CLI to PATH..."
+        if [ $CI ]; then
+            sudo ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
+        else
+            ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
+        fi
     fi
 }

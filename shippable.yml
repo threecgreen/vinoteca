@@ -5,8 +5,8 @@ python:
 build:
   ci:
     - ./scripts/install.sh
-    - ./scripts/lint.sh
-    - ./scripts/test.sh
+    - vinoteca lint
+    - vinoteca test
 integrations:
   notifications:
     - integrationName: email

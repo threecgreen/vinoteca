@@ -4,46 +4,36 @@ source "$(dirname $0)/utils.sh"
 # Install script for Debian-based systems
 # Get admin privileges before running
 sudo echo
-# Assumes nothing is installed
-info_text "Updating system..."
-sudo apt-get -y update
-sudo apt-get -y upgrade
-sudo apt-get -y install git execstack nodejs sqlite3
 
 # Download Python
-info_text "Downloading Miniconda Python distribution..."
+info_text "Downloading miniconda python..."
 wget repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
 # Install Python
-info_text "Installing..."
-bash Miniconda3-latest-Linux-x86_64.sh -p $HOME/miniconda -b
-# add miniconda to PATH
-info_text -e "export PATH=\"\$HOME/miniconda/bin:\$PATH\"" >> "$HOME/.bashrc"
-bin="$HOME/miniconda/bin"
+info_text "Installing python..."
+bash Miniconda3-latest-Linux-x86_64.sh -p "$HOME/miniconda" -b
 
 # Create environment
-info_text "Creating a new python virtual environment called 'vinoteca'..."
-if [ "$CI" != "true" ]; then
+info_text "Creating 'vinoteca' virtual environment..."
+if [ $CI != true ]; then
     execstack -c "$HOME/miniconda/lib/libcrypto.so.1.0.0"
 fi
-$bin/conda create -n vinoteca -y python=3.6
+"$HOME/miniconda/bin/conda" env create -f environment.yml
 find_python_env
-info_text "Installing vinoteca dependencies..."
-$py_env/pip install -r requirements.txt
 info_text "Creating database..."
-$py_env/python "$root_dir/manage.py" migrate
+"$py_env/python" "$root_dir/manage.py" migrate
+
+check_for_install
 
 # Javascript
 info_text "Installing NPM dependencies..."
 check_for_node
 cd vinoteca
-npm install --save --no-optional
+"$py_env/npm" install --save --no-optional
 info_text "Building webpack bundles..."
-npm run-script build
+"$py_env/npm" run-script build
 cd "$root_dir"
 
 # Finishing up
 echo
 info_text "Installation complete."
-echo
-
