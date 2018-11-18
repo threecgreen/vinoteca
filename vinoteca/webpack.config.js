@@ -9,8 +9,8 @@ const outputPath = __dirname + "/static";
 module.exports = {
     devtool: "inline-source-map",
     entry: {
-        global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass" ],
-        home: [inputPath + "home/home.ts" ],
+        global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass"],
+        home: [inputPath + "home/home.ts"],
         // Dashboards
         dashboards: [inputPath + "dashboards/dashboards.ts"],
         // Producers

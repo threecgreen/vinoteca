@@ -5,6 +5,7 @@
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
         "noUnusedParameters": true,
+        "strictNullChecks": true,
     },
     "include": [
         "front_end",

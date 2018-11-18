@@ -82,7 +82,7 @@ export class Grape implements IChartInput {
     }
 
     public datum(): number {
-        return this.percent;
+        return this.percent ? this.percent : 0;
     }
 }
 
