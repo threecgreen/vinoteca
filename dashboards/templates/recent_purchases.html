@@ -9,9 +9,9 @@
     <tr>
       <th>Date</th>
       <th>Store</th>
+      <th>Name and Type</th>
       <th>Producer</th>
       <th>Region</th>
-      <th>Name and Type</th>
       <th class="num-col">Price</th>
       <th class="num-col">Quantity</th>
     </tr>
@@ -21,9 +21,9 @@
       <tr>
         <td>{{ purchase.date|inttodate|naturalday:"b j"|title }}</td>
         {% include "basic_cell.html" with name=purchase.store.name %}
+        {% include "name_and_type_cell.html" with name=purchase.wine.name wine_type=purchase.wine.wine_type.name id=purchase.wine.id %}
         {% include "producer_cell.html" with name=purchase.wine.producer.name id=purchase.wine.producer.id %}
         {% include "region_cell.html" with name=purchase.wine.producer.region.name id=purchase.wine.producer.region.id %}
-        {% include "name_and_type_cell.html" with name=purchase.wine.name wine_type=purchase.wine.wine_type.name id=purchase.wine.id %}
         {% include "number_cell.html" with number=purchase.price decpoint=True %}
         {% include "number_cell.html" with number=purchase.quantity %}
       </tr>
