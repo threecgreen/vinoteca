@@ -29,9 +29,9 @@ check_for_install
 info_text "Installing NPM dependencies..."
 check_for_node
 cd vinoteca
-"$py_env/npm" install --save --no-optional
+"$py_env/npm" install --save --no-optional || error_exit "Failed installing JavaScript dependencies"
 info_text "Building webpack bundles..."
-"$py_env/npm" run-script build
+"$py_env/npm" run-script build || error_exit "Failed building webpack bundles"
 cd "$root_dir"
 
 # Finishing up

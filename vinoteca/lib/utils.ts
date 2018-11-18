@@ -39,7 +39,7 @@ export interface IRESTObject {
 }
 
 export function flattenToDict(objects: IRESTObject[]) {
-    const dict: IDict<string> = {};
+    const dict: IDict<string | null> = {};
     objects.map((obj) => {
         dict[obj.name] = null;
     });

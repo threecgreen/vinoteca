@@ -358,12 +358,11 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
         },
         type: "line",
     };
-
     // Validate then add each data series to config
     const dataValidation = data.map((series, i) => {
-        // @ts-ignore
         const [_, chartData] = splitData(series);
         // Add the series data to the corresponding key in datasetLabels
+        // @ts-ignore
         config.data.datasets.push({
             backgroundColor: changeTransparency(Colors.index(i), 0.5),
             borderColor: Colors.index(i),

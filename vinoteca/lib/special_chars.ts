@@ -8,7 +8,7 @@ export function specialChars() {
     const shiftBtn: JQuery<HTMLLinkElement> = $("#shift");
     const textInputs: JQuery<HTMLInputElement> = $("[type=text]");
     /* Keep track of last active text element */
-    let lastInput: string = null;
+    let lastInput: string;
 
     /* Add special character to last input field */
     $(specialCharBtns).on("click", function() {
