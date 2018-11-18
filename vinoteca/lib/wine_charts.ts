@@ -46,7 +46,10 @@ class Colors {
     public static rainbow(colorCount: number): string[] {
         return Colors.TEN_COLOR_RAINBOW.slice(colorCount);
     }
-    public static index(index: number): string {
+    public static index(index: number, transparency?: number): string {
+        if (transparency) {
+            return Colors.changeTransparency(Colors.TEN_COLOR_RAINBOW[index], transparency);
+        }
         return Colors.TEN_COLOR_RAINBOW[index];
     }
     public static white(): string {
@@ -57,6 +60,24 @@ class Colors {
     }
     public static translucentGray(): string {
         return Colors.TRANSLUCENT_GRAY;
+    }
+
+    /**
+     * Takes in a rgb color string and transparency value, and * creates a rgba
+     * string.
+     * @param color rgb string
+     * @param transparency between 0 and 1
+     */
+    public static changeTransparency(color: string, transparency: number) {
+        if (transparency <= 0 || transparency >= 1) {
+            throw Error("Transparency must be between 0 and 1");
+        }
+        const fields = color.substr(5, color.length - 7).split(",").map(
+            (val) => parseInt(val, 10),
+        );
+
+        fields[3] = transparency;
+        return `rgba(${fields[0]}, ${fields[1]}, ${fields[2]}, ${fields[3]})`;
     }
 
     private static readonly TEN_COLOR_RAINBOW = [
@@ -115,22 +136,6 @@ function validateChartInput(canvas: JQuery<HTMLCanvasElement>, chartData: number
         return false;
     }
     return true;
-}
-
-/**
- * Helper function that dates in a rgb color string and transparency value, and
- * creates a rgba string.
- */
-function changeTransparency(color: string, transparency: number) {
-    if (transparency <= 0 || transparency >= 1) {
-        throw Error("Transparency must be between 0 and 1");
-    }
-    const fields = color.substr(5, color.length - 7).split(",").map(
-        (val) => parseInt(val, 10),
-    );
-
-    fields[3] = transparency;
-    return `rgba(${fields[0]}, ${fields[1]}, ${fields[2]}, ${fields[3]})`;
 }
 
 /**
@@ -213,7 +218,6 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
     };
 
     try {
-        // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
         console.warn(e);
@@ -286,7 +290,6 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
     };
 
     try {
-        // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
         console.warn(e);
@@ -364,7 +367,7 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
         // Add the series data to the corresponding key in datasetLabels
         // @ts-ignore
         config.data.datasets.push({
-            backgroundColor: changeTransparency(Colors.index(i), 0.5),
+            backgroundColor: Colors.index(i, 0.5),
             borderColor: Colors.index(i),
             data: chartData,
             label: seriesLabels[i],
@@ -381,7 +384,6 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
     }
 
     try {
-        // @ts-ignore
         const pie = new Chart(canvas, config);
     } catch (e) {
         console.warn(e);
