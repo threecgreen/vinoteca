@@ -1,4 +1,5 @@
 """Views for updating or editing wine and wine purchase data."""
+import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -12,6 +13,10 @@ from vinoteca.utils import (
     g_or_c_region, empty_to_none, g_or_c_viti_area, handle_grapes
 )
 from wines.read import WineProfileView
+
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class EditWineView(WineProfileView):
@@ -28,6 +33,7 @@ class EditWineView(WineProfileView):
     @staticmethod
     def post(request, wine_id: int):
         r"""View for posting edits to a wine."""
+        LOGGER.debug(f"Received the following POST data for updating a wine:\n{request.POST}")
         wine = Wines.objects.get(id=wine_id)
         producer = request.POST.get("producer")
         region = empty_to_none(request.POST.get("region"))
@@ -80,6 +86,7 @@ class EditPurchaseView(WineProfileView):
     @staticmethod
     def post(request, wine_id: int, purchase_id: int):
         r"""Post edits to the purchase."""
+        LOGGER.debug(f"Received the following POST data for updating a purchase:\n{request.POST}")
         purchase = Purchases.objects.get(id=purchase_id)
         purchase.date = date_str_to_int(request.POST.get("purchase-date"))
         purchase.quantity = empty_to_none(request.POST.get("quantity"), int)
@@ -98,8 +105,10 @@ def change_inventory(request, wine_id: int, sign: str,
     assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
+        logging.debug(f"Adding one to inventory of wine with id {wine_id}")
         wine.inventory += 1
     else:
+        logging.debug(f"Removing one from inventory of wine with id {wine_id}")
         wine.inventory -= 1
     wine.save()
     if return_to_inventory:

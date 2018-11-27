@@ -1,4 +1,5 @@
 # pylint: disable=unused-argument
+import logging
 from pathlib import Path
 
 import attr
@@ -12,6 +13,9 @@ from vinoteca.models import Colors, Purchases, Wines, WineGrapes
 from vinoteca.utils import get_connection, empty_to_none, TableColumn
 
 
+LOGGER = logging.getLogger(__name__)
+
+
 class WineProfileView(View):
     r"""Contains views for interacting with a particular wine."""
     template_name = "wine_profile.html"
@@ -19,6 +23,7 @@ class WineProfileView(View):
     @staticmethod
     def get_base_context(wine_id: int, do_purchases: bool = True):
         r"""Fetches wine data used in several views into context."""
+        LOGGER.debug(f"Fetching wine context for wine with id {wine_id}")
         wine = Wines.objects \
             .prefetch_related("wine_type", "color", "producer", "producer__region",
                               "viti_area") \
@@ -40,9 +45,11 @@ class WineProfileView(View):
         cursor = conn.cursor()
         recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
         conn.close()
+        LOGGER.debug(f"Fetching grape data for wine with id {wine_id}")
         grapes = (WineGrapes.objects
                   .filter(wine__id=wine.id)
                   .order_by("-percent", "grape__name"))
+        LOGGER.debug(f"Found {grapes.count()} grapes")
         has_img = (Path(settings.MEDIA_ROOT) / f"{wine_id}.png").is_file()
 
         context = {

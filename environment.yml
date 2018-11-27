@@ -2,24 +2,24 @@ name: vinoteca
 channels:
   - defaults
 dependencies:
-  - ca-certificates=2018.03.07=0
-  - certifi=2018.10.15=py37_0
-  - libedit=3.1.20170329=h6b74fdf_2
-  - libffi=3.2.1=hd88cf55_4
-  - libgcc-ng=8.2.0=hdf63c60_1
-  - libstdcxx-ng=8.2.0=hdf63c60_1
-  - ncurses=6.1=hf484d3e_0
-  - nodejs=10.13.0=he6710b0_0
-  - openssl=1.1.1=h7b6447c_0
-  - pip=10.0.1=py37_0
-  - python=3.7.1=h0371630_3
-  - readline=7.0=ha6073c6_4
-  - setuptools=39.2.0=py37_0
-  - sqlite=3.25.3=h7b6447c_0
-  - tk=8.6.8=hbc83047_0
-  - wheel=0.31.1=py37_0
-  - xz=5.2.4=h14c3975_4
-  - zlib=1.2.11=ha838bed_2
+  - ca-certificates=2018.03.07
+  - certifi=2018.10.15
+  - libedit=3.1.20170329
+  - libffi=3.2.1
+  - libgcc-ng=8.2.0
+  - libstdcxx-ng=8.2.0
+  - ncurses=6.1
+  - nodejs=10.13.0
+  - openssl=1.1.1
+  - pip=10.0.1
+  - python=3.7.1
+  - readline=7.0
+  - setuptools=39.2.0
+  - sqlite=3.25.3
+  - tk=8.6.8
+  - wheel=0.31.1
+  - xz=5.2.4
+  - zlib=1.2.11
   - pip:
     - astroid==2.0.4
     - atomicwrites==1.2.1
@@ -49,5 +49,3 @@ dependencies:
     - six==1.11.0
     - sqlparse==0.2.4
     - wrapt==1.10.11
-prefix: /home/carter/.conda/envs/vinoteca
-

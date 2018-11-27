@@ -1,4 +1,5 @@
 r"""Django settings for vinoteca project."""
+import logging.config
 from pathlib import Path
 
 from .config import ConfigurationManager
@@ -18,59 +19,60 @@ ALLOWED_HOSTS = []
 # Configuration file
 CONFIG_MAN = ConfigurationManager(BASE_DIR / "vinoteca" / "config.json",
                                   BASE_DIR / "data" / "wine.db",
-                                  BASE_DIR / "media")
+                                  BASE_DIR / "media",
+                                  BASE_DIR / "vinoteca.log")
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
 
     # Installed
-    'rest_framework',
-    'django_js_error_hook',
-    'django_filters',
+    "rest_framework",
+    "django_js_error_hook",
+    "django_filters",
 
     # Internal apps
-    'vinoteca',
-    'dashboards',
-    'rest',
-    'places',
-    'producers',
-    'wine_attrs',
-    'wines',
+    "vinoteca",
+    "dashboards",
+    "rest",
+    "places",
+    "producers",
+    "wine_attrs",
+    "wines",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'vinoteca.urls'
+ROOT_URLCONF = "vinoteca.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
                 # Add version number to all context of all pages
-                'vinoteca.context_processors.version_context',
+                "vinoteca.context_processors.version_context",
             ],
         },
     },
@@ -80,9 +82,9 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': CONFIG_MAN.database_path
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": CONFIG_MAN.database_path
     }
 }
 
@@ -92,16 +94,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -109,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = "America/Chicago"
 
 USE_I18N = True
 
@@ -122,7 +124,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "vinoteca" / "static",
@@ -130,55 +132,70 @@ STATICFILES_DIRS = [
 ]
 
 # Media files
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 MEDIA_ROOT = CONFIG_MAN.media_folder_path
 
 # Django rest
-
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",)
 }
 
-# django-js-error-hook
-if DEBUG:
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'filters': {
-            'require_debug_false': {
-                '()': 'django.utils.log.RequireDebugFalse'
-            }
+COLORS = {
+    "debug": "\033[22;32m",
+    "info": "\033[22;32m",
+    "warning": "\033[01;33m",
+    "error": "\033[22;31m"
+}
+
+# Logging
+LOGGING_CONFIG = None
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
         },
-        'formatters': {
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-            },
-            'simple': {
-                'format': '\033[22;32m%(levelname)s\033[0;0m %(message)s'
-            },
+        "simple": {
+            "format": "\033[22;32m%(levelname)s\033[0;0m %(message)s"
         },
-        'handlers': {
-            'mail_admins': {
-                'level': 'ERROR',
-                'filters': ['require_debug_false'],
-                'class': 'django.utils.log.AdminEmailHandler'
-            },
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple'
-            },
-        },
-        'loggers': {
-            'django.request': {
-                'handlers': ['mail_admins'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
-            'javascript_error': {
-                'handlers': ['mail_admins', 'console'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse"
         }
-    }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "level": "INFO"
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+        },
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "formatter": "verbose",
+            "filename": CONFIG_MAN.log_path,
+        }
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file", "mail_admins"],
+            # Uncomment for more detailed django debugging
+            "level": "DEBUG" if DEBUG else "INFORMATION",
+            "propagate": True,
+        },
+        "javascript_error": {
+            "handlers": ["file", "mail_admins"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
+
+logging.config.dictConfig(LOGGING)

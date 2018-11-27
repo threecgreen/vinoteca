@@ -1,4 +1,5 @@
 """Views for creating new wine and wine purchase data."""
+import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -14,6 +15,9 @@ from vinoteca.utils import (
     default_vintage_year
 )
 from wines.read import WineProfileView
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class NewWineView(View):
@@ -34,6 +38,7 @@ class NewWineView(View):
     def post(request):
         r"""Handles logic for inserting a wine purchased for the first time and
         therefore new Wines and Purchases objects are created."""
+        LOGGER.debug(f"Received the following POST data for creating a new wine:\n{request.POST}")
         store = empty_to_none(request.POST.get("store"))
         purchase_date = empty_to_none(request.POST.get("purchase-date"))
         wine_type = empty_to_none(request.POST.get("wine-type"))
@@ -69,6 +74,7 @@ class NewWineView(View):
         handle_grapes(request, wine)
 
         if request.FILES.get("wine-image"):
+            LOGGER.debug("Found wine image in POST request")
             wine_image = request.FILES["wine-image"]
             file_sys = FileSystemStorage()
             file_sys.save(str(wine.id) + ".png", wine_image)
@@ -87,6 +93,7 @@ class NewPurchaseView(WineProfileView):
     def post(request, wine_id: int):
         r"""Logic for handling a new wine purchase. Creates a new Purchases
         object."""
+        LOGGER.debug(f"Received the following POST data for creating a new purchase:\n{request.POST}")
         store = empty_to_none(request.POST.get("store"))
         purchase_date = empty_to_none(request.POST.get("purchase-date"))
         price = empty_to_none(request.POST.get("price"))
