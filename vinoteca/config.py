@@ -1,6 +1,7 @@
 """Contains the configuration manager class which handles the setting of where
-certain data will be. Currently it supports setting the database location and
-the media folder location (i.e. where Wine images are stored)."""
+certain data will be. Currently it supports setting the database location,
+the media folder location (i.e. where Wine images are stored) and the log file
+location."""
 import json
 from pathlib import Path
 
@@ -8,9 +9,11 @@ from pathlib import Path
 class ConfigurationManager(object):
     r"""Manages machine-specific configurations set by the user that can't be
     stored in the database."""
-    def __init__(self, path: Path, database_path: Path, media_folder_path: Path):
+    def __init__(self, path: Path, database_path: Path, media_folder_path: Path,
+                 log_path: Path):
         self.database_path = str(database_path)
         self.media_folder_path = str(media_folder_path)
+        self.log_path = str(log_path)
         if Path(path).exists():
             self._load_or_default(path)
 

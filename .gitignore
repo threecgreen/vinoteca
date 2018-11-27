@@ -36,3 +36,7 @@ vinoteca/static/*bundle*
 
 # Ctags
 tags
+
+# Logs
+vinoteca.log
+

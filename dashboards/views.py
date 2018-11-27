@@ -1,5 +1,6 @@
 r"""Implements views (business logic) for the various dashboards displayed on the
 home page and the dashboard page."""
+import logging
 import sqlite3
 from datetime import date
 from typing import List
@@ -12,6 +13,9 @@ from django.shortcuts import render
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
 from vinoteca.utils import get_connection, int_to_date, TableColumn
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def recent_purchases(limit: int) -> List[Purchases]:
