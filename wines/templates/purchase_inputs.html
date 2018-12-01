@@ -12,7 +12,7 @@
     <div class="input-field col s6 m3">
   {% endif %}
       <input id="quantity" name="quantity" type="number" class="validate"
-              {% if purchase.quantity %}value={{ purchase.quantity }}{% endif %}>
+              value={% if purchase.quantity %}{{ purchase.quantity }}{% else %}1{% endif %}>
       <label for="quantity">Quantity</label>
     </div>
   {% if include_inventory %}

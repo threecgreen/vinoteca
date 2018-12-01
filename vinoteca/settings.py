@@ -189,12 +189,12 @@ LOGGING = {
     "loggers": {
         "vinoteca": {
             "handlers": ["console", "file", "mail_admins"],
-            "level": "INFO",
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": True,
         },
         "django": {
             "handlers": ["console", "file", "mail_admins"],
-            "level": "DEBUG" if DEBUG else "INFORMATION",
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": True,
         },
         "django.request": {
