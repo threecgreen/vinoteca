@@ -66,7 +66,7 @@ def test_search_wines(client, wine_type, color, producer, region, viti_area):
 def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     post_data = {
         "store": store,
-        "purchase-date": date.today().strftime("%d %B, %Y"),
+        "purchase-date": date.today().strftime("%b %d, %Y"),
         "price": price,
         "why": why,
         "vintage": vintage,
@@ -88,11 +88,12 @@ def test_new_purchase_and_wine(client, store, price, why, vintage, quantity):
     ("Costco", "Sauvignon Blanc", "Rodney Strong", None, None, "", "", "", "", "red", 8, 2020, 2, True, None),
 ])
 @pytest.mark.django_db
-def test_insert_new_wine(client, store, wine_type, producer, region, description,                     price, viti_area, why, notes, color, rating, vintage,
+def test_insert_new_wine(client, store, wine_type, producer, region, description,
+                         price, viti_area, why, notes, color, rating, vintage,
                          quantity, add_to_inventory, grapes):
     post_data = {
         "store": store,
-        "purchase-date": date.today().strftime("%d %B, %Y"),
+        "purchase-date": date.today().strftime("%b %d, %Y"),
         "wine-type": wine_type,
         "producer": producer,
         "region": region,

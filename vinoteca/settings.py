@@ -148,51 +148,68 @@ COLORS = {
 }
 
 # Logging
-LOGGING_CONFIG = None
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
+            "format": "%(levelname)-8s %(asctime)-26s %(name)-20s %(message)s",
         },
         "simple": {
-            "format": "\033[22;32m%(levelname)s\033[0;0m %(message)s"
+            "()": "colorlog.ColoredFormatter",
+            "format": "%(log_color)s%(levelname)-8s %(reset)s%(message)s",
+            "log_colors": {
+                "DEBUG":    "bold_green",
+                "INFO":     "bold_blue",
+                "WARNING":  "bold_yelow",
+                "ERROR":    "bold_orange",
+                "CRITICAL": "bold_red",
+            },
         },
-    },
-    "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse"
-        }
     },
     "handlers": {
         "console": {
-            "class": "logging.StreamHandler",
+            "class": "colorlog.StreamHandler",
+            "level": "INFO",
             "formatter": "simple",
-            "level": "INFO"
         },
         "mail_admins": {
             "level": "ERROR",
-            "filters": ["require_debug_false"],
             "class": "django.utils.log.AdminEmailHandler",
         },
         "file": {
             "level": "DEBUG",
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "formatter": "verbose",
             "filename": CONFIG_MAN.log_path,
+            "maxBytes": 256 * 1024 * 1024,
+            "backupCount": 2
         }
     },
     "loggers": {
+        "vinoteca": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": True,
+        },
         "django": {
             "handlers": ["console", "file", "mail_admins"],
-            # Uncomment for more detailed django debugging
-            "level": "DEBUG" if DEBUG else "INFORMATION",
+            "level": "DEBUG" if DEBUG else "INFO",
             "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["file", "mail_admins"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.template": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": False,
         },
         "javascript_error": {
             "handlers": ["file", "mail_admins"],
-            "level": "ERROR",
+            "level": "WARNING",
             "propagate": True,
         },
     },

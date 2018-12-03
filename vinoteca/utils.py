@@ -131,9 +131,9 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
         grape = Grapes.objects.get(name=grape)
     except Grapes.DoesNotExist:
         LOGGER.debug("Grape does not exist")
-        LOGGER.info(f"Creating new grape with name '{viti_area}'")
+        LOGGER.info(f"Creating new grape with name '{grape}'")
         grape = Grapes(name=grape)
-        LOGGER.debug(f"Created new grape with id {new_viti_area.id}")
+        LOGGER.debug(f"Created new grape with id {grape.id}")
         grape.save()
     try:
         wine_grape = WineGrapes.objects.get(wine=wine, grape=grape)

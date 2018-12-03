@@ -19,7 +19,7 @@ def test_no_duplicate_viti_area(client):
     whether they fail, because duplicates are undesired behavior."""
     post_data = {
         "store": "Surdyk's",
-        "purchase-date": date.today().strftime("%d %B, %Y"),
+        "purchase-date": date.today().strftime("%b %d, %Y"),
         "wine-type": "Chardonnay",
         "producer": "A new producer",
         "region": "Spain",
