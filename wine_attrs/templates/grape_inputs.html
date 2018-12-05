@@ -3,107 +3,12 @@
     <h6>Grape composition</h6>
   </div>
   {% for grape in grapes %}
-    {% with count=forloop.counter %}
-      <div class="input-field col s4 m2">
-        <input id="grape-{{ count }}-pct" name="grape-{{ count }}-pct"
-                type="number" class="validate" {% if grape.percent %}value={{ grape.percent }}{% endif %}>
-        <label for="grape-{{ count }}-pct">Percentage</label>
-      </div>
-      <div class="input-field col s8 m4">
-          <input id="auto-grape-{{ count }}" name="grape-{{ count }}"
-                  type="text" class="autocomplete" value="{{ grape.grape.name }}">
-          <label for="auto-grape-{{ count }}">Grape</label>
-      </div>
+    {% with i=forloop.counter|add:"1" %}
+      {% include "grape_input.html" with name=grape.grape.name percent=grape.percent %}
     {% endwith %}
   {% empty %}
-    <div class="col s12 m6">
-      <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-1">
-        <i class="material-icons">add</i>
-      </a>
-    </div>
-    <div class="input-field col s4 m2" hidden id="grape-form-1-pct">
-      <input id="grape-1-pct" name="grape-1-pct" type="number" class="validate" value=100>
-      <label for="grape-1-pct">Percentage</label>
-    </div>
-    <div class="input-field col s8 m4" hidden id="grape-form-1-name">
-      <input id="auto-grape-1" name="grape-1" type="text" class="autocomplete">
-      <label for="auto-grape-1">Grape</label>
-    </div>
-    <div class="col s12 m6" hidden>
-      <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-2">
-        <i class="material-icons">add</i>
-      </a>
-    </div>
-    <div class="input-field col s4 m2" hidden id="grape-form-2-pct">
-      <input id="grape-2-pct" name="grape-2-pct" type="number" class="validate" value=50>
-      <label for="grape-2-pct">Percentage</label>
-    </div>
-    <div class="input-field col s8 m4" hidden id="grape-form-2-name">
-      <input id="auto-grape-2" name="grape-2" type="text" class="autocomplete">
-      <label for="auto-grape-2">Grape</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s12 m6" hidden>
-      <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-3">
-        <i class="material-icons">add</i>
-      </a>
-    </div>
-    <div class="input-field col s4 m2" hidden id="grape-form-3-pct">
-      <input id="grape-3-pct" name="grape-3-pct" type="number" class="validate" value=33>
-      <label for="grape-3-pct">Percentage</label>
-    </div>
-    <div class="input-field col s8 m4" hidden id="grape-form-3-name">
-      <input id="auto-grape-3" name="grape-3" type="text" class="autocomplete">
-      <label for="auto-grape-3">Grape</label>
-    </div>
-    <div class="col s12 m6" hidden>
-      <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-4">
-        <i class="material-icons">add</i>
-      </a>
-    </div>
-    <div class="input-field col s4 m2" hidden id="grape-form-4-pct">
-      <input id="grape-4-pct" name="grape-4-pct" type="number" class="validate" value=25>
-      <label for="grape-4-pct">Percentage</label>
-    </div>
-    <div class="input-field col s8 m4" hidden id="grape-form-4-name">
-      <input id="auto-grape-4" name="grape-4" type="text" class="autocomplete">
-      <label for="auto-grape-4">Grape</label>
-    </div>
-  {% endfor %}
-  {# Add additional blank rows if this wine already has grapes #}
-  {% if grapes %}
-    {% with next_id=grapes|length|add:1 %}
-      {% if not grapes|length|divisibleby:2 %}
-        <div class="col s12 m6">
-          <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn"
-              id="grape-btn-{{ next_id }}">
-            <i class="material-icons">add</i>
-          </a>
-        </div>
-        <div class="input-field col s4 m2" hidden id="grape-form-{{ next_id }}">
-          <input id="grape-{{ next_id }}-pct" name="grape-{{ next_id }}-pct" type="number" class="validate">
-          <label for="grape-{{ next_id }}-pct">Percentage</label>
-        </div>
-        <div class="input-field col s8 m4" hidden id="grape-form-{{ next_id }}-name">
-          <input id="auto-grape-{{ next_id }}" name="grape-{{ next_id }}" type="text" class="autocomplete">
-          <label for="auto-grape-{{ next_id }}">Grape</label>
-        </div>
-      {% else %}
-        <div class="col s12 m6">
-          <a class="btn-floating waves-effect waves-light light-green lighten-2 grape-btn" id="grape-btn-{{ next_id }}">
-            <i class="material-icons">add</i>
-          </a>
-        </div>
-        <div class="input-field col s4 m2" hidden id="grape-form-{{ next_id }}-pct">
-          <input id="grape-{{ next_id }}-pct" name="grape-{{ next_id }}-pct" type="number" class="validate">
-          <label for="grape-{{ next_id }}-pct">Percentage</label>
-        </div>
-        <div class="input-field col s8 m4" hidden id="grape-form-{{ next_id }}-name">
-          <input id="auto-grape-{{ next_id }}" name="grape-{{ next_id }}" type="text" class="autocomplete">
-          <label for="auto-grape-{{ next_id }}">Grape</label>
-        </div>
-      {% endif %}
+    {% with i=1 %}
+      {% include "grape_input.html" %}
     {% endwith %}
-  {% endif %}
-</row>
+  {% endfor %}
+</div>

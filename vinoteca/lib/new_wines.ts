@@ -64,35 +64,6 @@ function setGrapePct(id: number, pct: number): void {
     $(`#grape-${id}-pct`).val(pct);
 }
 
-export class GrapeBtnListener {
-    private selector: JQuery<HTMLButtonElement>;
-    constructor(selector: JQuery<HTMLButtonElement>) {
-        this.selector = selector;
-    }
-
-    private setupPlusBtn() {
-        this.selector.on("click", function() {
-            // Hide parent div and thus self
-            $(this).parent().hide();
-            const id = parseInt(this.id.slice(-1), 10);
-            // All elements starting with grape-form-2
-            $(`[id^=grape-form-${id}]`).show();
-            // Show next plus button if less than 5
-            if (id < 5) {
-                const grapeBtnParent = $(`#grape-btn-${id + 1}`).parent();
-                grapeBtnParent.show();
-                grapeBtnParent.parent().show();
-            }
-            // Update wine percentage
-            setGrapePct(id, remGrapePct(id));
-        });
-    }
-
-    private setupMinusBtn() {
-        console.warn("not implemented");
-    }
-}
-
 /** Show additional grape forms with click of + button. */
 export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>): void {
     grapeBtnSelector.on("click", function() {
