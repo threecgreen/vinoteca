@@ -1,6 +1,5 @@
-import "materialize-css";
-import { showNextGrapeInput, toggleRating, toggleRegion,
-         updateVitiAreaSelections } from "../../lib/new_wines";
+import { GrapeController } from "../../lib/GrapeController";
+import { toggleRating, toggleRegion, updateVitiAreaSelections } from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
 import { autocomplete, datepicker, navbar } from "../../lib/widgets" ;
 
@@ -21,6 +20,6 @@ $(() => {
 
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement);
 
-    showNextGrapeInput($(".grape-btn"));
+    const grapeCtl = new GrapeController(".grape-block");
     specialChars();
 });

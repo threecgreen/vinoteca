@@ -3,9 +3,12 @@
     <h6>Grape composition</h6>
   </div>
   {% for grape in grapes %}
-    {% with i=forloop.counter %}
+    {% with i=forloop.counter|add:"1" %}
       {% include "grape_input.html" with name=grape.grape.name percent=grape.percent %}
     {% endwith %}
+  {% empty %}
+    {% with i=1 %}
+      {% include "grape_input.html" %}
+    {% endwith %}
   {% endfor %}
-  {% include "grape_input.html" %}
-</row>
+</div>

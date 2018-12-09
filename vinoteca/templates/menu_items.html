@@ -1,10 +1,10 @@
 <li {% block new-nav %}{% endblock %}>
   <ul id="{{ id }}" class="dropdown-content">
     <li>
-      <a href="{% url "Wines:New Wine" %}">First-time Purchase</a>
+      <a href="{% url "Wines:New Wine" %}">New Wine</a>
     </li>
     <li>
-      <a href="{% url "Wines:Search Wines" %}">Return Purchase</a>
+      <a href="{% url "Wines:Search Wines" %}">Purchased Again</a>
     </li>
   </ul>
   <a href="#!" class="dropdown-trigger" data-target="{{ id }}">

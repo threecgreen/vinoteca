@@ -1,5 +1,3 @@
-import { pipe } from "./utils";
-
 enum HideOrShow {
     Hide,
     Show,
@@ -19,14 +17,51 @@ export class GrapeController {
         this.selectorPrefix = selectorPrefix;
         this.lastBlock = $(selectorPrefix).last() as JQuery<HTMLDivElement>;
         this.grapeRow = this.lastBlock.parent();
+        this.setUpListeners();
+        // console.log(`grapeRow = ${this.grapeRow}`);
     }
 
     private getId(elem: JQuery<HTMLElement>): number {
         return parseInt(elem.attr("id") as string, 10);
     }
 
+    /**
+     * Very explicit and repeptitive way of changing all the ids of elements in
+     * a grape block to be the same.
+     *
+     * @param elem Grape block containing inputs with ids to be renumbered and
+     * renamed.
+     * @param id the new id number.
+     */
+    private setId(elem: JQuery<HTMLElement>, id: number): void {
+        const oldId = this.getId(elem);
+        if (oldId === id) {
+            return;
+        }
+        elem.attr("id", `${id}`);
+        const grapePctInput = elem.children(`#grape-form-${oldId}-pct`);
+        grapePctInput.attr("id", `grape-form-${id}-pct`);
+        grapePctInput.children().first().attr("id", `grape-${id}-pct`);
+        grapePctInput.children().first().attr("name", `grape-${id}-pct`);
+        grapePctInput.children().last().attr("for", `grape-${id}-pct`);
+        const grapeNameInput = elem.children(`#grape-form-${oldId}-name`);
+        grapeNameInput.attr("id", `auto-grape-${id}`);
+        grapePctInput.children().first().attr("id", `auto-grape-${id}`);
+        grapePctInput.children().first().attr("name", `grape-${id}`);
+        grapePctInput.children().last().attr("for", `auto-grape-${id}`);
+        const buttonDiv = elem.children(".col").last();
+        buttonDiv.children(`#grape-btn-add-${oldId}`).attr("id", `grape-btn-add-${id}`);
+        buttonDiv.children(`#grape-btn-remove-${oldId}`).attr("id", `grape-btn-remove-${id}`);
+    }
+
     private getBlockById(id: number): JQuery<HTMLDivElement> {
         return $(`${this.selectorPrefix}#${id}`).first() as JQuery<HTMLDivElement>;
+    }
+
+    private renumberBlocks(): void {
+        this.grapeRow.children(".grape-block").each((id: number, elem: HTMLElement) => {
+            this.setId($(elem), id + 1);
+        });
     }
 
     /**
@@ -56,8 +91,8 @@ export class GrapeController {
                 removeBtn.hide();
                 return;
             case HideOrShow.Show:
-                addBtn.hide();
-                removeBtn.hide();
+                addBtn.show();
+                removeBtn.show();
                 return;
         }
     }
@@ -88,11 +123,12 @@ export class GrapeController {
         const newGrapeBlock = this.lastBlock.clone();
         this.grapeRow.append(newGrapeBlock);
         // Clear values
-        this.grapeRow.children(".input-field").each(function() {
-            $(this).val();
+        this.grapeRow.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
+            $(inputField).val();
         });
-        // TODO: set ids
+        this.renumberBlocks();
         this.lastBlock = newGrapeBlock;
+        this.hideShowButtons(this.getId(this.lastBlock), HideOrShow.Show);
     }
 
     /**
@@ -102,10 +138,11 @@ export class GrapeController {
      */
     private showNext(): void {
         // Hide currently shown buttons
-        const newVisibleId = this.getId(this.lastBlock);
-        this.hideShowButtons(newVisibleId - 1, HideOrShow.Hide);
-        this.setGrapePct(newVisibleId, this.remGrapePct(newVisibleId));
+        const lastVisibleId = this.getId(this.lastBlock);
+        this.hideShowButtons(lastVisibleId, HideOrShow.Hide);
         this.newDiv();
+        this.setGrapePct(lastVisibleId + 1, this.remGrapePct(lastVisibleId));
+        this.setUpListeners();
     }
 
     /**
@@ -115,6 +152,22 @@ export class GrapeController {
      */
     private deleteGrape(id: number): void {
         this.getBlockById(id).remove();
-        // TODO: set other ids
+        this.renumberBlocks();
+        this.setUpListeners();
+    }
+
+    /**
+     * Sets up event listeners.
+     */
+    private setUpListeners(): void {
+        $(".grape-btn-add").on("click", () => {
+            console.debug("Add button clicked.");
+            this.showNext();
+        });
+        $(".grape-btn-remove").on("click", (event) => {
+            console.debug("Remove button clicked.");
+            const clickedElem = $(event.target);
+            this.deleteGrape(this.getId(clickedElem.data("id")));
+        });
     }
 }
