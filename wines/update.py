@@ -10,9 +10,10 @@ from vinoteca.image import UserImage
 from vinoteca.models import Colors, Purchases, Wines
 from vinoteca.utils import (
     date_str_to_int, g_or_c_wine_type, g_or_c_store, g_or_c_producer,
-    g_or_c_region, empty_to_none, g_or_c_viti_area, handle_grapes
+    g_or_c_region, empty_to_none, g_or_c_viti_area
 )
 from wines.read import WineProfileView
+from wine_attrs.views import handle_grapes
 
 
 

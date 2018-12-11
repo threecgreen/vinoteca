@@ -12,8 +12,6 @@ $(() => {
     autocomplete("wine-type");
     autocomplete("producer");
     autocomplete("region");
-    autocomplete("grape", 5, 1, "[id^=auto-grape-]");
-
     const region: JQuery<HTMLInputElement> = $("#auto-region");
     toggleRegion($("#auto-producer"), region);
     updateVitiAreaSelections(region, $("#auto-viti-area"));

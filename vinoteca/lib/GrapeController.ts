@@ -1,7 +1,10 @@
+import { autocomplete } from "./widgets";
+
 enum HideOrShow {
     Hide,
     Show,
 }
+
 /**
  * This class controls the adding and removal of grape inputs and the
  * calculation of remaining grape percentage. In reality everything is called
@@ -11,14 +14,16 @@ enum HideOrShow {
 export class GrapeController {
     private selectorPrefix: string;
     private lastBlock: JQuery<HTMLDivElement>;
+    private blockHTML: string;
     private grapeRow: JQuery<HTMLDivElement>;
 
     constructor(selectorPrefix: string) {
         this.selectorPrefix = selectorPrefix;
         this.lastBlock = $(selectorPrefix).last() as JQuery<HTMLDivElement>;
+        this.blockHTML = this.lastBlock[0].outerHTML;
         this.grapeRow = this.lastBlock.parent();
         this.setUpListeners();
-        // console.log(`grapeRow = ${this.grapeRow}`);
+        this.updateAutocomplete();
     }
 
     private getId(elem: JQuery<HTMLElement>): number {
@@ -39,6 +44,8 @@ export class GrapeController {
             return;
         }
         elem.attr("id", `${id}`);
+        const buttonDiv = elem.children(".col").first();
+        buttonDiv.children(`#grape-btn-remove-${oldId}`).attr("id", `grape-btn-remove-${id}`);
         const grapePctInput = elem.children(`#grape-form-${oldId}-pct`);
         grapePctInput.attr("id", `grape-form-${id}-pct`);
         grapePctInput.children().first().attr("id", `grape-${id}-pct`);
@@ -46,12 +53,9 @@ export class GrapeController {
         grapePctInput.children().last().attr("for", `grape-${id}-pct`);
         const grapeNameInput = elem.children(`#grape-form-${oldId}-name`);
         grapeNameInput.attr("id", `auto-grape-${id}`);
-        grapePctInput.children().first().attr("id", `auto-grape-${id}`);
-        grapePctInput.children().first().attr("name", `grape-${id}`);
-        grapePctInput.children().last().attr("for", `auto-grape-${id}`);
-        const buttonDiv = elem.children(".col").last();
-        buttonDiv.children(`#grape-btn-add-${oldId}`).attr("id", `grape-btn-add-${id}`);
-        buttonDiv.children(`#grape-btn-remove-${oldId}`).attr("id", `grape-btn-remove-${id}`);
+        grapeNameInput.children().first().attr("id", `auto-grape-${id}`);
+        grapeNameInput.children().first().attr("name", `grape-${id}`);
+        grapeNameInput.children().last().attr("for", `auto-grape-${id}`);
     }
 
     private getBlockById(id: number): JQuery<HTMLDivElement> {
@@ -80,21 +84,15 @@ export class GrapeController {
     }
 
     /**
-     * Hides or shows the grape add and remove buttons of the given id.
+     * Determine whether any grape has a percentage set.
      */
-    private hideShowButtons(id: number, hideOrShow: HideOrShow): void {
-        const addBtn = $(`#grape-btn-add-${id}`);
-        const removeBtn = $(`#grape-btn-remove-${id}`);
-        switch (hideOrShow) {
-            case HideOrShow.Hide:
-                addBtn.hide();
-                removeBtn.hide();
-                return;
-            case HideOrShow.Show:
-                addBtn.show();
-                removeBtn.show();
-                return;
+    private hasGrapePct(lastVisibleId: number): boolean {
+        for (let i = 1; i < lastVisibleId; i++) {
+            if ($(`#grape-${i}-pct`).val() !== "") {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -103,7 +101,11 @@ export class GrapeController {
     private remGrapePct(lastVisibleId: number): number {
         let sum = 0;
         for (let i = 1; i < lastVisibleId; i++) {
-            sum += parseInt($(`#grape-${i}-pct`).val() as string, 10);
+            const pct = parseInt($(`#grape-${i}-pct`).val() as string, 10);
+            // Only add if not undefined
+            if (pct) {
+                sum += pct;
+            }
         }
         return sum < 100 ? 100 - sum : 0;
     }
@@ -120,29 +122,39 @@ export class GrapeController {
      * data.
      */
     private newDiv(): void {
-        const newGrapeBlock = this.lastBlock.clone();
-        this.grapeRow.append(newGrapeBlock);
+        if (this.grapeRow.children(".grape-block").length > 0) {
+            /* Create new grape block after the last current grape block. Can't use
+            * append here because plus button is the last child
+            */
+            this.grapeRow.children(".grape-block").last().after(this.blockHTML);
+        } else {
+            // Special case when no grape inputs
+            this.grapeRow.children(".col").first().after(this.blockHTML);
+        }
+        this.lastBlock = this.grapeRow.children(".grape-block").last();
         // Clear values
-        this.grapeRow.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
+        this.lastBlock.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
             $(inputField).val();
         });
         this.renumberBlocks();
-        this.lastBlock = newGrapeBlock;
-        this.hideShowButtons(this.getId(this.lastBlock), HideOrShow.Show);
+        const newBlockId = this.getId(this.lastBlock);
+        this.hideShowDiv(newBlockId, HideOrShow.Show);
     }
 
     /**
-     * Hides old buttons, shows next grape form and its buttons, sets the
-     * percent value in the percent field of next grape form to the remaining
-     * percentage, and creates a new hidden grape block.
+     * Creates new grape inputs and minus button, sets the percent value in the
+     * percent field of next grape form to the remaining percentage.
      */
-    private showNext(): void {
-        // Hide currently shown buttons
-        const lastVisibleId = this.getId(this.lastBlock);
-        this.hideShowButtons(lastVisibleId, HideOrShow.Hide);
+    private addGrapeInput(): void {
+        let lastVisibleId = this.getId(this.lastBlock) || 0;
         this.newDiv();
-        this.setGrapePct(lastVisibleId + 1, this.remGrapePct(lastVisibleId));
-        this.setUpListeners();
+        lastVisibleId++;
+        // Only set the percentage if other grapes have percentages
+        if (this.hasGrapePct(lastVisibleId)) {
+            this.setGrapePct(lastVisibleId, this.remGrapePct(lastVisibleId));
+        }
+        this.setUpRemoveListeners();
+        this.updateAutocomplete();
     }
 
     /**
@@ -153,21 +165,36 @@ export class GrapeController {
     private deleteGrape(id: number): void {
         this.getBlockById(id).remove();
         this.renumberBlocks();
-        this.setUpListeners();
+        this.lastBlock = this.grapeRow.children(".grape-block").last();
+        this.setUpRemoveListeners();
     }
 
     /**
      * Sets up event listeners.
      */
     private setUpListeners(): void {
-        $(".grape-btn-add").on("click", () => {
-            console.debug("Add button clicked.");
-            this.showNext();
-        });
+        this.setUpAddListener();
+        this.setUpRemoveListeners();
+    }
+
+    private setUpRemoveListeners(): void {
+        $(".grape-btn.remove").off("click");
         $(".grape-btn-remove").on("click", (event) => {
-            console.debug("Remove button clicked.");
-            const clickedElem = $(event.target);
-            this.deleteGrape(this.getId(clickedElem.data("id")));
+            // event.target is the inner <i/> element
+            const idStr = $(event.target).parent().attr("id") as string;
+            this.deleteGrape(parseInt(idStr.substr(idStr.length - 1), 10));
+            event.stopImmediatePropagation();
         });
+    }
+
+    private setUpAddListener(): void {
+        $(".grape-btn.add").unbind("click");
+        $(".grape-btn-add").on("click", () => {
+            this.addGrapeInput();
+        });
+    }
+
+    private updateAutocomplete(): void {
+        autocomplete("grape", 5, 1, "[id^=auto-grape-]");
     }
 }
