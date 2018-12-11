@@ -2,6 +2,7 @@ enum HideOrShow {
     Hide,
     Show,
 }
+
 /**
  * This class controls the adding and removal of grape inputs and the
  * calculation of remaining grape percentage. In reality everything is called
@@ -11,11 +12,13 @@ enum HideOrShow {
 export class GrapeController {
     private selectorPrefix: string;
     private lastBlock: JQuery<HTMLDivElement>;
+    private blockHTML: string;
     private grapeRow: JQuery<HTMLDivElement>;
 
     constructor(selectorPrefix: string) {
         this.selectorPrefix = selectorPrefix;
         this.lastBlock = $(selectorPrefix).last() as JQuery<HTMLDivElement>;
+        this.blockHTML = this.lastBlock[0].outerHTML;
         this.grapeRow = this.lastBlock.parent();
         this.setUpListeners();
         // console.log(`grapeRow = ${this.grapeRow}`);
@@ -120,15 +123,16 @@ export class GrapeController {
      * data.
      */
     private newDiv(): void {
-        const newGrapeBlock = this.lastBlock.clone();
-        this.grapeRow.append(newGrapeBlock);
+        this.grapeRow.append(this.blockHTML);
+        this.lastBlock = this.grapeRow.children().last();
         // Clear values
-        this.grapeRow.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
+        this.lastBlock.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
             $(inputField).val();
         });
         this.renumberBlocks();
-        this.lastBlock = newGrapeBlock;
-        this.hideShowButtons(this.getId(this.lastBlock), HideOrShow.Show);
+        const newBlockId = this.getId(this.lastBlock);
+        this.hideShowDiv(newBlockId, HideOrShow.Show);
+        this.hideShowButtons(newBlockId, HideOrShow.Show);
     }
 
     /**
@@ -166,8 +170,9 @@ export class GrapeController {
         });
         $(".grape-btn-remove").on("click", (event) => {
             console.debug("Remove button clicked.");
-            const clickedElem = $(event.target);
-            this.deleteGrape(this.getId(clickedElem.data("id")));
+            // event.target is the inner <i/> element
+            const idStr = $(event.target).parent().attr("id") as string;
+            this.deleteGrape(parseInt(idStr.substr(idStr.length - 1), 10));
         });
     }
 }

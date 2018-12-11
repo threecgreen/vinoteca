@@ -4,6 +4,7 @@ $pink: rgb(233, 30, 99)
 $wine-red: rgb(135, 14, 79)
 $wine-green: rgb(139, 195, 74)
 $golden-yellow: rgb(251, 192, 45)
+$light-gray: rgb(200, 200, 200)
 
 body
   display: flex
@@ -184,6 +185,15 @@ code
 .golden-yellow-card
   background-color: $golden-yellow
 
+.grape-btn-add
+  background-color: $wine-green
+.grape-btn-add:hover
+  background-color: lighten($wine-green, 10)
+.grape-btn-remove
+  background-color: lighten($wine-red, 5)
+.grape-btn-remove:hover
+  background-color: lighten($wine-red, 15)
+
 .page-title
   @extend .bold
   color: lighten($wine-red, 5)
@@ -196,8 +206,14 @@ img
 .no-forced-caps
   text-transform: none
 
+.light-gray
+  background-color: $light-gray
+.light-gray:hover
+  background-color: lighten($light-gray, 7)
+
 .spec-chars
   @extend .no-forced-caps
+  @extend .light-gray
 
 /** Rating slider had unnecessary margin */
 #rating-slider
