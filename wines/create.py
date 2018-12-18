@@ -11,10 +11,10 @@ from vinoteca.image import UserImage
 from vinoteca.models import Colors, Stores, Wines
 from vinoteca.utils import (
     empty_to_none, g_or_c_store, g_or_c_wine_type, g_or_c_producer,
-    g_or_c_region, c_wine, g_or_c_viti_area, handle_grapes, c_purchase,
-    default_vintage_year
+    g_or_c_region, c_wine, g_or_c_viti_area,  c_purchase, default_vintage_year
 )
 from wines.read import WineProfileView
+from wine_attrs.views import handle_grapes
 
 
 LOGGER = logging.getLogger(__name__)

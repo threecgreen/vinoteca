@@ -1,5 +1,5 @@
-import { showNextGrapeInput, toggleRating, toggleRegion,
-         updateVitiAreaSelections} from "../../lib/new_wines";
+import { GrapeController } from "../../lib/GrapeController";
+import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
 import { autocomplete, navbar } from "../../lib/widgets";
 
@@ -19,12 +19,11 @@ $(() => {
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement,
                  hasRating);
     updateVitiAreaSelections(region, $("#auto-viti-area"));
-    showNextGrapeInput($(".grape-btn"));
+    const grapeCtl = new GrapeController(".grape-block");
 });
 
 // Gave weird error when in same document ready function
 $(() => {
-    autocomplete("grape", 5, 1, "[id^=auto-grape-]");
     // Run first for initial region
     $(region).trigger("change");
 });

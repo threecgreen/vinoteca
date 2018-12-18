@@ -227,20 +227,3 @@ def default_vintage_year() -> int:
     r"""Returns the default vintage year, which is two years prior to the
     current year."""
     return (datetime.now() - relativedelta(years=2)).year
-
-
-def handle_grapes(request, wine) -> None:
-    r"""Create Grape and WineGrapes objects for a new wine or when a wine has
-    been edited."""
-    LOGGER.debug(f"Handling grape changes for POST request {request.POST}")
-    if request.POST.get("grape-1"):
-        for i in range(1, 6):
-            grape = empty_to_none(request.POST.get(f"grape-{i}"))
-            percent = empty_to_none(request.POST.get(f"grape-{i}-pct"), int)
-            LOGGER.debug(f"Handling grape {grape} and percent {percent}")
-            if grape and (percent is None or 0 < percent <= 100):
-                c_or_u_wine_grapes(wine, grape, percent)
-            else:
-                LOGGER.debug("No more grape data")
-                # No more grapes
-                break
