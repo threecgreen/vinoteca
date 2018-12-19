@@ -9,7 +9,12 @@
     ],
     "python.linting.enabled": true,
     "python.unitTest.pyTestArgs": [
-        "tests"
+        "--cov=.",
+        "--cov-branch",
+        "--cov-config=./.coveragerc",
+        "${workspaceRoot}",
+        "--cov-report",
+        "term-missing"
     ],
     "files.exclude": {
         "**/.git": true,
@@ -24,5 +29,7 @@
     },
     "python.unitTest.unittestEnabled": false,
     "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.pyTestEnabled": true
+    "python.unitTest.pyTestEnabled": true,
+    "typescript.format.enable": true,
+    "typescript.suggest.completeFunctionCalls": true,
 }
