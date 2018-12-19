@@ -2,11 +2,12 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
 from django.conf import settings
 from django.urls import reverse
-import pytest
 
 from vinoteca.models import Grapes, Purchases, WineGrapes, Wines
+
 
 @pytest.fixture
 def wine_and_post_data(a_wine):
@@ -27,7 +28,6 @@ def wine_and_post_data(a_wine):
 @pytest.mark.parametrize("page", [
     reverse("Wines:Search Wines"),
     reverse("Wines:New Wine"),
-    # reverse("New Purchase Wine"),
     reverse("Wines:Search Wines Results JSON"),
 ])
 def test_pages(client, page):
@@ -40,7 +40,7 @@ def test_pages(client, page):
     ("", "red", "", "", ""),
     ("", "", "Martinelli", "", ""),
     ("", "", "", "California", ""),
-    # ("", "", "", "", "Sonoma County"),
+    ("", "", "", "", "Sonoma County"),
     ("", "red", "Le Grand Noir", "France", ""),
     ("Pinot Noir", "red", "", "California", "")
 ])
@@ -146,16 +146,17 @@ def upload_file(a_wine):
 @pytest.mark.django_db
 def test_edit_wine(client, wine_and_post_data, attr, val):
     wine, post_data = wine_and_post_data
-    init_val = wine.__getattribute__(attr)
+    init_val = getattr(wine, attr)
     assert init_val != val
     post_data[attr.replace("_", "-")] = val
-    response = client.post(reverse("Wines:Edit Wine", kwargs={"wine_id": wine.id}), post_data, follow=True)
+    response = client.post(reverse("Wines:Edit Wine", kwargs={"wine_id": wine.id}),
+                           post_data, follow=True)
     assert response.status_code == 200
     assert (reverse("Wines:Wine Profile", kwargs={"wine_id": wine.id}), 302) in response.redirect_chain
     if attr in ("producer", "viti_area", "color") or attr == "viti_area":
-        assert Wines.objects.get(id=1).__getattribute__(attr).name == val
+        assert getattr(Wines.objects.get(id=1), attr).name == val
     else:
-        assert Wines.objects.get(id=1).__getattribute__(attr) == val
+        assert getattr(Wines.objects.get(id=1), attr) == val
 
 
 @pytest.mark.django_db
@@ -210,7 +211,7 @@ def test_edit_wine_image(a_wine, client, upload_file):
 @pytest.mark.django_db
 def test_edit_purchases(client, attr, val, a_wine):
     purchase = Purchases.objects.get(id=1)
-    init_val = purchase.__getattribute__(attr)
+    init_val = getattr(purchase, attr)
     assert init_val != val
     post_data = {
         "quantity": purchase.quantity,
@@ -226,9 +227,9 @@ def test_edit_purchases(client, attr, val, a_wine):
     assert response.status_code == 200
     assert (f"/wines/{a_wine.id}/edit/", 302) in response.redirect_chain
     if attr == "store":
-        assert Purchases.objects.get(id=1).__getattribute__(attr).name == val
+        assert getattr(Purchases.objects.get(id=1), attr).name == val
     else:
-        assert Purchases.objects.get(id=1).__getattribute__(attr) == val
+        assert getattr(Purchases.objects.get(id=1), attr) == val
 
 
 @pytest.mark.parametrize("sign", ["add", "subtract"])

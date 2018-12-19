@@ -123,7 +123,7 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
     r"""Get or create a WineGrapes object."""
     LOGGER.debug("Creating wine grape and getting or creating grape with name "
                  f" '{grape}', for wine with id {wine.id}. This grape makes up "
-                 f"{percent} of the wine.")
+                 f"{percent}% of the wine.")
     if grape is None:
         LOGGER.debug("No valid grape provided, returning")
         return False

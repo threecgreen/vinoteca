@@ -8,7 +8,6 @@ from vinoteca.models import Wines, WineTypes, WineGrapes
 from vinoteca.utils import c_or_u_wine_grapes, empty_to_none, TableColumn
 
 
-
 LOGGER = logging.getLogger(__name__)
 
 
