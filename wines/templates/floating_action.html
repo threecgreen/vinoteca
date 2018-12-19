@@ -1,35 +1,15 @@
 <div class="fixed-action-btn">
-  <a class="btn-floating btn-large pink darken-3">
-    <i class="material-icons">menu</i>
-  </a>
+  {% include "menu_btn_floating.html" %}
   <ul>
-    <li>
-      <a class="btn-floating light-green darken-2 waves-effect waves-light"
-        href="{% url "Wines:New Purchase" wine_id=wine.id %}">
-        <i class="material-icons">add</i>
-      </a>
-    </li>
-    <li>
-      <a class="btn-floating yellow darken-2 waves-effect waves-light"
-        href="{% url "Wines:Edit Wine" wine_id=wine.id %}">
-        <i class="material-icons">edit</i>
-      </a>
-    </li>
-    <li>
-      <a class="btn-floating pink darken-3 modal-trigger waves-effect waves-light"
-        href="#delete-modal">
-        <i class="material-icons">delete</i>
-      </a>
-    </li>
+    {% url "Wines:New Purchase" wine_id=wine.id as add_url %}
+    {% include "add_btn_floating.html" with url_=add_url %}
+    {% if not editing %}
+      {% url "Wines:Edit Wine" wine_id=wine.id as edit_url %}
+      {% include "edit_btn_floating.html" with url_=edit_url %}
+    {% endif %}
+    {% include "delete_btn_floating.html" %}
   </ul>
 </div>
-<div id="delete-modal" class="modal ">
-  <div class="modal-content">
-    <h5>Are you sure you want to delete this wine?</h5>
-    <p>This action is not reversible.</p>
-  </div>
-  <div class="modal-footer">
-    <a href="{% url "Wines:Delete Wine" wine_id=wine.id %}" class="btn modal-action pink darken-3 waves-effect waves-light" id="delete-wine-btn">Yes, delete this wine</a>
-    <a href="" class="btn modal-action modal-close light-green darken-2 waves-effect waves-light">No</a>
-  </div>
-</div>
+
+{% url "Wines:Delete Wine" wine_id=wine.id as delete_url %}
+{% include "delete_modal.html" with item="wine" url_=delete_url %}

@@ -10,10 +10,9 @@
         {% include "purchase_inputs.html" with include_inventory=True %}
         <div class="row">
           <div class="col s12">
-            <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
-              Submit<i class="material-icons right">send</i>
-            </button>
-            <a class="waves-effect waves-light btn pink darken-3" href={% url "Wines:Wine Profile" wine_id=wine.id %}>cancel</a>
+            {% include "submit_btn.html" %}
+            {% url "Wines:Wine Profile" wine_id=wine.id as cancel_url %}
+            {% include "cancel_btn.html" with url_=cancel_url %}
           </div>
         </div>
       </form>

@@ -1,7 +1,7 @@
 import { GrapeController } from "../../lib/GrapeController";
 import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
-import { autocomplete, navbar } from "../../lib/widgets";
+import { autocomplete, hFloatingActnBtn, navbar } from "../../lib/widgets";
 
 declare const hasRating: boolean;
 
@@ -10,6 +10,7 @@ const region: JQuery<HTMLInputElement> = $("#auto-region");
 $(() => {
     navbar();
     specialChars();
+    hFloatingActnBtn();
     $("select").formSelect();
 
     autocomplete("wine-type");
@@ -20,6 +21,7 @@ $(() => {
                  hasRating);
     updateVitiAreaSelections(region, $("#auto-viti-area"));
     const grapeCtl = new GrapeController(".grape-block");
+    $("#delete-modal").modal();
 });
 
 // Gave weird error when in same document ready function
