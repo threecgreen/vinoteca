@@ -40,3 +40,6 @@ tags
 # Logs
 vinoteca.log
 
+# Old storage folders
+data/
+media/
