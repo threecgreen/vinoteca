@@ -4,17 +4,9 @@
     "python.linting.pylintArgs": [
         "--rcfile={workspaceRoot}/.pylintrc"
     ],
-    "cSpell.words": [
-        "vinoteca"
-    ],
     "python.linting.enabled": true,
     "python.unitTest.pyTestArgs": [
-        "--cov=.",
-        "--cov-branch",
-        "--cov-config=./.coveragerc",
         "${workspaceRoot}",
-        "--cov-report",
-        "term-missing"
     ],
     "files.exclude": {
         "**/.git": true,

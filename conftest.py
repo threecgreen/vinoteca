@@ -31,4 +31,3 @@ def client():
 def a_wine():
     """Returns a wine object for manipulation, linking or other purposes."""
     return Wines.objects.get(id=1)
-

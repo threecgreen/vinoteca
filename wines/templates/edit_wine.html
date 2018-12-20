@@ -9,21 +9,20 @@
       {% with edit_wine=True  %}
         {% include "wine_inputs.html" %}
       {% endwith %}
-      {# Submit #}
       <div class="row">
         <div class="col s12">
-          <button class="btn waves-effect waves-light light-green lighten-2" type="submit" name="action">
-            Confirm Edits<i class="material-icons right">send</i>
-          </button>
-          <a class="waves-effect waves-light btn pink darken-3"
-             href={% url "Wines:Wine Profile" wine_id=wine.id %}>cancel</a>
+          {% include "submit_btn.html" %}
+          {% url "Wines:Wine Profile" wine_id=wine.id as cancel_url %}
+          {% include "cancel_btn.html" with url_=cancel_url %}
         </div>
       </div>
     </form>
   </div>
 {% endblock %}
 
-{% block edit-wine %}{% endblock %}
+{% block edit-wine %}
+  {% include "floating_action.html" with editing=True %}
+{% endblock %}
 
 {% block table-edit-head %}<th>Edit</th>{% endblock %}
 

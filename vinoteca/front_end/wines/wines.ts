@@ -1,10 +1,9 @@
 /// <reference path="../../@types/tablesorter.d.ts" />
 
-import "materialize-css";
 import "tablesorter";
 import { navbar } from "../../lib/widgets";
-import "./jquery.tablesorter.pager";
-import "./jquery.tablesorter.widgets";
+// import "./jquery.tablesorter.pager";
+// import "./jquery.tablesorter.widgets";
 
 $(() => {
     navbar();
@@ -16,7 +15,7 @@ $(() => {
             filter_cssFilter: ["browser-default"],
             filter_ignoreCase: true,
             filter_reset: ".reset",
-            filter_saveFilter: true,
+            filter_saveFilters: true,
         },
         widgets: ["filter"],
         widthFixed: true,

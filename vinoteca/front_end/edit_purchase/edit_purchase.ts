@@ -15,5 +15,5 @@ $(() => {
     // Edit purchase stuff
     datepicker();
     autocomplete("store");
-    $("#delete-purchase-modal").modal();
+    $("#delete-modal").modal();
 });

@@ -6,6 +6,24 @@ $wine-green: rgb(139, 195, 74)
 $golden-yellow: rgb(251, 192, 45)
 $light-gray: rgb(200, 200, 200)
 
+/** Colored background classes */
+.green-bg
+  background-color: $wine-green
+.green-bg:hover
+  background-color: lighten($wine-green, 10)
+.yellow-bg
+  background-color: $golden-yellow
+.yellow-bg:hover
+  background-color: lighten($golden-yellow, 10)
+.red-bg
+  background-color: lighten($wine-red, 5)
+.red-bg:hover
+  background-color: lighten($wine-red, 15)
+.light-gray-bg
+  background-color: $light-gray
+.light-gray-bg:hover
+  background-color: lighten($light-gray, 7)
+
 body
   display: flex
   min-height: 100vh
@@ -183,16 +201,11 @@ code
     /* White text */
     color: white
 .golden-yellow-card
-  background-color: $golden-yellow
-
+  @extend .yellow-bg
 .grape-btn-add
-  background-color: $wine-green
-.grape-btn-add:hover
-  background-color: lighten($wine-green, 10)
+  @extend .green-bg
 .grape-btn-remove
-  background-color: lighten($wine-red, 5)
-.grape-btn-remove:hover
-  background-color: lighten($wine-red, 15)
+  @extend .red-bg
 
 .page-title
   @extend .bold
@@ -206,14 +219,9 @@ img
 .no-forced-caps
   text-transform: none
 
-.light-gray
-  background-color: $light-gray
-.light-gray:hover
-  background-color: lighten($light-gray, 7)
-
 .spec-chars
   @extend .no-forced-caps
-  @extend .light-gray
+  @extend .light-gray-bg
 
 /** Rating slider had unnecessary margin */
 #rating-slider

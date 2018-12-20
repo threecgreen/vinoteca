@@ -15,7 +15,7 @@ declare namespace Tablesorter {
         /** Reset filters button */
         filter_reset: string;
         /** Save most recent filters in cookies between refreshes. */
-        filter_saveFilter: boolean;
+        filter_saveFilters: boolean;
     }
 
     /** Options passed to tablesorter property. */

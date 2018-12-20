@@ -27,21 +27,31 @@ def grapes_post_data():
 
 
 @pytest.fixture
-def grape_post_data(grape_post_data):
-    return {k: grape_post_data[k] for k in ("grape-1", "grape-1-pct")}
+def grape_post_data(grapes_post_data):
+    return {k: grapes_post_data[k] for k in ("grape-1", "grape-1-pct")}
 
 
-def test_basic_handle_grapes(mocker, client, grape_post_data):
+def test_basic_handle_grapes(mocker, grape_post_data):
     mock_wine = mocker.MagicMock()
     mock_wine.id = 10
     mock_request = mocker.MagicMock()
-    mock_request.POST = grape_post_data
-    with mocker.patch.object(WineGrapes):
-        handle_grapes()
+    mock_request.POST.get = mocker.MagicMock()
+    mock_request.POST.get.side_effect = grape_post_data.get
+    with mocker.patch("wine_attrs.views.WineGrapes"):
+        with mocker.patch("wine_attrs.views.c_or_u_wine_grapes"):
+            handle_grapes(mock_request, mock_wine)
+            # while check x2, grape name, grape percent
+            assert mock_request.POST.get.call_count == 4
 
-def test_many_grapes():
-    pass
 
-
-def test_deleting_grape():
-    pass
+def test_many_grapes(mocker, grapes_post_data):
+    mock_wine = mocker.MagicMock()
+    mock_wine.id = 10
+    mock_request = mocker.MagicMock()
+    mock_request.POST.get = mocker.MagicMock()
+    mock_request.POST.get.side_effect = grapes_post_data.get
+    with mocker.patch("wine_attrs.views.WineGrapes"):
+        with mocker.patch("wine_attrs.views.c_or_u_wine_grapes"):
+            handle_grapes(mock_request, mock_wine)
+            # while check x8, grape name x7, grape percent x7
+            assert mock_request.POST.get.call_count == 22
