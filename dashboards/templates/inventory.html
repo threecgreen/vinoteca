@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load static %}
 
 {% block body %}
   <div class="container">
@@ -42,4 +43,8 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'inventory.bundle.js' %}"></script>
 {% endblock %}

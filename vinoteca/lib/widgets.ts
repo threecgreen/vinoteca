@@ -22,8 +22,15 @@ export function datepicker(selector = ".datepicker"): void {
     });
 }
 
+function activateNavbarTab(id: string): void {
+    $(`#${id}`).addClass("active");
+}
+
 /** Enables navbar menus. Should be called on every page. */
-export function navbar() {
+export function navbar(activeNavTabId?: string) {
+    if (activeNavTabId) {
+        activateNavbarTab(activeNavTabId);
+    }
     $(".sidenav").sidenav();
     $(".dropdown-trigger").dropdown();
 }

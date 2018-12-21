@@ -1,4 +1,4 @@
-<li {% block new-nav %}{% endblock %}>
+<li id="new-wine-nav">
   <ul id="{{ id }}" class="dropdown-content">
     <li>
       <a href="{% url "Wines:New Wine" %}">New Wine</a>
@@ -13,19 +13,19 @@
     <i class="material-icons right">arrow_drop_down</i>
   </a>
 </li>
-<li {% block view-nav %}{% endblock %}>
+<li id="wines-nav">
   <a href="{% url "Wines:Wines" %}">
     <i class="material-icons left"> reorder</i>
     Wines
   </a>
 </li>
-<li {% block dashboard-nav %}{% endblock %}>
+<li id="dashboard-nav">
   <a href="{% url "Dashboards" %}">
     <i class="material-icons left">dashboard</i>
     Dashboards
   </a>
 </li>
-<li {% block inventory-nav %}{% endblock %}>
+<li id="inventory-nav">
   <a href="{% url "Inventory" %}">
     <i class="material-icons left">view_comfy</i>
     Inventory

@@ -20,7 +20,7 @@ declare const purchasesByYearData: IGenericStatJSON[];
 declare const doPurchasesByYear: boolean;
 
 $(() => {
-    navbar();
+    navbar("dashboard-nav");
     tabs();
 
     // Colors

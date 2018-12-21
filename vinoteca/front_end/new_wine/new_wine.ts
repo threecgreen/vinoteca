@@ -4,7 +4,7 @@ import { specialChars } from "../../lib/special_chars";
 import { autocomplete, datepicker, navbar } from "../../lib/widgets" ;
 
 $(() => {
-    navbar();
+    navbar("new-wine-nav");
     datepicker();
     $("select").formSelect();
 

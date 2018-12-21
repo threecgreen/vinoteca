@@ -6,7 +6,7 @@ import { navbar } from "../../lib/widgets";
 // import "./jquery.tablesorter.widgets";
 
 $(() => {
-    navbar();
+    navbar("wines-nav");
     $("select").formSelect();
 
     $("table").tablesorter({

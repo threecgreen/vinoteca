@@ -19,6 +19,7 @@ module.exports = {
         // Wines
         edit_purchase: [inputPath + "edit_purchase/edit_purchase.ts"],
         edit_wine: [inputPath + "edit_wine/edit_wine.ts"],
+        inventory: [inputPath + "inventory/inventory.ts"],
         new_purchase: [inputPath + "new_purchase/new_purchase.ts"],
         new_wine: [inputPath + "new_wine/new_wine.ts"],
         search_wines: [inputPath + "search_wines/search_wines.ts"],

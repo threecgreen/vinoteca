@@ -1,5 +1,6 @@
 import { clearTable, resetFormBtn, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
+import { specialChars } from "../../lib/special_chars";
 import { autocomplete, navbar } from "../../lib/widgets";
 
 /** Update search results when search fields change */
@@ -34,7 +35,7 @@ function liveWineSearch(searchParams: JQuery<HTMLInputElement>,
 }
 
 $(() => {
-    navbar();
+    navbar("new-wine-nav");
     const producer: JQuery<HTMLInputElement> = $("#auto-producer");
     const region: JQuery<HTMLInputElement> = $("#auto-region");
 
@@ -47,7 +48,9 @@ $(() => {
     autocomplete("region");
     autocomplete("viti-area");
 
+    specialChars();
     resetFormBtn();
+    $(region).prop("disabled", false);
     liveWineSearch($(".input-field"), $("#auto-wine-type"), $("#color"), producer,
                    region, $("#auto-viti-area"));
 });
