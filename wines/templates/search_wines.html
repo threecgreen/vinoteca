@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <h3 class="page-title">Find a previously purchased wine</h3>
+    <div class="col s12">
+      <button class="btn waves-effect waves-light yellow darken-2" id="reset-btn">Reset Filters</button>
+    </div>
+    <form autocomplete="off">
+      <div class="row">
+        {% include "color_input.html" %}
+        {% include "wine_type_input.html" %}
+        {% include "producer_input.html" %}
+        {% include "region_input.html" %}
+        {% include "viti_area_input.html" %}
+      </div>
+      {% include "special_chars.html" %}
+    </form>
+    <table class="highlight responsive-table" hidden>
+      <thead>
+        <tr>
+          <th>Color</th>
+          <th>Name and Type</th>
+          <th>Producer</th>
+          <th>Region</th>
+          <th>Viticultural Area</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <h5 id="no-results" hidden>No results found.</h5>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'search_wines.bundle.js' %}"></script>
+{% endblock %}

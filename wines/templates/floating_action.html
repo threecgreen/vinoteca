@@ -1,0 +1,15 @@
+<div class="fixed-action-btn">
+  {% include "menu_btn_floating.html" %}
+  <ul>
+    {% url "Wines:New Purchase" wine_id=wine.id as add_url %}
+    {% include "add_btn_floating.html" with url_=add_url %}
+    {% if not editing %}
+      {% url "Wines:Edit Wine" wine_id=wine.id as edit_url %}
+      {% include "edit_btn_floating.html" with url_=edit_url %}
+    {% endif %}
+    {% include "delete_btn_floating.html" %}
+  </ul>
+</div>
+
+{% url "Wines:Delete Wine" wine_id=wine.id as delete_url %}
+{% include "delete_modal.html" with item="wine" url_=delete_url %}

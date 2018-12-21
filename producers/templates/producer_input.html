@@ -1,0 +1,8 @@
+<div class="input-field col s6 m3">
+  <input type="text" id="auto-producer" name="producer" class="autocomplete"
+    {% if producer %}
+      value="{{ producer }}"
+    {% endif %}
+    required>
+  <label for="auto-producer">Producer</label>
+</div>

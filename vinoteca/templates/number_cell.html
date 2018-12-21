@@ -1,0 +1,7 @@
+{% load vinoteca %}
+
+{% if decpoint %}
+  <td class="num-col">{{ number|floatformat:2|defndash }}</td>
+{% else %}
+  <td class="num-col">{{ number|defndash }}</td>
+{% endif %}

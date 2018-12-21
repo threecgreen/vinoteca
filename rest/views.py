@@ -9,7 +9,8 @@ from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
     VitiAreaSerializer, WineTypeSerializer, WineSerializer,
     ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
-    WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer
+    WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer,
+    WineGrapeSerializer
 )
 from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
@@ -60,6 +61,12 @@ def grape(request):
             "percent": wine_grape.percent
         })
     return JsonResponse(content, safe=False)
+
+
+class GrapeList(generics.ListAPIView):
+    queryset = WineGrapes.objects.all().prefetch_related("grape")
+    serializer_class = WineGrapeSerializer
+    filterset_fields = ("wine", "grape")
 
 
 class ColorList(generics.ListAPIView):

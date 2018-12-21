@@ -60,7 +60,10 @@ class VitiAreaSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "region")
 
 
+# pylint: disable=missing-docstring
 class WineGrapeSerializer(serializers.ModelSerializer):
+    grape = serializers.StringRelatedField()
+
     class Meta:
         model = WineGrapes
         fields = ("id", "wine", "grape", "percent")

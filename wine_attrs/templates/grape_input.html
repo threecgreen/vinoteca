@@ -1,0 +1,15 @@
+<div class="grape-block col s12 l6" id="{{ i }}">
+  <div class="input-field col s1">
+    <a class="btn-floating waves-effect waves-light grape-btn-remove" id="grape-btn-remove-{{ i }}">
+      <i class="material-icons">remove</i>
+    </a>
+  </div>
+  <div class="input-field col s3" id="grape-form-{{ i }}-pct">
+    <input class="grape-pct" id="grape-{{ i }}-pct" name="grape-{{ i }}-pct" type="number" class="validate" {% if percent %}value={{ percent }}{% endif %}>
+    <label for="grape-{{ i }}-pct">Percentage</label>
+  </div>
+  <div class="input-field col s8" id="grape-form-{{ i }}-name">
+    <input id="auto-grape-{{ i }}" name="grape-{{ i }}" type="text" class="autocomplete" {% if name %}value="{{ name }}"{% endif %}>
+    <label for="auto-grape-{{ i }}">Grape</label>
+  </div>
+</div>

@@ -27,6 +27,9 @@ parse_args()
 
 parse_args $@
 
+find_vinoteca_version
+info_text "Running vinoteca $vinoteca_ver"
+
 # Only backup db if --backup-db arg passed
 if [ $BACKUP_DB = "true" ]; then
     info_text "Backing up database..."
@@ -49,9 +52,9 @@ if [ $NO_TAB == "false" ]; then
         *) info_text "Don't know how to open URLs on "`uname`;;
     esac
     if [ "$cmd" == "windows" ] ; then
-        (sleep 2; cmd.exe /c "start http://localhost:8000")&
+        (sleep 3; cmd.exe /c "start http://localhost:8000")&
     elif [ "$cmd" != "false" ] ; then
-        (sleep 2;$cmd http://localhost:8000)&
+        (sleep 3;$cmd http://localhost:8000)&
     fi
 fi
 

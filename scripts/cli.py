@@ -37,13 +37,13 @@ def vinoteca_help(options):
 
 
 def main():
-    scripts_dir = Path(__file__).parent
+    scripts_dir = Path(__file__).resolve().parent
     options = {
         "help": None,
-        "run": (scripts_dir / "run.sh").resolve(),
-        "test": (scripts_dir / "test.sh").resolve(),
-        "update": (scripts_dir / "update.sh").resolve(),
-        "lint": (scripts_dir / "lint.sh").resolve(),
+        "run": (scripts_dir / "run.sh"),
+        "test": (scripts_dir / "test.sh"),
+        "update": (scripts_dir / "update.sh"),
+        "lint": (scripts_dir / "lint.sh"),
     }
     if len(sys.argv) == 1:
         print_error("Missing subcommand.\n")
@@ -58,7 +58,7 @@ def main():
         vinoteca_help(options)
     else:
         # Run corresponding bash script
-        call([options[subcommand], *sys.argv[2:]], cwd=scripts_dir)
+        call([options[subcommand], *sys.argv[2:]], cwd=scripts_dir.parent)
 
 
 if __name__ == '__main__':

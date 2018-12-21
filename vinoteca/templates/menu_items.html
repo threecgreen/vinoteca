@@ -1,0 +1,33 @@
+<li id="new-wine-nav">
+  <ul id="{{ id }}" class="dropdown-content">
+    <li>
+      <a href="{% url "Wines:New Wine" %}">New Wine</a>
+    </li>
+    <li>
+      <a href="{% url "Wines:Search Wines" %}">Purchased Again</a>
+    </li>
+  </ul>
+  <a href="#!" class="dropdown-trigger" data-target="{{ id }}">
+    <i class="material-icons left">add_circle</i>
+    Add
+    <i class="material-icons right">arrow_drop_down</i>
+  </a>
+</li>
+<li id="wines-nav">
+  <a href="{% url "Wines:Wines" %}">
+    <i class="material-icons left"> reorder</i>
+    Wines
+  </a>
+</li>
+<li id="dashboard-nav">
+  <a href="{% url "Dashboards" %}">
+    <i class="material-icons left">dashboard</i>
+    Dashboards
+  </a>
+</li>
+<li id="inventory-nav">
+  <a href="{% url "Inventory" %}">
+    <i class="material-icons left">view_comfy</i>
+    Inventory
+  </a>
+</li>

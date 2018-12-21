@@ -1,5 +1,6 @@
 r"""Implements views (business logic) for the various dashboards displayed on the
 home page and the dashboard page."""
+import logging
 import sqlite3
 from datetime import date
 from typing import List
@@ -11,7 +12,10 @@ from django.shortcuts import render
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
-from vinoteca.utils import get_connection, int_to_date
+from vinoteca.utils import get_connection, int_to_date, TableColumn
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def recent_purchases(limit: int) -> List[Purchases]:
@@ -138,7 +142,7 @@ def top_grape_varieties(limit: int) -> List[Grapes]:
     # TODO: possibly rewrite in SQL to better calculate average pct with
     # coalesce and wine-weighted avg price
     return Grapes.objects.annotate(wine_varieties=Count("winegrapes__wine", distinct=True)) \
-        .annotate(avg_price=Count("winegrapes__wine__purchases__price")) \
+        .annotate(avg_price=Avg("winegrapes__wine__purchases__price")) \
         .annotate(avg_pct=Avg("winegrapes__percent")) \
         .order_by("-wine_varieties", "-avg_price")[:limit]
 
@@ -173,3 +177,78 @@ def dashboards(request):
     }
     conn.close()
     return render(request, "dashboards.html", context)
+
+
+def inventory(request):
+    r"""View what wines and how many bottles are in the user's inventory/
+    collection."""
+    @attr.s
+    class InventoryItem(object):
+        r"""Denotes one row of the table."""
+        color = attr.ib(type=str)
+        name = attr.ib(type=str)
+        wine_type = attr.ib(type=str)
+        producer = attr.ib(type=str)
+        region = attr.ib(type=str)
+        vintage = attr.ib(type=int)
+        last_purchase_date = attr.ib(type=int)
+        inventory_cnt = attr.ib(type=int)
+        wine_id = attr.ib(type=int)
+        producer_id = attr.ib(type=int)
+        region_id = attr.ib(type=int)
+        wine_type_id = attr.ib(type=int)
+        avg_price = attr.ib(type=float)
+
+    query = """
+        SELECT
+            c.name
+            , w.name
+            , wt.name
+            , p.name
+            , r.name
+            , p3.vintage
+            , sub.last_purchase_date
+            , w.inventory
+            , w.id
+            , p.id
+            , r.id
+            , wt.id
+            , avg(pu.price)
+        FROM wines w
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN regions r ON p.region_id = r.id
+            LEFT JOIN colors c ON w.color_id = c.id
+            LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+            LEFT JOIN purchases pu ON w.id = pu.wine_id
+            LEFT JOIN (
+                SELECT
+                    w2.id
+                    , max(p2.date) as last_purchase_date
+                FROM wines w2
+                    INNER JOIN purchases p2 ON w2.id = p2.wine_id
+                WHERE p2.vintage IS NOT NULL
+                GROUP BY w2.id
+            ) AS sub ON sub.id = w.id
+            LEFT JOIN purchases p3 ON w.id = p3.wine_id AND p3.date = sub.last_purchase_date
+        WHERE w.inventory > 0
+        GROUP BY w.id
+        ORDER BY sub.last_purchase_date DESC;
+    """
+    connection = get_connection()
+    cursor = connection.cursor()
+    wine_inventory = []
+    for item in cursor.execute(query).fetchall():
+        # Convert YYYYMMDD date format to date object for formatting
+        wine_inventory.append(InventoryItem(*item))
+    columns = TableColumn.from_list([
+        "Modify", TableColumn("Quantity", num_col=True), "Color", "Name and Type",
+        "Producer", "Region", TableColumn("Vintage", num_col=True),
+        TableColumn("Purchase Date", num_col=True), TableColumn("Avg Price", num_col=True)
+    ])
+    context = {
+        "inventory": wine_inventory,
+        "columns": columns,
+        "page_name": "Inventory",
+    }
+    connection.close()
+    return render(request, "inventory.html", context)

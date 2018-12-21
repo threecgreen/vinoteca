@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h3 class="bold">{{ producer.name }}</h3>
+        {% if producer.region %}
+          <h4 class="light">
+            <a class="text-link" href="{% url "Region Profile" region_id=producer.region.id %}">
+              {{ producer.region.name }}
+            </a>
+          </h4>
+        {% else %}
+          <h5>
+            This producer currently does not have a region, please add one.
+          </h5>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s9">
+        <h4>Wines</h4>
+      </div>
+      <div class="col s3 fixed-action-div">
+        <div class="fixed-action-btn horizontal">
+          <a class="btn-floating btn-large pink darken-3">
+            <i class="material-icons">menu</i>
+          </a>
+          <ul>
+            <li>
+              <a class="btn-floating yellow darken-2 waves-effect waves-light"
+                 href="{% url "Producers:Edit Producer" producer_id=producer.id %}">
+                <i class="material-icons">edit</i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col s12">
+        <table class="highlight responsive">
+          {% include "table_header.html" %}
+          <tbody>
+            {% for wine in wines %}
+              <tr>
+                {% include "date_cell.html" with date=wine.last_purchased_date %}
+                {% include "color_cell.html" with color=wine.color.name %}
+                {% include "name_and_type_cell.html" with name=wine.name wine_type=wine.wine_type.name id=wine.id %}
+                {% include "basic_cell.html" with name=wine.viti_area.name %}
+                {% include "number_cell.html" with number=wine.total_quantity %}
+                {% include "number_cell.html" with number=wine.avg_price decpoint=True %}
+                {% include "number_cell.html" with number=wine.rating %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'producer_profile.bundle.js' %}"></script>
+{% endblock %}

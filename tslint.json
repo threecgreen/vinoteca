@@ -12,7 +12,8 @@
         "no-reference": false,
         "max-classes-per-file": false,
         "no-string-literal": false,
-        "forin": false
+        "forin": false,
+        "no-console": false
     },
     "rulesDirectory": [],
     "linterOptions": {

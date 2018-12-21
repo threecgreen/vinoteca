@@ -13,7 +13,7 @@
     <tbody>
         {% for producer in producers %}
             <tr>
-                <td><a href="{% url "Producer Profile" producer_id=producer.id %}">{{ producer.name }}</a></td>
+                <td><a href="{% url "Producers:Producer Profile" producer_id=producer.id %}">{{ producer.name }}</a></td>
                 <td class="num-col">{{ producer.quantity }}</td>
 {#                {% if producer.avg_rating %}#}
 {#                    <td class="num-col">{{ producer.avg_rating|floatformat:"1" }}</td>#}

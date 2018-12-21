@@ -4,6 +4,11 @@ class corresponds to a table in the database."""
 from django.db import models
 
 
+def _id_name_repr(self):
+    r"""Many reprs are just an id and a name string."""
+    return f"<{self.__class__}(id={self.id}, name={self.name})>"
+
+
 class Colors(models.Model):
     r"""Wine colors such as red, white, sparkling, etc."""
     id = models.AutoField(primary_key=True)
@@ -11,6 +16,9 @@ class Colors(models.Model):
 
     class Meta:
         db_table = 'colors'
+
+    def __repr__(self):
+        return _id_name_repr(self)
 
 
 class Regions(models.Model):
@@ -22,6 +30,10 @@ class Regions(models.Model):
     class Meta:
         db_table = 'regions'
 
+    def __repr__(self):
+        return (f"<{self.__class__}(id={self.id}, name={self.name}, "
+                f"is_us={self.is_us})>")
+
 
 class Grapes(models.Model):
     r"""Grapes used to make wines."""
@@ -30,6 +42,12 @@ class Grapes(models.Model):
 
     class Meta:
         db_table = 'grapes'
+
+    def __repr__(self):
+        return _id_name_repr(self)
+
+    def __str__(self):
+        return self.name
 
 
 class Producers(models.Model):
@@ -41,6 +59,9 @@ class Producers(models.Model):
 
     class Meta:
         db_table = 'producers'
+
+    def __repr__(self):
+        return f"<{self.__class__}(id={self.id}, name={self.name})>"
 
 
 class Purchases(models.Model):
@@ -57,6 +78,11 @@ class Purchases(models.Model):
     class Meta:
         db_table = 'purchases'
 
+    def __repr__(self):
+        return (f"<{self.__class__}(id={self.id}, name={self.store}, wine={self.wine}, "
+                f"price={self.price}, quantity={self.quantity}, date={self.date}, "
+                f"vintage={self.vintage}, memo={self.memo})>")
+
 
 class Stores(models.Model):
     r"""A store or other place where wine is obtained such as as a gift."""
@@ -65,6 +91,9 @@ class Stores(models.Model):
 
     class Meta:
         db_table = 'stores'
+
+    def __repr__(self):
+        return _id_name_repr(self)
 
 
 class VitiAreas(models.Model):
@@ -77,6 +106,9 @@ class VitiAreas(models.Model):
 
     class Meta:
         db_table = 'viti_areas'
+
+    def __repr__(self):
+        return _id_name_repr(self)
 
 
 class WineGrapes(models.Model):
@@ -92,6 +124,10 @@ class WineGrapes(models.Model):
         db_table = 'wine_grapes'
         unique_together = (('wine', 'grape'),)
 
+    def __repr__(self):
+        return (f"<{self.__class__}(id={self.id}, name={self.name}, grape={self.grape}, "
+                f"percent={self.percent})>")
+
 
 class WineTypes(models.Model):
     r"""Wine types like Chardonnay."""
@@ -100,6 +136,9 @@ class WineTypes(models.Model):
 
     class Meta:
         db_table = 'wine_types'
+
+    def __repr__(self):
+        return _id_name_repr(self)
 
 
 class Wines(models.Model):
@@ -125,3 +164,10 @@ class Wines(models.Model):
 
     class Meta:
         db_table = 'wines'
+
+    def __repr__(self):
+        return (f"<{self.__class__}(id={self.id}, name={self.name}, "
+                f"description={self.description}, notes={self.notes}, "
+                f"producer={self.producer}, wine_type={self.wine_type}, "
+                f"color={self.color}, rating={self.rating}, inventory={self.inventory}, "
+                f"viti_area={self.viti_area}, why={self.why})>")

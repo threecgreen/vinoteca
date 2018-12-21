@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block view-nav %}class="active"{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h3 class="page-title">Wines</h3>
+        {% if not wines %}
+          <h6 class="bold center-align">
+            Your inventory is current empty.
+          </h6>
+          {% include "add_wine_btn.html" %}
+        {% else %}
+        <button class="btn reset yellow darken-2">Reset Filters</button>
+
+        <table class="highlight responsive sortable tablesorter condensed">
+          {% include "table_header.html" %}
+          <tfoot>
+            <tr class="tablesorter-ignoreRow">
+              <th colspan="9" class="ts-pager form-horizontal center">
+                <button type="button" class="btn first red-bg">
+                  <i class="small material-icons">first_page</i>
+                </button>
+                <button type="button" class="btn prev red-bg">
+                  <i class="small material-icons">navigate_before</i>
+                </button>
+                <span class="pagedisplay"></span>
+                <button type="button" class="btn next red-bg">
+                  <i class="small material-icons">navigate_next</i>
+                </button>
+                <button type="button" class="btn last red-bg">
+                  <i class="small material-icons">last_page</i>
+                </button>
+                <select class="pagesize col s" title="Select page size" id="pagesize-sel">
+                  <option value="25">25</option>
+                  <option value="50" selected>50</option>
+                  <option value="100">100</option>
+                </select>
+              </th>
+            </tr>
+          </tfoot>
+          <tbody>
+            {% for wine in wines %}
+              <tr>
+                {% include "color_cell.html" with color=wine.color %}
+                {% include "number_cell.html" with number=wine.inventory %}
+                {% include "name_and_type_cell.html" with id=wine.id wine_type=wine.type name=wine.name %}
+                {% include "producer_cell.html" with name=wine.producer id=wine.producer_id %}
+                {% include "region_cell.html" with id=wine.region_id name=wine.region %}
+                {% include "basic_cell.html" with name=wine.viti_area %}
+                {% include "vintage_cell.html" with vintage=wine.vintage %}
+                {% include "basic_cell.html" with name=wine.description %}
+                {% include "number_cell.html" with number=wine.rating %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% if wines %}
+  {% block js %}
+    <script src="{% static 'wines.bundle.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'wines.bundle.css' %}">
+  {% endblock %}
+{% endif %}

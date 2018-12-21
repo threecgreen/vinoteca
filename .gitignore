@@ -4,6 +4,9 @@
 # Compiled
 *.pyc
 
+# Configuration files
+vinoteca/config.yaml
+
 # Data files
 data/*.csv
 data/*.db
@@ -26,3 +29,18 @@ media/*.jpg
 scripts/*.cache
 .vscode/.ropeproject/
 .vscode/launch.json
+
+# Javascript
+node_modules
+vinoteca/static/*bundle*
+
+# Ctags
+tags
+
+# Logs
+vinoteca.log
+
+# Old storage folders
+data
+media
+

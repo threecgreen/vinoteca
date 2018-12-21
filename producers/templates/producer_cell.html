@@ -1,0 +1,9 @@
+<td>
+  {% if id %}
+    <a href="{% url "Producers:Producer Profile" producer_id=id %}">
+      {{ name }}
+    </a>
+  {% else %}
+    {{ name }}
+  {% endif %}
+</td>
