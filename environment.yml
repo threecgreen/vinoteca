@@ -26,7 +26,7 @@ dependencies:
     - attrs==17.4.0
     - colorlog==3.1.4
     - coverage==4.5.1
-    - django==2.1.2
+    - django==2.1.4
     - django-debug-toolbar==1.8
     - django-filter==2.0.0
     - django-js-error-hook==0.6
