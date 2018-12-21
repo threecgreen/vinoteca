@@ -2,9 +2,10 @@
 certain data will be. Currently it supports setting the database location,
 the media folder location (i.e. where Wine images are stored) and the log file
 location."""
-import json
 import logging
 from pathlib import Path
+
+import yaml
 
 
 LOGGER = logging.getLogger(__name__)
@@ -29,11 +30,10 @@ class ConfigurationManager(object):
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
             LOGGER.debug(f"Loaded configuration file at path '{path}'")
-            config = json.loads(fin.read())
+            config = yaml.load(fin.read())
             # Iterate through attributes and set them
-            # TODO: logging here!
             for setting, _ in self.__dict__.items():
                 val = config.get(setting, "")
                 LOGGER.debug(f"For setting '{setting}' found configuration '{val}'")
-                if val and Path(val).exists():
-                    setattr(self, setting, val)
+                if val and Path(val).expanduser().exists():
+                    setattr(self, setting, val.expanduser().resolve())

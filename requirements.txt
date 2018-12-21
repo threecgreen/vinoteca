@@ -12,5 +12,6 @@ djangorestframework==3.8.*
 django-js-error-hook==0.6
 django-filter==2.0.*
 pylint
+pyyaml
 pylint-django
 colorlog

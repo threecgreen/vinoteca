@@ -5,7 +5,7 @@
 *.pyc
 
 # Configuration files
-vinoteca/config.json
+vinoteca/config.yaml
 
 # Data files
 data/*.csv
