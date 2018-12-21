@@ -209,6 +209,6 @@ def wines_view(request):
     context = {
         "columns": columns,
         "wines": wines_,
-        "page_name": "Wine Table",
+        "page_name": "Wines Table",
     }
     return render(request, "wines.html", context)

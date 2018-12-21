@@ -231,3 +231,19 @@ img
 
 .grape-block
   padding: 0 !important
+
+/** Change toggle switch color */
+.switch label input[type=checkbox]:checked+.lever
+  background-color: $wine-red
+.switch label input[type=checkbox]:checked+.lever:after
+  background-color: lighten($wine-red, 15)
+/** Range slider color */
+input[type=range]::-webkit-slider-thumb
+  background-color: lighten($wine-red, 15)
+input[type=range]::-moz-range-thumb
+  background-color: lighten($wine-red, 15)
+input[type=range]::-ms-thumb
+  background-color: lighten($wine-red, 15)
+/** Text background */
+input[type=range] + .thumb
+  background-color: $wine-red;
