@@ -17,7 +17,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Configuration file
-CONFIG_MAN = ConfigurationManager(BASE_DIR / "vinoteca" / "config.json",
+CONFIG_MAN = ConfigurationManager(BASE_DIR / "vinoteca" / "config.yaml",
                                   BASE_DIR / "data" / "wine.db",
                                   BASE_DIR / "media",
                                   BASE_DIR / "vinoteca.log")

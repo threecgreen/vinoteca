@@ -20,6 +20,9 @@ if [ $CI != true ]; then
 fi
 "$HOME/miniconda/bin/conda" env create -f environment.yml
 find_python_env
+info_text "Creating data and media directories..."
+mkdir -p data
+mkdir -p media
 info_text "Creating database..."
 "$py_env/python" "$root_dir/manage.py" migrate
 
@@ -33,6 +36,7 @@ cd vinoteca
 info_text "Building webpack bundles..."
 "$py_env/npm" run-script build || error_exit "Failed building webpack bundles"
 cd "$root_dir"
+
 
 # Finishing up
 echo
