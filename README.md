@@ -10,6 +10,7 @@ As such, vinoteca is designed with one specific user in mind and it shows.
  1. Clone the repository
      ```bash
      $ git clone https://github.com/threecgreen/vinoteca
+     $ cd vinoteca
      ```
  1. Create a new virtual environment and activate it
      ```bash
@@ -17,7 +18,7 @@ As such, vinoteca is designed with one specific user in mind and it shows.
      $ conda activate vinoteca
      ```
      or use virtualenv
- 1. Install dependencies
+ 1. Install python dependencies
     ```bash
     $ pip install -r requirements.txt
     ```
@@ -25,17 +26,30 @@ As such, vinoteca is designed with one specific user in mind and it shows.
     ```bash
     $ python manage.py migrate
     ```
+ 1. Install JavaScript dependencies and build the webpack bundles
+    ```bash
+    $ npm install --save --no-optional
+    $ npm run-script build
+    ```
 
 **NB: Many of the tests currently rely on specific data in the database.
 I haven't gotten around to creating test data.**
+
+## Configuration
+Configuration is managed via `vinoteca/config.yaml`.
+The file is for overrides of default locations and therefore does not contain any paths when it is initially created.
+The configuration options are:
+ * Database path: where the database is stored (default `.../data/wine.db`)
+ * Log path: where logs will be written to (default `.../vinoteca.log`)
+ * Media path: where uploaded wine images will be stored (default `.../media/`)
 
 ## Built-With
 * Django
 * sqlite3
 * Materialize CSS
 * Typescript
+* Webpack
 * Chart.js
-* Sigma.js
 
 ## Acknowledgements
 * Homepage image taken by [CollideStorm](https://www.reddit.com/r/wine/comments/6z7d6c/one_of_my_favorite_road_trips_i_have_ever_done_i/)
