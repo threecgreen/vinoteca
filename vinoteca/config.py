@@ -36,4 +36,4 @@ class ConfigurationManager(object):
                 val = config.get(setting, "")
                 LOGGER.debug(f"For setting '{setting}' found configuration '{val}'")
                 if val and Path(val).expanduser().exists():
-                    setattr(self, setting, val.expanduser().resolve())
+                    setattr(self, setting, str(Path(val).expanduser().resolve()))

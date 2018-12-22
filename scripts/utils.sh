@@ -98,9 +98,9 @@ check_for_install()
     if [ $? != 0 ]; then
         info_text "Adding vinoteca CLI to PATH..."
         if [ $CI ]; then
-            sudo ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
-        else
             ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
+        else
+            sudo ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
         fi
     fi
 }
