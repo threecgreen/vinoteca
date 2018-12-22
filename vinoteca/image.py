@@ -42,11 +42,11 @@ class UserImage(object):
             if orientation is not None and hasattr(self.image, "_getexif") \
                     and  self.image._getexif() is not None:
                 exif = dict(self.image._getexif().items())
-                if exif[orientation] == 3:
+                if exif.get(orientation) == 3:
                     self.image = self.image.rotate(180, expand=True)
-                elif exif[orientation] == 6:
+                elif exif.get(orientation) == 6:
                     self.image = self.image.rotate(270, expand=True)
-                elif exif[orientation] == 8:
+                elif exif.get(orientation) == 8:
                     self.image = self.image.rotate(90, expand=True)
             return True
         return False
