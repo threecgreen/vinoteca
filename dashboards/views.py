@@ -229,7 +229,9 @@ def inventory(request):
                 WHERE p2.vintage IS NOT NULL
                 GROUP BY w2.id
             ) AS sub ON sub.id = w.id
-            LEFT JOIN purchases p3 ON w.id = p3.wine_id AND p3.date = sub.last_purchase_date
+            LEFT JOIN purchases p3 ON w.id = p3.wine_id
+                AND (p3.date = sub.last_purchase_date
+                    OR sub.last_purchase_date IS NULL)
         WHERE w.inventory > 0
         GROUP BY w.id
         ORDER BY sub.last_purchase_date DESC;

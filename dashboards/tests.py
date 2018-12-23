@@ -2,6 +2,7 @@ import pytest
 from django.urls import reverse
 
 from dashboards.views import *
+from vinoteca.models import Purchase, Wines
 
 
 @pytest.fixture
@@ -73,3 +74,19 @@ def test_top_grape_varieties(limit):
     grapes = top_grape_varieties(limit)
     assert isinstance(grapes[0], Grapes)
     assert len(grapes) == limit
+
+
+@pytest.mark.django_db
+def test_inventory_nvs(client):
+    r"""Previously there was a bug where wines that were purchased at an unknown
+    date had their vintage displayed as 'NV' in the inventory table."""
+    # Wine with one purchase
+    wine = Wines.objects.get(id=2)
+    purchase = Purchases.objects.filter(wine__id=2)[0]
+    purchase.date = None
+    purchase.save()
+    response = client.get(reverse("Inventory"))
+    inventory = response.context["inventory"]
+    for item in inventory:
+        if item.wine_id == wine.id:
+            assert item.vintage == purchase.vintage
