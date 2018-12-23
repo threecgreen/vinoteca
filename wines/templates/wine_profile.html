@@ -32,7 +32,7 @@
             {% endif %}
           </h4>
         </div>
-        <div class="col s12 m6">
+        <div class="col s12 l6">
           <h5 class="light">{{ wine.color.name|title }}</h5>
           <h5 class="inline-h"><b>Inventory: </b> {{ wine.inventory }}</h5> &thinsp;
           <a class="waves-effect waves-light btn-floating btn-floating-small green-bg"
@@ -64,51 +64,50 @@
             <h6><b>Why:</b> {{ wine.why }}</h6>
           {% endif %}
         </div>
-        {% if grapes %}
-        <div class="col s12 m6">
-          <h5 class="light">Grape composition</h5>
-          <ul class="tabs tabs-fixed-width z-depth-1">
-            <li class="wine-red-tab tab col s6" id="grape-comp-table-li">
-              <a href="#grape-comp-table-tab">Table</a>
-            </li>
-            <li class="wine-green-tab tab col s6" id="grape-comp-chart-li">
-              <a href="#grape-comp-chart-tab">Pie chart</a>
-            </li>
-          </ul>
-          <div id="grape-comp-table-tab" class="s12">
-            <table class="highlight responsive">
-              <thead>
-              <tr>
-                <th>Grape</th>
-                <th class="num-col">Percentage</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for grape in grapes %}
+        <div class="col s12 l6">
+          {% if grapes %}
+            <h5 class="light">Grape composition</h5>
+            <ul class="tabs tabs-fixed-width z-depth-1">
+              <li class="wine-red-tab tab col s6" id="grape-comp-table-li">
+                <a href="#grape-comp-table-tab">Table</a>
+              </li>
+              <li class="wine-green-tab tab col s6" id="grape-comp-chart-li">
+                <a href="#grape-comp-chart-tab">Pie chart</a>
+              </li>
+            </ul>
+            <div id="grape-comp-table-tab" class="s12">
+              <table class="highlight responsive">
+                <thead>
                   <tr>
-                    <td>{{ grape.grape.name }}</td>
-                    <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
+                    <th>Grape</th>
+                    <th class="num-col">Percentage</th>
                   </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          <div id="grape-comp-chart-tab" class="s12">
-            <canvas id="grape-comp-chart"></canvas>
-          </div>
-        {% endif %}
-    </div>
-    {% if has_img %}
-      <div class="row">
-        <div class="col s12 l6 offset-l3">
-          <div class="card">
-            <div class="card-image">
-              <img src="/media/{{ wine.id }}.png" alt="Wine Image">
+                </thead>
+                <tbody>
+                  {% for grape in grapes %}
+                    <tr>
+                      <td>{{ grape.grape.name }}</td>
+                      <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-          </div>
+            <div id="grape-comp-chart-tab" class="s12">
+              <canvas id="grape-comp-chart"></canvas>
+            </div>
+          {% elif has_img %}
+            {% include "wine_image.html" %}
+          {% endif %}
         </div>
       </div>
-    {% endif %}
+      {% if has_img and grapes %}
+        <div class="row">
+          <div class="col s12 l6 offset-l3">
+          {% include "wine_image.html" %}
+          </div>
+        </div>
+      {% endif %}
     {% endblock %}
 
     {% block prev_purchases %}
