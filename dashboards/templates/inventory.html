@@ -33,7 +33,7 @@
                 {% include "region_cell.html" with name=wine.region id=wine.region_id %}
                 {% include "vintage_cell.html" with vintage=wine.vintage %}
                 {% include "date_cell.html" with date=wine.last_purchase_date %}
-                {% include "number_cell.html" with number=wine.avg_price decpoint=True %}
+                {% include "number_cell.html" with number=wine.last_price decpoint=True %}
               </tr>
             {% empty %}
             {% endfor %}

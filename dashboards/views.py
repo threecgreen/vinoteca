@@ -197,7 +197,7 @@ def inventory(request):
         producer_id = attr.ib(type=int)
         region_id = attr.ib(type=int)
         wine_type_id = attr.ib(type=int)
-        avg_price = attr.ib(type=float)
+        last_price = attr.ib(type=float)
 
     query = """
         SELECT
@@ -213,7 +213,7 @@ def inventory(request):
             , p.id
             , r.id
             , wt.id
-            , avg(pu.price)
+            , p3.price
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN regions r ON p.region_id = r.id
@@ -245,7 +245,7 @@ def inventory(request):
     columns = TableColumn.from_list([
         "Modify", TableColumn("Quantity", num_col=True), "Color", "Name and Type",
         "Producer", "Region", TableColumn("Vintage", num_col=True),
-        TableColumn("Purchase Date", num_col=True), TableColumn("Avg Price", num_col=True)
+        TableColumn("Purchase Date", num_col=True), TableColumn("Price", num_col=True)
     ])
     context = {
         "inventory": wine_inventory,
