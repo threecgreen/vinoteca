@@ -31,6 +31,12 @@ info_text()
     echo -e "\033[1;34m$1\033[0m"
 }
 
+update_path()
+# Adds vinoteca environment to path
+{
+    export PATH="$PATH:$py_env"
+}
+
 find_python_env()
 # Function that tries to locate the vinoteca Python environment and the conda path
 # Accepts zero arguments
@@ -40,6 +46,7 @@ find_python_env()
     if [ -f "$scripts_dir/.py_env.cache" ] &&  [ -f "$scripts_dir/.conda.cache" ]; then
         py_env="$(cat "$scripts_dir/.py_env.cache")"
         conda="$(cat "$scripts_dir/.conda.cache")"
+        update_path
         return 0
     fi
     command -v conda > /dev/null 2>&1
@@ -66,6 +73,7 @@ find_python_env()
     # Cache to file
     echo $py_env > "$scripts_dir/.py_env.cache"
     echo $conda > "$scripts_dir/.conda.cache"
+    update_path
 }
 
 find_vinoteca_version()

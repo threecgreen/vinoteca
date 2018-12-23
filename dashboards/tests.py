@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 
 from dashboards.views import *
-from vinoteca.models import Purchase, Wines
+from vinoteca.models import Purchases, Wines
 
 
 @pytest.fixture
