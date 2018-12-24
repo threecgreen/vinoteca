@@ -1,3 +1,3 @@
 r"""Stores version information about vinoteca."""
-__version__ = "4.0.2"
+__version__ = "4.0.3"
 VERSION = __version__
