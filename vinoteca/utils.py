@@ -19,6 +19,22 @@ from vinoteca.settings import BASE_DIR
 LOGGER = logging.getLogger(__name__)
 
 
+def strip_params(db_func):
+    def _strip_params(*args, **kwargs):
+        new_args = []
+        for arg in args:
+            if isinstance(arg, str):
+                arg = arg.strip()
+            new_args.append(arg)
+        new_kwargs = {}
+        for kwarg_key, kwarg_val in kwargs.items():
+            if isinstance(kwarg_val, str):
+                kwarg_val = kwarg_val.strip()
+            new_kwargs[kwarg_key] = kwarg_val
+        return db_func(*new_args, **new_kwargs)
+    return _strip_params
+
+
 class TableColumn(object):
     def __init__(self, name: str, placeholder="", num_col=False):
         self.name = name
@@ -36,9 +52,9 @@ class TableColumn(object):
         return output
 
 
+@strip_params
 def g_or_c_store(store: str) -> Union[Stores, None]:
     r"""Get or create a Stores object."""
-    # TODO: error handling
     LOGGER.debug(f"Getting or creating store with name '{store}'")
     if store is None:
         LOGGER.debug("No valid store provided, returning")
@@ -54,6 +70,7 @@ def g_or_c_store(store: str) -> Union[Stores, None]:
         return new_store
 
 
+@strip_params
 def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
     r"""Get or create a WineTypes object."""
     LOGGER.debug(f"Getting or creating wine type with name '{wine_type}'")
@@ -71,6 +88,7 @@ def g_or_c_wine_type(wine_type: str) -> Union[WineTypes, None]:
         return new_wine_type
 
 
+@strip_params
 def g_or_c_region(region: str) -> Union[Regions, None]:
     r"""Get or create a Regions object."""
     LOGGER.debug(f"Getting or creating region with name '{region}'")
@@ -88,6 +106,7 @@ def g_or_c_region(region: str) -> Union[Regions, None]:
         return region
 
 
+@strip_params
 def g_or_c_producer(producer: str, region: Regions) -> Producers:
     r"""Get or create a Producers object."""
     LOGGER.debug(f"Getting or creating producer with name '{producer}'")
@@ -102,6 +121,7 @@ def g_or_c_producer(producer: str, region: Regions) -> Producers:
         return new_producer
 
 
+@strip_params
 def g_or_c_viti_area(viti_area: str, region: Regions) -> Union[VitiAreas, None]:
     r"""Get or create a VitiAreas object."""
     LOGGER.debug(f"Getting or creating viti area with name '{viti_area}'")
@@ -119,6 +139,7 @@ def g_or_c_viti_area(viti_area: str, region: Regions) -> Union[VitiAreas, None]:
         return new_viti_area
 
 
+@strip_params
 def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bool:
     r"""Get or create a WineGrapes object."""
     LOGGER.debug("Creating wine grape and getting or creating grape with name "
@@ -145,7 +166,7 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
         ret_val = True
     else:
         LOGGER.info(f"Updating percent for wine grape with wine id {wine.id} "
-                     f"and grape '{grape.name}' to {percent}%")
+                    f"and grape '{grape.name}' to {percent}%")
         # update percent for extant winegrape
         wine_grape.percent = percent
         ret_val = False
@@ -156,6 +177,7 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
 
 
 # pylint: disable=too-many-arguments
+@strip_params
 def c_wine(desc: Union[str], notes: Union[str], name: Union[str], prod: Producers,
            wine_type: WineTypes, color: Colors, rating: Union[float],
            inventory: int, viti_area: VitiAreas, why: Union[str]) -> Wines:
@@ -170,6 +192,7 @@ def c_wine(desc: Union[str], notes: Union[str], name: Union[str], prod: Producer
 
 
 # pylint: disable=too-many-arguments
+@strip_params
 def c_purchase(wine: Wines, store: Stores, price: float, memo: str,
                purchase_date: str, vintage: int, quantity: int) -> None:
     r"""Create a Purchases object."""
@@ -183,10 +206,13 @@ def c_purchase(wine: Wines, store: Stores, price: float, memo: str,
 
 
 def empty_to_none(item: str, type_: Type = None) -> Union["type_", str]:
-    r"""Shorthand for `a if a else None`. Common line when parsing data from
-    POST requests. Optional `type` argument will convert the string to that type
-    if the string is not empty, useful for numbers."""
-    if type_:
+    r"""Originally shorthand for `a if a else None`. Now it also trims
+    whitespace."""
+    if item is None:
+        return None
+    elif isinstance(item, str):
+        item = item.strip()
+    if type_ is not None:
         return type_(item) if item else None
     return item if item else None
 

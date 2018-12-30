@@ -41,7 +41,7 @@ def edit_producer(request, producer_id: int):
         LOGGER.debug(f"Received the following POST data for editing producer with "
                      f"id {producer_id}:\n{request.POST}")
         producer = Producers.objects.get(id=producer_id)
-        region = request.POST.get("region")
+        region = empty_to_none(request.POST.get("region"))
         producer.name = request.POST.get("producer")
         producer.region = g_or_c_region(region)
         producer.save()
