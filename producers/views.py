@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from vinoteca.models import (
     Producers, Wines
 )
-from vinoteca.utils import g_or_c_region, TableColumn
+from vinoteca.utils import empty_to_none, g_or_c_region, TableColumn
 
 
 LOGGER = logging.getLogger(__name__)
@@ -43,7 +43,8 @@ def edit_producer(request, producer_id: int):
         producer = Producers.objects.get(id=producer_id)
         region = empty_to_none(request.POST.get("region"))
         producer.name = request.POST.get("producer")
-        producer.region = g_or_c_region(region)
+        if region is not None:
+            producer.region = g_or_c_region(region)
         producer.save()
         return redirect("Producers:Producer Profile", producer_id=producer_id)
     context = {

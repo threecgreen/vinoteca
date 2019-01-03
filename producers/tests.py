@@ -42,3 +42,20 @@ def test_edit_producer(client, attr, val):
         assert Producers.objects.get(id=1).region.name == val
     else:
         assert Producers.objects.get(id=1).name == val
+
+
+@pytest.mark.django_db
+def test_edit_producer_region_unchanged(client):
+    producer = Producers.objects.get(id=1)
+    assert producer.region.id is not None
+    response = client.post(
+        reverse("Producers:Edit Producer", kwargs={"producer_id": producer.id}),
+        {
+            "producer": f"{producer.name}abc",
+            "region": ""
+        },
+        follow=True
+    )
+    edited_producer = Producers.objects.get(id=1)
+    assert edited_producer.name == f"{producer.name}abc"
+    assert edited_producer.region.id == producer.region.id
