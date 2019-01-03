@@ -6,7 +6,6 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import List, Type, Union
 
-import attr
 from dateutil.relativedelta import relativedelta
 
 from vinoteca.models import (
@@ -20,6 +19,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 def strip_params(db_func):
+    r"""Decorator function that strips all strings passed as arguments to that
+    function."""
     def _strip_params(*args, **kwargs):
         new_args = []
         for arg in args:
@@ -36,6 +37,7 @@ def strip_params(db_func):
 
 
 class TableColumn(object):
+    r"""Simple class for creating table headers in django templates."""
     def __init__(self, name: str, placeholder="", num_col=False):
         self.name = name
         self.placeholder = placeholder
@@ -210,7 +212,7 @@ def empty_to_none(item: str, type_: Type = None) -> Union["type_", str]:
     whitespace."""
     if item is None:
         return None
-    elif isinstance(item, str):
+    if isinstance(item, str):
         item = item.strip()
     if type_ is not None:
         return type_(item) if item else None
