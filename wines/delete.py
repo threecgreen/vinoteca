@@ -21,7 +21,7 @@ def delete_wine(request, wine_id: int):
     # Determine if producer was created for this wine
     if Wines.objects.filter(producer__id=wine.producer.id).count() == 1:
         logging.debug(f"{wine.producer} was created specifically for {wine} and"
-                       " will now be deleted.")
+                      " will now be deleted.")
         wine.producer.delete()
     wine.delete()
     return redirect("Wines:Wines")

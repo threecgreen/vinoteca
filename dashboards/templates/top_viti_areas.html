@@ -23,7 +23,7 @@
       {% for viti_area in viti_areas %}
         <tr>
           {% include "basic_cell.html" with name=viti_area.name %}
-          {% include "number_cell.html" with number=viti_area.variety %}
+          {% include "number_cell.html" with number=viti_area.varieties %}
           {% include "number_cell.html" with number=viti_area.producers %}
           {% include "number_cell.html" with number=viti_area.avg_price decpoint=True %}
         </tr>

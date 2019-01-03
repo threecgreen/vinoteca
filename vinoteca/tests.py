@@ -5,6 +5,15 @@ import pytest
 from vinoteca.utils import *
 
 
+def test_strip_params():
+    @strip_params
+    def _a_fake_func(*args, **kwargs):
+        return args, kwargs
+    args, kwargs = _a_fake_func(1, "   what now ", 2, 3, what="up   ", hello=True)
+    assert args == (1, "what now", 2, 3)
+    assert kwargs == {"what": "up", "hello": True}
+
+
 @pytest.mark.parametrize("url", [
     reverse("Home"),
     "/",
@@ -93,14 +102,15 @@ def test_g_or_c_viti_area(viti_area, region, california):
             g_or_c_viti_area(viti_area, region)
 
 
-@pytest.mark.parametrize("item,result", [
-    ("", None),
-    (None, None),
-    (" ", " "),
-    (0, None)
+@pytest.mark.parametrize("item,type_,result", [
+    ("", None, None),
+    (None, None, None),
+    (" ", None, None,),
+    (" abc    ", None, "abc"),
+    ("  0", int, 0),
 ])
-def test_empty_to_none(item, result):
-    assert empty_to_none(item) == result
+def test_empty_to_none(item, type_, result):
+    assert empty_to_none(item, type_) == result
 
 
 def test_get_connection():

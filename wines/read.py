@@ -57,7 +57,7 @@ class WineProfileView(View):
             "recent_vintage": recent_vintage[0] if recent_vintage else None,
             "wine": wine,
             "has_img": has_img,
-            "page_name": f"{wine.name} {wine.wine_type}" if wine.name else wine.wine_type,
+            "page_name": f"{wine.name} {wine.wine_type.name}" if wine.name else wine.wine_type.name,
         }
         if do_purchases:
             context["purchases"] = Purchases.objects.filter(wine__id=wine.id) \

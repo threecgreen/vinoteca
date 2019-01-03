@@ -11,7 +11,7 @@ from vinoteca.image import UserImage
 from vinoteca.models import Colors, Stores, Wines
 from vinoteca.utils import (
     empty_to_none, g_or_c_store, g_or_c_wine_type, g_or_c_producer,
-    g_or_c_region, c_wine, g_or_c_viti_area,  c_purchase, default_vintage_year
+    g_or_c_region, c_wine, g_or_c_viti_area, c_purchase, default_vintage_year
 )
 from wines.read import WineProfileView
 from wine_attrs.views import handle_grapes
@@ -93,7 +93,8 @@ class NewPurchaseView(WineProfileView):
     def post(request, wine_id: int):
         r"""Logic for handling a new wine purchase. Creates a new Purchases
         object."""
-        LOGGER.debug(f"Received the following POST data for creating a new purchase:\n{request.POST}")
+        LOGGER.debug("Received the following POST data for creating a new purchase: "
+                     f"{request.POST}")
         store = empty_to_none(request.POST.get("store"))
         purchase_date = empty_to_none(request.POST.get("purchase-date"))
         price = empty_to_none(request.POST.get("price"))
