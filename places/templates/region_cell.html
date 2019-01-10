@@ -4,6 +4,6 @@
       {{ name }}
     </a>
   {% else %}
-    {{ name }}
+    {{ name|default_if_none:"" }}
   {% endif %}
 </td>
