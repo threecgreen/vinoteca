@@ -9,9 +9,7 @@
       {% csrf_token %}
       {% with continue_row=True  %}
         {% include "purchase_inputs.html" with include_inventory=True %}
-        {% with edit_wine=True  %}
-          {% include "wine_inputs.html" %}
-        {% endwith %}
+        {% include "wine_inputs.html" %}
       {% endwith %}
       <div class="row">
         <div class="col s12">
