@@ -1,3 +1,4 @@
+import * as M from "materialize-css";
 import { autocomplete } from "./widgets";
 
 enum HideOrShow {
@@ -115,6 +116,8 @@ export class GrapeController {
      */
     private setGrapePct(id: number, pct: number): void {
         $(`#grape-${id}-pct`).val(pct);
+        // Fix overlapping text bug
+        M.updateTextFields();
     }
 
     /**

@@ -1,24 +1,36 @@
-import { flattenToDict, IRESTObject } from "./utils";
+import * as M from "materialize-css";
+import { IRegionJSON, IRESTObject, IVitiAreaJSON } from "./rest";
+import { flattenToDict, IDict } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>,
                              region: JQuery<HTMLInputElement>): void {
+    // If no region or other error, disable field
+    const noRegion = () => {
+        $(region).prop("disabled", false);
+        $(region).val("");
+        $("label[for='auto-region']").text("Region");
+    };
     $(producer).on("change", () => {
-        $.getJSON("/rest/producers/all/", (producersJSON) => {
+        $.getJSON("/rest/producers/all/", (producersJSON: IDict<string>) => {
             if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
                 $.getJSON("/rest/regions/",
                           { producers__name: $(producer).val() },
-                          (regionJSON) => {
-                    $(region).val(regionJSON[0]["name"]);
-                    $(region).prop("disabled", true);
-                    $("label[for='auto-country']").text("");
-                    // Update viticulture area autocomplete
-                    $(region).trigger("change");
+                          (regionJSON: IRegionJSON[]) => {
+                    if (regionJSON.length > 0) {
+                        $(region).val(regionJSON[0].name);
+                        // Fix overlapping text bug
+                        M.updateTextFields();
+                        $(region).prop("disabled", true);
+                        $("label[for='auto-country']").text("");
+                        // Update viticulture area autocomplete
+                        $(region).trigger("change");
+                    } else {
+                        noRegion();
+                    }
                 });
             } else {
-                $(region).prop("disabled", false);
-                $(region).val("");
-                $("label[for='auto-region']").text("Region");
+                noRegion();
             }
         });
     });
@@ -28,7 +40,8 @@ export function toggleRegion(producer: JQuery<HTMLInputElement>,
 export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
                                          vitiArea: JQuery<HTMLInputElement>): void {
     $(region).on("change", function() {
-        $.get("/rest/viti-areas/", { region__name: $(this).val() }, (responseJSON) => {
+        $.get("/rest/viti-areas/", { region__name: $(this).val() },
+              (responseJSON: IVitiAreaJSON[]) => {
             // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
             // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
@@ -47,39 +60,6 @@ export function toggleRating(hasRatingSelector: HTMLInputElement,
     $(hasRatingSelector).prop("checked", checked);
     $(hasRatingSelector).on("click", function() {
         $(ratingSelector).prop("disabled", !$(this).prop("checked"));
-    });
-}
-
-/** Determine the percentage of grape composition not yet accounted for. */
-function remGrapePct(lastVisibleId: number): number {
-    let sum = 0;
-    for (let i = 1; i < lastVisibleId; i++) {
-        sum += parseInt($(`#grape-${i}-pct`).val() as string, 10);
-    }
-    return sum < 100 ? 100 - sum : 0;
-}
-
-/** Updates a percentage for a given grape id.  */
-function setGrapePct(id: number, pct: number): void {
-    $(`#grape-${id}-pct`).val(pct);
-}
-
-/** Show additional grape forms with click of + button. */
-export function showNextGrapeInput(grapeBtnSelector: JQuery<HTMLButtonElement>): void {
-    grapeBtnSelector.on("click", function() {
-        // Hide parent div and thus self
-        $(this).parent().hide();
-        const id = parseInt(this.id.slice(-1), 10);
-        // All elements starting with grape-form-2
-        $(`[id^=grape-form-${id}]`).show();
-        // Show next plus button if less than 5
-        if (id < 5) {
-            const grapeBtnParent = $(`#grape-btn-${id + 1}`).parent();
-            grapeBtnParent.show();
-            grapeBtnParent.parent().show();
-        }
-        // Update wine percentage
-        setGrapePct(id, remGrapePct(id));
     });
 }
 
