@@ -25,7 +25,7 @@
   </div>
   <div class="input-field col s6 m3">
     <input id="vintage" name="vintage" type="number" class="validate"
-            value={% if purchase.vintage %} {{ purchase.vintage }} {% else %} "{% now "Y" %}"{% endif %}>
+            value={% if purchase.vintage %} {{ purchase.vintage }} {% else %}{{ default_vintage }}{% endif %}>
     <label for="vintage">Vintage</label>
   </div>
   <div class="input-field col s6 m3">
