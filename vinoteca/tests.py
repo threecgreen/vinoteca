@@ -120,7 +120,9 @@ def test_get_connection():
 @pytest.mark.parametrize("date_str,date_int", [
     ("Jul 04, 2017", 20170704),
     ("", None),
-    ("May 21, 2015", 20150521)
+    ("May 21, 2015", 20150521),
+    # Test removing periods
+    ("Nov. 22, 2018", 20181122)
 ])
 def test_date_str_to_int(date_str, date_int):
     assert date_str_to_int(date_str) == date_int
