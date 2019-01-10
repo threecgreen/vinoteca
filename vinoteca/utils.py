@@ -229,6 +229,7 @@ def date_str_to_int(date_str: str) -> Union[int]:
     r"""Convert date string of format "Day Month, Year" (the format Materialize
     CSS date selector uses) to an int of format "YYYYMMDD"."""
     if date_str:
+        date_str = date_str.replace(".", "")
         return int(datetime.strptime(date_str, "%b %d, %Y").strftime("%Y%m%d"))
 
 

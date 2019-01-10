@@ -13,7 +13,7 @@ $(() => {
     hFloatingActnBtn();
 
     // Grape chart
-    $.getJSON("/rest/grapes/", {wine: wineId}, (grapesJSON) => {
-        applyChart(pieChart, Grape.fromArray(grapesJSON as IGrapeJSON[]), "grape-comp");
+    $.getJSON("/rest/grapes/", {wine: wineId}, (grapesJSON: IGrapeJSON[]) => {
+        applyChart(pieChart, Grape.fromArray(grapesJSON), "grape-comp");
     });
 });

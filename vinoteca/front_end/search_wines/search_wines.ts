@@ -1,5 +1,6 @@
 import { clearTable, resetFormBtn, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
+import { IWineSearchResultsJSON } from "../../lib/rest";
 import { specialChars } from "../../lib/special_chars";
 import { autocomplete, navbar } from "../../lib/widgets";
 
@@ -20,12 +21,12 @@ function liveWineSearch(searchParams: JQuery<HTMLInputElement>,
               region: region.val(),
               viti_area: vitiArea.val(),
               wine_type: wineType.val(),
-        }, (searchResultsJSON) => {
+        }, (searchResultsJSON: IWineSearchResultsJSON) => {
             clearTable();
             // Update search results with received data
             // Greater than 1 because spaces count in length
-            if (searchResultsJSON["results"].length > 1) {
-                $("table tbody").append(searchResultsJSON["results"]);
+            if (searchResultsJSON.results.length > 1) {
+                $("table tbody").append(searchResultsJSON.results);
                 $("table").show();
             } else {
                 $("#no-results").show();

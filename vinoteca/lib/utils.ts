@@ -1,4 +1,6 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
+import { IRESTObject } from "./rest";
+
 export interface IDict<T> {
     [key: string]: T;
 }
@@ -31,11 +33,6 @@ export function pipe<T>(val: T): IPipe<T> {
  */
 export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) !== "undefined" && elem.length > 0;
-}
-
-export interface IRESTObject {
-    id: number;
-    name: string;
 }
 
 export function flattenToDict(objects: IRESTObject[]) {

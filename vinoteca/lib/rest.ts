@@ -1,6 +1,11 @@
 /** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
 
+export interface IRESTObject {
+    id: number;
+    name: string;
+}
+
 export interface IGenericStatJSON {
     [name: string]: number;
 }
@@ -72,9 +77,9 @@ export class Grape implements IChartInput {
     private percent: number | undefined;
 
     constructor(json: IGrapeJSON) {
-        this.wine = json["wine"];
-        this.grape = json["grape"];
-        this.percent = json["percent"];
+        this.wine = json.wine;
+        this.grape = json.grape;
+        this.percent = json.percent;
     }
 
     public label(): string {
@@ -98,4 +103,8 @@ export interface IWineJSON {
     wine_type: number;
     color: number;
     viti_area: number;
+}
+
+export interface IWineSearchResultsJSON {
+    results: string;
 }
