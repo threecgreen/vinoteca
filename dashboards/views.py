@@ -207,7 +207,7 @@ def inventory(request):
             , p.name
             , r.name
             , p3.vintage
-            , sub.last_purchase_date
+            , max(pu.date)
             , w.inventory
             , w.id
             , p.id
