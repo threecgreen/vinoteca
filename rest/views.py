@@ -2,7 +2,9 @@ r"""Still figuring out where exactly the REST framework will be used. It seems
 ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
-from django.http import JsonResponse
+import logging
+
+from django.http import JsonResponse, HttpResponse
 from rest_framework import generics
 
 from rest.serializers import (
@@ -111,3 +113,35 @@ class WineList(generics.ListAPIView):
     serializer_class = WineSerializer
     filterset_fields = ("id", "color_id", "producer_id", "viti_area_id",
                         "wine_type_id")
+
+
+CLIENT_SIDE_LOGGER = logging.getLogger("ClientSide")
+
+
+def write_client_side_logs(request):
+    r"""Allows errors on the client-side to be written to the unified vinoteca
+    logs.
+
+    Data Format:
+      - level: one of Critical, Error, Warning, Info, or Debug
+      - module: the file name source of the error
+      - message: error details"""
+    if request.method == "POST":
+        level = request.POST.get("level")
+        module = request.POST.get("module")
+        message = request.POST.get("message")
+        if any([field is None for field in (level, message, module)]):
+            return JsonResponse({"success": False})
+        if level == "critical":
+            CLIENT_SIDE_LOGGER.critical(f"{module}: {message}")
+        elif level == "error":
+            CLIENT_SIDE_LOGGER.error(f"{module}: {message}")
+        elif level == "warning":
+            CLIENT_SIDE_LOGGER.warning(f"{module}: {message}")
+        elif level == "info":
+            CLIENT_SIDE_LOGGER.warning(f"{module}: {message}")
+        else:
+            CLIENT_SIDE_LOGGER.debug(f"{module}: {message}")
+        return JsonResponse({"success": True})
+    else:
+        raise HttpResponse(statuscode=405)
