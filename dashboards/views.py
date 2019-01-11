@@ -66,7 +66,11 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
         ORDER BY count(p.id) DESC
         LIMIT 1;
     """
-    mcd_result = cursor.execute(query).fetchone()[0]
+    try:
+        mcd_result = cursor.execute(query).fetchone()[0]
+    except (TypeError, IndexError) as e:
+        LOGGER.warning("No purchase data found. Returning a blank 'By the numbers'")
+        return None
     most_common_date = int_to_date(mcd_result) if mcd_result else None
     variety_count = Wines.objects.all().count()
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)

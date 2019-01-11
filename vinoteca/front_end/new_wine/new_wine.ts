@@ -1,4 +1,4 @@
-import { GrapeController } from "../../lib/GrapeController";
+import GrapeController from "../../lib/GrapeController";
 import { toggleRating, toggleRegion, updateVitiAreaSelections } from "../../lib/new_wines";
 import { specialChars } from "../../lib/special_chars";
 import { autocomplete, datepicker, navbar } from "../../lib/widgets" ;

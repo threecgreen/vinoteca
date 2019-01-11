@@ -5,9 +5,8 @@ from django.urls import path
 
 from rest.views import (
     generic_all_names, region_all_names, ColorList, RegionList, ProducerList,
-    VitiAreaList, WineTypeList, WineList, GrapeList
+    VitiAreaList, WineTypeList, WineList, GrapeList, write_client_side_logs
 )
-
 
 app_name = "REST"
 urlpatterns = [
@@ -34,4 +33,7 @@ urlpatterns = [
     path("wine-types/", WineTypeList.as_view(), name="Wine Type"),
     path("wines/", WineList.as_view(), name="Wine"),
     path("grapes/", GrapeList.as_view(), name="Grape"),
+
+    # Logs
+    path("logs/client/", write_client_side_logs)
 ]

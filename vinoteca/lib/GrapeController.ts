@@ -12,7 +12,7 @@ enum HideOrShow {
  * in the constructor so it be a simple function but a class seeemed like a
  * better grouping.
  */
-export class GrapeController {
+export default class GrapeController {
     private selectorPrefix: string;
     private lastBlock: JQuery<HTMLDivElement>;
     private blockHTML: string;

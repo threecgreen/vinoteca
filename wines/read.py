@@ -164,7 +164,6 @@ class WineTableDatum(NamedTuple):
 
 def wines_view(request):
     r"""View for viewing all wines together in a tabular, filterable format."""
-
     wine_query = """
         SELECT
             w.id
