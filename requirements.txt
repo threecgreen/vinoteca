@@ -6,7 +6,6 @@ pytest-django>=3.2.0
 pytest-mock>=1.0.0
 python-dateutil==2.6.*
 pytz==2018.3
-attrs==17.4.*
 pillow==5.2.*
 djangorestframework==3.8.*
 django-js-error-hook==0.6

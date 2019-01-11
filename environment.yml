@@ -23,7 +23,6 @@ dependencies:
   - pip:
     - astroid==2.0.4
     - atomicwrites==1.2.1
-    - attrs==17.4.0
     - colorlog==3.1.4
     - coverage==4.5.1
     - django==2.1.4

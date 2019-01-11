@@ -1,8 +1,8 @@
 # pylint: disable=unused-argument
 import logging
 from pathlib import Path
+from typing import NamedTuple
 
-import attr
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -80,21 +80,21 @@ def search_wines_view(request):
     return render(request, "search_wines.html", context)
 
 
+class WineSearchResult(NamedTuple):
+    r"""Query result attrs object for wine search results. Makes for easier
+    and clearer access to wine attributes in the template."""
+    id: int
+    color: str
+    name: str
+    producer: str
+    region: str
+    wine_type: str
+    viti_area: str
+
+
 def search_wines_results_view(request) -> JsonResponse:
     r"""Render a search results table inserted into a JSON object for live
     search results of existing wines."""
-    @attr.s
-    class WineSearchResult(object):
-        r"""Query result attrs object for wine search results. Makes for easier
-        and clearer access to wine attributes in the template."""
-        id = attr.ib(type=int)
-        color = attr.ib(type=str)
-        name = attr.ib(type=str)
-        producer = attr.ib(type=str)
-        region = attr.ib(type=str)
-        wine_type = attr.ib(type=str)
-        viti_area = attr.ib(type=str)
-
     conn = get_connection()
     cursor = conn.cursor()
     wine_type = empty_to_none(request.GET.get("wine_type"))
@@ -143,26 +143,27 @@ def search_wines_results_view(request) -> JsonResponse:
     return JsonResponse({"results": []})
 
 
+class WineTableDatum(NamedTuple):
+    r"""Attrs object for wine table data. Each instance contains the
+    information required about one wine for one row in the table."""
+    id: int
+    description: str
+    rating: int
+    region: str
+    producer: str
+    name: str
+    type: str
+    color: str
+    inventory: int
+    vintage: int
+    viti_area: str
+    producer_id: int
+    region_id: int
+    wine_type_id: int
+
+
 def wines_view(request):
     r"""View for viewing all wines together in a tabular, filterable format."""
-    @attr.s
-    class WineTableDatum(object):
-        r"""Attrs object for wine table data. Each instance contains the
-        information required about one wine for one row in the table."""
-        id = attr.ib(type=int)
-        description = attr.ib(type=str)
-        rating = attr.ib(type=int)
-        region = attr.ib(type=str)
-        producer = attr.ib(type=str)
-        name = attr.ib(type=str)
-        type = attr.ib(type=str)
-        color = attr.ib(type=str)
-        inventory = attr.ib(type=int)
-        vintage = attr.ib(type=int)
-        viti_area = attr.ib(type=str)
-        producer_id = attr.ib(type=int)
-        region_id = attr.ib(type=int)
-        wine_type_id = attr.ib(type=int)
 
     wine_query = """
         SELECT
