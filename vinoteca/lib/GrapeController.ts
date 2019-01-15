@@ -136,7 +136,7 @@ export default class GrapeController {
         }
         this.lastBlock = this.grapeRow.children(".grape-block").last();
         // Clear values
-        this.lastBlock.children(".input-field").each((_: number, inputField: HTMLInputElement) => {
+        this.lastBlock.children(".input-field").each((_: number, inputField: HTMLDivElement) => {
             $(inputField).val();
         });
         this.renumberBlocks();
