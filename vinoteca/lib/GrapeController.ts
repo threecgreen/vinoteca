@@ -1,5 +1,6 @@
 import * as M from "materialize-css";
 import { autocomplete } from "./widgets";
+import SpecialCharController from "./SpecialCharController";
 
 enum HideOrShow {
     Hide,
@@ -17,14 +18,16 @@ export default class GrapeController {
     private lastBlock: JQuery<HTMLDivElement>;
     private blockHTML: string;
     private grapeRow: JQuery<HTMLDivElement>;
+    private specialCharCtl: SpecialCharController | undefined;
 
-    constructor(selectorPrefix: string) {
+    constructor(selectorPrefix: string, specialCharCtl?: SpecialCharController) {
         this.selectorPrefix = selectorPrefix;
         this.lastBlock = $(selectorPrefix).last() as JQuery<HTMLDivElement>;
         this.blockHTML = this.lastBlock[0].outerHTML;
         this.grapeRow = this.lastBlock.parent();
         this.setUpListeners();
         this.updateAutocomplete();
+        this.specialCharCtl = specialCharCtl || undefined;
     }
 
     private getId(elem: JQuery<HTMLElement>): number {
@@ -99,7 +102,7 @@ export default class GrapeController {
     /**
      * Determine the percentage of grape composition not yet accounted for.
      */
-    private remGrapePct(lastVisibleId: number): number {
+    private remainingGrapePct(lastVisibleId: number): number {
         let sum = 0;
         for (let i = 1; i < lastVisibleId; i++) {
             const pct = parseInt($(`#grape-${i}-pct`).val() as string, 10);
@@ -154,10 +157,11 @@ export default class GrapeController {
         lastVisibleId++;
         // Only set the percentage if other grapes have percentages
         if (this.hasGrapePct(lastVisibleId)) {
-            this.setGrapePct(lastVisibleId, this.remGrapePct(lastVisibleId));
+            this.setGrapePct(lastVisibleId, this.remainingGrapePct(lastVisibleId));
         }
         this.setUpRemoveListeners();
         this.updateAutocomplete();
+        this.refreshSpecialChars();
     }
 
     /**
@@ -199,5 +203,11 @@ export default class GrapeController {
 
     private updateAutocomplete(): void {
         autocomplete("grape", 5, 1, "[id^=auto-grape-]");
+    }
+
+    private refreshSpecialChars(): void {
+        if (this.specialCharCtl) {
+            this.specialCharCtl.updateTextInputs();
+        }
     }
 }

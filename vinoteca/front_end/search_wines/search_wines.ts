@@ -1,7 +1,7 @@
 import { clearTable, resetFormBtn, toggleRegion,
          updateVitiAreaSelections } from "../../lib/new_wines";
 import { IWineSearchResultsJSON } from "../../lib/rest";
-import { specialChars } from "../../lib/special_chars";
+import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, navbar } from "../../lib/widgets";
 
 /** Update search results when search fields change */
@@ -49,7 +49,7 @@ $(() => {
     autocomplete("region");
     autocomplete("viti-area");
 
-    specialChars();
+    const specCharCtl = new SpecialCharController();
     resetFormBtn();
     $(region).prop("disabled", false);
     liveWineSearch($(".input-field"), $("#auto-wine-type"), $("#color"), producer,

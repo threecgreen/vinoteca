@@ -1,6 +1,6 @@
 import GrapeController from "../../lib/GrapeController";
 import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/new_wines";
-import { specialChars } from "../../lib/special_chars";
+import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, hFloatingActnBtn, navbar } from "../../lib/widgets";
 
 declare const hasRating: boolean;
@@ -9,7 +9,7 @@ const region: JQuery<HTMLInputElement> = $("#auto-region");
 
 $(() => {
     navbar();
-    specialChars();
+    const specCharCtl = new SpecialCharController();
     hFloatingActnBtn();
     $("select").formSelect();
 
