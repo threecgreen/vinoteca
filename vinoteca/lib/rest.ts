@@ -58,7 +58,7 @@ export interface IVitiAreaJSON {
     region: number;
 }
 
-export interface IGrapeJSON {
+export interface IWineGrapeJSON {
     id: number;
     wine: number;
     grape: string;
@@ -66,7 +66,7 @@ export interface IGrapeJSON {
 }
 
 export class Grape implements IChartInput {
-    public static fromArray(jsonArray: IGrapeJSON[]) {
+    public static fromArray(jsonArray: IWineGrapeJSON[]) {
         return jsonArray.map((grapeJ) => {
             return new Grape(grapeJ);
         });
@@ -76,7 +76,7 @@ export class Grape implements IChartInput {
     private grape: string;
     private percent: number | undefined;
 
-    constructor(json: IGrapeJSON) {
+    constructor(json: IWineGrapeJSON) {
         this.wine = json.wine;
         this.grape = json.grape;
         this.percent = json.percent;

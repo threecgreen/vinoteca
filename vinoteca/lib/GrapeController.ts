@@ -1,6 +1,6 @@
 import * as M from "materialize-css";
-import { autocomplete } from "./widgets";
 import SpecialCharController from "./SpecialCharController";
+import { autocomplete } from "./widgets";
 
 enum HideOrShow {
     Hide,

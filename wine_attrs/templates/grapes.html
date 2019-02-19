@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+import * as React
+{% load static %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h3 class="page-title">Grapes</h3>
+        <div id="grapes-app-container"></div>
+      </div>
+    </div>
+  </div>
+{% endblock body %}
+
+{% block js %}
+  <script src="{% static 'grapes.bundle.js' %}"></script>
+{% endblock js %}

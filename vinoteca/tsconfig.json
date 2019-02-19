@@ -6,6 +6,7 @@
         "allowSyntheticDefaultImports": true,
         "noUnusedParameters": true,
         "strict": true,
+        "jsx": "react",
     },
     "include": [
         "front_end",

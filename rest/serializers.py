@@ -24,6 +24,12 @@ class GrapeNameSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
+class GrapeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grapes
+        fields = ("id", "name")
+
+
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Regions

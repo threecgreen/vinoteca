@@ -5,14 +5,14 @@ file."""
 import logging
 
 from django.http import JsonResponse, HttpResponse
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
     VitiAreaSerializer, WineTypeSerializer, WineSerializer,
     ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
     WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer,
-    WineGrapeSerializer
+    WineGrapeSerializer, GrapeSerializer
 )
 from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
@@ -32,7 +32,6 @@ def region_all_names(_) -> JsonResponse:
         regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name \
                 in region_flags else None
     return JsonResponse(regions)
-
 
 
 def generic_all_names(_, obj_name: str) -> JsonResponse:
@@ -65,7 +64,7 @@ def grape(request):
     return JsonResponse(content, safe=False)
 
 
-class GrapeList(generics.ListAPIView):
+class WineGrapeList(generics.ListAPIView):
     queryset = WineGrapes.objects.all().prefetch_related("grape")
     serializer_class = WineGrapeSerializer
     filterset_fields = ("wine", "grape")
@@ -113,6 +112,22 @@ class WineList(generics.ListAPIView):
     serializer_class = WineSerializer
     filterset_fields = ("id", "color_id", "producer_id", "viti_area_id",
                         "wine_type_id")
+
+
+class GrapeView(generics.GenericAPIView,
+                mixins.ListModelMixin,
+                mixins.UpdateModelMixin):
+    queryset = Grapes.objects.all()
+    serializer_class = GrapeSerializer
+    filterset_fields = ("id", "name")
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """ Grape update API, need to submit both `id` and `name` fields at the
+        same time, or django will prevent to do update for field missing."""
+        return self.update(request, *args, **kwargs)
 
 
 CLIENT_SIDE_LOGGER = logging.getLogger("ClientSide")
