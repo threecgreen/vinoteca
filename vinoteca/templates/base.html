@@ -55,9 +55,23 @@
   <footer class="page-footer pink darken-4 footer-copyright">
     <div class="container">
       <div class="row">
-        <u><a class="footer-link" href="{% url "About" %}">About</a></u>
-        <u><a class="footer-link" href="{% url "About" %}#changelog">Changelog</a></u>
-        <u><a class="footer-link" href="{% url "About" %}#help">Help</a></u>
+        <div class="col l6 s12">
+          <h5 class="white-text brand-logo">vinoteca</h5>
+          <ul>
+            <li><a class="footer-link" href="{% url "About" %}">About</a></li>
+            <li><a class="footer-link" href="{% url "About" %}#changelog">Changelog</a></li>
+            <li><a class="footer-link" href="{% url "About" %}#help">Help</a></li>
+          </ul>
+        </div>
+        <div class="col l4 offset-s12 s12">
+          <h5 class="white-text">API Views</h5>
+          <p grey-text text-lighten-4>Simple views for more direct access to the underlying data.</p>
+          <ul>
+            <li>
+              <a href="{% url "Grapes" %}" class="footer-link">Grapes List (Experimental)</a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="footer-copyright">

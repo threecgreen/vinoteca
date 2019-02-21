@@ -128,7 +128,11 @@ class GrapeView(generics.GenericAPIView,
     def put(self, request, *args, **kwargs):
         """ Grape update API, need to submit both `id` and `name` fields at the
         same time, or django will prevent to do update for field missing."""
-        return self.update(request, *args, **kwargs)
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as e:
+            logging.warn(e)
+            raise e
 
 
 CLIENT_SIDE_LOGGER = logging.getLogger("ClientSide")

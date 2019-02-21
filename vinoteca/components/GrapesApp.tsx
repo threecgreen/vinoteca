@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as React from "react";
+import { get, put } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
 import { IRESTObject } from "../lib/rest";
 import { GrapesList } from "./GrapesList";
@@ -16,7 +17,6 @@ type State = Readonly<typeof initialState>;
 export class GrapesApp extends React.Component {
     public readonly state: State = initialState;
     private logger: Logger = new Logger("GrapesApp");
-    private readonly grapesUrl = "/rest/grapes";
 
     constructor(props: any) {
         super(props);
@@ -35,10 +35,7 @@ export class GrapesApp extends React.Component {
     }
 
     public componentDidMount() {
-        fetch(this.grapesUrl)
-            .then((resp) => {
-                return resp.json();
-            })
+        get(this.getGrapesUrl())
             .then((restGrapes: IRESTObject[]) => {
                 const grapes: GrapeItem[] = restGrapes.map(
                     (g) => new GrapeItem(g.id, g.name),
@@ -69,16 +66,20 @@ export class GrapesApp extends React.Component {
     }
 
     public handleSave(id: number) {
-        const [ saved, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
-        saved[0].isEditable = false;
-        console.log(JSON.stringify(saved[0]));
-        fetch(this.grapesUrl, {
-            body: JSON.stringify({id: saved[0].id, name: saved[0].name}),
-            method: "PUT",
-        }).catch((e) => {
+        const [ savedL, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
+        const saved: GrapeItem = savedL[0];
+        saved.isEditable = false;
+        put(
+            this.getGrapesUrl(id),
+            {id: saved, name: saved.name},
+        ).catch((e) => {
             this.logger.logError(`Failed to save grape change for grape with id ${id}`
                                  + ` and error message ${e.message}`);
         });
-        this.setState({grapes: saved.concat(grapes)});
+        this.setState({grapes: [saved].concat(grapes)});
+    }
+
+    private getGrapesUrl(id?: number): string {
+        return id ? `/rest/grapes/${id}/` : `/rest/grapes/`;
     }
 }
