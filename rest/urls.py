@@ -34,7 +34,8 @@ urlpatterns = [
     path("wine-types/", WineTypeList.as_view(), name="Wine Type"),
     path("wines/", WineList.as_view(), name="Wine"),
     path("wine-grapes/", WineGrapeList.as_view(), name="Wine Grape"),
-    path("grapes/", GrapeView.as_view(), name="Grape"),
+    path("grapes/", GrapeView.as_view(), name="Grape-Get"),
+    path("grapes/<int:id>/", GrapeView.as_view(), name="Grape-Put"),
 
     # Logs
     path("logs/client/", write_client_side_logs)

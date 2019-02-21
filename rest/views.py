@@ -120,6 +120,7 @@ class GrapeView(generics.GenericAPIView,
     queryset = Grapes.objects.all()
     serializer_class = GrapeSerializer
     filterset_fields = ("id", "name")
+    lookup_field = "id"
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
