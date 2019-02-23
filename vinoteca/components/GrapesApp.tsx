@@ -52,11 +52,7 @@ export class GrapesApp extends React.Component {
         });
     }
 
-    /**
-     * Updates state to reflect that a grape is editable.
-     *
-     * @param id of the grape whose 'edit' button was clicked
-     */
+    /** Updates state to reflect that a grape is editable. */
     public handleEdit(id: number) {
         const [ edited, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
         edited[0].isEditable = true;

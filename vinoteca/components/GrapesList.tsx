@@ -20,13 +20,13 @@ export class GrapesList extends React.Component<IGrapesListProps, {}> {
             </thead>
             <tbody>
                 {this.props.grapes.map((grape) => {
-                    return (<GrapesListItem key={grape.id}
-                                            id={grape.id}
-                                            name={grape.name}
-                                            isEditable={grape.isEditable}
-                                            onChange={this.props.onChange}
-                                            handleEdit={this.props.handleEdit}
-                                            handleSave={this.props.handleSave} />);
+                    return (<GrapesListItem key={ grape.id }
+                                            id={ grape.id }
+                                            name={ grape.name }
+                                            isEditable={ grape.isEditable }
+                                            onChange={ this.props.onChange }
+                                            handleEdit={ this.props.handleEdit }
+                                            handleSave={ this.props.handleSave } />);
                 })}
             </tbody>
         </table>;
