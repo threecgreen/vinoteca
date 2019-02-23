@@ -28,7 +28,6 @@ media/*.jpg
 # Script cache files
 scripts/*.cache
 .vscode/.ropeproject/
-.vscode/launch.json
 
 # Javascript
 node_modules
