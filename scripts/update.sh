@@ -26,8 +26,18 @@ find_python_env
 
 if [ $GIT_PULL = true ]; then
     info_text "Updating project source..."
-    git stash
-    git pull -r || error_exit "Failed to update source code."
+    # Check for clean directory
+    if [ -z "$(git status -uno --porcelain)"]; then
+        git stash
+    fi
+    git remote update
+    # Check for clean directory
+    if [ -z "$(git status -uno --porcelain)"]; then
+        git pull -r || error_exit "Failed to update source code."
+    else
+        info_text "Up to date."
+        exit 0;
+    fi
 fi
 
 # Sometimes needed in WSL
