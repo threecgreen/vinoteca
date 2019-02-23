@@ -1,8 +1,0 @@
-{% load vinoteca %}
-{% load humanize %}
-
-{% if date %}
-  <td>{{ date|inttodate|naturalday:"b j, Y"|title|defndash }}</td>
-{% else %}
-  <td>&ndash;</td>
-{% endif %}

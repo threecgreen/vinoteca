@@ -1,7 +1,7 @@
 {% load humanize %}
 {% load vinoteca %}
 
-<td class="num-col">
+<td>
   {% if date %}
     {{ date|inttodate|naturalday:"b j, Y"|title }}
   {% else %}

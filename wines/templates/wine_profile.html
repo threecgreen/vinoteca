@@ -148,7 +148,7 @@
 
                     {% block table-edit-body %}{% endblock %}
 
-                    {% include "purchase_date_cell.html" with date=purchase.date %}
+                    {% include "date_cell.html" with date=purchase.date %}
                     {% include "number_cell.html" with number=purchase.quantity %}
                     {% include "number_cell.html" with number=purchase.price decpoint=2 %}
                     {% include "vintage_cell.html" with vintage=purchase.vintage %}
