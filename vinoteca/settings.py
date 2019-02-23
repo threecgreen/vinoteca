@@ -35,7 +35,6 @@ INSTALLED_APPS = [
 
     # Installed
     "rest_framework",
-    "django_js_error_hook",
     "django_filters",
 
     # Internal apps

@@ -37,5 +37,4 @@ urlpatterns = [
 
     # Internal URLs
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
-    re_path("^js_error_hook/", include("django_js_error_hook.urls")),
 ]
