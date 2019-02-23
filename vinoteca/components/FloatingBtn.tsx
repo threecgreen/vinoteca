@@ -1,8 +1,8 @@
 import * as React from "react";
 import { IChildrenProp, IClassesProp } from "./IProps";
 
-export interface IFloatingBtn extends IChildrenProp, IClassesProp {
-    onClick: ((event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void | undefined);
+interface IFloatingBtn extends IChildrenProp, IClassesProp {
+    onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void | undefined;
 }
 
 export class FloatingBtn extends React.Component<IFloatingBtn, {}> {
