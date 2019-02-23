@@ -28,6 +28,8 @@ module.exports = {
                 inputPath + "wines/jquery.tablesorter.pager.js",
                 inputPath + "wines/jquery.tablesorter.widgets.js",
                 inputPath + "wines/jquery.tablesorter.pager.css"],
+        // Wine Attrs
+        grapes: [inputPath + "grapes/grapes.ts"]
     },
     module: {
         rules: [
@@ -91,6 +93,6 @@ module.exports = {
         })
     ],
     resolve: {
-        extensions: [ ".js", ".json", ".ts" ],
+        extensions: [ ".js", ".json", ".ts", ".tsx" ],
     },
 };

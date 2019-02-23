@@ -1,6 +1,9 @@
 import { Chart } from "chart.js";
+import Logger from "./Logger";
 import { elementExists, pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";
+
+const logger =  new Logger("wine_charts.ts");
 
 export interface IChartInput {
     label(): string;
@@ -310,9 +313,12 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
     const chartLabels = splitData(data[0])[0];
     // Error checking
     if (!elementExists(canvas)) {
+        logger.logWarning(`Canvas element ${canvas} does not exist.`);
         return false;
     }
     if (data.length !== seriesLabels.length) {
+        logger.logWarning(`Data and seriesLabels have different lenghts. ` +
+                   `${data.length} and ${seriesLabels.length} respectively.`);
         return false;
     }
 
@@ -374,20 +380,23 @@ export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]
         });
         // Error checking
         if (allZero(chartData)) {
+            logger.logWarning("All Chart");
             return false;
         }
         return true;
     });
 
     if (!dataValidation.every((val) => val)) {
+        logger.logWarning("Data validation of chartData failed.");
         return false;
     }
 
     try {
         const pie = new Chart(canvas, config);
     } catch (e) {
-        console.warn(e);
+        logger.logWarning(e);
         return false;
     }
+    logger.logInfo("Successfully created line chart.");
     return true;
 }

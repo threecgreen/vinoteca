@@ -3,9 +3,8 @@ home page and the dashboard page."""
 import logging
 import sqlite3
 from datetime import date
-from typing import List
+from typing import List, NamedTuple
 
-import attr
 from django.db.models import Avg, Count, Sum
 from django.db.models.functions import Coalesce
 from django.shortcuts import render
@@ -36,13 +35,12 @@ def top_wine_types(limit: int) -> List[WineTypes]:
         .order_by("-variety")[:limit]
 
 
-@attr.s
-class ByTheNumbers(object):
-    r"""Return attrs object for by_the_numbers function."""
-    liters_of_wine = attr.ib(type=int)
-    most_common_date = attr.ib(type=date)
-    total_purchase_count = attr.ib(type=int)
-    variety_count = attr.ib(type=int)
+class ByTheNumbers(NamedTuple):
+    r"""Return object for by_the_numbers function."""
+    liters_of_wine: int
+    most_common_date: date
+    total_purchase_count: int
+    variety_count: int
 
 
 def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
@@ -68,7 +66,11 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
         ORDER BY count(p.id) DESC
         LIMIT 1;
     """
-    mcd_result = cursor.execute(query).fetchone()[0]
+    try:
+        mcd_result = cursor.execute(query).fetchone()[0]
+    except (TypeError, IndexError) as e:
+        LOGGER.warning("No purchase data found. Returning a blank 'By the numbers'")
+        return None
     most_common_date = int_to_date(mcd_result) if mcd_result else None
     variety_count = Wines.objects.all().count()
     return ByTheNumbers(liters_of_wine, most_common_date, total_purchase_count, variety_count)
@@ -105,14 +107,13 @@ def top_producers(limit: int) -> List[Producers]:
         .order_by("-avg_rating", "-quantity")[:limit]
 
 
-@attr.s
-class Year(object):
+class Year(NamedTuple):
     r"""Return attrs object for the purchases_by_year function."""
-    year = attr.ib(type=int)
-    quantity = attr.ib(type=int)
-    price = attr.ib(type=float)
-    avg_price = attr.ib(type=float)
-    avg_vintage = attr.ib(type=float)
+    year: str
+    quantity: int
+    price: float
+    avg_price: float
+    avg_vintage: float
 
 
 def purchases_by_year(conn: sqlite3.Connection) -> List[Year]:
@@ -179,25 +180,26 @@ def dashboards(request):
     return render(request, "dashboards.html", context)
 
 
+class InventoryItem(NamedTuple):
+    r"""Denotes one row of the table."""
+    color: str
+    name: str
+    wine_type: str
+    producer: str
+    region: str
+    vintage: int
+    last_purchase_date: int
+    inventory_cnt: int
+    wine_id: int
+    producer_id: int
+    region_id: int
+    wine_type_id: int
+    last_price: float
+
+
 def inventory(request):
     r"""View what wines and how many bottles are in the user's inventory/
     collection."""
-    @attr.s
-    class InventoryItem(object):
-        r"""Denotes one row of the table."""
-        color = attr.ib(type=str)
-        name = attr.ib(type=str)
-        wine_type = attr.ib(type=str)
-        producer = attr.ib(type=str)
-        region = attr.ib(type=str)
-        vintage = attr.ib(type=int)
-        last_purchase_date = attr.ib(type=int)
-        inventory_cnt = attr.ib(type=int)
-        wine_id = attr.ib(type=int)
-        producer_id = attr.ib(type=int)
-        region_id = attr.ib(type=int)
-        wine_type_id = attr.ib(type=int)
-        last_price = attr.ib(type=float)
 
     query = """
         SELECT

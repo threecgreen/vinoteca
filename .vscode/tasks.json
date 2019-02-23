@@ -2,25 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "typescript",
-            "tsconfig": "vinoteca/static/tsconfig.json",
-            "option": "watch",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
             "label": "Run Server",
             "type": "shell",
             "command": "${workspaceRoot}/scripts/run.sh",
@@ -73,24 +54,6 @@
             }
         },
         {
-            "label": "SASS",
-            "type": "shell",
-            "command": "sass",
-            "args": [
-                "--watch",
-                "${workspaceRoot}/vinoteca/static/css/vinoteca-style.sass"
-            ],
-            "group": "build",
-            "presentation": {
-                "echo": true,
-                "reveal": "never",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Pytest",
             "type": "shell",
             "command": "${workspaceRoot}/scripts/test.sh",
@@ -102,6 +65,12 @@
                 "panel": "dedicated",
                 "showReuseMessage": false
             }
+        },
+        {
+            "type": "npm",
+            "script": "watch",
+            "path": "vinoteca/",
+            "problemMatcher": []
         }
     ],
 }

@@ -1,6 +1,8 @@
-import { GrapeController } from "../../lib/GrapeController";
+import { createElement } from "react";
+import * as ReactDOM from "react-dom";
+import { GrapeFormApp } from "../../components/GrapesFormApp";
 import { toggleRating, toggleRegion, updateVitiAreaSelections } from "../../lib/new_wines";
-import { specialChars } from "../../lib/special_chars";
+import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, datepicker, navbar } from "../../lib/widgets" ;
 
 $(() => {
@@ -18,6 +20,7 @@ $(() => {
 
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement);
 
-    const grapeCtl = new GrapeController(".grape-block");
-    specialChars();
+    ReactDOM.render(createElement(GrapeFormApp),
+        document.getElementById("grapes-form-app-container"));
+    const specCharCtl = new SpecialCharController();
 });

@@ -5,7 +5,8 @@
         "sourceMap": true,
         "allowSyntheticDefaultImports": true,
         "noUnusedParameters": true,
-        "strictNullChecks": true,
+        "strict": true,
+        "jsx": "react",
     },
     "include": [
         "front_end",

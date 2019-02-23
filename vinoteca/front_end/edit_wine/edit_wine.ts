@@ -1,6 +1,8 @@
-import { GrapeController } from "../../lib/GrapeController";
+import { createElement } from "react";
+import * as ReactDOM from "react-dom";
+import { GrapeFormApp } from "../../components/GrapesFormApp";
 import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/new_wines";
-import { specialChars } from "../../lib/special_chars";
+import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, hFloatingActnBtn, navbar } from "../../lib/widgets";
 
 declare const hasRating: boolean;
@@ -9,7 +11,7 @@ const region: JQuery<HTMLInputElement> = $("#auto-region");
 
 $(() => {
     navbar();
-    specialChars();
+    const specCharCtl = new SpecialCharController();
     hFloatingActnBtn();
     $("select").formSelect();
 
@@ -20,7 +22,8 @@ $(() => {
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement,
                  hasRating);
     updateVitiAreaSelections(region, $("#auto-viti-area"));
-    const grapeCtl = new GrapeController(".grape-block");
+    ReactDOM.render(createElement(GrapeFormApp),
+        document.getElementById("grapes-form-app-container"));
     $("#delete-modal").modal();
 });
 

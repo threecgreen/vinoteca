@@ -1,8 +1,8 @@
-import { specialChars } from "../../lib/special_chars";
+import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, navbar } from "../../lib/widgets";
 
 $(() => {
     navbar();
-    specialChars();
+    const controller = new SpecialCharController();
     autocomplete("region");
 });

@@ -6,6 +6,7 @@ from django.views.static import serve
 
 from dashboards.views import dashboards, inventory
 from places.views import region_profile
+from vinoteca.settings import BASE_DIR
 from vinoteca.views import simple_page, home
 from wine_attrs.views import wine_type_profile
 
@@ -23,6 +24,7 @@ urlpatterns = [
 
     # Wine attrs URLs
     path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),
+    path("grapes/", simple_page, name="Grapes", kwargs={"page_name": "grapes"}),
 
     # Other pages
     path("dashboards/", dashboards, name="Dashboards"),
@@ -35,5 +37,4 @@ urlpatterns = [
 
     # Internal URLs
     re_path("^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
-    re_path("^js_error_hook/", include("django_js_error_hook.urls")),
 ]

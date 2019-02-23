@@ -35,7 +35,6 @@ INSTALLED_APPS = [
 
     # Installed
     "rest_framework",
-    "django_js_error_hook",
     "django_filters",
 
     # Internal apps
@@ -161,7 +160,7 @@ LOGGING = {
             "log_colors": {
                 "DEBUG":    "bold_green",
                 "INFO":     "bold_blue",
-                "WARNING":  "bold_yelow",
+                "WARNING":  "bold_yellow",
                 "ERROR":    "bold_orange",
                 "CRITICAL": "bold_red",
             },
