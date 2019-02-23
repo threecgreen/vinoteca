@@ -1,4 +1,4 @@
-import "materialize-css";
+import * as M from "materialize-css";
 import { IDict } from "./utils";
 
 /** Streamlines the configuration of Materialize CSS autocomplete. */
@@ -53,4 +53,13 @@ export function setTabAccessibility(tabListElem: JQuery<HTMLUListElement>, abili
 /** Activates all horizontal floating action buttons in class fixed-action-btn.  */
 export function hFloatingActnBtn() {
     $(".fixed-action-btn").floatingActionButton({direction: "left"});
+}
+
+/** Simplifies displaying of toast messages to user */
+export function toast(message: string) {
+    M.toast({
+        classes: "red-bg",
+        displayLength: 10000,
+        html: message,
+    });
 }

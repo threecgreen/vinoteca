@@ -19,7 +19,7 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
     }
 
     get NameId(): string {
-        return `grape-${this.props.name}`;
+        return `grape-${this.props.name}-${this.props.id}`;
     }
 
     public render() {

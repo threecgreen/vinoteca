@@ -1,3 +1,5 @@
+import { toast } from "./widgets";
+
 /** Provides logging functionality for client-side JavaScript errors. */
 enum LogLevel {
     Critical = "critical",
@@ -17,16 +19,35 @@ export default class Logger {
     constructor(private module: string) {
     }
 
+    /**
+     * Meant for irrecoverable or truly exceptional errors. A toast with the
+     * log message will be displayed and the log will be sent back to the server
+     * for posterity.
+     */
     public logCritical(message: string) {
-        return this.log(LogLevel.Critical, message);
+        const level = LogLevel.Critical;
+        this.toast(level, message);
+        return this.log(level, message);
     }
 
+    /**
+     * A toast with the log message will be displayed and the log will be sent
+     * back to the server for posterity.
+     */
     public logError(message: string) {
-        return this.log(LogLevel.Error, message);
+        const level = LogLevel.Error;
+        this.toast(level, message);
+        return this.log(level, message);
     }
 
+    /**
+     * A toast with the log message will be displayed and the log will be sent
+     * back to the server for posterity.
+     */
     public logWarning(message: string) {
-        return this.log(LogLevel.Warning, message);
+        const level = LogLevel.Warning;
+        this.toast(level, message);
+        return this.log(level, message);
     }
 
     public logInfo(message: string) {
@@ -39,5 +60,9 @@ export default class Logger {
 
     private log(level: LogLevel, message: string) {
         return $.post("/rest/logs/client/", {level, module: this.module, message});
+    }
+
+    private toast(level: LogLevel, message: string) {
+        toast(`${level.toUpperCase()}: ${message}`);
     }
 }

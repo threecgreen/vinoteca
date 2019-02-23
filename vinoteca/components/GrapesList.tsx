@@ -5,8 +5,8 @@ import { GrapesListItem } from "./GrapesListItem";
 interface IGrapesListProps {
     grapes: GrapeItem[];
     onChange: (id: number, name: string) => void;
-    handleEdit: (id: number) => void;
-    handleSave: (id: number) => void;
+    handleEdit: (e: React.MouseEvent, id: number) => void;
+    handleSave: (e: React.MouseEvent, id: number) => void;
 }
 
 export class GrapesList extends React.Component<IGrapesListProps, {}> {

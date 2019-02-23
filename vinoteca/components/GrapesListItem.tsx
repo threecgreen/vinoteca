@@ -4,9 +4,9 @@ import { GrapeItem } from "./GrapesApp";
 import { MaterialIcon } from "./MaterialIcon";
 
 interface IGrapeItemProps extends GrapeItem {
-    handleEdit: (id: number) => void;
-    handleSave: (id: number) => void;
     onChange: (id: number, name: string) => void;
+    handleEdit: (e: React.MouseEvent, id: number) => void;
+    handleSave: (e: React.MouseEvent, id: number) => void;
 }
 
 export class GrapesListItem extends React.Component<IGrapeItemProps, {}> {
@@ -28,12 +28,12 @@ export class GrapesListItem extends React.Component<IGrapeItemProps, {}> {
 
     public renderButton() {
         if (this.props.isEditable) {
-            return <FloatingBtn onClick={ () => this.props.handleSave(this.props.id) }
+            return <FloatingBtn onClick={ (e) => this.props.handleSave(e, this.props.id) }
                                 classes={ ["small", "green-bg"] }>
                         <MaterialIcon iconName="save" />
                     </FloatingBtn>;
         }
-        return <FloatingBtn onClick={ () => this.props.handleEdit(this.props.id) }
+        return <FloatingBtn onClick={ (e) => this.props.handleEdit(e, this.props.id) }
                             classes={ ["small", "red-bg"] }>
                     <MaterialIcon iconName="edit" />
                 </FloatingBtn>;

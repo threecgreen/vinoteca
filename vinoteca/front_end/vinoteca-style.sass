@@ -25,6 +25,8 @@ $light-gray: rgb(200, 200, 200)
   background-color: lighten($wine-red, 15)
 .light-gray-bg
   background-color: $light-gray
+.light-gray-bg:focus
+  background-color: $light-gray
 .light-gray-bg:hover
   background-color: lighten($light-gray, 7)
 
@@ -223,9 +225,25 @@ img
 .no-forced-caps
   text-transform: none
 
-.spec-chars
+/** Special character btn */
+.spec-char-btn
   @extend .no-forced-caps
   @extend .light-gray-bg
+  margin-left: 4px
+  margin-right: 4px
+.shift-btn
+  margin-left: 4px
+  margin-right: 4px
+/** Special character div */
+.special-chars
+  position: fixed
+  align-content: center
+  bottom: 0
+  background: white
+  z-index: 2
+  padding: 15px
+  margin-bottom: 30px
+  margin-left: 0!important
 
 /** Rating slider had unnecessary margin */
 #rating-slider

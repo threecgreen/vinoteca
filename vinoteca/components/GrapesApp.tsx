@@ -5,32 +5,43 @@ import Logger from "../lib/Logger";
 import { IRESTObject } from "../lib/rest";
 import { GrapesList } from "./GrapesList";
 import { Preloader } from "./Preloader";
+import { SpecialChars } from "./SpecialChars";
 
 export class GrapeItem {
     constructor(public id: number, public name: string, public isEditable = false) {
     }
 }
 
-const initialState = { grapes: [] as GrapeItem[] };
-type State = Readonly<typeof initialState>;
+interface IGrapesAppState {
+    grapes: GrapeItem[];
+    // Keep track of id of last active grape name input for special characters
+    lastActiveId?: number;
+    logger: Logger;
+}
 
-export class GrapesApp extends React.Component {
-    public readonly state: State = initialState;
-    private logger: Logger = new Logger("GrapesApp");
-
-    constructor(props: any) {
+export class GrapesApp extends React.Component<{}, IGrapesAppState> {
+    constructor(props: {}) {
         super(props);
-        this.state = initialState;
+        this.state = {
+            grapes: [],
+            lastActiveId: undefined,
+            logger: new Logger(this.constructor.name),
+        };
     }
 
     public render() {
         if (this.state) {
-            return <GrapesList grapes={this.state.grapes}
-                               handleEdit={this.handleEdit.bind(this)}
-                               handleSave={this.handleSave.bind(this)}
-                               onChange={this.onChange.bind(this)} />;
+            return <div>
+                <GrapesList grapes={this.state.grapes}
+                            handleEdit={this.handleEdit.bind(this)}
+                            handleSave={this.handleSave.bind(this)}
+                            onChange={this.onChange.bind(this)} />
+                <SpecialChars onClick={this.handleSpecialChar.bind(this)}
+                              display={this.hasEditableGrapes} />
+                <span className="clear" />
+            </div>;
         } else {
-            return <Preloader/>;
+            return <Preloader />;
         }
     }
 
@@ -45,34 +56,74 @@ export class GrapesApp extends React.Component {
     }
 
     public onChange(id: number, name: string) {
-        const [ changed, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
-        changed[0].name = name;
-        this.setState({
-            grapes: changed.concat(grapes),
-        });
+        this.setState((state) => ({
+            grapes: state.grapes.map((g) => {
+                if (g.id === id) {
+                    g.name = name;
+                }
+                return g;
+            }),
+        }));
     }
 
     /** Updates state to reflect that a grape is editable. */
-    public handleEdit(id: number) {
-        const [ edited, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
-        edited[0].isEditable = true;
-        this.setState({
-            grapes: edited.concat(grapes),
+    public handleEdit(e: React.MouseEvent, id: number) {
+        e.preventDefault();
+        let lastActiveId: number;
+        this.setState((state) => ({
+            grapes: state.grapes.map((g) => {
+                if (g.id === id) {
+                    g.isEditable = true;
+                    lastActiveId = g.id;
+                }
+                return g;
+            }),
+            lastActiveId,
+        }));
+    }
+
+    public handleSave(e: React.MouseEvent, id: number) {
+        e.preventDefault();
+        this.setState((state) => {
+            let lastActiveId = state.lastActiveId;
+            const grapes = state.grapes.map((g) => {
+                if (g.id === id) {
+                    g.isEditable = false;
+                    lastActiveId = lastActiveId === id ? undefined : lastActiveId;
+                    put(
+                        this.getGrapesUrl(id),
+                        {id, name: g.name},
+                    ).catch((e) => {
+                        state.logger.logError(
+                            `Failed to save grape change for grape with id ${id}`
+                            + ` and error message ${e.message}`,
+                        );
+                    });
+                }
+                return g;
+            });
+            return {
+                grapes,
+                lastActiveId,
+            };
         });
     }
 
-    public handleSave(id: number) {
-        const [ savedL, grapes ] = _.partition(this.state.grapes, (g) => g.id === id);
-        const saved: GrapeItem = savedL[0];
-        saved.isEditable = false;
-        put(
-            this.getGrapesUrl(id),
-            {id: saved, name: saved.name},
-        ).catch((e) => {
-            this.logger.logError(`Failed to save grape change for grape with id ${id}`
-                                 + ` and error message ${e.message}`);
-        });
-        this.setState({grapes: [saved].concat(grapes)});
+    public handleSpecialChar(e: React.MouseEvent, char: string) {
+        e.preventDefault();
+        if (this.state.lastActiveId) {
+            this.setState((state) => ({
+                grapes: state.grapes.map((g) => {
+                    return g.id === state.lastActiveId
+                        ? new GrapeItem(g.id, g.name + char, g.isEditable)
+                        : g;
+                }),
+            }));
+        }
+    }
+
+    private get hasEditableGrapes(): boolean {
+        return _.some(this.state.grapes, (g: GrapeItem) => g.isEditable);
     }
 
     private getGrapesUrl(id?: number): string {

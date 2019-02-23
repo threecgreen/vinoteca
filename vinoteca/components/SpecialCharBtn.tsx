@@ -9,7 +9,7 @@ interface ISpecialCharBtnProps extends IClassesProp {
 
 export class SpecialCharBtn extends React.Component<ISpecialCharBtnProps, {}> {
     public render() {
-        const classes = ["center", "spec-chars"];
+        const classes = ["btn-small", "center", "spec-char-btn"];
         return <FloatingBtn classes={ classes }
                             onClick={ (e) => this.props.onClick(e, this.props.char) }>
             { this.props.char }
