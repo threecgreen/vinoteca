@@ -4,6 +4,7 @@ out there. May also move most or all other JSON methods over to this views
 file."""
 import logging
 
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from rest_framework import generics, mixins
 
@@ -18,7 +19,7 @@ from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
     WineGrapes
 )
-from vinoteca.utils import get_region_flags
+from vinoteca.utils import get_region_flags, json_post
 
 
 def region_all_names(_) -> JsonResponse:
@@ -138,6 +139,8 @@ class GrapeView(generics.GenericAPIView,
 CLIENT_SIDE_LOGGER = logging.getLogger("ClientSide")
 
 
+@csrf_exempt
+@json_post
 def write_client_side_logs(request):
     r"""Allows errors on the client-side to be written to the unified vinoteca
     logs.
@@ -151,7 +154,7 @@ def write_client_side_logs(request):
         module = request.POST.get("module")
         message = request.POST.get("message")
         if any([field is None for field in (level, message, module)]):
-            return JsonResponse({"success": False})
+            return JsonResponse({"success": False}, status=400)
         if level == "critical":
             CLIENT_SIDE_LOGGER.critical(f"{module}: {message}")
         elif level == "error":
@@ -163,5 +166,4 @@ def write_client_side_logs(request):
         else:
             CLIENT_SIDE_LOGGER.debug(f"{module}: {message}")
         return JsonResponse({"success": True})
-    else:
-        raise HttpResponse(statuscode=405)
+    return JsonResponse({"success": False}, status=405)

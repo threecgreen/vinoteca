@@ -1,3 +1,4 @@
+import { post } from "./ApiHelper";
 import { toast } from "./widgets";
 
 /** Provides logging functionality for client-side JavaScript errors. */
@@ -7,6 +8,10 @@ enum LogLevel {
     Warning = "warning",
     Info = "info",
     Debug = "debug",
+}
+
+interface ILogResult {
+    success: boolean;
 }
 
 export default class Logger {
@@ -59,7 +64,15 @@ export default class Logger {
     }
 
     private log(level: LogLevel, message: string) {
-        return $.post("/rest/logs/client/", {level, module: this.module, message});
+        return post("/rest/logs/client", {
+            level,
+            message,
+            module: this.module,
+        }).then((response: ILogResult) => {
+            if (!response.success) {
+                this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+            }
+        });
     }
 
     private toast(level: LogLevel, message: string) {

@@ -1,12 +1,14 @@
 r"""Assorted functions used accross vinoteca. Many are database related or deal
 with parsing POST requests."""
 import logging
+import json
 import sqlite3
 from datetime import date, datetime
 from pathlib import Path
 from typing import List, Type, Union
 
 from dateutil.relativedelta import relativedelta
+from django import http
 
 from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, VitiAreas,
@@ -34,6 +36,15 @@ def strip_params(db_func):
             new_kwargs[kwarg_key] = kwarg_val
         return db_func(*new_args, **new_kwargs)
     return _strip_params
+
+
+def json_post(view):
+    def _new_view(request: http.request, *args, **kwargs):
+        if not request.POST and request.body and request.content_type == "application/json":
+            request.POST = json.loads(request.body)
+        return view(request, *args, **kwargs)
+    return _new_view
+
 
 
 class TableColumn(object):
