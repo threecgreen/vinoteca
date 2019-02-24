@@ -161,7 +161,7 @@ LOGGING = {
                 "DEBUG":    "bold_green",
                 "INFO":     "bold_blue",
                 "WARNING":  "bold_yellow",
-                "ERROR":    "bold_orange",
+                "ERROR":    "bold_red",
                 "CRITICAL": "bold_red",
             },
         },

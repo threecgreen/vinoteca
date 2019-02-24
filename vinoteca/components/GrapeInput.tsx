@@ -57,6 +57,10 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
 
     /** Starts autocomplete on mount */
     public componentDidMount() {
+        /*
+         * TODO: although straightforward, there's no reason to fetch all grapes each
+         * time a grape input is added.
+         */
         autocomplete("grape", 5, 1, `#${this.NameId}`);
         // Fix overlapping text bug
         M.updateTextFields();
