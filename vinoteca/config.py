@@ -14,10 +14,10 @@ LOGGER = logging.getLogger(__name__)
 class ConfigurationManager(object):
     r"""Manages machine-specific configurations set by the user that can't be
     stored in the database."""
-    def __init__(self, path: Path, database_path: Path, media_folder_path: Path,
+    def __init__(self, path: Path, database_path: Path, media_path: Path,
                  log_path: Path):
         self.database_path = str(database_path)
-        self.media_folder_path = str(media_folder_path)
+        self.media_path = str(media_path)
         self.log_path = str(log_path)
         LOGGER.debug(f"Default configurations: {self}")
         if Path(path).exists():
@@ -25,7 +25,7 @@ class ConfigurationManager(object):
 
     def __repr__(self):
         return (f"<ConfigurationManager(database_path={self.database_path},"
-                f" media_folder_path={self.media_folder_path})>")
+                f" media_path={self.media_path})>")
 
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
@@ -35,5 +35,12 @@ class ConfigurationManager(object):
             for setting, _ in self.__dict__.items():
                 val = config.get(setting, "")
                 LOGGER.debug(f"For setting '{setting}' found configuration '{val}'")
-                if val and Path(val).expanduser().exists():
+                if val and (Path(val).expanduser().exists()
+                            or (Path(val).expanduser().parent.exists()
+                                and setting == "log_path")):
                     setattr(self, setting, str(Path(val).expanduser().resolve()))
+                else:
+                    LOGGER.warn(f"Invalid path set for {setting} with value '{val}'")
+                    LOGGER.debug(f"Val {val} is {bool(val)}")
+                    LOGGER.debug(f"Path {Path(val).expanduser()}")
+                    LOGGER.debug(f"Exists is {Path(val).expanduser().exists()}")

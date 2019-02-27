@@ -132,7 +132,7 @@ STATICFILES_DIRS = [
 
 # Media files
 MEDIA_URL = "/media/"
-MEDIA_ROOT = CONFIG_MAN.media_folder_path
+MEDIA_ROOT = CONFIG_MAN.media_path
 
 # Django rest
 REST_FRAMEWORK = {
