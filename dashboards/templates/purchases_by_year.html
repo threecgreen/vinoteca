@@ -16,9 +16,9 @@
       <tr>
         {% include "basic_cell.html" with name=year.year %}
         {% include "number_cell.html" with number=year.quantity %}
-        {% include "number_cell.html" with number=year.quantity decpoint=True %}
-        {% include "number_cell.html" with number=year.quantity decpoint=True %}
-        {% include "number_cell.html" with number=year.quantity decpoint=True %}
+        {% include "number_cell.html" with number=year.price decpoint=True %}
+        {% include "number_cell.html" with number=year.avg_price decpoint=True %}
+        {% include "number_cell.html" with number=year.avg_vintage decpoint=True %}
       </tr>
     {% endfor %}
     </tbody>
