@@ -14,7 +14,7 @@ from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, VitiAreas,
     WineGrapes, Wines, WineTypes
 )
-from vinoteca.settings import BASE_DIR
+from vinoteca.settings import BASE_DIR, CONFIG_MAN
 
 
 LOGGER = logging.getLogger(__name__)
@@ -233,7 +233,7 @@ def empty_to_none(item: str, type_: Type = None) -> Union["type_", str]:
 def get_connection() -> sqlite3.Connection:
     r"""Get a SQLite database connection."""
     LOGGER.debug("Creating database connection")
-    return sqlite3.connect(str(Path(BASE_DIR) / "data" / "wine.db"))
+    return sqlite3.connect(CONFIG_MAN.database_path)
 
 
 def date_str_to_int(date_str: str) -> Union[int]:
