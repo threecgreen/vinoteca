@@ -6,8 +6,8 @@ parse_args()
 # Parses command-line arguments by assigning them a variable. Pass with $@
 {
     GIT_PULL="true"
-    while [ $1 != "" ]; do
-        case $1 in
+    while [ "$1" != "" ]; do
+        case "$1" in
             -g | --no-git-pull)
                 GIT_PULL="false"
                 ;;
@@ -24,7 +24,7 @@ find_vinoteca_version
 old_ver="$vinoteca_ver"
 find_python_env
 
-if [ $GIT_PULL = true ]; then
+if [ "$GIT_PULL" = true ]; then
     info_text "Updating project source..."
     # Check for clean directory
     if [ -z "$(git status -uno --porcelain)"]; then
