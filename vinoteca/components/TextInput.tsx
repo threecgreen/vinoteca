@@ -12,7 +12,7 @@ interface ITextInputProps {
     initText: string;
     enabled: boolean;
     className: string;
-    onChange: (val: string) => void;
+    // onChange: (val: string) => void;
     autocomplete: boolean;
     s?: number;
     m?: number;

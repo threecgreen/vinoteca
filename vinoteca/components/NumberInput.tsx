@@ -11,7 +11,7 @@ interface INumberInputProps {
     initNumber: number;
     enabled: boolean;
     className: string;
-    onChange: (val: string) => void;
+    // onChange: (val: string) => void;
     min: number;
     step: string;
     s?: number;
