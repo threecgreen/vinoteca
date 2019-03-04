@@ -25,7 +25,7 @@ class ConfigurationManager(object):
 
     def __repr__(self):
         return (f"<ConfigurationManager(database_path={self.database_path},"
-                f" media_path={self.media_path})>")
+                f" media_path={self.media_path}, log_path={self.log_path})>")
 
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
@@ -40,7 +40,8 @@ class ConfigurationManager(object):
                                 and setting == "log_path")):
                     setattr(self, setting, str(Path(val).expanduser().resolve()))
                 else:
-                    LOGGER.warn(f"Invalid path set for {setting} with value '{val}'")
+                    if len(val) > 0:
+                        LOGGER.warn(f"Invalid path set for {setting} with value '{val}'")
                     LOGGER.debug(f"Val {val} is {bool(val)}")
                     LOGGER.debug(f"Path {Path(val).expanduser()}")
                     LOGGER.debug(f"Exists is {Path(val).expanduser().exists()}")
