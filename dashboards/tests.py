@@ -10,7 +10,6 @@ def connection():
     return get_connection()
 
 
-@pytest.mark.xfail(pytest.CI, reason="Purchase queries aren't working in CI.")
 @pytest.mark.django_db
 def test_dash_page(client):
     response = client.get(reverse("Dashboards"))
