@@ -86,8 +86,19 @@ check_for_node()
 {
     command -v "$py_env/npm" > /dev/null 2>&1
     if [ $? != 0 ]; then
-        error_exit "Node is not installed."
+        error_exit "NPM is not installed."
     fi
+}
+
+js_install_and_build()
+{
+    info_text "Installing JavaScript dependencies..."
+    check_for_node
+    cd vinoteca
+    "$py_env/npm" ci || error_exit "Failed installing JavaScript dependencies"
+    info_text "Building webpack bundles..."
+    "$py_env/npm" run-script build || error_exit "Failed building webpack bundles"
+    cd "$root_dir"
 }
 
 find_tslint()
