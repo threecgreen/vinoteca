@@ -105,10 +105,10 @@ def change_inventory(request, wine_id: int, sign: str,
     assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
-        logging.debug(f"Adding one to inventory of wine with id {wine_id}")
+        LOGGER.debug(f"Adding one to inventory of wine with id {wine_id}")
         wine.inventory += 1
     else:
-        logging.debug(f"Removing one from inventory of wine with id {wine_id}")
+        LOGGER.debug(f"Removing one from inventory of wine with id {wine_id}")
         wine.inventory -= 1
     wine.save()
     if return_to_inventory:

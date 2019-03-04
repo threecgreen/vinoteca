@@ -122,18 +122,18 @@ def test_insert_new_wine(client, store, wine_type, producer, region, description
 @pytest.fixture
 def upload_file(a_wine):
     # Rename file if it already exists
-    image_file = Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png"
+    image_file = Path(settings.MEDIA_ROOT) / f"{a_wine.id}.png"
     if image_file.is_file():
         existing_file = True
-        image_file.rename(Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png")
+        image_file.rename(Path(settings.MEDIA_ROOT) / f"{a_wine.id}_real.png")
     else:
         existing_file = False
     with open(Path(__file__).parent.parent / "vinoteca" / "test_data" / "test.jpg", "rb") as file:
         yield file
-    (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").unlink()
+    (Path(settings.MEDIA_ROOT) / f"{a_wine.id}.png").unlink()
     if existing_file:
-        (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}_real.png").rename(
-            Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png")
+        (Path(settings.MEDIA_ROOT) / f"{a_wine.id}_real.png").rename(
+            Path(settings.MEDIA_ROOT) / f"{a_wine.id}.png")
 
 
 @pytest.fixture
@@ -199,7 +199,7 @@ def test_edit_wine_image(a_wine, client, upload_file):
     response = client.post(f"/wines/{a_wine.id}/edit/", post_data, follow=True)
     assert response.status_code == 200
     assert (f"/wines/{a_wine.id}/", 302) in response.redirect_chain
-    assert (Path(settings.BASE_DIR) / "media" / f"{a_wine.id}.png").is_file()
+    assert (Path(settings.MEDIA_ROOT) / f"{a_wine.id}.png").is_file()
     response = client.get(f"/media/{a_wine.id}.png")
     assert response.status_code == 200
 

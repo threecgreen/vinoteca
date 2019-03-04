@@ -10,14 +10,15 @@ def create_config_yaml(_, __):
         "log_path": ""
     }
     config_file = settings.BASE_DIR / "vinoteca" / "config.yaml"
-    with open(config_file, "w") as fout:
-        print("# Use this file to override the location of vinoteca database,", file=fout)
-        print("# the wine images folder (media_path), and the log file path.", file=fout)
-        print("#", file=fout)
-        print("# Place the file paths within the single quotes ('').", file=fout)
-        print("# For locations within your home directory, you may abbreviate", file=fout)
-        print("# using the ~ character.", file=fout)
-        print(yaml.dump(default_settings, default_flow_style=False), file=fout)
+    if not config_file.exists():
+        with open(config_file, "w") as fout:
+            print("# Use this file to override the location of vinoteca database,", file=fout)
+            print("# the wine images folder (media_path), and the log file path.", file=fout)
+            print("#", file=fout)
+            print("# Place the file paths within the single quotes ('').", file=fout)
+            print("# For locations within your home directory, you may abbreviate", file=fout)
+            print("# using the ~ character.", file=fout)
+            print(yaml.dump(default_settings, default_flow_style=False), file=fout)
 
 
 class Migration(migrations.Migration):
