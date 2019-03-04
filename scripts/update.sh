@@ -27,12 +27,12 @@ find_python_env
 if [ "$GIT_PULL" = true ]; then
     info_text "Updating project source..."
     # Check for clean directory
-    if [ -z "$(git status -uno --porcelain)"]; then
+    if [ -n "$(git status -uno --porcelain)" ]; then
         git stash
     fi
     git remote update
     # Check for clean directory
-    git status --uno | grep 'behind'
+    git status -uno | grep 'behind'
     if [ $? = 0 ]; then
         git pull -r || error_exit "Failed to update source code."
     else
