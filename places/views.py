@@ -1,15 +1,13 @@
 """Contains views for interacting with Places: ie, regions, viticultural areas,
 and stores."""
-import logging
-
 from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render
 
 from vinoteca.models import Regions, Wines, VitiAreas
-from vinoteca.utils import flag_exists, TableColumn
+from vinoteca.utils import flag_exists, get_logger, TableColumn
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("places")
 
 
 def region_profile(request, region_id: int):

@@ -172,10 +172,6 @@ LOGGING = {
             "level": "INFO",
             "formatter": "simple",
         },
-        "mail_admins": {
-            "level": "ERROR",
-            "class": "django.utils.log.AdminEmailHandler",
-        },
         "file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
@@ -187,17 +183,17 @@ LOGGING = {
     },
     "loggers": {
         "vinoteca": {
-            "handlers": ["console", "file", "mail_admins"],
+            "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
             "propagate": True,
         },
         "django": {
-            "handlers": ["console", "file", "mail_admins"],
+            "handlers": ["console", "file"],
             "level": "DEBUG" if DEBUG else "INFO",
             "propagate": True,
         },
         "django.request": {
-            "handlers": ["file", "mail_admins"],
+            "handlers": ["file"],
             "level": "INFO",
             "propagate": False,
         },
@@ -206,9 +202,9 @@ LOGGING = {
             "level": "ERROR",
             "propagate": False,
         },
-        "javascript_error": {
-            "handlers": ["file", "mail_admins"],
-            "level": "WARNING",
+        "vinoteca.client_side": {
+            "handlers": ["file"],
+            "level": "INFO",
             "propagate": True,
         },
     },

@@ -2,8 +2,6 @@ r"""Still figuring out where exactly the REST framework will be used. It seems
 ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
-import logging
-
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from rest_framework import generics, mixins
@@ -19,7 +17,10 @@ from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
     WineGrapes
 )
-from vinoteca.utils import get_region_flags, json_post
+from vinoteca.utils import get_region_flags, get_logger, json_post
+
+
+LOGGER = get_logger("rest")
 
 
 def region_all_names(_) -> JsonResponse:
@@ -132,11 +133,11 @@ class GrapeView(generics.GenericAPIView,
         try:
             return self.update(request, *args, **kwargs)
         except Exception as e:
-            logging.warn(e)
+            LOGGER.warn(e)
             raise e
 
 
-CLIENT_SIDE_LOGGER = logging.getLogger("ClientSide")
+CLIENT_SIDE_LOGGER = get_logger("client_side")
 
 
 @csrf_exempt
@@ -162,7 +163,7 @@ def write_client_side_logs(request):
         elif level == "warning":
             CLIENT_SIDE_LOGGER.warning(f"{module}: {message}")
         elif level == "info":
-            CLIENT_SIDE_LOGGER.warning(f"{module}: {message}")
+            CLIENT_SIDE_LOGGER.info(f"{module}: {message}")
         else:
             CLIENT_SIDE_LOGGER.debug(f"{module}: {message}")
         return JsonResponse({"success": True})

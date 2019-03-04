@@ -64,7 +64,7 @@ export default class Logger {
     }
 
     private log(level: LogLevel, message: string) {
-        return post("/rest/logs/client", {
+        return post("/rest/logs/client/", {
             level,
             message,
             module: this.module,

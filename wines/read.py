@@ -1,5 +1,4 @@
 # pylint: disable=unused-argument
-import logging
 from pathlib import Path
 from typing import NamedTuple
 
@@ -10,10 +9,10 @@ from django.template.loader import render_to_string
 from django.views import View
 
 from vinoteca.models import Colors, Purchases, Wines, WineGrapes
-from vinoteca.utils import get_connection, empty_to_none, TableColumn
+from vinoteca.utils import get_connection, empty_to_none, get_logger, TableColumn
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("wines.read")
 
 
 class WineProfileView(View):

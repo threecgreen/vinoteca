@@ -1,5 +1,4 @@
 """Views for creating new wine and wine purchase data."""
-import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -11,13 +10,14 @@ from vinoteca.image import UserImage
 from vinoteca.models import Colors, Stores, Wines
 from vinoteca.utils import (
     empty_to_none, g_or_c_store, g_or_c_wine_type, g_or_c_producer,
-    g_or_c_region, c_wine, g_or_c_viti_area, c_purchase, default_vintage_year
+    g_or_c_region, c_wine, g_or_c_viti_area, c_purchase, default_vintage_year,
+    get_logger
 )
 from wines.read import WineProfileView
 from wine_attrs.views import handle_grapes
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("wines.create")
 
 
 class NewWineView(View):

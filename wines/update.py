@@ -1,5 +1,4 @@
 """Views for updating or editing wine and wine purchase data."""
-import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -10,14 +9,14 @@ from vinoteca.image import UserImage
 from vinoteca.models import Colors, Purchases, Wines
 from vinoteca.utils import (
     date_str_to_int, g_or_c_wine_type, g_or_c_store, g_or_c_producer,
-    g_or_c_region, empty_to_none, g_or_c_viti_area
+    g_or_c_region, empty_to_none, g_or_c_viti_area, get_logger
 )
 from wines.read import WineProfileView
 from wine_attrs.views import handle_grapes
 
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("wines.update")
 
 
 class EditWineView(WineProfileView):

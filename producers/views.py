@@ -1,16 +1,14 @@
 """Contains views for interacting with data regarding wine producers."""
-import logging
-
 from django.db.models import Max, Sum, Avg
 from django.shortcuts import render, redirect
 
 from vinoteca.models import (
     Producers, Wines
 )
-from vinoteca.utils import empty_to_none, g_or_c_region, TableColumn
+from vinoteca.utils import empty_to_none, g_or_c_region, get_logger, TableColumn
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("producers")
 
 
 def producer_profile(request, producer_id: int):

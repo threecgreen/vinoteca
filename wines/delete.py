@@ -1,13 +1,12 @@
 """Views for deleting wines and purchases."""
 # pylint: disable=unused-argument
-import logging
-
 from django.shortcuts import redirect
 
 from vinoteca.models import Purchases, WineGrapes, Wines
+from vinoteca.utils import get_logger
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("wines.delete")
 
 
 def delete_wine(request, wine_id: int):

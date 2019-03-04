@@ -1,14 +1,13 @@
 r"""Contains views for CRUD functionality for WineTypes and Colors which are
 'wine attributes.'"""
-import logging
 from django.db.models import Avg, Max, Sum
 from django.shortcuts import render
 
 from vinoteca.models import Wines, WineTypes, WineGrapes
-from vinoteca.utils import c_or_u_wine_grapes, empty_to_none, TableColumn
+from vinoteca.utils import c_or_u_wine_grapes, empty_to_none, get_logger, TableColumn
 
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = get_logger("wine_attrs")
 
 
 def wine_type_profile(request, wine_type_id: int):

@@ -7,6 +7,11 @@ from typing import Union
 
 from PIL import Image, ExifTags
 
+from vinoteca.utils import get_logger
+
+
+LOGGER = get_logger(__file__)
+
 
 class UserImage(object):
     r"""Object containing a loaded Pillow image and contains functions used
@@ -16,8 +21,8 @@ class UserImage(object):
         try:
             self.image = Image.open(in_file)
         except IOError:
-            print("IOError opening the image file for editing.")
-            print(in_file)
+            LOGGER.warn("IOError opening the image file for editing.")
+            LOGGER.info(f"File: {in_file}")
             self.image = None
 
     def save(self) -> bool:
@@ -26,7 +31,7 @@ class UserImage(object):
         try:
             self.image.save(out_file)
         except IOError:
-            print("IOError opening the image file for saving.")
+            LOGGER.warn("IOError opening the image file for saving.")
             return False
         return True
 

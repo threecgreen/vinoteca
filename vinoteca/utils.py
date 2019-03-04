@@ -17,7 +17,12 @@ from vinoteca.models import (
 from vinoteca.settings import BASE_DIR, CONFIG_MAN
 
 
-LOGGER = logging.getLogger(__name__)
+def get_logger(module: str):
+    r"""Returns a logger under the vinoteca namespace."""
+    return logging.getLogger(f"vinoteca.{module}")
+
+
+LOGGER = get_logger(__name__)
 
 
 def strip_params(db_func):
@@ -39,12 +44,13 @@ def strip_params(db_func):
 
 
 def json_post(view):
+    r"""Decorator function that parses a request that contains JSON in the request
+    body and stores it in the POST property of the request object."""
     def _new_view(request: http.request, *args, **kwargs):
         if not request.POST and request.body and request.content_type == "application/json":
             request.POST = json.loads(request.body)
         return view(request, *args, **kwargs)
     return _new_view
-
 
 
 class TableColumn(object):
