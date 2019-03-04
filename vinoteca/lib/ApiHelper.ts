@@ -1,5 +1,8 @@
+import * as Cookies from "js-cookie";
+
 const headers = {
     "Content-Type": "application/json",
+    "X-CSRFToken": Cookies.get("csrftoken") || "",
 };
 
 export async function get(url: string): Promise<any> {

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { CheckboxInput } from "./CheckboxInput";
 import { DateInput } from "./DateInput";
 import { Row } from "./Grid";
 import { NumberInput } from "./NumberInput";
@@ -29,24 +30,35 @@ export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurch
     }
 
     public render() {
-        const inventory = this.props.displayInventoryBtn ? null : null;
+        const inventory = this.props.displayInventoryBtn
+            ? <CheckboxInput id="add-to-inventory" text="Add to Inventory"
+                             default={ true } s={ 3 } l={ 1 } />
+            : null;
+        const [quantityS, quantityL] = this.calcQuantitySize();
         return (
             <Row>
                 <DateInput />
-                { inventory }
                 <NumberInput id="quantity" name="Quantity" className="validate"
                              initNumber={ this.state.quantity } enabled={ true }
-                             min={ 0 } step="1" />
+                             min={ 0 } step="1" s={ quantityS } l={ quantityL } />
+                { inventory }
                 <NumberInput id="price" name="Price" className="validate"
                              initNumber={ this.state.price } enabled={ true }
-                             min={ 0 } step="0.01" />
+                             min={ 0 } step="0.01" s={ 6 } l={ 3 } />
                 <TextInput id="store" name="Store" autocomplete={ true }
                            initText={ this.state.storeName } enabled={ true }
-                           className="autocomplete" />
+                           className="autocomplete" s={ 6 } l={ 3 } />
                 <TextInput id="memo" name="Memo" autocomplete={ false }
                            initText={ this.state.memo } enabled={ true }
-                           className="" />
+                           className="" s={ 6 } l={ 3 } />
             </Row>
         );
+    }
+
+    private calcQuantitySize(): [number, number] {
+        if (this.props.displayInventoryBtn) {
+            return [3, 2];
+        }
+        return [6, 3];
     }
 }

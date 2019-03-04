@@ -33,11 +33,8 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
     }
 
     public render() {
-        const sClass = this.props.s ? `s${this.props.s}` : ``;
-        const mClass = this.props.m ? `m${this.props.m}` : ``;
-        const lClass = this.props.l ? `l${this.props.l}` : ``;
         const id = this.props.id;
-        return <InputField classes={ [sClass, mClass, lClass] }>
+        return <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
             <input id={ id } name={ id } type={ this.props.inputType }
                    className={ this.props.className } value={ this.props.value }
                    step={ this.props.step } min={ this.props.min }

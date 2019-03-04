@@ -2,10 +2,6 @@ import * as React from "react";
 import { autocomplete } from "../lib/widgets";
 import { Input } from "./Input";
 
-interface ITextInputState {
-    text: string;
-}
-
 interface ITextInputProps {
     id: string;
     name: string;
@@ -17,6 +13,10 @@ interface ITextInputProps {
     s?: number;
     m?: number;
     l?: number;
+}
+
+interface ITextInputState {
+    text: string;
 }
 
 export class TextInput extends React.Component<ITextInputProps, ITextInputState> {

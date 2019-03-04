@@ -1,10 +1,6 @@
 import * as React from "react";
 import { Input } from "./Input";
 
-interface INumberInputState {
-    number: number;
-}
-
 interface INumberInputProps {
     id: string;
     name: string;
@@ -17,6 +13,10 @@ interface INumberInputProps {
     s?: number;
     m?: number;
     l?: number;
+}
+
+interface INumberInputState {
+    number: number;
 }
 
 export class NumberInput extends React.Component<INumberInputProps, INumberInputState> {

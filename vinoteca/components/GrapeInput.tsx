@@ -23,14 +23,14 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
     }
 
     public render() {
-        return <Col classes={ ["grape-block", "s12", "l6"] }>
-            <InputField classes={ ["s1"] }>
+        return <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
+            <InputField s={ 1 }>
                 <FloatingBtn onClick={ (e) => this.props.handleDelete(e, this.props.id) }
                              classes={ ["red-bg"] }>
                     <MaterialIcon iconName="remove"></MaterialIcon>
                 </FloatingBtn>
             </InputField>
-            <InputField classes={ ["s3"] }>
+            <InputField s={ 3 }>
                 <input id={ this.PercentId }
                        name={ this.PercentId }
                        type="number"
@@ -41,7 +41,7 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
                        value={ this.props.percent } />
                 <label htmlFor={ this.PercentId }>Percentage</label>
             </InputField>
-            <InputField classes={ ["s8"] }>
+            <InputField s={ 8 }>
                 <input id={ this.NameId }
                        name={ this.NameId }
                        type="text"

@@ -3,8 +3,9 @@ import { Col } from "./Grid";
 
 export class InputField extends Col {
     public render() {
-        return <div className={ `input-field col ${(this.props.classes || []).join(" ")}` }>
+        return <Col classes={ ["input-field"] } s={ this.props.s } m={ this.props.m }
+                    l={ this.props.l }>
             { this.props.children }
-        </div>;
+        </Col>;
     }
 }
