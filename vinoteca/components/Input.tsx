@@ -11,6 +11,7 @@ export interface IInputProps<T extends IInputValue> {
     className: string;
     onChange: (val: string) => void;
     inputType?: string;
+    active?: boolean;
     step?: string;
     min?: number;
     s?: number;
@@ -40,7 +41,9 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                    step={ this.props.step } min={ this.props.min }
                    onChange={ (e) => this.props.onChange(e.target.value) } >
             </input>
-            <label htmlFor={ id }>{ this.props.name }</label>
+            <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
+                { this.props.name }
+            </label>
         </InputField>;
     }
 }

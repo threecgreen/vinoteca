@@ -1,3 +1,4 @@
+import * as M from "materialize-css";
 import * as React from "react";
 import { Col } from "./Grid";
 
@@ -28,15 +29,14 @@ export class CheckboxInput extends React.Component<ICheckboxInputProps, ICheckbo
                 <label htmlFor={ this.props.id }>
                     { this.props.text }
                     <input type="checkbox" id={ this.props.id } name={ this.props.id }
-                           checked={ this.state.checked } onClick={ (e) => this.onClick(e) } />
+                           checked={ this.state.checked } onChange={ () => this.onClick() } />
                     <span className="lever" />
                 </label>
             </div>
         </Col>;
     }
 
-    public onClick(e: React.MouseEvent) {
-        e.preventDefault();
+    public onClick() {
         this.setState((state) => ({
             checked: !state.checked,
         }));

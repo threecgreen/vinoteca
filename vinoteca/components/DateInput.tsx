@@ -14,9 +14,16 @@ export class DateInput extends React.Component<{}, IDateInputState> {
         };
     }
 
+    get valueSet(): boolean {
+        if (this.state.date) {
+            return true;
+        }
+        return false;
+    }
+
     public render() {
-        return <Input id="purchase-date" name="Purchase Date" value={ this.state.date }
-                      className="datepicker" s={ 6 } l={ 3 }
+        return <Input id="purchase-date" name="Purchase Date" value={ this.state.date || "" }
+                      className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
                       onChange={ this.onChange.bind(this) } />;
     }
 
