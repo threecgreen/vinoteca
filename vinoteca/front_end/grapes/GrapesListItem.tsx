@@ -1,7 +1,7 @@
 import * as React from "react";
-import { FloatingBtn } from "./FloatingBtn";
+import { FloatingBtn } from "../../components/FloatingBtn";
 import { GrapeItem } from "./GrapesApp";
-import { MaterialIcon } from "./MaterialIcon";
+import { MaterialIcon } from "../../components/MaterialIcon";
 
 interface IGrapeItemProps extends GrapeItem {
     onChange: (id: number, name: string) => void;

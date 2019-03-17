@@ -71,6 +71,18 @@
             "script": "watch",
             "path": "vinoteca/",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "install",
+            "path": "vinoteca/",
+            "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "path": "vinoteca/",
+            "problemMatcher": []
         }
     ],
 }

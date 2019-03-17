@@ -1,11 +1,11 @@
 import * as _ from "lodash";
 import * as React from "react";
-import { get, put } from "../lib/ApiHelper";
-import Logger from "../lib/Logger";
-import { IRESTObject } from "../lib/rest";
+import { get, put } from "../../lib/ApiHelper";
+import Logger from "../../lib/Logger";
+import { IRESTObject } from "../../lib/rest";
 import { GrapesList } from "./GrapesList";
-import { Preloader } from "./Preloader";
-import { SpecialChars } from "./SpecialChars";
+import { Preloader } from "../../components/Preloader";
+import { SpecialChars } from "../../components/SpecialChars";
 
 export class GrapeItem {
     constructor(public id: number, public name: string, public isEditable = false) {
