@@ -105,6 +105,8 @@ class NewPurchaseView(WineProfileView):
         quantity = int(request.POST.get("quantity"))
         store = g_or_c_store(store)
         wine = Wines.objects.get(id=wine_id)
+        wine.inventory += quantity if request.POST.get("add-to-inventory") else 0
+        wine.save()
         c_purchase(wine, store, price, memo, purchase_date, vintage, quantity)
         return redirect("Wines:Wine Profile", wine_id=wine_id)
 

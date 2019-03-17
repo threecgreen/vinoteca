@@ -80,8 +80,8 @@ def test_inventory_nvs(client):
     r"""Previously there was a bug where wines that were purchased at an unknown
     date had their vintage displayed as 'NV' in the inventory table."""
     # Wine with one purchase
-    wine = Wines.objects.get(id=2)
-    purchase = Purchases.objects.filter(wine__id=2)[0]
+    wine = Wines.objects.get(id=3)
+    purchase = Purchases.objects.filter(wine__id=3)[0]
     purchase.date = None
     purchase.save()
     response = client.get(reverse("Inventory"))

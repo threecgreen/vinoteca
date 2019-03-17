@@ -5,6 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Unit Tests",
+            "type": "python",
+            "request": "test"
+        },
+        {
             "name": "Django",
             "type": "python",
             "request": "launch",
@@ -15,6 +20,6 @@
                 "--nothreading"
             ],
             "django": true
-        },
+        }
     ]
 }

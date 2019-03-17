@@ -107,8 +107,11 @@ def test_insert_new_wine(client, store, wine_type, producer, region, description
         "rating": rating,
         "vintage": vintage,
         "quantity": quantity,
-        "add-to-inventory": add_to_inventory,
+        "add-to-inventory": "on",
     }
+    # No value is passed if the switch is off
+    if not add_to_inventory:
+        del post_data["add-to-inventory"]
     if grapes:
         for i, grape in enumerate(grapes):
             post_data[f"grape-{i + 1}"] = grape[0]
@@ -117,6 +120,11 @@ def test_insert_new_wine(client, store, wine_type, producer, region, description
         post_data[f"grape-{len(grapes)}-pct"] = 100
     response = client.post(reverse("Wines:New Wine"), post_data)
     assert response.status_code == 302
+    wine = Wines.objects.order_by("-id")[0]
+    if add_to_inventory:
+        assert wine.inventory == quantity
+    else:
+        assert wine.inventory == 0
 
 
 @pytest.fixture
@@ -202,6 +210,31 @@ def test_edit_wine_image(a_wine, client, upload_file):
     assert (Path(settings.MEDIA_ROOT) / f"{a_wine.id}.png").is_file()
     response = client.get(f"/media/{a_wine.id}.png")
     assert response.status_code == 200
+
+
+@pytest.mark.parametrize("add_to_inventory", [True, False])
+@pytest.mark.django_db
+def test_new_purchase(client, add_to_inventory, a_wine):
+    post_data = {
+        "purchase-date": date.today().strftime("%b %d, %Y"),
+        "quantity": 2,
+        "add-to-inventory": "on",
+        "price": 10.15,
+        "vintage": 2015,
+        "store": "Costco",
+        "memo": ""
+    }
+    # No value is passed if the switch is off
+    if not add_to_inventory:
+        del post_data["add-to-inventory"]
+    before_inventory = a_wine.inventory
+    response = client.post(reverse("Wines:New Purchase", kwargs={"wine_id": a_wine.id}),
+                           post_data, follow=True)
+    assert response.status_code == 200
+    purchase = Purchases.objects.order_by("-id")[0]
+    assert purchase.wine_id == a_wine.id
+    expected_inventory = before_inventory + (2 if add_to_inventory else 0)
+    assert Wines.objects.get(id=a_wine.id).inventory == expected_inventory
 
 
 @pytest.mark.parametrize("attr,val", [
