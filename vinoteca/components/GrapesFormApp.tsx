@@ -5,6 +5,8 @@ import { GrapeInput } from "./GrapeInput";
 import { Col, Row } from "./Grid";
 import { InputField } from "./InputField";
 import { MaterialIcon } from "./MaterialIcon";
+import { IDict } from "../lib/utils";
+import { get } from "../lib/ApiHelper";
 
 export class WineGrape {
     constructor(public id: number, public name: string, public percent?: number) {
@@ -12,11 +14,15 @@ export class WineGrape {
 }
 
 interface IGrapeFormAppState {
+    completions: IDict<string>;
     wineGrapes: WineGrape[];
 }
 
 export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
-    public readonly state: Readonly<IGrapeFormAppState> = { wineGrapes: [] };
+    public readonly state: Readonly<IGrapeFormAppState> = {
+        completions: {},
+        wineGrapes: [],
+    };
 
     public render() {
         return <Row>
@@ -26,6 +32,7 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
             { this.state.wineGrapes.map((wineGrape) => {
                 return (<GrapeInput key={ wineGrape.id }
                                     id={ wineGrape.id }
+                                    completions={ this.state.completions }
                                     name={ wineGrape.name }
                                     percent={ wineGrape.percent }
                                     handleDelete={ this.handleDelete.bind(this) }
@@ -38,6 +45,13 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
                 </FloatingBtn>
             </InputField>
         </Row>;
+    }
+
+    public componentDidMount() {
+        get("/rest/grapes/all/")
+            .then((completions: IDict<string>) => {
+                this.setState({ completions });
+            });
     }
 
     public handleAdd(e: React.MouseEvent) {

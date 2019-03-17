@@ -1,19 +1,22 @@
 import * as React from "react";
-import { autocomplete } from "../lib/widgets";
+import * as _ from "lodash";
+import { staticAutocomplete } from "../lib/widgets";
 import { FloatingBtn } from "./FloatingBtn";
 import { Col } from "./Grid";
 import { InputField } from "./InputField";
 import { MaterialIcon } from "./MaterialIcon";
+import { IDict } from "../lib/utils";
 
 interface IWineGrapeProps {
     id: number;
+    completions: IDict<string>;
     name: string;
     percent?: number;
     handleDelete: (e: React.MouseEvent, id: number) => void;
     onChange: (id: number, name: string, percent?: string) => void;
 }
 
-export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
+export class GrapeInput extends React.Component<IWineGrapeProps> {
     get PercentId(): string {
         return `grape-${this.props.id}-pct`;
     }
@@ -38,7 +41,7 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
                        onChange={ (e) => this.props.onChange(this.props.id,
                                                              this.props.name,
                                                              e.target.value || undefined)}
-                       value={ this.props.percent } />
+                       value={ this.props.percent || "" } />
                 <label htmlFor={ this.PercentId }>Percentage</label>
             </InputField>
             <InputField s={ 8 }>
@@ -57,12 +60,8 @@ export class GrapeInput extends React.Component<IWineGrapeProps, {}> {
 
     /** Starts autocomplete on mount */
     public componentDidMount() {
-        /*
-         * TODO: although straightforward, there's no reason to fetch all grapes each
-         * time a grape input is added.
-         */
-        autocomplete("grape", 5, 1, `#${this.NameId}`);
-        // Fix overlapping text bug
-        M.updateTextFields();
+        if (!_.isEmpty(this.props.completions)) {
+            staticAutocomplete(this.NameId, this.props.completions);
+        }
     }
 }
