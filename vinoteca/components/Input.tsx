@@ -13,6 +13,7 @@ export interface IInputProps<T extends IInputValue> {
     inputType?: string;
     active?: boolean;
     step?: string;
+    max?: number;
     min?: number;
     s?: number;
     m?: number;
@@ -38,7 +39,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
         return <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
             <input id={ id } name={ id } type={ this.props.inputType }
                    className={ this.props.className } value={ this.props.value }
-                   step={ this.props.step } min={ this.props.min }
+                   step={ this.props.step } min={ this.props.min } max={ this.props.max }
                    onChange={ (e) => this.props.onChange(e.target.value) } >
             </input>
             <label className={ this.props.active ? "active" : "" } htmlFor={ id }>

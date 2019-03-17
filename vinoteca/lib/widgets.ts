@@ -1,9 +1,46 @@
-import * as M from "materialize-css";
+import { Autocomplete, updateTextFields } from "materialize-css";
 import { IDict } from "./utils";
+import { get } from "./ApiHelper";
+import Logger from "./Logger";
 
-/** Streamlines the configuration of Materialize CSS autocomplete. */
-export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string): void {
-    $.getJSON(`/rest/${modelName}s/all/`, (responseJSON: IDict<string>) => {
+
+/** Setup autocompletion with provided completion options. */
+export function staticAutocomplete(elementId: string, completions: IDict<string>,
+                                   minLength = 1, limit = 5) {
+    const logger = new Logger("widgets");
+    const elem = document.getElementById(elementId);
+    if (elem) {
+        const instance = new Autocomplete(elem, {
+            data: completions,
+            limit,
+            minLength,
+        })
+        // Fix overlappting text bug
+        M.updateTextFields();
+    } else {
+        logger.logError(`Could not find DOM element with id ${elementId}`);
+    }
+}
+
+/** Improved autocomplete without JQuery. Meant for use with React. */
+export function rAutocomplete(modelName: string, elementId: string, minLength = 1,
+                              limit = 5) {
+    const logger = new Logger("widgets");
+    get(`/rest/${modelName.toLowerCase()}s/all/`)
+        .then((completions: IDict<string>) => {
+            staticAutocomplete(elementId, completions, minLength, limit);
+        })
+        .catch(() => {
+            logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);
+        });
+}
+
+/**
+ * Streamlines the configuration of Materialize CSS autocomplete. Deprecated in
+ * favor of rAutocomplete which doesn't use JQuery.
+*/
+export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
+    $.getJSON(`/rest/${modelName.toLowerCase()}s/all/`, (responseJSON: IDict<string>) => {
         $(selector ? selector : `#auto-${modelName}`).autocomplete({
             data: responseJSON,
             limit,
@@ -14,7 +51,7 @@ export function autocomplete(modelName: string, limit = 5, minLength = 1, select
 
 /**
  * Streamlines the Materialize CSS datepicker widget, whose configuration
- * isn"t changed.
+ * isn't changed.
  */
 export function datepicker(selector = ".datepicker"): void {
     $(selector).datepicker({

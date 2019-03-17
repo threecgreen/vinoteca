@@ -7,7 +7,7 @@ interface INumberInputProps {
     initNumber: number;
     enabled: boolean;
     className: string;
-    // onChange: (val: string) => void;
+    max?: number;
     min: number;
     step: string;
     s?: number;
@@ -31,7 +31,7 @@ export class NumberInput extends React.Component<INumberInputProps, INumberInput
         return <Input id={ this.props.id } name={ this.props.name }
                       enabled={ this.props.enabled } value={ this.state.number }
                       className={ this.props.className } inputType="number"
-                      min={ this.props.min } step={ this.props.step }
+                      min={ this.props.min } max={ this.props.max } step={ this.props.step }
                       s={ this.props.s } m={ this.props.m } l={ this.props.l }
                       onChange={ this.onChange.bind(this) } />;
     }

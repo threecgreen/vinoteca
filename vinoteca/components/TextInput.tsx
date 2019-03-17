@@ -1,5 +1,5 @@
 import * as React from "react";
-import { autocomplete } from "../lib/widgets";
+import { rAutocomplete } from "../lib/widgets";
 import { Input } from "./Input";
 
 interface ITextInputProps {
@@ -8,7 +8,6 @@ interface ITextInputProps {
     initText: string;
     enabled: boolean;
     className: string;
-    // onChange: (val: string) => void;
     autocomplete: boolean;
     s?: number;
     m?: number;
@@ -42,10 +41,8 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
     }
 
     public componentDidMount() {
-        if (autocomplete) {
-            autocomplete(this.props.name, 5, 1, `#${this.props.id}`);
-            // Fix overlappting text bug
-            M.updateTextFields();
+        if (this.props.autocomplete) {
+            rAutocomplete(this.props.name, this.props.id);
         }
     }
 }

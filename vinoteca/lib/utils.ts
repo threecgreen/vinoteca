@@ -57,3 +57,12 @@ export function numToDate(num: number): Date {
     const day = strNum.substr(6, 2);
     return new Date(`${year}-${month}-${day}`);
 }
+
+/**
+ * Returns the default vintage year, which is two years prior to the current
+ * year. This function duplicates the Python function
+ * vinoteca.utils.default_vintage_year
+ */
+export function defaultVintageYear(): number {
+    return new Date().getFullYear() - 2;
+}

@@ -4,6 +4,7 @@ import { DateInput } from "./DateInput";
 import { Row } from "./Grid";
 import { NumberInput } from "./NumberInput";
 import { TextInput } from "./TextInput";
+import { defaultVintageYear } from "../lib/utils";
 
 interface IPurchaseInputsProps {
     displayInventoryBtn: boolean;
@@ -45,6 +46,10 @@ export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurch
                 <NumberInput id="price" name="Price" className="validate"
                              initNumber={ this.state.price } enabled={ true }
                              min={ 0 } step="0.01" s={ 6 } l={ 3 } />
+                <NumberInput id="vintage" name="Vintage" className="validate"
+                             initNumber={ defaultVintageYear() } enabled={ true }
+                             min={1900 } step="1" max={ new Date().getFullYear() }
+                             s={ 6 } l={ 3 } />
                 <TextInput id="store" name="Store" autocomplete={ true }
                            initText={ this.state.storeName } enabled={ true }
                            className="autocomplete" s={ 6 } l={ 3 } />

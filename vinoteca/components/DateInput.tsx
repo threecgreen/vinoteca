@@ -1,9 +1,10 @@
 import * as M from "materialize-css";
+import * as moment from "moment";
 import * as React from "react";
 import { Input } from "./Input";
 
 interface IDateInputState {
-    date?: string;
+    date?: Date;
 }
 
 export class DateInput extends React.Component<{}, IDateInputState> {
@@ -21,23 +22,33 @@ export class DateInput extends React.Component<{}, IDateInputState> {
         return false;
     }
 
+    get dateString(): string {
+        return this.state.date ? moment(this.state.date).format("MMM DD, YYYY") : "";
+    }
+
     public render() {
-        return <Input id="purchase-date" name="Purchase Date" value={ this.state.date || "" }
+        return <Input id="purchase-date" name="Purchase Date" value={ this.dateString }
                       className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
-                      onChange={ this.onChange.bind(this) } />;
+                      onChange={ () => undefined } />;
     }
 
     public componentDidMount() {
+        const context = this;
         const node = document.getElementsByClassName("datepicker")[0];
         const datepicker = new M.Datepicker(node, {
             autoClose: false,
+            defaultDate: new Date(),
+            maxDate: new Date(),
+            onClose: function (this) {
+                context.onClose(this);
+            },
             yearRange: 15,
         });
     }
 
-    public onChange(val: string) {
-        this.setState({
-            date: val,
-        });
+    public onClose(datepicker: M.Datepicker) {
+        this.setState(() => ({
+            date: datepicker.date,
+        }));
     }
 }
