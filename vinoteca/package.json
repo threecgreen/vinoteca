@@ -47,8 +47,12 @@
         "webpack-merge": "^4.2.1"
     },
     "scripts": {
+        "analyze-bundle": "webpack-bundle-analyzer webpack.stats.json ./static -p 8889",
         "build": "./node_modules/.bin/webpack --mode production",
-        "watch": "./node_modules/.bin/webpack --watch --mode development",
-        "profile": "./node_modules/.bin/webpack --profile --json > webpack.stats.json"
+        "profile": "./node_modules/.bin/webpack --profile --json > webpack.stats.json",
+        "watch": "./node_modules/.bin/webpack --watch --mode development"
+    },
+    "devDependencies": {
+        "webpack-bundle-analyzer": "^3.1.0"
     }
 }
