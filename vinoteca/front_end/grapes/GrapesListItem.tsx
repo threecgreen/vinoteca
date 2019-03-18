@@ -30,13 +30,13 @@ export class GrapesListItem extends React.Component<IGrapeItemProps, {}> {
         if (this.props.isEditable) {
             return <FloatingBtn onClick={ (e) => this.props.handleSave(e, this.props.id) }
                                 classes={ ["small", "green-bg"] }>
-                        <MaterialIcon iconName="save" />
-                    </FloatingBtn>;
+                <MaterialIcon iconName="save" />
+            </FloatingBtn>;
         }
         return <FloatingBtn onClick={ (e) => this.props.handleEdit(e, this.props.id) }
                             classes={ ["small", "red-bg"] }>
-                    <MaterialIcon iconName="edit" />
-                </FloatingBtn>;
+            <MaterialIcon iconName="edit" />
+        </FloatingBtn>;
     }
 
     public render() {

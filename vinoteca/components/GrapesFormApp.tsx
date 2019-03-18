@@ -1,12 +1,13 @@
-import * as _ from "lodash";
+import maxBy from "lodash/maxBy";
+import sumBy from "lodash/sumBy";
 import * as React from "react";
+import { get } from "../lib/ApiHelper";
+import { IDict } from "../lib/utils";
 import { FloatingBtn } from "./FloatingBtn";
 import { GrapeInput } from "./GrapeInput";
 import { Col, Row } from "./Grid";
 import { InputField } from "./InputField";
 import { MaterialIcon } from "./MaterialIcon";
-import { IDict } from "../lib/utils";
-import { get } from "../lib/ApiHelper";
 
 export class WineGrape {
     constructor(public id: number, public name: string, public percent?: number) {
@@ -80,7 +81,7 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
     }
 
     private get maxId(): number {
-        const max = _.maxBy(this.state.wineGrapes, (wg) => wg.id);
+        const max = maxBy(this.state.wineGrapes, (wg) => wg.id);
         return max ? max.id : 0;
     }
 
@@ -92,7 +93,7 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
 
     private get remainingGrapePct(): number {
         if (this.state.wineGrapes.length > 0) {
-            const sum = _.sumBy(this.state.wineGrapes, (wg) => wg.percent || 0);
+            const sum = sumBy(this.state.wineGrapes, (wg) => wg.percent || 0);
             // TODO: warning if greater than 100
             return sum < 100 ? 100 - sum : 0;
         }

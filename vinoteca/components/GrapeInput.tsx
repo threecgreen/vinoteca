@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { staticAutocomplete } from "../lib/widgets";
 import { FloatingBtn } from "./FloatingBtn";
 import { Col } from "./Grid";
@@ -60,7 +60,7 @@ export class GrapeInput extends React.Component<IWineGrapeProps> {
 
     /** Starts autocomplete on mount */
     public componentDidMount() {
-        if (!_.isEmpty(this.props.completions)) {
+        if (!isEmpty(this.props.completions)) {
             staticAutocomplete(this.NameId, this.props.completions);
         }
     }

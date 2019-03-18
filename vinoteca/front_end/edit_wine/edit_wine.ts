@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import * as ReactDOM from "react-dom";
+import { render } from "react-dom";
 import { GrapeFormApp } from "../../components/GrapesFormApp";
 import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/new_wines";
 import SpecialCharController from "../../lib/SpecialCharController";
@@ -22,7 +22,7 @@ $(() => {
     toggleRating($("#has-rating")[0] as HTMLInputElement, $("#rating")[0] as HTMLInputElement,
                  hasRating);
     updateVitiAreaSelections(region, $("#auto-viti-area"));
-    ReactDOM.render(createElement(GrapeFormApp),
+    render(createElement(GrapeFormApp),
         document.getElementById("grapes-form-app-container"));
     $("#delete-modal").modal();
 });

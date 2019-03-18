@@ -1,11 +1,11 @@
-import * as _ from "lodash";
+import some from "lodash/some";
 import * as React from "react";
+import { Preloader } from "../../components/Preloader";
+import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IRESTObject } from "../../lib/rest";
 import { GrapesList } from "./GrapesList";
-import { Preloader } from "../../components/Preloader";
-import { SpecialChars } from "../../components/SpecialChars";
 
 export class GrapeItem {
     constructor(public id: number, public name: string, public isEditable = false) {
@@ -123,7 +123,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     private get hasEditableGrapes(): boolean {
-        return _.some(this.state.grapes, (g: GrapeItem) => g.isEditable);
+        return some(this.state.grapes, (g: GrapeItem) => g.isEditable);
     }
 
     private getGrapesUrl(id?: number): string {

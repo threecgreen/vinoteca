@@ -1,4 +1,3 @@
-import * as M from "materialize-css";
 import * as React from "react";
 import { Col } from "./Grid";
 

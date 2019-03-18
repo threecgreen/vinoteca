@@ -1,4 +1,4 @@
-import * as M from "materialize-css";
+import { Datepicker } from "materialize-css";
 import * as moment from "moment";
 import * as React from "react";
 import { Input } from "./Input";
@@ -35,7 +35,7 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     public componentDidMount() {
         const context = this;
         const node = document.getElementsByClassName("datepicker")[0];
-        const datepicker = new M.Datepicker(node, {
+        const datepicker = new Datepicker(node, {
             autoClose: false,
             defaultDate: new Date(),
             maxDate: new Date(),
@@ -46,7 +46,7 @@ export class DateInput extends React.Component<{}, IDateInputState> {
         });
     }
 
-    public onClose(datepicker: M.Datepicker) {
+    public onClose(datepicker: Datepicker) {
         this.setState(() => ({
             date: datepicker.date,
         }));

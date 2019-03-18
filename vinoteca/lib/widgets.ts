@@ -1,4 +1,4 @@
-import { Autocomplete, updateTextFields } from "materialize-css";
+import { Autocomplete } from "materialize-css";
 import { IDict } from "./utils";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";

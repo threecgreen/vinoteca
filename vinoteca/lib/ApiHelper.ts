@@ -6,6 +6,7 @@ const headers = {
 };
 
 export async function get(url: string): Promise<any> {
+    // TODO: url parameter formatting
     return fetch(url).then((response) => response.json());
 }
 
