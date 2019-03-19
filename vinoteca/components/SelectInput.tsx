@@ -6,23 +6,17 @@ interface ISelectInputProps {
     id: string;
     name: string;
     options: string[];
-    initSelection?: string;
+    selection: string;
     selectText?: string;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     s?: number;
     m?: number;
     l?: number;
 }
 
-interface ISelectInputState {
-    selection: string;
-}
-
-export class SelectInput extends React.Component<ISelectInputProps, ISelectInputState> {
+export class SelectInput extends React.Component<ISelectInputProps, {}> {
     constructor(props: ISelectInputProps) {
         super(props);
-        this.setState({
-            selection: this.props.initSelection || "",
-        });
     }
 
     public render() {
@@ -34,11 +28,11 @@ export class SelectInput extends React.Component<ISelectInputProps, ISelectInput
             </option>;
         }
         return <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
-            <select id={ id } name={ id } onChange={ (e) => this.onChange(e) }>
+            <select id={ id } name={ id } onChange={ (e) => this.props.onChange(e) }>
                 { selectText }
                 { this.props.options.map((option) => {
                     return (
-                        <option value={ option } selected={ option === this.props.initSelection }>
+                        <option value={ option } selected={ option === this.props.selection }>
                             { capitalizeFirstLetter(option) }
                         </option>
                     );
@@ -46,12 +40,5 @@ export class SelectInput extends React.Component<ISelectInputProps, ISelectInput
             </select>
             <label htmlFor={ id }>{ this.props.name }</label>
         </InputField>;
-    }
-
-    public onChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        e.preventDefault();
-        this.setState({
-            selection: e.target.value,
-        });
     }
 }
