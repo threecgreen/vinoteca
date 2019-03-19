@@ -32,6 +32,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                 { /* non-floating button here */ }
             </Row>
             <SearchWinesForm />
+            { /* TODO: special characters */ }
             <SearchWinesResults results={ this.state.results } />
         </div>;
     }

@@ -1,13 +1,17 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 import { IRESTObject } from "./rest";
 
+/**
+ * Key-value store where the key must be a string, but the value is of any type
+ * T.
+ */
 export interface IDict<T> {
     [key: string]: T;
 }
 
 /**
- * Basic piping of the return values of one function to arguments of the next
- * function.
+ * Basic piped value interface  used to pipe the return values of one function
+ * to arguments of the next function.
  *
  * Solution from @regiontog on https://github.com/Microsoft/TypeScript/issues/17718
  */
@@ -19,6 +23,7 @@ interface IPipe<T> {
 /**
  * Given a function, returns an object containing the function's return value
  * accessed with .value() and chaining with .chain(fn(x)).
+ * @param val
  */
 export function pipe<T>(val: T): IPipe<T> {
     return {
@@ -35,7 +40,7 @@ export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) !== "undefined" && elem.length > 0;
 }
 
-export function flattenToDict(objects: IRESTObject[]) {
+export function restObjsToNameDict(objects: IRESTObject[]) {
     const dict: IDict<string | null> = {};
     objects.map((obj) => {
         dict[obj.name] = null;
@@ -65,4 +70,20 @@ export function numToDate(num: number): Date {
  */
 export function defaultVintageYear(): number {
     return new Date().getFullYear() - 2;
+}
+
+/**
+ * Checks if an object is empty, i.e. has no keys.
+ * @param obj An object
+ */
+export function isEmpty(obj: object): boolean {
+    return Object.keys(obj).length > 0;
+}
+
+/**
+ * Returns s with the first letter capitalized.
+ * @param s A string
+ */
+export function capitalizeFirstLetter(s: string): string {
+    return s.length > 0 ? s[0].toUpperCase() + s.substring(1) : "";
 }

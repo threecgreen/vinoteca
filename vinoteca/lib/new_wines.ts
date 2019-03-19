@@ -1,6 +1,6 @@
 import * as M from "materialize-css";
 import { IRegionJSON, IRESTObject, IVitiAreaJSON } from "./rest";
-import { flattenToDict, IDict } from "./utils";
+import { restObjsToNameDict, IDict } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>,
@@ -45,7 +45,7 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
             // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
             // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
-                data: flattenToDict(responseJSON as IRESTObject[]),
+                data: restObjsToNameDict(responseJSON as IRESTObject[]),
                 limit: 5,
                 minLength: 1,
             });

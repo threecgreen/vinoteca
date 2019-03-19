@@ -1,15 +1,18 @@
 import * as React from "react";
+import { SelectInput } from "../../components/SelectInput";
 import { StatelessTextInput } from "../../components/StatelessTextInput";
 import { TextInput } from "../../components/TextInput";
+import { get } from "../../lib/ApiHelper";
 import { IRegionJSON, IVitiAreaJSON } from "../../lib/rest";
 import { rAutocomplete } from "../../lib/widgets";
-import { get } from "../../lib/ApiHelper";
 
 interface ISearchWinesFormProps {
 
 }
 
 interface ISearchWinesFormState {
+    colorSelection: string;
+    colorOptions: string[];
     producerText: string;
     regionResults: IRegionJSON[];
     regionText: string;
@@ -24,7 +27,7 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
             producerText: "",
             regionResults: [],
             regionText: "",
-            // TODO: should be all viti areas
+            // TODO: default should be all viti areas
             vitiAreaCompletions: [],
             vitiAreaText: ""
         });
@@ -32,7 +35,7 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
 
     public render() {
         return <form>
-            { /* TODO: color input */ }
+            <SelectInput id="color" name="color" s={ 4 } m={ 2 } options={ this.state.colorOptions } />
             <TextInput id="wine-type" name="Wine Type" autocomplete={ true } initText=""
                        enabled={ true } className="autocomplete" s={ 8 } l={ 4 } />
             <StatelessTextInput id="producer" name="Producer" text={ this.state.producerText }
@@ -60,6 +63,19 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
     }
 
     public onRegionChange(val: string) {
+        this.setState(() => ({
+            regionText: val,
+        }));
+        get(`/rest/`)
+    }
 
+    /**
+     * On any change send a new request for search results based on the latest
+     * inputs.
+     */
+    public onChange() {
+        get("/rest/wines/search/", {
+            color: this.state.colorSelection,
+        });
     }
 }

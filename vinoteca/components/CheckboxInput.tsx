@@ -23,7 +23,8 @@ export class CheckboxInput extends React.Component<ICheckboxInputProps, ICheckbo
     }
 
     public render() {
-        return <Col s={ this.props.s } m={ this.props.m } l={ this.props.l }>
+        // return <Col { this.props.s } m={ this.props.m } l={ this.props.l }>
+        return <Col { ...this.props }>
             <div className="switch">
                 <label htmlFor={ this.props.id }>
                     { this.props.text }
