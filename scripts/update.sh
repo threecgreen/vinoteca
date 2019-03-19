@@ -56,6 +56,9 @@ check_for_install
 
 # Javascript
 js_install_and_build
+cd vinoteca
+"$py_env/npm" prune
+cd -
 
 echo
 info_text "Running test suite..."
