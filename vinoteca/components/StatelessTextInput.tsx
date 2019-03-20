@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Input } from "./Input";
+import { nameToId } from "../lib/utils";
 
 interface IStatelessTextInputProps {
-    id: string;
     name: string;
     text: string;
     enabled: boolean;
@@ -14,12 +14,20 @@ interface IStatelessTextInputProps {
     l?: number;
 }
 
-export class StatelessTextInput extends React.Component<IStatelessTextInputProps, {}> {
+export class StatelessTextInput extends React.Component<IStatelessTextInputProps> {
+    public static defaultProps = {
+        enabled: true,
+        componentDidMount: () => undefined,
+    }
+
     public render() {
-        return <Input id={ this.props.id } name={ this.props.name } enabled={ true }
-                      value={ this.props.text } inputType="text"
-                      s={ this.props.s } m={ this.props.m } l={ this.props.l }
-                      onChange={ this.props.onChange } className={ this.props.className } />;
+        return (
+            <Input id={ nameToId(this.props.name) }
+                inputType="text"
+                value={ this.props.text }
+                { ...this.props }
+            />
+        );
     }
 
     public componentDidMount() {

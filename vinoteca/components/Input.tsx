@@ -1,10 +1,10 @@
 import * as React from "react";
 import { InputField } from "./InputField";
+import { nameToId } from "../lib/utils";
 
 type IInputValue = string | number | string[];
 
 export interface IInputProps<T extends IInputValue> {
-    id: string;
     name: string;
     value: T;
     enabled: boolean;
@@ -24,18 +24,13 @@ export interface IInputProps<T extends IInputValue> {
  * A generic form input that should always be used within another input component
  * that holds state.
  */
-export class Input<U extends IInputValue> extends React.Component<IInputProps<U>, {}> {
+export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
     public static defaultProps = {
         enabled: true,
-        validate: false,
     };
 
-    constructor(props: IInputProps<U>) {
-        super(props);
-    }
-
     public render() {
-        const id = this.props.id;
+        const id = nameToId(this.props.name);
         return <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
             <input id={ id } name={ id } type={ this.props.inputType }
                    className={ this.props.className } value={ this.props.value }

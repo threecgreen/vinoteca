@@ -1,9 +1,9 @@
 import * as React from "react";
+import { nameToId } from "../lib/utils";
 import { rAutocomplete } from "../lib/widgets";
 import { Input } from "./Input";
 
 interface ITextInputProps {
-    id: string;
     name: string;
     initText: string;
     enabled: boolean;
@@ -27,7 +27,7 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
     }
 
     public render() {
-        return <Input id={ this.props.id } name={ this.props.name }
+        return <Input name={ this.props.name }
                       enabled={ this.props.enabled } value={ this.state.text }
                       className={ this.props.className } inputType="text"
                       s={ this.props.s } m={ this.props.m } l={ this.props.l }
@@ -42,7 +42,7 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
 
     public componentDidMount() {
         if (this.props.autocomplete) {
-            rAutocomplete(this.props.name, this.props.id);
+            rAutocomplete(this.props.name, nameToId(this.props.name));
         }
     }
 }

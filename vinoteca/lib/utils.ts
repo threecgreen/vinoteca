@@ -87,3 +87,11 @@ export function isEmpty(obj: object): boolean {
 export function capitalizeFirstLetter(s: string): string {
     return s.length > 0 ? s[0].toUpperCase() + s.substring(1) : "";
 }
+
+/**
+ * Converts a display name to an html id
+ * @param name A component display name
+ */
+export function nameToId(name: string): string {
+    return name.replace(/(\s)+/g, "-").toLowerCase();
+}

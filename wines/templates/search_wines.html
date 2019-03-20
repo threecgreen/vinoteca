@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body %}
-  <div class="container">
+  {% comment %} <div class="container">
     <h3 class="page-title">Find a previously purchased wine</h3>
     <div class="col s12">
       <button class="btn waves-effect waves-light yellow darken-2" id="reset-btn">Reset Filters</button>
@@ -30,7 +30,8 @@
       <tbody></tbody>
     </table>
     <h5 id="no-results" hidden>No results found.</h5>
-  </div>
+  </div> {% endcomment %}
+  <div id="search-wines-app-container"></div>
 {% endblock %}
 
 {% block js %}

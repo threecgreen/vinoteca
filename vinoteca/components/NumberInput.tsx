@@ -28,12 +28,12 @@ export class NumberInput extends React.Component<INumberInputProps, INumberInput
     }
 
     public render() {
-        return <Input id={ this.props.id } name={ this.props.name }
-                      enabled={ this.props.enabled } value={ this.state.number }
-                      className={ this.props.className } inputType="number"
-                      min={ this.props.min } max={ this.props.max } step={ this.props.step }
-                      s={ this.props.s } m={ this.props.m } l={ this.props.l }
-                      onChange={ this.onChange.bind(this) } />;
+        return (
+            <Input inputType="number" value={ this.state.number }
+                onChange={ this.onChange.bind(this) }
+                { ...this.props }
+            />
+        );
     }
 
     public onChange(val: string) {

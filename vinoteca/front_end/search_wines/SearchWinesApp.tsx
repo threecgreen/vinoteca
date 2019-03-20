@@ -1,8 +1,10 @@
 import * as React from "react";
-import Logger from "../../lib/Logger";
 import { Row } from "../../components/Grid";
-import { SearchWinesResults } from "./SearchWinesResults";
+import Logger from "../../lib/Logger";
+import { get } from "../../lib/ApiHelper";
 import { SearchWinesForm } from "./SearchWinesForm";
+import { SearchWinesResults } from "./SearchWinesResults";
+import { SpecialChars } from "../../components/SpecialChars";
 
 export class WineResult {
     constructor(public id: number, public color: string, public wineType: string,
@@ -26,14 +28,34 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     }
 
     public render() {
-        return <div>
-            <Row s={ 12 }>
-                <h3 className="page-title">Find a previously purchased wine</h3>
-                { /* non-floating button here */ }
-            </Row>
-            <SearchWinesForm />
-            { /* TODO: special characters */ }
-            <SearchWinesResults results={ this.state.results } />
-        </div>;
+        return (
+            <div className="container">
+                <Row s={ 12 }>
+                    <h3 className="page-title">Find a previously purchased wine</h3>
+                    { /* non-floating button here */ }
+                </Row>
+                <SearchWinesForm onChange={ this.onInputChange.bind(this) } />
+                <SpecialChars onClick={ this.handleSpecialChar.bind(this) } display />
+                <SearchWinesResults results={ this.state.results } />
+            </div>
+        );
+    }
+
+    public onInputChange(colorSelection: string, wineTypeText: string, producerText: string,
+        regionText: string, vitiAreaText: string) {
+        get("/rest/wines/search/", {
+            color: colorSelection,
+            wine_type: wineTypeText,
+            producer: producerText,
+            region: regionText,
+            viti_area: vitiAreaText,
+        }).then((results: WineResult[]) => {
+            this.setState({results});
+        });
+    }
+
+    public handleSpecialChar(e: React.MouseEvent, char: string) {
+        e.preventDefault();
+        // TODO: pass to form component
     }
 }

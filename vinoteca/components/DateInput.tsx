@@ -2,6 +2,7 @@ import { Datepicker } from "materialize-css";
 import * as moment from "moment";
 import * as React from "react";
 import { Input } from "./Input";
+import { nameToId } from "../lib/utils";
 
 interface IDateInputState {
     date?: Date;
@@ -27,7 +28,9 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     }
 
     public render() {
-        return <Input id="purchase-date" name="Purchase Date" value={ this.dateString }
+        const name = "Purchase Date";
+        const id = nameToId(name);
+        return <Input id={ id } name={ name } value={ this.dateString }
                       className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
                       onChange={ () => undefined } />;
     }

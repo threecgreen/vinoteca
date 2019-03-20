@@ -90,4 +90,4 @@ class WineTypeSerializer(serializers.ModelSerializer):
 class WineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wines
-        fields = ("id", "name", "producer", "wine_type", "color", "viti_area")
+        fields = ("id", "name", "color", "producer", "wine_type", "color", "viti_area")

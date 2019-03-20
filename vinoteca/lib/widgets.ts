@@ -1,11 +1,13 @@
 import { Autocomplete } from "materialize-css";
-import { IDict } from "./utils";
+import { IDict, nameToId } from "./utils";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";
 
+type OnChange = (text: string) => void;
 
 /** Setup autocompletion with provided completion options. */
-export function staticAutocomplete(elementId: string, completions: IDict<string>,
+export function staticAutocomplete(elementId: string, completions: IDict<string | null>,
+                                   onChange: OnChange,
                                    minLength = 1, limit = 5) {
     const logger = new Logger("widgets");
     const elem = document.getElementById(elementId);
@@ -14,7 +16,10 @@ export function staticAutocomplete(elementId: string, completions: IDict<string>
             data: completions,
             limit,
             minLength,
-        })
+            onAutocomplete: function(this, text) {
+                onChange(text);
+            },
+        });
         // Fix overlappting text bug
         M.updateTextFields();
     } else {
@@ -23,12 +28,12 @@ export function staticAutocomplete(elementId: string, completions: IDict<string>
 }
 
 /** Improved autocomplete without JQuery. Meant for use with React. */
-export function rAutocomplete(modelName: string, elementId: string, minLength = 1,
-                              limit = 5) {
+export function rAutocomplete(modelName: string, onChange: OnChange,
+                              minLength = 1, limit = 5) {
     const logger = new Logger("widgets");
     get(`/rest/${modelName.toLowerCase()}s/all/`)
         .then((completions: IDict<string>) => {
-            staticAutocomplete(elementId, completions, minLength, limit);
+            staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
         })
         .catch(() => {
             logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);

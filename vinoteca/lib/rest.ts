@@ -31,30 +31,18 @@ export class GenericStat implements IChartInput {
     }
 }
 
-export interface INameJSON {
-    name: string;
+export interface IColorJSON extends IRESTObject {
 }
 
-export interface IColorJSON {
-    id: number;
-    name: string;
-}
-
-export interface IRegionJSON {
-    id: number;
-    name: string;
+export interface IRegionJSON extends IRESTObject {
     is_us: boolean;
 }
 
-export interface IProducerJSON {
-    id: number;
-    name: string;
+export interface IProducerJSON extends IRESTObject {
     region: number;
 }
 
-export interface IVitiAreaJSON {
-    id: number;
-    name: string;
+export interface IVitiAreaJSON extends IRESTObject {
     region: number;
 }
 
@@ -87,18 +75,14 @@ export class Grape implements IChartInput {
     }
 
     public datum(): number {
-        return this.percent ? this.percent : 0;
+        return this.percent || 0;
     }
 }
 
-export interface IWineTypeJSON {
-    id: number;
-    name: string;
+export interface IWineTypeJSON extends IRESTObject {
 }
 
-export interface IWineJSON {
-    id: number;
-    name: string;
+export interface IWineJSON extends IRESTObject {
     producer: number;
     wine_type: number;
     color: number;

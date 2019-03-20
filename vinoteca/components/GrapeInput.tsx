@@ -17,11 +17,11 @@ interface IWineGrapeProps {
 }
 
 export class GrapeInput extends React.Component<IWineGrapeProps> {
-    get PercentId(): string {
+    public get PercentId(): string {
         return `grape-${this.props.id}-pct`;
     }
 
-    get NameId(): string {
+    public get NameId(): string {
         return `grape-${this.props.name}-${this.props.id}`;
     }
 

@@ -4,7 +4,7 @@ out there. May also move most or all other JSON methods over to this views
 file."""
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, response, views
 
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
@@ -17,7 +17,7 @@ from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
     WineGrapes
 )
-from vinoteca.utils import get_region_flags, get_logger, json_post
+from vinoteca.utils import get_connection, get_region_flags, get_logger, json_post
 
 
 LOGGER = get_logger("rest")
@@ -116,6 +116,47 @@ class WineList(generics.ListAPIView):
                         "wine_type_id")
 
 
+class SearchWines(views.APIView):
+    def get(self, request):
+        with get_connection() as conn:
+            cursor = conn.get_cursor()
+            wine_type = empty_to_none(request.GET.get("wine_type"))
+            color = empty_to_none(request.GET.get("color"))
+            producer = empty_to_none(request.GET.get("producer"))
+            region = empty_to_none(request.GET.get("region"))
+            viti_area = empty_to_none(request.GET.get("viti_area"))
+            params = [color, wine_type, producer, region, viti_area]
+            params = [param for param in params if param is not None]
+            query = """
+                SELECT
+                    w.id
+                    , cl.name
+                    , w.name
+                    , pro.name
+                    , r.name
+                    , t.name
+                    , v.name
+                FROM wines w
+                    LEFT JOIN producers pro ON w.producer_id = pro.id
+                    LEFT JOIN regions r ON pro.region_id = r.id
+                    LEFT JOIN wine_types t ON w.wine_type_id = t.id
+                    LEFT JOIN colors cl ON w.color_id = cl.id
+                    LEFT JOIN viti_areas v on w.viti_area_id = v.id
+                WHERE
+                    t.name LIKE coalesce(?, t.name)
+                    AND cl.name LIKE coalesce(?, cl.name)
+                    AND pro.name LIKE coalesce(?, pro.name)
+                    AND r.name LIKE coalesce(?, r.name)
+                    and (
+                        ? is null or ? like v.name
+                    );
+            """
+            results = cursor.execute(query, (wine_type, color, producer, region,
+                                         viti_area, viti_area)).fetchall()
+            serializer = WineSerializer(results, many=True)
+            return response.Response(serializer.data)
+
+
 class GrapeView(generics.GenericAPIView,
                 mixins.ListModelMixin,
                 mixins.UpdateModelMixin):
@@ -128,7 +169,7 @@ class GrapeView(generics.GenericAPIView,
         return self.list(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        """ Grape update API, need to submit both `id` and `name` fields at the
+        """Grape update API, need to submit both `id` and `name` fields at the
         same time, or django will prevent to do update for field missing."""
         try:
             return self.update(request, *args, **kwargs)

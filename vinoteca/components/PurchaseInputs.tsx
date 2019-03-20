@@ -48,14 +48,14 @@ export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurch
                              min={ 0 } step="0.01" s={ 6 } l={ 3 } />
                 <NumberInput id="vintage" name="Vintage" className="validate"
                              initNumber={ defaultVintageYear() } enabled={ true }
-                             min={1900 } step="1" max={ new Date().getFullYear() }
+                             min={ 1900 } step="1" max={ new Date().getFullYear() }
                              s={ 6 } l={ 3 } />
-                <TextInput id="store" name="Store" autocomplete={ true }
-                           initText={ this.state.storeName } enabled={ true }
-                           className="autocomplete" s={ 6 } l={ 3 } />
-                <TextInput id="memo" name="Memo" autocomplete={ false }
-                           initText={ this.state.memo } enabled={ true }
-                           className="" s={ 6 } l={ 3 } />
+                <TextInput name="Store" autocomplete enabled
+                    initText={ this.state.storeName } className="autocomplete" s={ 6 } l={ 3 }
+                />
+                <TextInput name="Memo" autocomplete={ false }
+                    initText={ this.state.memo } enabled className="" s={ 6 } l={ 3 }
+                />
             </Row>
         );
     }

@@ -1,6 +1,5 @@
 import * as Cookies from "js-cookie";
-import isEmpty from "lodash/isEmpty";
-import { IDict } from "./utils";
+import { IDict, isEmpty } from "./utils";
 
 const headers = {
     "Content-Type": "application/json",
