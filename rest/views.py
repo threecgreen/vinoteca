@@ -17,7 +17,9 @@ from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
     WineGrapes
 )
-from vinoteca.utils import get_connection, get_region_flags, get_logger, json_post
+from vinoteca.utils import (
+    get_connection, get_region_flags, get_logger, json_post, empty_to_none
+)
 
 
 LOGGER = get_logger("rest")
@@ -117,9 +119,18 @@ class WineList(generics.ListAPIView):
 
 
 class SearchWines(views.APIView):
+    @staticmethod
+    def dictfetchall(cursor):
+        "Returns all rows from a cursor as a dict"
+        desc = cursor.description
+        return [
+            dict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()
+        ]
+
     def get(self, request):
         with get_connection() as conn:
-            cursor = conn.get_cursor()
+            cursor = conn.cursor()
             wine_type = empty_to_none(request.GET.get("wine_type"))
             color = empty_to_none(request.GET.get("color"))
             producer = empty_to_none(request.GET.get("producer"))
@@ -130,12 +141,12 @@ class SearchWines(views.APIView):
             query = """
                 SELECT
                     w.id
-                    , cl.name
                     , w.name
-                    , pro.name
-                    , r.name
-                    , t.name
-                    , v.name
+                    , cl.name as color
+                    , pro.name as producer
+                    , r.name as region
+                    , t.name as wine_type
+                    , v.name as viti_area
                 FROM wines w
                     LEFT JOIN producers pro ON w.producer_id = pro.id
                     LEFT JOIN regions r ON pro.region_id = r.id
@@ -151,9 +162,9 @@ class SearchWines(views.APIView):
                         ? is null or ? like v.name
                     );
             """
-            results = cursor.execute(query, (wine_type, color, producer, region,
-                                         viti_area, viti_area)).fetchall()
-            serializer = WineSerializer(results, many=True)
+            cursor.execute(query, (wine_type, color, producer, region,
+                                   viti_area, viti_area))
+            serializer = WineSerializer(self.dictfetchall(cursor), many=True)
             return response.Response(serializer.data)
 
 

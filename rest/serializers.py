@@ -87,7 +87,11 @@ class WineTypeSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class WineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wines
-        fields = ("id", "name", "color", "producer", "wine_type", "color", "viti_area")
+class WineSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    color = serializers.CharField()
+    producer = serializers.CharField()
+    region = serializers.CharField()
+    wine_type = serializers.CharField()
+    viti_area = serializers.CharField()
