@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Input } from "./Input";
-import { nameToId } from "../lib/utils";
 
 interface IStatelessTextInputProps {
     name: string;
@@ -22,11 +21,7 @@ export class StatelessTextInput extends React.Component<IStatelessTextInputProps
 
     public render() {
         return (
-            <Input id={ nameToId(this.props.name) }
-                inputType="text"
-                value={ this.props.text }
-                { ...this.props }
-            />
+            <Input inputType="text" value={ this.props.text } { ...this.props } />
         );
     }
 

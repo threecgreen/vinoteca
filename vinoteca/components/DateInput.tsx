@@ -30,7 +30,7 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     public render() {
         const name = "Purchase Date";
         const id = nameToId(name);
-        return <Input id={ id } name={ name } value={ this.dateString }
+        return <Input name={ name } value={ this.dateString }
                       className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
                       onChange={ () => undefined } />;
     }

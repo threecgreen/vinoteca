@@ -1,12 +1,14 @@
+import { FormSelect } from "materialize-css";
 import * as React from "react";
+import { Row } from "../../components/Grid";
+import { SpecialChars } from "../../components/SpecialChars";
 import { StatelessSelectInput } from "../../components/StatelessSelectInput";
 import { StatelessTextInput } from "../../components/StatelessTextInput";
 import { get } from "../../lib/ApiHelper";
-import { IVitiAreaJSON, IProducerJSON, IRegionJSON } from "../../lib/rest";
+import { IProducerJSON, IRegionJSON, IVitiAreaJSON } from "../../lib/rest";
 import { IDict, nameToId, restObjsToNameDict } from "../../lib/utils";
-import { rAutocomplete, staticAutocomplete } from "../../lib/widgets";
-import { Row } from "../../components/Grid";
-import { FormSelect } from "materialize-css";
+import { staticAutocomplete } from "../../lib/widgets";
+import Logger from "../../lib/Logger";
 
 interface ISearchWinesFormProps {
     onChange: (colorSelection: string, wineTypeText: string, producerText: string,
@@ -17,6 +19,7 @@ interface ISearchWinesFormState {
     colorSelection: string;
     colorOptions: string[];
     producerText: string;
+    allRegions: IDict<string>;
     regionIsEnabled: boolean;
     regionText: string;
     vitiAreaText: string;
@@ -25,6 +28,8 @@ interface ISearchWinesFormState {
 
 export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISearchWinesFormState> {
     private colorSelectRef: React.RefObject<HTMLSelectElement>;
+    private logger: Logger;
+    private updateLastActive: (char: string) => void;
 
     constructor(props: ISearchWinesFormProps) {
         super(props);
@@ -32,58 +37,61 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
             colorSelection: "",
             colorOptions: [],
             producerText: "",
+            allRegions: {},
             regionText: "",
             regionIsEnabled: true,
             vitiAreaText: "",
             wineTypeText: ""
         };
+        this.logger = new Logger(this.constructor.name, true);
+        this.updateLastActive = (_) => null;
         this.colorSelectRef = React.createRef();
         this.onColorChange = this.onColorChange.bind(this);
         this.onWineTypeChange = this.onWineTypeChange.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
         this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
+        this.handleSpecialChar = this.handleSpecialChar.bind(this);
     }
 
     public render() {
         return (
-            <form>
-                <Row>
-                    <StatelessSelectInput name="Color" s={ 4 } m={ 2 }
-                        selectRef={ this.colorSelectRef }
-                        selection={ this.state.colorSelection }
-                        options={ this.state.colorOptions }
-                        onChange={ this.onColorChange }
-                        selectText="Select a color"
-                    />
-                    <StatelessTextInput name="Wine Type" text={ this.state.wineTypeText }
-                        enabled className="autocomplete" s={ 8 } l={ 4 }
-                        onChange={ this.onWineTypeChange }
-                        componentDidMount={ () => this.onWineTypeChange }
-                    />
-                    <StatelessTextInput name="Producer" text={ this.state.producerText }
-                        enabled className="autocomplete" s={ 6 } l={ 3 }
-                        onChange={ this.onProducerChange }
-                        componentDidMount={ () => this.onProducerChange }
-                    />
-                    <StatelessTextInput name="Region" text={ this.state.regionText }
-                        enabled={ this.state.regionIsEnabled } className="autocomplete"
-                        s={ 6 } l={ 3 } onChange={ this.onRegionChange }
-                    />
-                    <StatelessTextInput name="Viti Area" text={ this.state.vitiAreaText }
-                        className="autocomplete" s={ 6 } l={ 3 }
-                        onChange={ this.onVitiAreaChange }
-                    />
-                </Row>
-            </form>
+            <div>
+                <SpecialChars onClick={ this.handleSpecialChar } display />
+                <form>
+                    <Row>
+                        <StatelessSelectInput name="Color" s={ 4 } m={ 2 }
+                            selectRef={ this.colorSelectRef }
+                            selection={ this.state.colorSelection }
+                            options={ this.state.colorOptions }
+                            onChange={ this.onColorChange }
+                            selectText="Select a color"
+                        />
+                        <StatelessTextInput name="Wine Type" text={ this.state.wineTypeText }
+                            enabled className="autocomplete" s={ 8 } l={ 4 }
+                            onChange={ this.onWineTypeChange }
+                            // componentDidMount={ () => this.onWineTypeChange }
+                        />
+                        <StatelessTextInput name="Producer" text={ this.state.producerText }
+                            enabled className="autocomplete" s={ 6 } l={ 3 }
+                            onChange={ this.onProducerChange }
+                            // componentDidMount={ () => this.onProducerChange }
+                        />
+                        <StatelessTextInput name="Region" text={ this.state.regionText }
+                            enabled={ this.state.regionIsEnabled } className="autocomplete"
+                            s={ 6 } l={ 3 } onChange={ this.onRegionChange }
+                        />
+                        <StatelessTextInput name="Viti Area" text={ this.state.vitiAreaText }
+                            className="autocomplete" s={ 6 } l={ 3 }
+                            onChange={ this.onVitiAreaChange }
+                        />
+                    </Row>
+                </form>
+            </div>
         );
     }
 
     public componentDidMount() {
-        get("/rest/viti-areas/all/")
-            .then((vitiAreas: IDict<string>) => {
-                staticAutocomplete(nameToId("Viti Area"), vitiAreas, this.onVitiAreaChange);
-            });
         get("/rest/colors/all/")
             .then((colors: IDict<string>) => {
                 this.setState({
@@ -91,18 +99,38 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                 });
                 const formSelect = new FormSelect(this.colorSelectRef.current!);
             });
+        get("/rest/wine-types/all/")
+            .then((wineTypes: IDict<string>) => {
+                staticAutocomplete(nameToId("Wine Type"), wineTypes, this.onWineTypeChange);
+            });
+        get("/rest/producers/all/")
+            .then((producers: IDict<string>) => {
+                staticAutocomplete(nameToId("Producer"), producers, this.onProducerChange);
+            });
+        get("/rest/regions/all/")
+            .then((regions: IDict<string>) => {
+                this.setState({allRegions: regions});
+            });
+        get("/rest/viti-areas/all/")
+            .then((vitiAreas: IDict<string>) => {
+                staticAutocomplete(nameToId("Viti Area"), vitiAreas, this.onVitiAreaChange);
+            });
     }
 
     public onColorChange(val: string) {
         this.setState({
             colorSelection: val,
         });
+        this.onChange();
     }
 
     public onWineTypeChange(val: string) {
         this.setState({
             wineTypeText: val,
         });
+        // TODO: On focus instead of on change
+        this.updateLastActive = (c) => this.onWineTypeChange(this.state.wineTypeText + c);
+        this.onChange();
     }
 
     public onProducerChange(val: string) {
@@ -116,10 +144,11 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
         const producers: IProducerJSON[] = await get(
             `/rest/producers/`, {name: this.state.producerText}
         );
+        this.logger.logInfo(`Fetched producers: ${producers}`)
         if (producers.length !== 1) {
-            return false;
+            return true;
         }
-        get(`/rest/regions`, {producer__name: this.state.producerText})
+        get("/rest/regions/", {producer__name: this.state.producerText})
             .then((regions: IRegionJSON[]) => {
                 this.setState({
                     regionIsEnabled: regions.length > 0,
@@ -130,14 +159,19 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                     })
                     this.onRegionChange(regions[0].name);
                 }
-            })
-        return true;
+                return true;
+            }).then();
+    }
+
+    public async updateRegionAutocomplete() {
+
     }
 
     public onRegionChange(val: string) {
         this.setState({
             regionText: val,
         });
+        this.updateLastActive = (c) => this.onRegionChange(this.state.regionText + c);
         get("/rest/viti-areas/", {region__name: this.state.regionText})
             .then((vitiAreas: IVitiAreaJSON[]) => {
                 const context = this;
@@ -147,12 +181,14 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                     this.onVitiAreaChange,
                 );
             });
+        this.onChange();
     }
 
     public onVitiAreaChange(val: string) {
         this.setState({
             vitiAreaText: val,
         });
+        this.onChange();
     }
 
     public onChange() {
@@ -165,6 +201,8 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
         );
     }
 
-    private updateVitiArea() {
+    public handleSpecialChar(e: React.MouseEvent, char: string) {
+        e.preventDefault();
+        this.updateLastActive(char);
     }
 }

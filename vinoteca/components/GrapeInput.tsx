@@ -17,6 +17,11 @@ interface IWineGrapeProps {
 }
 
 export class GrapeInput extends React.Component<IWineGrapeProps> {
+    public constructor(props: IWineGrapeProps) {
+        super(props);
+        this.onChange = this.onChange.bind(this);
+    }
+
     public get PercentId(): string {
         return `grape-${this.props.id}-pct`;
     }
@@ -35,13 +40,12 @@ export class GrapeInput extends React.Component<IWineGrapeProps> {
             </InputField>
             <InputField s={ 3 }>
                 <input id={ this.PercentId }
-                       name={ this.PercentId }
-                       type="number"
-                       className="validate"
-                       onChange={ (e) => this.props.onChange(this.props.id,
-                                                             this.props.name,
-                                                             e.target.value || undefined)}
-                       value={ this.props.percent || "" } />
+                    name={ this.PercentId }
+                    type="number"
+                    className="validate"
+                    onChange={ (e) => this.onChange(this.props.name, e.target.value || undefined)}
+                    value={ this.props.percent || "" }
+                />
                 <label htmlFor={ this.PercentId }>Percentage</label>
             </InputField>
             <InputField s={ 8 }>
@@ -58,10 +62,17 @@ export class GrapeInput extends React.Component<IWineGrapeProps> {
         </Col>;
     }
 
+    public onChange(name: string, percent?: string) {
+        this.props.onChange(this.props.id, name, percent);
+    }
+
     /** Starts autocomplete on mount */
     public componentDidMount() {
         if (!isEmpty(this.props.completions)) {
-            staticAutocomplete(this.NameId, this.props.completions);
+            staticAutocomplete(
+                this.NameId, this.props.completions,
+                (text) => this.onChange(text, `${this.props.percent}`),
+            );
         }
     }
 }

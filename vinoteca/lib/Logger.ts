@@ -19,9 +19,10 @@ export default class Logger {
      * Logging class for client-side errors that will be posted to the server
      * for logging to the same file as all other vinoteca logs.
      *
-     * @param module name of the module from which the log messages originate.
+     * @param module the name of the module from which the log messages originate.
+     * @param toConsole whether to also print messages to the console
      */
-    constructor(private module: string) {
+    constructor(private module: string, private toConsole = false) {
     }
 
     /**
@@ -64,6 +65,9 @@ export default class Logger {
     }
 
     private log(level: LogLevel, message: string) {
+        if (this.toConsole) {
+            console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
+        }
         return post("/rest/logs/client/", {
             level,
             message,

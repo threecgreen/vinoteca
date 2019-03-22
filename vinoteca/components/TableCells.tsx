@@ -1,22 +1,28 @@
-import startCase from "lodash/startCase";
 import * as React from "react";
+import { capitalizeFirstLetter } from "../lib/utils";
+import { SourceMapDevToolPlugin } from "webpack";
 
+// TODO: use children here instead of a normal prop
 interface ITextCellProps {
     default?: string;
     text: string | undefined;
 }
 
-export const TextCell: React.FunctionComponent<ITextCellProps> = (props) => {
-    if (!props.default) {
-        props.default = "";
+export class TextCell extends React.Component<ITextCellProps> {
+    public static defaultProps = {
+        default: "",
     }
-    return <td>{ props.text || props.default }</td>;
+
+    public render() {
+        return <td>{ this.props.text || this.props.default }</td>;
+    }
 };
 
 interface INumCellProps {
     num: number;
 }
 
+// TODO: default to en dash
 export const NumCell: React.FunctionComponent<INumCellProps> = (props) => {
     return <td className="num-col">{ props.num.toString() }</td>;
 };
@@ -26,7 +32,7 @@ interface IColorCellProps {
 }
 
 export const ColorCell: React.FunctionComponent<IColorCellProps> = (props) => {
-    return <td>{ startCase(props.color) }</td>;
+    return <td>{ capitalizeFirstLetter(props.color) }</td>;
 };
 
 interface INameAndTypeProps {

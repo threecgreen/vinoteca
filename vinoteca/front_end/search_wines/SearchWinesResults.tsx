@@ -19,7 +19,7 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
                 </tr>
             </thead>
             <tbody>
-                { props.results.map((wine) => <SearchWinesResult result={ wine } /> ) }
+                { props.results.map((wine) => <SearchWinesResult result={ wine } key={ wine.id } /> ) }
             </tbody>
         </table>;
     }
