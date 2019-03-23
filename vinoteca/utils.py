@@ -4,6 +4,8 @@ import logging
 import json
 import sqlite3
 from datetime import date, datetime
+from enum import Enum
+from inspect import getargspec
 from pathlib import Path
 from typing import List, Type, Union
 
@@ -43,14 +45,30 @@ def strip_params(db_func):
     return _strip_params
 
 
-def json_post(view):
+class RequestLocation(Enum):
+    GET = 'GET'
+    POST = 'POST'
+
+
+def place_json(location: RequestLocation):
     r"""Decorator function that parses a request that contains JSON in the request
-    body and stores it in the POST property of the request object."""
-    def _new_view(request: http.request, *args, **kwargs):
-        if not request.POST and request.body and request.content_type == "application/json":
-            request.POST = json.loads(request.body)
-        return view(request, *args, **kwargs)
-    return _new_view
+    body and stores it in the given location property of the request object.
+    Location should be either 'GET' or 'POST'."""
+    def _place_json(view):
+        # Check if method
+        spec = getargspec(view)
+        if spec.args and spec.args[0] == 'self':
+            def _new_view(self, request: http.request, *args, **kwargs):
+                if not getattr(request, location.value) and request.body and request.content_type == "application/json":
+                    setattr(request, location.value, json.loads(request.body))
+                return view(self, request, *args, **kwargs)
+        else:
+            def _new_view(request: http.request, *args, **kwargs):
+                if not getattr(request, location.value) and request.body and request.content_type == "application/json":
+                    setattr(request, location.value, json.loads(request.body))
+                return view(request, *args, **kwargs)
+        return _new_view
+    return _place_json
 
 
 class TableColumn(object):

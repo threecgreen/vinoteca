@@ -18,7 +18,8 @@ from vinoteca.models import (
     WineGrapes
 )
 from vinoteca.utils import (
-    get_connection, get_region_flags, get_logger, json_post, empty_to_none
+    get_connection, get_region_flags, get_logger, place_json, empty_to_none,
+    RequestLocation
 )
 
 
@@ -193,7 +194,7 @@ CLIENT_SIDE_LOGGER = get_logger("client_side")
 
 
 @csrf_exempt
-@json_post
+@place_json(RequestLocation.POST)
 def write_client_side_logs(request):
     r"""Allows errors on the client-side to be written to the unified vinoteca
     logs.
