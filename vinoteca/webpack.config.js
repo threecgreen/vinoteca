@@ -1,4 +1,3 @@
-const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -57,12 +56,6 @@ module.exports = {
             }
         ],
     },
-    node: {
-        "chart.js": true,
-        "jquery": true,
-        "materialize-css": true,
-        "tablesorter": true,
-    },
     optimization: {
         splitChunks: {
             cacheGroups: {
@@ -93,6 +86,10 @@ module.exports = {
         })
     ],
     resolve: {
+        alias: {
+            // Avoid moment
+            "chart.js": "chart.js/dist/Chart.js"
+        },
         extensions: [ ".js", ".json", ".ts", ".tsx" ],
     },
 };

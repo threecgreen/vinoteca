@@ -1,8 +1,8 @@
+import { format } from "date-fns";
 import { Datepicker } from "materialize-css";
-import * as moment from "moment";
 import * as React from "react";
-import { Input } from "./Input";
 import { nameToId } from "../lib/utils";
+import { Input } from "./Input";
 
 interface IDateInputState {
     date?: Date;
@@ -24,7 +24,7 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     }
 
     get dateString(): string {
-        return this.state.date ? moment(this.state.date).format("MMM DD, YYYY") : "";
+        return this.state.date ? format(this.state.date, "MMM DD, YYYY") : "";
     }
 
     public render() {

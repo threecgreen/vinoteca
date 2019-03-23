@@ -97,6 +97,12 @@
             "script": "profile",
             "path": "vinoteca/",
             "problemMatcher": []
+        },
+        {
+            "type": "npm",
+            "script": "analyze-bundle",
+            "path": "vinoteca/",
+            "problemMatcher": []
         }
     ],
 }
