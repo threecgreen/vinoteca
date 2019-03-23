@@ -1,7 +1,7 @@
 import { Autocomplete } from "materialize-css";
-import { IDict, nameToId } from "./utils";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";
+import { IDict, nameToId } from "./utils";
 
 type OnChange = (text: string) => void;
 
@@ -43,7 +43,7 @@ export function rAutocomplete(modelName: string, onChange: OnChange,
 /**
  * Streamlines the configuration of Materialize CSS autocomplete. Deprecated in
  * favor of rAutocomplete which doesn't use JQuery.
-*/
+ */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
     $.getJSON(`/rest/${modelName.toLowerCase()}s/all/`, (responseJSON: IDict<string>) => {
         $(selector ? selector : `#auto-${modelName}`).autocomplete({

@@ -1,10 +1,10 @@
-import some from "lodash/some";
 import * as React from "react";
 import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IRESTObject } from "../../lib/rest";
+import { IRESTModel } from "../../lib/rest";
+import { any } from "../../lib/utils";
 import { GrapesList } from "./GrapesList";
 
 export class GrapeItem {
@@ -47,7 +47,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
 
     public componentDidMount() {
         get(this.getGrapesUrl())
-            .then((restGrapes: IRESTObject[]) => {
+            .then((restGrapes: IRESTModel[]) => {
                 const grapes: GrapeItem[] = restGrapes.map(
                     (g) => new GrapeItem(g.id, g.name),
                 );
@@ -123,7 +123,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     private get hasEditableGrapes(): boolean {
-        return some(this.state.grapes, (g: GrapeItem) => g.isEditable);
+        return any(this.state.grapes, (g: GrapeItem) => g.isEditable);
     }
 
     private getGrapesUrl(id?: number): string {

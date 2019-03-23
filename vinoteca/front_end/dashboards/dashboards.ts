@@ -1,21 +1,21 @@
-import { GenericStat, IGenericStatJSON } from "../../lib/rest";
+import { GenericStat, IGenericStat } from "../../lib/rest";
 import { navbar, tabs  } from "../../lib/widgets";
 import { applyChart, barChart, IChartInput, lineChart } from "../../lib/wine_charts";
 
-declare const colorPurchases: IGenericStatJSON;
-declare const colorVarieties: IGenericStatJSON;
-declare const colorPrice: IGenericStatJSON;
-declare const wineTypePurchases: IGenericStatJSON;
-declare const wineTypeVarieties: IGenericStatJSON;
-declare const wineTypePrice: IGenericStatJSON;
-declare const grapeVarieties: IGenericStatJSON;
-declare const grapePrice: IGenericStatJSON;
-declare const grapePct: IGenericStatJSON;
-declare const vitiAreasVarieties: IGenericStatJSON;
-declare const vitiAreasProducers: IGenericStatJSON;
-declare const vitiAreasPrice: IGenericStatJSON;
+declare const colorPurchases: IGenericStat;
+declare const colorVarieties: IGenericStat;
+declare const colorPrice: IGenericStat;
+declare const wineTypePurchases: IGenericStat;
+declare const wineTypeVarieties: IGenericStat;
+declare const wineTypePrice: IGenericStat;
+declare const grapeVarieties: IGenericStat;
+declare const grapePrice: IGenericStat;
+declare const grapePct: IGenericStat;
+declare const vitiAreasVarieties: IGenericStat;
+declare const vitiAreasProducers: IGenericStat;
+declare const vitiAreasPrice: IGenericStat;
 
-declare const purchasesByYearData: IGenericStatJSON[];
+declare const purchasesByYearData: IGenericStat[];
 
 declare const doPurchasesByYear: boolean;
 

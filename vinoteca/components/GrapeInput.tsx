@@ -1,11 +1,10 @@
 import * as React from "react";
-import isEmpty from "lodash/isEmpty";
+import { IDict, isEmpty } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { FloatingBtn } from "./FloatingBtn";
 import { Col } from "./Grid";
 import { InputField } from "./InputField";
 import { MaterialIcon } from "./MaterialIcon";
-import { IDict } from "../lib/utils";
 
 interface IWineGrapeProps {
     id: number;

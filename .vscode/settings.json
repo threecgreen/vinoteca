@@ -1,4 +1,7 @@
 {
+    "editor.codeActionsOnSave": {
+        "source.fixAll.tslint": true,
+    },
     "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
@@ -24,5 +27,6 @@
     "python.unitTest.pyTestEnabled": true,
     "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
-    "tslint.configFile": "tslint.json"
+    "tslint.configFile": "tslint.json",
+    "tslint.alwaysShowRuleFailuresAsWarnings": true,
 }

@@ -10,7 +10,7 @@ function encodeParams(params: IDict<string>): string {
     if (isEmpty(params)) {
         return "";
     }
-    return Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&');
+    return "?" + Object.entries(params).map(([k, v]) => `${k}=${v}`).join("&");
 }
 
 /**

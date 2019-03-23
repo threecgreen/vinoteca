@@ -1,8 +1,6 @@
-import maxBy from "lodash/maxBy";
-import sumBy from "lodash/sumBy";
 import * as React from "react";
 import { get } from "../lib/ApiHelper";
-import { IDict } from "../lib/utils";
+import { IDict, maxBy, sumBy } from "../lib/utils";
 import { FloatingBtn } from "./FloatingBtn";
 import { GrapeInput } from "./GrapeInput";
 import { Col, Row } from "./Grid";
@@ -26,26 +24,33 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
     };
 
     public render() {
-        return <Row>
-            <Col classes={ ["s12"] }>
-                <h6>Grape composition</h6>
-            </Col>
-            { this.state.wineGrapes.map((wineGrape) => {
-                return (<GrapeInput key={ wineGrape.id }
-                                    id={ wineGrape.id }
-                                    completions={ this.state.completions }
-                                    name={ wineGrape.name }
-                                    percent={ wineGrape.percent }
-                                    handleDelete={ this.handleDelete.bind(this) }
-                                    onChange={ this.onChange.bind(this) } />);
-            }) }
-            <InputField>
-                <FloatingBtn onClick={ (e) => this.handleAdd(e) }
-                             classes={ ["green-bg"] }>
-                    <MaterialIcon iconName="add" />
-                </FloatingBtn>
-            </InputField>
-        </Row>;
+        return (
+            <Row>
+                <Col s={ 12 }>
+                    <h6>Grape composition</h6>
+                </Col> {
+                    this.state.wineGrapes.map((wineGrape) => {
+                        return (
+                            <GrapeInput key={ wineGrape.id }
+                                id={ wineGrape.id }
+                                completions={ this.state.completions }
+                                name={ wineGrape.name }
+                                percent={ wineGrape.percent }
+                                handleDelete={ this.handleDelete.bind(this) }
+                                onChange={ this.onChange.bind(this) }
+                            />
+                        );
+                    })
+                }
+                <InputField>
+                    <FloatingBtn onClick={ (e) => this.handleAdd(e) }
+                        classes={ ["green-bg"] }
+                    >
+                        <MaterialIcon iconName="add" />
+                    </FloatingBtn>
+                </InputField>
+            </Row>
+        );
     }
 
     public componentDidMount() {

@@ -1,10 +1,10 @@
-import { GenericStat, IGenericStatJSON } from "../../lib/rest";
+import { GenericStat, IGenericStat } from "../../lib/rest";
 import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart } from "../../lib/wine_charts";
 
-declare const wineTypePurchases: IGenericStatJSON;
-declare const wineTypeVarieties: IGenericStatJSON;
-declare const wineTypePrice: IGenericStatJSON;
+declare const wineTypePurchases: IGenericStat;
+declare const wineTypeVarieties: IGenericStat;
+declare const wineTypePrice: IGenericStat;
 
 $(() => {
     navbar();

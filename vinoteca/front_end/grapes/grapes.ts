@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import * as ReactDOM from "react-dom";
-import { GrapesApp } from "./GrapesApp";
 import { navbar } from "../../lib/widgets";
+import { GrapesApp } from "./GrapesApp";
 
 $(() => {
     navbar();

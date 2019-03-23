@@ -1,17 +1,17 @@
 /** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
 
-export interface IRESTObject {
+export interface IRESTModel {
     id: number;
     name: string;
 }
 
-export interface IGenericStatJSON {
+export interface IGenericStat {
     [name: string]: number;
 }
 
 export class GenericStat implements IChartInput {
-    public static fromJSON(json: IGenericStatJSON) {
+    public static fromJSON(json: IGenericStat) {
         const stats: GenericStat[] = [];
         Object.keys(json).forEach((key) => {
             stats.push(new GenericStat(key, json[key]));
@@ -31,22 +31,19 @@ export class GenericStat implements IChartInput {
     }
 }
 
-export interface IColorJSON extends IRESTObject {
-}
-
-export interface IRegionJSON extends IRESTObject {
+export interface IRegion extends IRESTModel {
     is_us: boolean;
 }
 
-export interface IProducerJSON extends IRESTObject {
+export interface IProducer extends IRESTModel {
     region: number;
 }
 
-export interface IVitiAreaJSON extends IRESTObject {
+export interface IVitiArea extends IRESTModel {
     region: number;
 }
 
-export interface IWineGrapeJSON {
+export interface IWineGrape {
     id: number;
     wine: number;
     grape: string;
@@ -54,7 +51,7 @@ export interface IWineGrapeJSON {
 }
 
 export class Grape implements IChartInput {
-    public static fromArray(jsonArray: IWineGrapeJSON[]) {
+    public static fromArray(jsonArray: IWineGrape[]) {
         return jsonArray.map((grapeJ) => {
             return new Grape(grapeJ);
         });
@@ -64,7 +61,7 @@ export class Grape implements IChartInput {
     private grape: string;
     private percent: number | undefined;
 
-    constructor(json: IWineGrapeJSON) {
+    constructor(json: IWineGrape) {
         this.wine = json.wine;
         this.grape = json.grape;
         this.percent = json.percent;
@@ -79,16 +76,19 @@ export class Grape implements IChartInput {
     }
 }
 
-export interface IWineTypeJSON extends IRESTObject {
-}
-
-export interface IWineJSON extends IRESTObject {
+export interface IWine extends IRESTModel {
     producer: number;
     wine_type: number;
     color: number;
     viti_area: number;
 }
 
-export interface IWineSearchResultsJSON {
-    results: string;
+export interface ISearchWinesResult {
+    id: number;
+    name?: string;
+    color: string;
+    producer: string;
+    region: string;
+    wine_type: string;
+    viti_area?: string;
 }

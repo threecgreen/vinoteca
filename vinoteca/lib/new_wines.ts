@@ -1,6 +1,6 @@
 import * as M from "materialize-css";
-import { IRegionJSON, IRESTObject, IVitiAreaJSON } from "./rest";
-import { restObjsToNameDict, IDict } from "./utils";
+import { IRegion, IRESTModel, IVitiArea } from "./rest";
+import { IDict, restObjsToNameDict } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
 export function toggleRegion(producer: JQuery<HTMLInputElement>,
@@ -16,7 +16,7 @@ export function toggleRegion(producer: JQuery<HTMLInputElement>,
             if ($.inArray($(producer).val(), Object.keys(producersJSON)) !== -1) {
                 $.getJSON("/rest/regions/",
                           { producers__name: $(producer).val() },
-                          (regionJSON: IRegionJSON[]) => {
+                          (regionJSON: IRegion[]) => {
                     if (regionJSON.length > 0) {
                         $(region).val(regionJSON[0].name);
                         // Fix overlapping text bug
@@ -41,11 +41,11 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
                                          vitiArea: JQuery<HTMLInputElement>): void {
     $(region).on("change", function() {
         $.get("/rest/viti-areas/", { region__name: $(this).val() },
-              (responseJSON: IVitiAreaJSON[]) => {
+              (responseJSON: IVitiArea[]) => {
             // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
             // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
-                data: restObjsToNameDict(responseJSON as IRESTObject[]),
+                data: restObjsToNameDict(responseJSON as IRESTModel[]),
                 limit: 5,
                 minLength: 1,
             });

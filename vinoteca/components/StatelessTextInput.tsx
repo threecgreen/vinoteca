@@ -6,7 +6,6 @@ interface IStatelessTextInputProps {
     text: string;
     enabled: boolean;
     onChange: (val: string) => void;
-    componentDidMount: () => void;
     className: string;
     s?: number;
     m?: number;
@@ -21,11 +20,11 @@ export class StatelessTextInput extends React.Component<IStatelessTextInputProps
 
     public render() {
         return (
-            <Input inputType="text" value={ this.props.text } { ...this.props } />
+            <Input inputType="text"
+                value={ this.props.text }
+                onBlur={ this.props.onChange }
+                { ...this.props }
+            />
         );
-    }
-
-    public componentDidMount() {
-        this.props.componentDidMount();
     }
 }

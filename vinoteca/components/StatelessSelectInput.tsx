@@ -1,9 +1,8 @@
 import * as React from "react";
-import { FormSelect } from "materialize-css";
 import { capitalizeFirstLetter, nameToId } from "../lib/utils";
 import { InputField } from "./InputField";
 
-interface ISelectInputProps {
+interface IStatelessSelectInputProps {
     name: string;
     options: string[];
     selection: string;
@@ -15,31 +14,24 @@ interface ISelectInputProps {
     l?: number;
 }
 
-export class StatelessSelectInput extends React.Component<ISelectInputProps> {
-    constructor(props: ISelectInputProps) {
-        super(props);
+export const StatelessSelectInput: React.FunctionComponent<IStatelessSelectInputProps > = (props) => {
+    const id = nameToId(props.name);
+    let selectText: JSX.Element | undefined;
+    if (props.selectText) {
+        selectText = <option value="" disabled>
+            { props.selectText }
+        </option>;
     }
-
-    get id(): string {
-        return nameToId(this.props.name);
-    }
-
-    public render() {
-        let selectText: JSX.Element | undefined;
-        if (this.props.selectText) {
-            selectText = <option value="" disabled>
-                { this.props.selectText }
-            </option>;
-        }
-        return <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
-            <select id={ this.id }
-                name={ this.id }
-                onChange={ (e) => this.props.onChange(e.target.value) }
-                value={ this.props.selection || this.props.selectText }
-                ref={ this.props.selectRef }
+    return (
+        <InputField s={ props.s } m={ props.m } l={ props.l }>
+            <select id={ id }
+                name={ id }
+                onChange={ (e) => props.onChange(e.target.value) }
+                value={ props.selection || props.selectText }
+                ref={ props.selectRef }
             >
                 { selectText }
-                { this.props.options.map((option) => {
+                { props.options.map((option) => {
                     return (
                         <option value={ option } key={ option }>
                             { capitalizeFirstLetter(option) }
@@ -47,7 +39,7 @@ export class StatelessSelectInput extends React.Component<ISelectInputProps> {
                     );
                 })}
             </select>
-            <label htmlFor={ this.id }>{ this.props.name }</label>
-        </InputField>;
-    }
-}
+            <label htmlFor={ id }>{ props.name }</label>
+        </InputField>
+    );
+};

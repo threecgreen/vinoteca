@@ -1,6 +1,5 @@
 import * as React from "react";
 import { capitalizeFirstLetter } from "../lib/utils";
-import { SourceMapDevToolPlugin } from "webpack";
 
 // TODO: use children here instead of a normal prop
 interface ITextCellProps {
@@ -46,7 +45,9 @@ export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (prop
     if (!props.url) {
         props.url = `/wines/${props.id}/`;
     }
-    return <td>
-        <a href={ props.url }>{ props.name || "" } { props.wineType }</a>
-    </td>;
+    return (
+        <td>
+            <a href={ props.url }>{ props.name || "" } { props.wineType }</a>
+        </td>
+    );
 };

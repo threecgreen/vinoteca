@@ -5,10 +5,10 @@ import { SpecialChars } from "../../components/SpecialChars";
 import { StatelessSelectInput } from "../../components/StatelessSelectInput";
 import { StatelessTextInput } from "../../components/StatelessTextInput";
 import { get } from "../../lib/ApiHelper";
-import { IProducerJSON, IRegionJSON, IVitiAreaJSON } from "../../lib/rest";
+import Logger from "../../lib/Logger";
+import { IProducer, IRegion, IVitiArea } from "../../lib/rest";
 import { IDict, nameToId, restObjsToNameDict } from "../../lib/utils";
 import { staticAutocomplete } from "../../lib/widgets";
-import Logger from "../../lib/Logger";
 
 interface ISearchWinesFormProps {
     onChange: (colorSelection: string, wineTypeText: string, producerText: string,
@@ -70,12 +70,10 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                         <StatelessTextInput name="Wine Type" text={ this.state.wineTypeText }
                             enabled className="autocomplete" s={ 8 } l={ 4 }
                             onChange={ this.onWineTypeChange }
-                            // componentDidMount={ () => this.onWineTypeChange }
                         />
                         <StatelessTextInput name="Producer" text={ this.state.producerText }
                             enabled className="autocomplete" s={ 6 } l={ 3 }
                             onChange={ this.onProducerChange }
-                            // componentDidMount={ () => this.onProducerChange }
                         />
                         <StatelessTextInput name="Region" text={ this.state.regionText }
                             enabled={ this.state.regionIsEnabled } className="autocomplete"
@@ -138,18 +136,18 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
             producerText: val,
         });
         this.updateRegion();
+        this.onChange();
     }
 
     private async updateRegion() {
-        const producers: IProducerJSON[] = await get(
+        const producers: IProducer[] = await get(
             `/rest/producers/`, {name: this.state.producerText}
         );
-        this.logger.logInfo(`Fetched producers: ${producers}`)
         if (producers.length !== 1) {
             return true;
         }
         get("/rest/regions/", {producer__name: this.state.producerText})
-            .then((regions: IRegionJSON[]) => {
+            .then((regions: IRegion[]) => {
                 this.setState({
                     regionIsEnabled: regions.length > 0,
                 });
@@ -160,7 +158,7 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                     this.onRegionChange(regions[0].name);
                 }
                 return true;
-            }).then();
+            });
     }
 
     public async updateRegionAutocomplete() {
@@ -173,8 +171,7 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
         });
         this.updateLastActive = (c) => this.onRegionChange(this.state.regionText + c);
         get("/rest/viti-areas/", {region__name: this.state.regionText})
-            .then((vitiAreas: IVitiAreaJSON[]) => {
-                const context = this;
+            .then((vitiAreas: IVitiArea[]) => {
                 staticAutocomplete(
                     nameToId("Viti Area"),
                     restObjsToNameDict(vitiAreas),

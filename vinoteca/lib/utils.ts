@@ -1,5 +1,5 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
-import { IRESTObject } from "./rest";
+import { IRESTModel } from "./rest";
 
 /**
  * Key-value store where the key must be a string, but the value is of any type
@@ -40,7 +40,7 @@ export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) !== "undefined" && elem.length > 0;
 }
 
-export function restObjsToNameDict(objects: IRESTObject[]) {
+export function restObjsToNameDict(objects: IRESTModel[]) {
     const dict: IDict<string | null> = {};
     objects.map((obj) => {
         dict[obj.name] = null;
@@ -77,7 +77,7 @@ export function defaultVintageYear(): number {
  * @param obj An object
  */
 export function isEmpty(obj: object): boolean {
-    return Object.keys(obj).length > 0;
+    return Object.keys(obj).length === 0;
 }
 
 /**
@@ -94,4 +94,49 @@ export function capitalizeFirstLetter(s: string): string {
  */
 export function nameToId(name: string): string {
     return name.replace(/(\s)+/g, "-").toLowerCase();
+}
+
+/**
+ * Tests if any member of the given container passes the predicate
+ * @param arr An array to test
+ * @param predicate A test to be applied to each element of arr
+ */
+export function any<T>(arr: T[], predicate: (elem: T) => boolean): boolean {
+    for (const e of arr) {
+        if (predicate(e)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Finds the maximum element by one the properties of the type of element
+ * @param arr An array of objcects
+ * @param accessor A function for accessing a number property of the objects
+ */
+export function maxBy<T>(arr: T[], accessor: (elem: T) => number): T | undefined {
+    let maxElem: T | undefined;
+    let maxVal = -Infinity;
+    for (const elem of arr) {
+        const val = accessor(elem);
+        if (val > maxVal) {
+            maxElem = elem;
+            maxVal = val;
+        }
+    }
+    return maxElem;
+}
+
+/**
+ * Sums an array of objects by one of the objects' properties.
+ * @param arr An array of objects
+ * @param accessor A function for accessing one of the objects' properties
+ */
+export function sumBy<T>(arr: T[], accessor: (elem: T) => number): number {
+    let sum = 0;
+    for (const elem of arr) {
+        sum += accessor(elem);
+    }
+    return sum;
 }

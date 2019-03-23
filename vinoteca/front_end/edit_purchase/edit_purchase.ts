@@ -1,4 +1,4 @@
-import { Grape, IWineGrapeJSON } from "../../lib/rest";
+import { Grape, IWineGrape } from "../../lib/rest";
 import { autocomplete, datepicker, navbar, tabs } from "../../lib/widgets";
 import { applyChart, pieChart } from "../../lib/wine_charts";
 
@@ -9,7 +9,7 @@ $(() => {
     navbar();
     tabs();
     // Grape chart
-    $.getJSON("/rest/wine-grapes/", {wine: wineId}, (wineGrapeJSON: IWineGrapeJSON[]) => {
+    $.getJSON("/rest/wine-grapes/", {wine: wineId}, (wineGrapeJSON: IWineGrape[]) => {
         applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
     });
     // Edit purchase stuff
