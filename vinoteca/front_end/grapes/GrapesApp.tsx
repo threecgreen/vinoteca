@@ -3,7 +3,7 @@ import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IRESTModel } from "../../lib/rest";
+import { IRestModel } from "../../lib/RestTypes";
 import { any } from "../../lib/utils";
 import { GrapesList } from "./GrapesList";
 
@@ -47,7 +47,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
 
     public componentDidMount() {
         get(this.getGrapesUrl())
-            .then((restGrapes: IRESTModel[]) => {
+            .then((restGrapes: IRestModel[]) => {
                 const grapes: GrapeItem[] = restGrapes.map(
                     (g) => new GrapeItem(g.id, g.name),
                 );

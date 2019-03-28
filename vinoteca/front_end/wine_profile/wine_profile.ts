@@ -1,6 +1,6 @@
 import "chart.js";
 import "materialize-css";
-import { Grape, IWineGrape } from "../../lib/rest";
+import { Grape, IWineGrape } from "../../lib/RestTypes";
 import { hFloatingActnBtn, navbar, tabs } from "../../lib/widgets";
 import { applyChart, pieChart  } from "../../lib/wine_charts";
 

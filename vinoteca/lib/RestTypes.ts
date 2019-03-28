@@ -1,7 +1,7 @@
 /** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
 
-export interface IRESTModel {
+export interface IRestModel {
     id: number;
     name: string;
 }
@@ -31,15 +31,15 @@ export class GenericStat implements IChartInput {
     }
 }
 
-export interface IRegion extends IRESTModel {
+export interface IRegion extends IRestModel {
     is_us: boolean;
 }
 
-export interface IProducer extends IRESTModel {
+export interface IProducer extends IRestModel {
     region: number;
 }
 
-export interface IVitiArea extends IRESTModel {
+export interface IVitiArea extends IRestModel {
     region: number;
 }
 
@@ -76,7 +76,7 @@ export class Grape implements IChartInput {
     }
 }
 
-export interface IWine extends IRESTModel {
+export interface IWine extends IRestModel {
     producer: number;
     wine_type: number;
     color: number;
@@ -91,4 +91,15 @@ export interface ISearchWinesResult {
     region: string;
     wine_type: string;
     viti_area?: string;
+}
+
+export interface IProducerWines {
+    lastPurchasedDate: Date;
+    color: string;
+    name?: string;
+    wineType: string;
+    vitiArea: string;
+    totalQuantityPurchased: number;
+    avgPrice: number;
+    rating: number;
 }

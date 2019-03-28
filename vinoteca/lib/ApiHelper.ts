@@ -6,7 +6,9 @@ const headers = {
     "X-CSRFToken": Cookies.get("csrftoken") || "",
 };
 
-function encodeParams(params: IDict<string>): string {
+export type IQueryParams = IDict<string | number | boolean>;
+
+function encodeParams(params: IQueryParams): string {
     if (isEmpty(params)) {
         return "";
     }
@@ -19,7 +21,7 @@ function encodeParams(params: IDict<string>): string {
  * @param url A URL to request
  * @param params An optional dictionary of parameters to their values
  */
-export async function get(url: string, params: IDict<string> = {}): Promise<any> {
+export async function get(url: string, params: IQueryParams = {}): Promise<any> {
     return fetch(url + encodeParams(params)).then((response) => response.json());
 }
 
@@ -30,7 +32,7 @@ export async function get(url: string, params: IDict<string> = {}): Promise<any>
  * @param body JSON object to encode and send to the server
  * @param params An optional dictionary of parameters to their values
  */
-export async function post(url: string, body: object, params: IDict<string> = {}): Promise<any> {
+export async function post(url: string, body: object, params: IQueryParams = {}): Promise<any> {
     return fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers,
@@ -45,7 +47,7 @@ export async function post(url: string, body: object, params: IDict<string> = {}
  * @param body JSON object to encode and send to the server
  * @param params An optional dictionary of parameters and their values
  */
-export async function put(url: string, body: object, params: IDict<string> = {}): Promise<any> {
+export async function put(url: string, body: object, params: IQueryParams = {}): Promise<any> {
     return fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers,

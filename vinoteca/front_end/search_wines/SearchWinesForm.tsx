@@ -6,7 +6,7 @@ import { StatelessSelectInput } from "../../components/StatelessSelectInput";
 import { StatelessTextInput } from "../../components/StatelessTextInput";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IProducer, IRegion, IVitiArea } from "../../lib/rest";
+import { IProducer, IRegion, IVitiArea } from "../../lib/RestTypes";
 import { IDict, nameToId, restModelsToNameDict } from "../../lib/utils";
 import { staticAutocomplete } from "../../lib/widgets";
 

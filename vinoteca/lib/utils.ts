@@ -1,5 +1,5 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
-import { IRESTModel } from "./rest";
+import { IRestModel } from "./RestTypes";
 
 /**
  * Key-value store where the key must be a string, but the value is of any type
@@ -45,7 +45,7 @@ export function elementExists(elem: JQuery<HTMLElement>): boolean {
  * autocomplete.
  * @param objects An array of REST models
  */
-export function restModelsToNameDict(objects: IRESTModel[]): IDict<null> {
+export function restModelsToNameDict(objects: IRestModel[]): IDict<null> {
     const dict: IDict<null> = {};
     objects.map((obj) => {
         dict[obj.name] = null;

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Row } from "../../components/Grid";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { ISearchWinesResult } from "../../lib/rest";
+import { ISearchWinesResult } from "../../lib/RestTypes";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { SearchWinesResults, ResultState } from "./SearchWinesResults";
 

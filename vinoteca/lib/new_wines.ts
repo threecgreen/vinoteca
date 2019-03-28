@@ -1,5 +1,5 @@
 import * as M from "materialize-css";
-import { IRegion, IRESTModel, IVitiArea } from "./rest";
+import { IRegion, IRestModel, IVitiArea } from "./RestTypes";
 import { IDict, restModelsToNameDict } from "./utils";
 
 /** Disable region selection if producer is chosen and show grayed region for that producer. */
@@ -45,7 +45,7 @@ export function updateVitiAreaSelections(region: JQuery<HTMLInputElement>,
             // const vitiAreasDict = flattenToDict(responseJSON as IRESTObject[]);
             // console.log(vitiAreasDict);
             $(vitiArea).autocomplete({
-                data: restModelsToNameDict(responseJSON as IRESTModel[]),
+                data: restModelsToNameDict(responseJSON as IRestModel[]),
                 limit: 5,
                 minLength: 1,
             });
