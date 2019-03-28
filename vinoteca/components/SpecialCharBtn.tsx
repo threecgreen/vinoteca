@@ -1,18 +1,15 @@
 import * as React from "react";
 import { FloatingBtn } from "./FloatingBtn";
-import { IClassesProp } from "./IProps";
 
-interface ISpecialCharBtnProps extends IClassesProp {
+interface ISpecialCharBtnProps {
     onClick: (event: React.MouseEvent, char: string) => void;
     char: string;
 }
 
-export class SpecialCharBtn extends React.Component<ISpecialCharBtnProps, {}> {
-    public render() {
-        const classes = ["btn-small", "center", "spec-char-btn"];
-        return <FloatingBtn classes={ classes }
-                            onClick={ (e) => this.props.onClick(e, this.props.char) }>
-            { this.props.char }
-        </FloatingBtn>;
-    }
-}
+export const SpecialCharBtn: React.FunctionComponent<ISpecialCharBtnProps> = (props) => {
+    const classes = ["btn-small", "center", "spec-char-btn"];
+    return <FloatingBtn classes={ classes }
+                        onClick={ (e) => props.onClick(e, props.char) }>
+        { props.char }
+    </FloatingBtn>;
+};

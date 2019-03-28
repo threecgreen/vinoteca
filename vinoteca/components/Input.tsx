@@ -1,6 +1,6 @@
 import * as React from "react";
-import { InputField } from "./InputField";
 import { nameToId } from "../lib/utils";
+import { InputField } from "./Grid";
 
 type IInputValue = string | number | string[];
 

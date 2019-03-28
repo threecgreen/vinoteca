@@ -33,18 +33,23 @@ export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCh
     public render() {
         const classes = ["special-chars", "z-depth-2"];
         if (this.props.display) {
-            return <Row classes={ classes }>
+            return (
+                <Row classes={ classes }>
                     {/* Shift button */}
                     <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
                                  onClick={ this.handleShift.bind(this) } >
                         { this.state.currentCase === Case.Lower ? "↑" : "↓" }
                     </FloatingBtn>
                     { this.state.chars.map((char) => {
-                        return (<SpecialCharBtn char={ char }
-                                                key={ char }
-                                                onClick={ this.props.onClick } />);
+                        return (
+                            <SpecialCharBtn char={ char }
+                                key={ char }
+                                onClick={ this.props.onClick }
+                            />
+                        );
                     }) }
-            </Row>;
+                </Row>
+            );
         } else {
             return null;
         }

@@ -2,8 +2,7 @@ import * as React from "react";
 import { IDict, isEmpty } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { FloatingBtn } from "./FloatingBtn";
-import { Col } from "./Grid";
-import { InputField } from "./InputField";
+import { Col, InputField } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
 
 interface IWineGrapeProps {

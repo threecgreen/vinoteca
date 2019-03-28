@@ -1,6 +1,6 @@
 import * as React from "react";
 import { capitalizeFirstLetter, nameToId } from "../lib/utils";
-import { InputField } from "./InputField";
+import { InputField } from "./Grid";
 
 interface IStatelessSelectInputProps {
     name: string;
@@ -14,7 +14,7 @@ interface IStatelessSelectInputProps {
     l?: number;
 }
 
-export const StatelessSelectInput: React.FunctionComponent<IStatelessSelectInputProps > = (props) => {
+export const StatelessSelectInput: React.FunctionComponent<IStatelessSelectInputProps> = (props) => {
     const id = nameToId(props.name);
     let selectText: JSX.Element | undefined;
     if (props.selectText) {

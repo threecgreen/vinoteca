@@ -40,8 +40,13 @@ export function elementExists(elem: JQuery<HTMLElement>): boolean {
     return typeof(elem) !== "undefined" && elem.length > 0;
 }
 
-export function restObjsToNameDict(objects: IRESTModel[]) {
-    const dict: IDict<string | null> = {};
+/**
+ * Converts the objects to a single object of names to null for use with materialize
+ * autocomplete.
+ * @param objects An array of REST models
+ */
+export function restModelsToNameDict(objects: IRESTModel[]): IDict<null> {
+    const dict: IDict<null> = {};
     objects.map((obj) => {
         dict[obj.name] = null;
     });

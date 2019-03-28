@@ -7,7 +7,7 @@ import { StatelessTextInput } from "../../components/StatelessTextInput";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IVitiArea } from "../../lib/rest";
-import { IDict, nameToId, restObjsToNameDict } from "../../lib/utils";
+import { IDict, nameToId, restModelsToNameDict } from "../../lib/utils";
 import { staticAutocomplete } from "../../lib/widgets";
 
 interface ISearchWinesFormProps {
@@ -174,7 +174,7 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
             .then((vitiAreas: IVitiArea[]) => {
                 staticAutocomplete(
                     nameToId("Viti Area"),
-                    restObjsToNameDict(vitiAreas),
+                    restModelsToNameDict(vitiAreas),
                     this.onVitiAreaChange,
                 );
             });

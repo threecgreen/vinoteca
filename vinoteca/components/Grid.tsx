@@ -25,18 +25,19 @@ function gridClasses(props: IGridProps): string[] {
     return [sClass, mClass, lClass];
 }
 
-export class Row extends React.Component<IGridProps, {}> {
-    public render() {
-        return <div className={ `row ${joinClasses(gridClasses(this.props), this.props.classes)}` }>
-            { this.props.children }
-        </div>;
-    }
+const GridComponentFactory = (className: string) => {
+    return (props: IGridProps) => {
+        const otherClasses = joinClasses(gridClasses(props), props.classes);
+        return (
+            <div className={ `${className} ${otherClasses}` }>
+                { props.children }
+            </div>
+        );
+    };
 }
 
-export class Col extends React.Component<IGridProps, {}> {
-    public render() {
-        return <div className={ `col ${joinClasses(gridClasses(this.props), this.props.classes)}` }>
-            { this.props.children }
-        </div>;
-    }
-}
+export const Row: React.FunctionComponent<IGridProps> = GridComponentFactory("row");
+
+export const Col: React.FunctionComponent<IGridProps> = GridComponentFactory("col");
+
+export const InputField: React.FunctionComponent<IGridProps> = GridComponentFactory("col input-field")
