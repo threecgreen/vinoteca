@@ -29,8 +29,12 @@ function singleEntityGetter<U>(listGetter: (...params: any) => Promise<U[]>): (i
     }
 }
 
-export async function getRegions(id: number): Promise<IRegion[]> {
-    return get("/rest/regions/", {id})
+export async function getRegions(id?: number, producerName?: string): Promise<IRegion[]> {
+    const nonNullParams = nonNulls({id, producers__name: producerName});
+    if (isEmpty(nonNullParams)) {
+        return Promise.reject("No query params provided");
+    }
+    return get("/rest/regions/", )
         .then((regions: IRegion[]) => {
             if (regions.length === 0) {
                 Promise.reject("Empty result returned for region");

@@ -145,3 +145,22 @@ export function sumBy<T>(arr: T[], accessor: (elem: T) => number): number {
     }
     return sum;
 }
+
+/**
+ * Compares two objects for deep equality.
+ * @param a An object
+ * @param b An object
+ */
+export function areEqual(a: any, b: any): boolean {
+    const aKeys = Object.keys(a);
+    const bKeys = Object.keys(b);
+    if (aKeys.length !== bKeys.length) {
+        return false;
+    }
+    for (const k of aKeys) {
+        if (a[k] !== b[k]) {
+            return false;
+        }
+    }
+    return true;
+}

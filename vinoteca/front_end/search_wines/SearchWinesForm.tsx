@@ -5,19 +5,16 @@ import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { WineTypeInput } from "../../components/WineTypeInput";
+import { SearchWinesInput } from "./SearchWinesApp";
 
 interface ISearchWinesFormProps {
     colorSelection: string;
-    onColorChange: (val: string) => void;
     wineTypeText: string;
-    onWineTypeChange: (val: string) => void;
     producerText: string;
-    onProducerChange: (val: string) => void;
     regionText: string;
-    onRegionChange: (val: string) => void;
     vitiAreaText: string;
-    onVitiAreaChange: (val: string) => void;
     isRegionEnabled: boolean;
+    onInputChange: (input: SearchWinesInput, val: string) => void;
 }
 
 export const SearchWinesForm: React.FunctionComponent<ISearchWinesFormProps> = (props) => {
@@ -25,20 +22,20 @@ export const SearchWinesForm: React.FunctionComponent<ISearchWinesFormProps> = (
         <form autoComplete="off">
             <Row>
                 <ColorInput selection={ props.colorSelection }
-                    onChange={ props.onColorChange }
+                    onChange={ (v) => props.onInputChange(SearchWinesInput.Color, v) }
                 />
                 <WineTypeInput value={ props.wineTypeText }
-                    onChange={ props.onWineTypeChange }
+                    onChange={ (v) => props.onInputChange(SearchWinesInput.WineType, v) }
                 />
                 <ProducerInput value={ props.producerText }
-                    onChange={ props.onProducerChange }
+                    onChange={ (v) => props.onInputChange(SearchWinesInput.Producer, v) }
                 />
                 <RegionInput value={ props.regionText }
-                    onChange={ props.onRegionChange }
+                    onChange={ (v) => props.onInputChange(SearchWinesInput.Region, v) }
                     enabled={ props.isRegionEnabled }
                 />
                 <VitiAreaInput value={ props.vitiAreaText }
-                    onChange={ props.onVitiAreaChange }
+                    onChange={ (v) => props.onInputChange(SearchWinesInput.VitiArea, v) }
                 />
             </Row>
         </form>
