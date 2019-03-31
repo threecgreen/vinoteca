@@ -6,19 +6,19 @@ import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
 
-interface IProductInputProps extends IOnChange {
+interface IProducerInputProps extends IOnChange {
     value: string;
 }
 
-interface IProductInputState {
+interface IProducerInputState {
     // Helpful for debugging to include in state
     autocompleteOptions: IDict<string>;
 }
 
-export class ProducerInput extends React.Component<IProductInputProps, IProductInputState> {
+export class ProducerInput extends React.Component<IProducerInputProps, IProducerInputState> {
     private logger: Logger;
 
-    constructor(props: IProductInputProps) {
+    constructor(props: IProducerInputProps) {
         super(props);
         this.logger = new Logger(this.constructor.name);
     }
@@ -28,7 +28,7 @@ export class ProducerInput extends React.Component<IProductInputProps, IProductI
             .then((producers: IDict<string>) => {
                 staticAutocomplete(nameToId("Producer"), producers, this.props.onChange);
             })
-            .catch((e) => this.logger.logError("Failed to get producer autocomplete options."));
+            .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
     }
 
     public render() {

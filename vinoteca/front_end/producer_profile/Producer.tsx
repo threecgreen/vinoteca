@@ -1,11 +1,14 @@
 import * as React from "react";
 import { IProducer, IRegion } from "../../lib/RestTypes";
 import { Col, Row } from "../../components/Grid";
-import { StatelessTextInput } from "../../components/StatelessTextInput";
+import { RegionInput } from "../../components/RegionInput";
+import { ProducerInput } from "../../components/ProducerInput";
 
 interface IProducerProps {
     producer: IProducer;
+    onProducerChange: (val: string) => void;
     region?: IRegion;
+    onRegionChange: (val: string) => void;
 }
 
 interface IProducerState {
@@ -18,6 +21,12 @@ export class Producer extends React.Component<IProducerProps, IProducerState> {
         this.state = {
             isEditing: false,
         };
+    }
+
+    public get regionName(): string {
+        return this.props.region
+            ? this.props.region.name
+            : "";
     }
 
     public render() {
@@ -61,15 +70,14 @@ export class Producer extends React.Component<IProducerProps, IProducerState> {
         return (
             <React.Fragment>
                 <h3 className="light">{ `Edit Producer ${this.props.producer.name}` }</h3>
-                <form autocomplete="off">
-                    <StatelessTextInput name="Producer"
-                        value={ this.props.producer.name }
-                        className=""
-                        onChange={ () => undefined }
-                        s={ 6 } l={ 3 }
+                <form autoComplete="off">
+                    <ProducerInput value={ this.props.producer.name }
+                        onChange={ this.props.onProducerChange }
                     />
-                    <StatelessTextInput name="Region"
-                        value={ this.props.region.name }
+                    <RegionInput value={ this.regionName }
+                        onChange={ this.props.onRegionChange }
+                        enabled
+                    />
                 </form>
             </React.Fragment>
         )

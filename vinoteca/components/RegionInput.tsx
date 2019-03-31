@@ -6,40 +6,42 @@ import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
 
-interface IWineTypeInputProps extends IOnChange {
+interface IRegionInputProps extends IOnChange {
+    enabled: boolean;
     value: string;
 }
 
-interface IWineTypeInputState {
+interface IRegionInputState {
     // Helpful for debugging to include in state
     autocompleteOptions: IDict<string>;
 }
 
-export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTypeInputState> {
+export class RegionInput extends React.Component<IRegionInputProps, IRegionInputState> {
     private logger: Logger;
 
-    constructor(props: IWineTypeInputProps) {
+    constructor(props: IRegionInputProps) {
         super(props);
-        this.setState({autocompleteOptions: {}});
         this.logger = new Logger(this.constructor.name);
     }
 
-    public onComponentMount() {
-        get("/rest/wine-types/all/")
-            .then((wineTypes: IDict<string>) => {
-                staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
+    public onComponentDidMount() {
+        get("/rest/regions/all/")
+            .then((producers: IDict<string>) => {
+                staticAutocomplete(nameToId("Region"), producers, this.props.onChange);
             })
-            .catch((e) => this.logger.logError(`Failed to get wine type autocomplete options. ${e}`));
+            .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
     }
 
     public render() {
         return (
-            <StatelessTextInput name="Wine Type"
+            <StatelessTextInput name="Region"
                 value={ this.props.value }
                 className="autocomplete"
-                s={ 8 } l={ 4 }
+                s={ 6 } l={ 3 }
                 onChange={ this.props.onChange }
+                enabled={ this.props.enabled }
             />
         );
     }
 }
+

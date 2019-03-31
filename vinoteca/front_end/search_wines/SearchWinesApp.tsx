@@ -27,6 +27,11 @@ export class WineResult {
 }
 
 interface ISearchWinesAppState {
+    colorSelection: string;
+    wineTypeText: string;
+    producerText: string;
+    regionText: string;
+    vitiAreaText: string;
     resultState: ResultState;
     results: WineResult[];
 }
@@ -37,11 +42,26 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+            colorSelection: "",
+            wineTypeText: "",
+            producerText: "",
+            regionText: "",
+            vitiAreaText: "",
             resultState: ResultState.HasNotSearched,
             results: [],
         };
         this.logger = new Logger(this.constructor.name, true),
-        this.onInputChange = this.onInputChange.bind(this);
+        this.querySearchResults = this.querySearchResults.bind(this);
+        this.onColorChange = this.onColorChange.bind(this);
+        this.onWineTypeChange = this.onWineTypeChange.bind(this);
+        this.onProducerChange = this.onProducerChange.bind(this);
+        this.onRegionChange = this.onRegionChange.bind(this);
+        this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
+    }
+
+    public get isRegionEnabled(): boolean {
+        // TODO:
+        return true;
     }
 
     public render() {
@@ -51,7 +71,19 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                     <h3 className="page-title">Find a previously purchased wine</h3>
                     { /* non-floating button here */ }
                 </Row>
-                <SearchWinesForm onChange={ this.onInputChange } />
+                <SearchWinesForm
+                    colorSelection={ this.state.colorSelection }
+                    onColorChange={ this.onColorChange }
+                    wineTypeText={ this.state.wineTypeText }
+                    onWineTypeChange={ this.onWineTypeChange }
+                    producerText={ this.state.producerText }
+                    onProducerChange={ this.onProducerChange }
+                    regionText={ this.state.regionText }
+                    onRegionChange={ this.onRegionChange }
+                    isRegionEnabled={ this.isRegionEnabled }
+                    vitiAreaText={ this.state.vitiAreaText }
+                    onVitiAreaChange={ this.onVitiAreaChange }
+                />
                 <SearchWinesResults results={ this.state.results }
                     resultState={ this.state.resultState }
                 />
@@ -59,7 +91,37 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         );
     }
 
-    public onInputChange(colorSelection: string, wineTypeText: string, producerText: string,
+    private onColorChange(val: string) {
+        this.setState({
+            colorSelection: val,
+        });
+    }
+
+    private onWineTypeChange(val: string) {
+        this.setState({
+            wineTypeText: val,
+        });
+    }
+
+    private onProducerChange(val: string) {
+        this.setState({
+            producerText: val,
+        });
+    }
+
+    private onRegionChange(val: string) {
+        this.setState({
+            regionText: val,
+        });
+    }
+
+    private onVitiAreaChange(val: string) {
+        this.setState({
+            vitiAreaText: val,
+        });
+    }
+
+    private querySearchResults(colorSelection: string, wineTypeText: string, producerText: string,
         regionText: string, vitiAreaText: string) {
         this.setState({resultState: ResultState.Searching});
         get("/rest/wines/search/", {
