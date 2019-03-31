@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FloatingBtn } from "./FloatingBtn";
+import { FloatingBtn } from "./Buttons";
 
 interface ISpecialCharBtnProps {
     onClick: (event: React.MouseEvent, char: string) => void;

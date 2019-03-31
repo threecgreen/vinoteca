@@ -76,7 +76,6 @@ export class Producer extends React.Component<IProducerProps, IProducerState> {
                     />
                     <RegionInput value={ this.regionName }
                         onChange={ this.props.onRegionChange }
-                        enabled
                     />
                 </form>
             </React.Fragment>

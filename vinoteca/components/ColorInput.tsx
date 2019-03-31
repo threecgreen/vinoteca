@@ -8,6 +8,7 @@ import { StatelessSelectInput } from "./StatelessSelectInput";
 
 interface IColorInputProps extends IOnChange {
     selection: string;
+    extraChoice?: string;
 }
 
 interface IColorInputState {
@@ -31,7 +32,7 @@ export class ColorInput extends React.Component<IColorInputProps, IColorInputSta
         get("/rest/colors/all/")
             .then((colors: IDict<string>) => {
                 this.setState({
-                    selectionOptions: Object.keys(colors),
+                    selectionOptions: this.concatIfNotNull(Object.keys(colors)),
                 });
                 const formSelect = new FormSelect(this.state.selectRef.current!);
             })
@@ -42,10 +43,10 @@ export class ColorInput extends React.Component<IColorInputProps, IColorInputSta
         return (
             <StatelessSelectInput name="Color"
                 s={ 4 } l={ 2 }
-                selection={ this.props.selection }
                 selectRef={ this.state.selectRef }
                 options={ this.state.selectionOptions }
                 onChange={ (v) => this.onChange(v) }
+                { ...this.props }
             />
         );
     }
@@ -54,5 +55,12 @@ export class ColorInput extends React.Component<IColorInputProps, IColorInputSta
         if (this.props.onChange) {
             this.props.onChange(val);
         }
+    }
+
+    private concatIfNotNull(options: string[]): string[] {
+        if (this.props.extraChoice) {
+            return [this.props.extraChoice].concat(options);
+        }
+        return options;
     }
 }

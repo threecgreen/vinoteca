@@ -1,7 +1,7 @@
 import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import { IDict, maxBy, sumBy } from "../lib/utils";
-import { FloatingBtn } from "./FloatingBtn";
+import { FloatingBtn } from "./Buttons";
 import { GrapeInput } from "./GrapeInput";
 import { Col, InputField, Row } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";

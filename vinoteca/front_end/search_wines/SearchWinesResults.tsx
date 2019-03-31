@@ -39,13 +39,13 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
                             <th>Viticultural Area</th>
                         </tr>
                     </thead>
-                    <tbody> {
-                        props.results.map((wine) => {
-                            return (
+                    <tbody>
+                        { props.results.map((wine) => {
+                            return(
                                 <SearchWinesResult result={ wine } key={ wine.id } />
                             );
-                        })
-                    } </tbody>
+                        }) }
+                    </tbody>
                 </table>
             );
     }

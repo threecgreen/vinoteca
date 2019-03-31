@@ -1,31 +1,27 @@
 import { get, IQueryParams } from "./ApiHelper";
-import { IProducer, IRegion, IRestModel } from "./RestTypes";
+import { IProducer, IRegion } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
-import { ResultState } from "../front_end/search_wines/SearchWinesResults";
 import Logger from "./Logger";
 
 function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
     let q: IQueryParams = {};
-    Object.keys(obj).filter(k => Boolean(k)).forEach((k) => {
-        if (obj[k]) {
-            q[k] = obj[k] as string | number | boolean;
-        }
+    Object.keys(obj).filter(k => Boolean(obj[k])).forEach((k) => {
+        q[k] = obj[k] as string | number | boolean;
     });
     return q;
 }
 
-function singleEntityGetter<U>(listGetter: (...params: any) => Promise<U[]>): (id: number) => Promise<U> {
-    return (id: number) => {
-        return listGetter(id)
-            .then((results: U[]) =>  {
-                if (results.length !== 1) {
-                    const message = "Received more than one result when one was expected";
-                    const logger = new Logger("RestApi");
-                    logger.logCritical(message);
-                    Promise.reject(message);
-                }
-                return results[0];;
-            });
+function singleEntityGetter<T>(listGetter: (...params: any) => Promise<T[]>): (id: number) => Promise<T> {
+    return async (id: number) => {
+        const results = await listGetter(id);
+        if (results.length !== 1) {
+            const message = "Received more than one result when one was expected";
+            const logger = new Logger("RestApi");
+            logger.logCritical(message);
+            Promise.reject(message);
+        }
+        return results[0];
+        ;
     }
 }
 
@@ -34,7 +30,7 @@ export async function getRegions(id?: number, producerName?: string): Promise<IR
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/regions/", )
+    return get("/rest/regions/", nonNullParams)
         .then((regions: IRegion[]) => {
             if (regions.length === 0) {
                 Promise.reject("Empty result returned for region");

@@ -2,6 +2,7 @@ r"""Still figuring out where exactly the REST framework will be used. It seems
 ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
+from typing import Tuple
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from rest_framework import generics, mixins, response, views
@@ -122,12 +123,18 @@ class WineList(generics.ListAPIView):
 class SearchWines(views.APIView):
     @staticmethod
     def dictfetchall(cursor):
-        "Returns all rows from a cursor as a dict"
+        """Returns all rows from a cursor as a dict"""
         desc = cursor.description
         return [
             dict(zip([col[0] for col in desc], row))
             for row in cursor.fetchall()
         ]
+
+    @staticmethod
+    def wrapInWildCards(params: Tuple[str]) -> Tuple[str]:
+        """If exact match fails, we want to try with wildcards. This function
+        wraps all non-null query parameters in the SQL wildcard '%'."""
+        return tuple(f"%{p}%" if p is not None else p for p in params)
 
     def get(self, request):
         with get_connection() as conn:
@@ -139,6 +146,8 @@ class SearchWines(views.APIView):
             viti_area = empty_to_none(request.GET.get("viti_area"))
             params = [color, wine_type, producer, region, viti_area]
             params = [param for param in params if param is not None]
+            if not params:
+                return response.Response([], 204)
             query = """
                 SELECT
                     w.id
@@ -163,9 +172,13 @@ class SearchWines(views.APIView):
                         ? is null or ? like v.name
                     );
             """
-            cursor.execute(query, (wine_type, color, producer, region,
-                                   viti_area, viti_area))
+            params = (wine_type, color, producer, region, viti_area, viti_area)
+            cursor.execute(query, params)
+            # Rerun with wildcards if empty
             serializer = WineSerializer(self.dictfetchall(cursor), many=True)
+            if not serializer.data:
+                cursor.execute(query, self.wrapInWildCards(params))
+                serializer = WineSerializer(self.dictfetchall(cursor), many=True)
             return response.Response(serializer.data)
 
 

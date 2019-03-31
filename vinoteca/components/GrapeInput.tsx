@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IDict, isEmpty } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
-import { FloatingBtn } from "./FloatingBtn";
+import { FloatingBtn } from "./Buttons";
 import { Col, InputField } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
 

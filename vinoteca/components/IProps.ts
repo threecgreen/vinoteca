@@ -10,4 +10,6 @@ export interface IClassesProp {
 
 export interface IOnChange {
     onChange: (val: string) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
 }

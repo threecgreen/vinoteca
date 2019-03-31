@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
 import { IDict, nameToId } from "../lib/utils";
@@ -20,11 +20,11 @@ export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTyp
 
     constructor(props: IWineTypeInputProps) {
         super(props);
-        this.setState({autocompleteOptions: {}});
+        this.state = {autocompleteOptions: {}};
         this.logger = new Logger(this.constructor.name);
     }
 
-    public onComponentMount() {
+    public componentDidMount() {
         get("/rest/wine-types/all/")
             .then((wineTypes: IDict<string>) => {
                 staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
@@ -35,10 +35,9 @@ export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTyp
     public render() {
         return (
             <StatelessTextInput name="Wine Type"
-                value={ this.props.value }
                 className="autocomplete"
                 s={ 8 } l={ 4 }
-                onChange={ this.props.onChange }
+                { ...this.props }
             />
         );
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
 import { IDict, nameToId } from "../lib/utils";
@@ -23,7 +23,7 @@ export class ProducerInput extends React.Component<IProducerInputProps, IProduce
         this.logger = new Logger(this.constructor.name);
     }
 
-    public onComponentDidMount() {
+    public componentDidMount() {
         get("/rest/producers/all/")
             .then((producers: IDict<string>) => {
                 staticAutocomplete(nameToId("Producer"), producers, this.props.onChange);
@@ -34,10 +34,9 @@ export class ProducerInput extends React.Component<IProducerInputProps, IProduce
     public render() {
         return (
             <StatelessTextInput name="Producer"
-                value={ this.props.value }
                 className="autocomplete"
                 s={ 6 } l={ 3 }
-                onChange={ this.props.onChange }
+                { ...this.props }
             />
         );
     }

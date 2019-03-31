@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as M from "materialize-css";
 import { nameToId } from "../lib/utils";
 import { InputField } from "./Grid";
 
@@ -10,8 +11,8 @@ export interface IInputProps<T extends IInputValue> {
     enabled: boolean;
     className: string;
     onChange: (val: string) => void;
-    onFocus: (val: string) => void;
-    onBlur: (val: string) => void;
+    onFocus: () => void;
+    onBlur: () => void;
     inputType?: string;
     active?: boolean;
     step?: string;
@@ -42,10 +43,11 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     type={ this.props.inputType }
                     className={ this.props.className }
                     value={ this.props.value }
+                    disabled={ !this.props.enabled }
                     step={ this.props.step } min={ this.props.min } max={ this.props.max }
                     onChange={ (e) => this.props.onChange(e.target.value) }
-                    onFocus={ (e) => this.props.onFocus(e.target.value) }
-                    onBlur={ (e) => this.props.onBlur(e.target.value) }
+                    onFocus={ () => this.props.onFocus() }
+                    onBlur={ () => this.props.onBlur() }
                 >
                 </input>
                 <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
@@ -53,6 +55,10 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                 </label>
             </InputField>
         );
+    }
+
+    public componentDidUpdate() {
+        M.updateTextFields();
     }
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
 import { IDict, nameToId } from "../lib/utils";
@@ -23,7 +23,7 @@ export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAre
         this.logger = new Logger(this.constructor.name);
     }
 
-    public onComponentDidMount() {
+    public componentDidMount() {
         get("/rest/viti-areas/all/")
             .then((producers: IDict<string>) => {
                 staticAutocomplete(nameToId("VitiArea"), producers, this.props.onChange);
@@ -34,10 +34,9 @@ export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAre
     public render() {
         return (
             <StatelessTextInput name="VitiArea"
-                value={ this.props.value }
                 className="autocomplete"
                 s={ 6 } l={ 3 }
-                onChange={ this.props.onChange }
+                { ...this.props }
             />
         );
     }
