@@ -7,3 +7,7 @@ export interface IChildrenProp {
 export interface IClassesProp {
     classes?: string[];
 }
+
+export interface IOnChange {
+    onChange: (val: string) => void;
+}

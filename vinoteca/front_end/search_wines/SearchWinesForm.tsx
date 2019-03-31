@@ -67,19 +67,19 @@ export class SearchWinesForm extends React.Component<ISearchWinesFormProps, ISea
                             onChange={ this.onColorChange }
                             selectText="Select a color"
                         />
-                        <StatelessTextInput name="Wine Type" text={ this.state.wineTypeText }
+                        <StatelessTextInput name="Wine Type" value={ this.state.wineTypeText }
                             enabled className="autocomplete" s={ 8 } l={ 4 }
                             onChange={ this.onWineTypeChange }
                         />
-                        <StatelessTextInput name="Producer" text={ this.state.producerText }
+                        <StatelessTextInput name="Producer" value={ this.state.producerText }
                             enabled className="autocomplete" s={ 6 } l={ 3 }
                             onChange={ this.onProducerChange }
                         />
-                        <StatelessTextInput name="Region" text={ this.state.regionText }
+                        <StatelessTextInput name="Region" value={ this.state.regionText }
                             enabled={ this.state.regionIsEnabled } className="autocomplete"
                             s={ 6 } l={ 3 } onChange={ this.onRegionChange }
                         />
-                        <StatelessTextInput name="Viti Area" text={ this.state.vitiAreaText }
+                        <StatelessTextInput name="Viti Area" value={ this.state.vitiAreaText }
                             className="autocomplete" s={ 6 } l={ 3 }
                             onChange={ this.onVitiAreaChange }
                         />

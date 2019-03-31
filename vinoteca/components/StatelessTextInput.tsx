@@ -3,7 +3,7 @@ import { Input } from "./Input";
 
 interface IStatelessTextInputProps {
     name: string;
-    text: string;
+    value: string;
     enabled: boolean;
     onChange: (val: string) => void;
     className: string;
@@ -21,7 +21,7 @@ export class StatelessTextInput extends React.Component<IStatelessTextInputProps
     public render() {
         return (
             <Input inputType="text"
-                value={ this.props.text }
+                value={ this.props.value }
                 onBlur={ this.props.onChange }
                 { ...this.props }
             />

@@ -63,13 +63,13 @@ export class Producer extends React.Component<IProducerProps, IProducerState> {
                 <h3 className="light">{ `Edit Producer ${this.props.producer.name}` }</h3>
                 <form autocomplete="off">
                     <StatelessTextInput name="Producer"
-                        text={ this.props.producer.name }
+                        value={ this.props.producer.name }
                         className=""
                         onChange={ () => undefined }
                         s={ 6 } l={ 3 }
                     />
                     <StatelessTextInput name="Region"
-                        text={ this.props.region.name }
+                        value={ this.props.region.name }
                 </form>
             </React.Fragment>
         )
