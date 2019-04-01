@@ -36,7 +36,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
 
     public render() {
         const id = nameToId(this.props.name);
-        return(
+        return (
             <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
                 <input id={ id }
                     name={ id }

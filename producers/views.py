@@ -18,7 +18,8 @@ def producer_profile(request, producer_id: int):
         .annotate(total_quantity=Sum("purchases__quantity")) \
         .annotate(avg_price=Avg("purchases__price")) \
         .annotate(last_purchased_date=Max("purchases__date")) \
-        .prefetch_related("wine_type", "color", "viti_area")
+        .prefetch_related("wine_type", "color", "viti_area") \
+        .order_by("-last_purchased_date")
     columns = TableColumn.from_list([
         "Last Purchased", "Color", "Name and Type", "Viticultural Area",
         TableColumn("Total Quantity", num_col=True), TableColumn("Avg Price", num_col=True),

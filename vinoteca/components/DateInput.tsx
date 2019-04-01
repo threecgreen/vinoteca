@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { Datepicker } from "materialize-css";
 import * as React from "react";
-import { nameToId } from "../lib/utils";
 import { Input } from "./Input";
 
 interface IDateInputState {
@@ -29,7 +28,6 @@ export class DateInput extends React.Component<{}, IDateInputState> {
 
     public render() {
         const name = "Purchase Date";
-        const id = nameToId(name);
         return <Input name={ name } value={ this.dateString }
                       className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
                       onChange={ () => undefined } />;

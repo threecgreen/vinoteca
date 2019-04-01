@@ -1,7 +1,8 @@
 import { get, IQueryParams } from "./ApiHelper";
-import { IProducer, IRegion } from "./RestTypes";
+import { IProducer, IRegion, IWine } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 import Logger from "./Logger";
+import { number } from "prop-types";
 
 function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
     let q: IQueryParams = {};
@@ -11,9 +12,9 @@ function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryPara
     return q;
 }
 
-function singleEntityGetter<T>(listGetter: (...params: any) => Promise<T[]>): (id: number) => Promise<T> {
-    return async (id: number) => {
-        const results = await listGetter(id);
+function singleEntityGetter<T, U>(listGetter: (params: T) => Promise<U[]>): (params: T) => Promise<U> {
+    return async (params: T) => {
+        const results = await listGetter(params);
         if (results.length !== 1) {
             const message = "Received more than one result when one was expected";
             const logger = new Logger("RestApi");
@@ -25,7 +26,12 @@ function singleEntityGetter<T>(listGetter: (...params: any) => Promise<T[]>): (i
     }
 }
 
-export async function getRegions(id?: number, producerName?: string): Promise<IRegion[]> {
+interface IGetRegionsParams {
+    id?: number;
+    producerName?: string;
+}
+
+export async function getRegions({id, producerName}: IGetRegionsParams): Promise<IRegion[]> {
     const nonNullParams = nonNulls({id, producers__name: producerName});
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
@@ -41,7 +47,12 @@ export async function getRegions(id?: number, producerName?: string): Promise<IR
 
 export const getRegion = singleEntityGetter(getRegions);
 
-export async function getProducers(id?: number, regionId?: number): Promise<IProducer[]> {
+interface IGetProducersParams {
+    id?: number;
+    regionId?: number;
+}
+
+export async function getProducers({id, regionId}: IGetProducersParams): Promise<IProducer[]> {
     const nonNullParams = nonNulls({id, region_id: regionId});
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
@@ -49,10 +60,34 @@ export async function getProducers(id?: number, regionId?: number): Promise<IPro
     return get("/rest/producers/", nonNullParams)
         .then((producers: IProducer[]) => {
             if (producers.length === 0) {
-                Promise.reject("Empty result return for producer");
+                Promise.reject("Empty result returned for producer");
             }
             return producers;
         });
 }
 
 export const getProducer = singleEntityGetter(getProducers);
+
+interface IGetWinesParams {
+    id?: number;
+    producerId?: number;
+    regionId?: number;
+    wineTypeId?: number;
+}
+
+export async function getWines(
+    {id, producerId, regionId, wineTypeId}: IGetWinesParams
+): Promise<IWine[]> {
+    const nonNullParams = nonNulls({id, producer_id: producerId, producer__region_id: regionId,
+                                    wine_type_id: wineTypeId});
+    if (isEmpty(nonNullParams)) {
+        return Promise.reject("No query params provided");
+    }
+    return get("/rest/wines/", nonNullParams)
+        .then((wines: IWine[]) => {
+            if (wines.length === 0) {
+                Promise.reject("Empty result returned for wines");
+            }
+            return wines;
+        });
+}

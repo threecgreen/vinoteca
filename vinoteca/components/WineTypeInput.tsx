@@ -11,7 +11,6 @@ interface IWineTypeInputProps extends IOnChange {
 }
 
 interface IWineTypeInputState {
-    // Helpful for debugging to include in state
     autocompleteOptions: IDict<string>;
 }
 

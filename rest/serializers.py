@@ -1,5 +1,7 @@
 r"""Contains serializers for vinoteca ORM models."""
 from rest_framework import serializers
+from django_filters import FilterSet, ModelChoiceFilter
+
 from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineGrapes,
     WineTypes, Wines
@@ -87,7 +89,7 @@ class WineTypeSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class WineSerializer(serializers.Serializer):
+class WineSearchResultSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
     color = serializers.CharField()
@@ -95,3 +97,16 @@ class WineSerializer(serializers.Serializer):
     region = serializers.CharField()
     wine_type = serializers.CharField()
     viti_area = serializers.CharField()
+
+
+class WineSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(allow_null=True)
+    color = serializers.CharField(source="color.name")
+    producer = serializers.CharField(source="producer.name")
+    region = serializers.CharField(source="producer.region.name")
+    wine_type = serializers.CharField(source="wine_type.name")
+    viti_area = serializers.CharField(source="viti_area.name", allow_null=True)
+    total_quantity = serializers.IntegerField()
+    avg_price = serializers.FloatField()
+    last_purchased_date = serializers.IntegerField()

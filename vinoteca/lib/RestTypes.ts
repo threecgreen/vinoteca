@@ -76,13 +76,6 @@ export class Grape implements IChartInput {
     }
 }
 
-export interface IWine extends IRestModel {
-    producer: number;
-    wine_type: number;
-    color: number;
-    viti_area: number;
-}
-
 export interface ISearchWinesResult {
     id: number;
     name?: string;
@@ -93,13 +86,47 @@ export interface ISearchWinesResult {
     viti_area?: string;
 }
 
-export interface IProducerWines {
-    lastPurchasedDate: Date;
-    color: string;
+export interface IWine {
+    id: number;
     name?: string;
-    wineType: string;
-    vitiArea: string;
-    totalQuantityPurchased: number;
-    avgPrice: number;
+    inventory: number;
     rating: number;
+    color: string;
+    wine_type: string;
+    producer: string;
+    region: string;
+    viti_area?: string;
+    last_purchased_date: number;
+    total_quantity: number;
+    avg_price: number;
+}
+
+export class Wine {
+    public id: number;
+    public name?: string;
+    public inventory: number;
+    public rating: number;
+    public color: string;
+    public wineType: string;
+    public producer: string;
+    public region: string;
+    public vitiArea?: string;
+    public lastPurchasedDate: number;
+    public totalQuantityPurchased: number;
+    public avgPrice: number;
+
+    constructor(wine: IWine) {
+        this.id = wine.id;
+        this.name = wine.name;
+        this.inventory = wine.inventory;
+        this.rating = wine.rating;
+        this.color = wine.color;
+        this.wineType = wine.wine_type;
+        this.producer = wine.producer;
+        this.region = wine.region;
+        this.vitiArea = wine.viti_area;
+        this.lastPurchasedDate = wine.last_purchased_date;
+        this.totalQuantityPurchased = wine.total_quantity;
+        this.avgPrice = wine.avg_price;
+    }
 }

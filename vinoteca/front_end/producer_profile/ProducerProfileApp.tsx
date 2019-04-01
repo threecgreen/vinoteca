@@ -2,14 +2,19 @@ import * as React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
-import { getProducer, getRegion } from "../../lib/RestApi";
-import { IProducer, IProducerWines, IRegion } from "../../lib/RestTypes";
+import { getProducer, getRegion, getWines } from "../../lib/RestApi";
+import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
 import { Producer } from "./Producer";
+import { FixedActionList } from "../../components/FixedActionList";
+import { ProducerWinesTable } from "./ProducerWinesTable";
+import { FloatingBtn } from "../../components/Buttons";
+import { MaterialIcon } from "../../components/MaterialIcon";
 
 interface IProducerProfileAppState {
+    isEditing: boolean;
     producer?: IProducer;
     region?: IRegion;
-    wines: IProducerWines[];
+    wines: Wine[];
 }
 
 interface IProducerProfileAppProps {
@@ -22,32 +27,33 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     constructor(props: IProducerProfileAppProps) {
         super(props);
         this.state = {
+            isEditing: false,
             producer: undefined,
             region: undefined,
             wines: [],
         };
         this.logger = new Logger(this.constructor.name, true);
+        this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
     }
 
     public componentDidMount() {
-        getProducer(this.props.producerId)
+        getProducer({id: this.props.producerId})
             .then((producer) => {
-                this.setState({
-                    producer,
-                });
+                this.setState({producer});
                 return producer.region;
             })
             .then((regionId) => {
-                return getRegion(regionId);
+                return getRegion({id: regionId});
             })
             .then((region) => {
-                this.setState({
-                    region,
-                });
+                this.setState({region});
             });
-        // TODO: get producer wines
+        getWines({producerId: this.props.producerId})
+            .then((wines) => {
+                this.setState({wines: wines.map(w => new Wine(w))});
+            });
     }
 
     public render() {
@@ -57,16 +63,40 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         return (
             <div className="container">
                 <Row>
-                    <Col>
-                        <Producer producer={ this.state.producer }
+                    <Col s={ 12 }>
+                        <Producer isEditing={ this.state.isEditing }
+                            producer={ this.state.producer }
                             onProducerChange={ this.onProducerChange }
                             region={ this.state.region }
                             onRegionChange={ this.onRegionChange }
                         />
                     </Col>
                 </Row>
+                <Row>
+                    <Col s={ 12 } l={ 9 }>
+                        <h4>Wines</h4>
+                    </Col>
+                    <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
+                        <FixedActionList>
+                            <FloatingBtn onClick={ this.onEditClick }
+                                classes={ ["yellow-bg"] }
+                            >
+                                <MaterialIcon iconName="edit" />
+                            </FloatingBtn>
+                        </FixedActionList>
+                    </Col>
+                    <Col s={ 12 }>
+                        <ProducerWinesTable wines={ this.state.wines } />
+                    </Col>
+                </Row>
             </div>
-        )
+        );
+    }
+
+    private onEditClick() {
+        this.setState({
+            isEditing: true,
+        });
     }
 
     private onProducerChange(val: string) {
@@ -83,7 +113,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
             }
             this.logger.logWarning(`Tried to update undefined producer with value '${val}'`);
             return state;
-        })
+        });
     }
 
     private onRegionChange(val: string) {

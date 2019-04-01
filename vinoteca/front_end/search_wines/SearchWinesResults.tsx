@@ -50,3 +50,4 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
             );
     }
 };
+SearchWinesResults.displayName = "SearchWinesResult";

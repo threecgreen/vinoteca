@@ -3,16 +3,17 @@ ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
 from typing import Tuple
-from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Max, Sum, Avg
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, mixins, response, views
 
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
-    VitiAreaSerializer, WineTypeSerializer, WineSerializer,
+    VitiAreaSerializer, WineTypeSerializer, WineSearchResultSerializer,
     ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
     WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer,
-    WineGrapeSerializer, GrapeSerializer
+    WineGrapeSerializer, GrapeSerializer, WineSerializer
 )
 from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
@@ -114,10 +115,14 @@ class WineTypeList(generics.ListAPIView):
 class WineList(generics.ListAPIView):
     r"""Allow queries about Wines based on their id, Color, Producer, VitiArea,
     and WineType."""
-    queryset = Wines.objects.all()
+    queryset = Wines.objects.all() \
+        .annotate(total_quantity=Sum("purchases__quantity")) \
+        .annotate(avg_price=Avg("purchases__price")) \
+        .annotate(last_purchased_date=Max("purchases__date")) \
+        .prefetch_related("wine_type", "color", "viti_area", "producer") \
+        .order_by("-last_purchased_date")
     serializer_class = WineSerializer
-    filterset_fields = ("id", "color_id", "producer_id", "viti_area_id",
-                        "wine_type_id")
+    filterset_fields = ("id", "producer_id", "producer__region_id", "wine_type_id")
 
 
 class SearchWines(views.APIView):
@@ -144,10 +149,10 @@ class SearchWines(views.APIView):
             producer = empty_to_none(request.GET.get("producer"))
             region = empty_to_none(request.GET.get("region"))
             viti_area = empty_to_none(request.GET.get("viti_area"))
-            params = [color, wine_type, producer, region, viti_area]
-            params = [param for param in params if param is not None]
-            if not params:
-                return response.Response([], 204)
+            # params = [color, wine_type, producer, region, viti_area]
+            # params = [param for param in params if param is not None]
+            # if not params:
+            #     return response.Response({}, 204)
             query = """
                 SELECT
                     w.id
@@ -168,17 +173,18 @@ class SearchWines(views.APIView):
                     AND cl.name LIKE coalesce(?, cl.name)
                     AND pro.name LIKE coalesce(?, pro.name)
                     AND r.name LIKE coalesce(?, r.name)
-                    and (
-                        ? is null or ? like v.name
-                    );
+                    AND (
+                        ? IS NULL OR ? LIKE v.name
+                    )
+                ORDER BY coalesce(w.name || ' ', '') || t.name;
             """
             params = (wine_type, color, producer, region, viti_area, viti_area)
             cursor.execute(query, params)
             # Rerun with wildcards if empty
-            serializer = WineSerializer(self.dictfetchall(cursor), many=True)
+            serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
             if not serializer.data:
                 cursor.execute(query, self.wrapInWildCards(params))
-                serializer = WineSerializer(self.dictfetchall(cursor), many=True)
+                serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
             return response.Response(serializer.data)
 
 

@@ -5,17 +5,14 @@ import { RegionInput } from "../../components/RegionInput";
 import { ProducerInput } from "../../components/ProducerInput";
 
 interface IProducerProps {
+    isEditing: boolean;
     producer: IProducer;
     onProducerChange: (val: string) => void;
     region?: IRegion;
     onRegionChange: (val: string) => void;
 }
 
-interface IProducerState {
-    isEditing: boolean;
-}
-
-export class Producer extends React.Component<IProducerProps, IProducerState> {
+export class Producer extends React.Component<IProducerProps> {
     constructor(props: IProducerProps) {
         super(props);
         this.state = {
@@ -30,7 +27,7 @@ export class Producer extends React.Component<IProducerProps, IProducerState> {
     }
 
     public render() {
-        const content = this.state.isEditing ? this.renderEdit() : this.renderView();
+        const content = this.props.isEditing ? this.renderEdit() : this.renderView();
         return (
             <Row>
                 <Col s={ 12 }>

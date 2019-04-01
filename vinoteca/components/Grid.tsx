@@ -1,5 +1,6 @@
 import * as React from "react";
 import { IChildrenProp, IClassesProp } from "./IProps";
+import { capitalizeFirstLetter } from "../lib/utils";
 
 interface IGridProps extends IClassesProp, IChildrenProp {
     s?: number;
@@ -25,8 +26,8 @@ function gridClasses(props: IGridProps): string[] {
     return [sClass, mClass, lClass];
 }
 
-const GridComponentFactory = (className: string) => {
-    return (props: IGridProps) => {
+const GridComponentFactory = (className: string): React.FunctionComponent<IGridProps> => {
+    const component: React.FunctionComponent<IGridProps> = (props: IGridProps) => {
         const otherClasses = joinClasses(gridClasses(props), props.classes);
         return (
             <div className={ `${className} ${otherClasses}` }>
@@ -34,6 +35,8 @@ const GridComponentFactory = (className: string) => {
             </div>
         );
     };
+    component.displayName = capitalizeFirstLetter(className);
+    return component;
 }
 
 export const Row: React.FunctionComponent<IGridProps> = GridComponentFactory("row");
