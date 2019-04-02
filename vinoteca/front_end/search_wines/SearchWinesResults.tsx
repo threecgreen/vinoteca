@@ -28,6 +28,7 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
                     <h5 id="no-results">No results found.</h5>
                 );
             }
+            // TODO: use components
             return (
                 <table className="highlight responsive-table">
                     <thead>

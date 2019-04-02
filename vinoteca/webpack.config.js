@@ -13,7 +13,6 @@ module.exports = {
         // Dashboards
         dashboards: [inputPath + "dashboards/dashboards.ts"],
         // Producers
-        edit_producer: [inputPath + "edit_producer/edit_producer.ts"],
         producer_profile: [inputPath + "producer_profile/producer_profile.ts"],
         // Wines
         edit_purchase: [inputPath + "edit_purchase/edit_purchase.ts"],

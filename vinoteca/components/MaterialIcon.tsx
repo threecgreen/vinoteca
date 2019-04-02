@@ -1,11 +1,15 @@
 import * as React from "react";
 
 interface IMaterializeIconProps {
+    className: string;
     iconName: string;
 }
 
-export class MaterialIcon extends React.Component<IMaterializeIconProps, {}> {
-    public render() {
-        return <i className="material-icons">{ this.props.iconName }</i>;
-    }
-}
+export const MaterialIcon: React.FunctionComponent<IMaterializeIconProps> = (props) => {
+    return (
+         <i className={ `material-icons ${props.className}` }>
+            { props.iconName }
+        </i>
+    );
+};
+MaterialIcon.displayName = "MaterialIcon";

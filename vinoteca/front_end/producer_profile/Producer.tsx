@@ -3,6 +3,8 @@ import { IProducer, IRegion } from "../../lib/RestTypes";
 import { Col, Row } from "../../components/Grid";
 import { RegionInput } from "../../components/RegionInput";
 import { ProducerInput } from "../../components/ProducerInput";
+import { Btn } from "../../components/Buttons";
+import { MaterialIcon } from "../../components/MaterialIcon";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -18,6 +20,7 @@ export class Producer extends React.Component<IProducerProps> {
         this.state = {
             isEditing: false,
         };
+        this.onConfirmClick = this.onConfirmClick.bind(this);
     }
 
     public get regionName(): string {
@@ -38,7 +41,6 @@ export class Producer extends React.Component<IProducerProps> {
     }
 
     private renderView(): JSX.Element {
-        // TODO: edit button
         let regionInfo: JSX.Element;
         if (this.props.region) {
             regionInfo = (
@@ -66,7 +68,7 @@ export class Producer extends React.Component<IProducerProps> {
         // TODO: who should create empty region for producers w/o them?
         return (
             <React.Fragment>
-                <h3 className="light">{ `Edit Producer ${this.props.producer.name}` }</h3>
+                <h3 className="bold">{ `Edit Producer ${this.props.producer.name}` }</h3>
                 <form autoComplete="off">
                     <ProducerInput value={ this.props.producer.name }
                         onChange={ this.props.onProducerChange }
@@ -74,8 +76,20 @@ export class Producer extends React.Component<IProducerProps> {
                     <RegionInput value={ this.regionName }
                         onChange={ this.props.onRegionChange }
                     />
+                    <Btn classes={ ["green-bg"] }
+                        onClick={ this.onConfirmClick }
+                    >
+                        Confirm Changes
+                        <MaterialIcon iconName="send" className="right" />
+                    </Btn>
+                    {/* TODO: cancel button */}
                 </form>
             </React.Fragment>
         )
+    }
+
+    private onConfirmClick(e: React.MouseEvent) {
+        e.preventDefault();
+        // TODO: send edits
     }
 }
