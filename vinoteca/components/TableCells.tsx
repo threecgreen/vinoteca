@@ -21,15 +21,36 @@ export class TextCell extends React.Component<ITextCellProps> {
 
 interface INumCellProps {
     num: number;
+    minDecimals?: number;
+    maxDecimals?: number;
 }
 
 export const NumCell: React.FunctionComponent<INumCellProps> = (props) => {
-    const num = props.num ? props.num.toString() : EN_DASH;
+    const num = props.num
+        // undefined to use browser's locale
+        ? props.num.toLocaleString(undefined,
+                                   {minimumFractionDigits: props.minDecimals,
+                                    maximumFractionDigits: props.maxDecimals})
+        : EN_DASH;
     return (
         <td className="num-col">{ num }</td>
     );
 };
 NumCell.displayName = "NumCell";
+
+interface IPriceCellProps {
+    price: number;
+}
+
+export const PriceCell: React.FunctionComponent<IPriceCellProps> = (props) => {
+    return (
+        <NumCell num={ props.price }
+            minDecimals={ 2 }
+            maxDecimals={ 2 }
+        />
+    );
+}
+PriceCell.displayName = "PriceCell";
 
 interface IDateCellProps {
     date?: number;

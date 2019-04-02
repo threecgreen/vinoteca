@@ -13,9 +13,11 @@ export class FixedActionList extends React.Component<IChildrenProp> {
                 >
                     <MaterialIcon iconName="menu" />
                 </FloatingBtn>
-                <ul>
-                    { this.props.children }
-                </ul>
+                <ul> { React.Children.map(this.props.children, (child) => {
+                    return (
+                        <li>{ child }</li>
+                    );
+                }) } </ul>
             </div>
         );
     }

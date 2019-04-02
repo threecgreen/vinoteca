@@ -35,4 +35,3 @@ export const Btn: React.FunctionComponent<IBtnProps> = (props) => {
         </button>
     );
 }
-

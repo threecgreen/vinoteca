@@ -9,6 +9,8 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { ProducerWinesTable } from "./ProducerWinesTable";
 import { FloatingBtn } from "../../components/Buttons";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { put } from "../../lib/ApiHelper";
+import { StatelessSelectInput } from "../../components/StatelessSelectInput";
 
 interface IProducerProfileAppState {
     isEditing: boolean;
@@ -36,20 +38,12 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
+        this.onConfirmClick = this.onConfirmClick.bind(this);
+        this.onCancelClick = this.onCancelClick.bind(this);
     }
 
     public componentDidMount() {
-        getProducer({id: this.props.producerId})
-            .then((producer) => {
-                this.setState({producer});
-                return producer.region;
-            })
-            .then((regionId) => {
-                return getRegion({id: regionId});
-            })
-            .then((region) => {
-                this.setState({region});
-            });
+        this.getCurrentProducerData();
         getWines({producerId: this.props.producerId})
             .then((wines) => {
                 this.setState({wines: wines.map(w => new Wine(w))});
@@ -69,6 +63,8 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                             onProducerChange={ this.onProducerChange }
                             region={ this.state.region }
                             onRegionChange={ this.onRegionChange }
+                            onConfirmClick={ this.onConfirmClick }
+                            onCancelClick={ this.onCancelClick }
                         />
                     </Col>
                 </Row>
@@ -97,6 +93,20 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.setState({
             isEditing: true,
         });
+    }
+
+    private async getCurrentProducerData() {
+        getProducer({id: this.props.producerId})
+            .then((producer) => {
+                this.setState({producer});
+                return producer.region;
+            })
+            .then((regionId) => {
+                return getRegion({id: regionId});
+            })
+            .then((region) => {
+                this.setState({region});
+            });
     }
 
     private onProducerChange(val: string) {
@@ -137,6 +147,23 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                 },
                 ...state
             };
-        })
+        });
+    }
+
+    private onConfirmClick(e: React.MouseEvent) {
+        e.preventDefault();
+        this.setState({ isEditing: false });
+        put(`/rest/producers/${this.props.producerId}/`,
+            {id: this.props.producerId, name: this.state.producer!.name,
+             region_id: this.state.producer!.region})
+            .catch((e) => {
+                this.logger.logError(`Failed to save producer changes with id `
+                                     + `${this.props.producerId} and error ${e}`);
+            });
+    }
+
+    private onCancelClick(e: React.MouseEvent) {
+        e.preventDefault();
+        this.getCurrentProducerData();
     }
 }

@@ -90,15 +90,13 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
                 if (g.id === id) {
                     g.isEditable = false;
                     lastActiveId = lastActiveId === id ? undefined : lastActiveId;
-                    put(
-                        this.getGrapesUrl(id),
-                        {id, name: g.name},
-                    ).catch((e) => {
-                        state.logger.logError(
-                            `Failed to save grape change for grape with id ${id}`
-                            + ` and error message ${e.message}`,
-                        );
-                    });
+                    put(this.getGrapesUrl(id), {id, name: g.name})
+                        .catch((e) => {
+                            state.logger.logError(
+                                `Failed to save grape change for grape with id ${id}`
+                                + ` and error message ${e.message}`,
+                            );
+                        });
                 }
                 return g;
             });

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface IMaterializeIconProps {
-    className: string;
+    className?: string;
     iconName: string;
 }
 

@@ -84,13 +84,6 @@ class ColorList(generics.ListAPIView):
     filterset_fields = ("id",)
 
 
-class ProducerList(generics.ListAPIView):
-    r"""Allows queries about Producers based on their Region and id."""
-    queryset = Producers.objects.all()
-    serializer_class = ProducerSerializer
-    filterset_fields = ("id", "region_id")
-
-
 class RegionList(generics.ListAPIView):
     r"""Allow queries about Regions based on their id."""
     queryset = Regions.objects.all()
@@ -176,7 +169,7 @@ class SearchWines(views.APIView):
                     AND (
                         ? IS NULL OR ? LIKE v.name
                     )
-                ORDER BY coalesce(w.name || ' ', '') || t.name;
+                ORDER BY coalesce(w.name || ' ', ''"""  """) || t.name;
             """
             params = (wine_type, color, producer, region, viti_area, viti_area)
             cursor.execute(query, params)
@@ -186,6 +179,25 @@ class SearchWines(views.APIView):
                 cursor.execute(query, self.wrapInWildCards(params))
                 serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
             return response.Response(serializer.data)
+
+
+class ProducerList(generics.ListAPIView
+                   mixins.ListModelMixin,
+                   mixins.UpdateModelMixin):
+    queryset = Producers.objects.all()
+    serializer_class = ProducerSerializer
+    filterset_fields = ("id", "region_id")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as e:
+            LOGGER.warn(e)
+            raise e
 
 
 class GrapeView(generics.GenericAPIView,

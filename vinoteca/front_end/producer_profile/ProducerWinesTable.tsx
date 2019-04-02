@@ -1,7 +1,9 @@
 import * as React from "react";
-import { Wine } from "../../lib/RestTypes";
 import { Table } from "../../components/Table";
-import { DateCell, NameAndTypeCell, NumCell, TextCell, ColorCell } from "../../components/TableCells";
+import {
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
+} from "../../components/TableCells";
+import { Wine } from "../../lib/RestTypes";
 
 interface IProducerWinesTableProps {
     wines: Wine[];
@@ -29,8 +31,10 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
                         />
                         <TextCell text={ wine.vitiArea } />
                         <NumCell num={ wine.totalQuantityPurchased } />
-                        <NumCell num={ wine.avgPrice } />
-                        <NumCell num={ wine.rating } />
+                        <PriceCell price={ wine.avgPrice } />
+                        <NumCell num={ wine.rating }
+                            maxDecimals={ 1 }
+                        />
                     </tr>
                 );
             })}
