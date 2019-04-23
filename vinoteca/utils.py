@@ -7,7 +7,7 @@ from datetime import date, datetime
 from enum import Enum
 from inspect import getfullargspec
 from pathlib import Path
-from typing import List, Type, Union
+from typing import Any, Callable, List, Type, Union
 
 from dateutil.relativedelta import relativedelta
 from django import http
@@ -19,7 +19,7 @@ from vinoteca.models import (
 from vinoteca.settings import BASE_DIR, CONFIG_MAN
 
 
-def get_logger(module: str):
+def get_logger(module: str) -> logging.Logger:
     r"""Returns a logger under the vinoteca namespace."""
     return logging.getLogger(f"vinoteca.{module}")
 
@@ -27,7 +27,7 @@ def get_logger(module: str):
 LOGGER = get_logger(__name__)
 
 
-def strip_params(db_func):
+def strip_params(db_func: Callable[Any]) -> Callable[Any]:
     r"""Decorator function that strips all strings passed as arguments to that
     function."""
     def _strip_params(*args, **kwargs):
@@ -50,11 +50,11 @@ class RequestLocation(Enum):
     POST = 'POST'
 
 
-def place_json(location: RequestLocation):
+def place_json(location: RequestLocation) -> Callable[http.request, Any]:
     r"""Decorator function that parses a request that contains JSON in the request
     body and stores it in the given location property of the request object.
     Location should be either 'GET' or 'POST'."""
-    def _place_json(view):
+    def _place_json(view: Callable[http.request, Any]) -> Callable[http.request, Any]:
         # Check if method
         spec = getfullargspec(view)
         if spec.args and spec.args[0] == 'self':
@@ -69,24 +69,6 @@ def place_json(location: RequestLocation):
                 return view(request, *args, **kwargs)
         return _new_view
     return _place_json
-
-
-class TableColumn(object):
-    r"""Simple class for creating table headers in django templates."""
-    def __init__(self, name: str, placeholder="", num_col=False):
-        self.name = name
-        self.placeholder = placeholder
-        self.num_col = num_col
-
-    @classmethod
-    def from_list(cls, col_list):
-        output = []
-        for col in col_list:
-            if isinstance(col, cls):
-                output.append(col)
-            else:
-                output.append(cls(col))
-        return output
 
 
 @strip_params
@@ -215,9 +197,9 @@ def c_or_u_wine_grapes(wine: Wines, grape: str, percent: Union[int, None]) -> bo
 
 # pylint: disable=too-many-arguments
 @strip_params
-def c_wine(desc: Union[str], notes: Union[str], name: Union[str], prod: Producers,
-           wine_type: WineTypes, color: Colors, rating: Union[float],
-           inventory: int, viti_area: VitiAreas, why: Union[str]) -> Wines:
+def c_wine(desc: Union[str, None], notes: Union[str, None], name: Union[str, None], prod: Producers,
+           wine_type: WineTypes, color: Colors, rating: Union[float, None],
+           inventory: int, viti_area: VitiAreas, why: Union[str, None]) -> Wines:
     r"""Create a Wines object."""
     LOGGER.info("Creating new wine")
     new_wine = Wines(description=desc, notes=notes, name=name, producer=prod,
