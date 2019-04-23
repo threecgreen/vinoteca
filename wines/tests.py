@@ -28,34 +28,10 @@ def wine_and_post_data(a_wine):
 @pytest.mark.parametrize("page", [
     reverse("Wines:Search Wines"),
     reverse("Wines:New Wine"),
-    reverse("Wines:Search Wines Results JSON"),
 ])
 def test_pages(client, page):
     response = client.get(page)
     assert response.status_code == 200
-
-
-@pytest.mark.parametrize("wine_type,color,producer,region,viti_area", [
-    ("Pinot Noir", "", "", "", ""),
-    ("", "red", "", "", ""),
-    ("", "", "Martinelli", "", ""),
-    ("", "", "", "California", ""),
-    ("", "", "", "", "Sonoma County"),
-    ("", "red", "Le Grand Noir", "France", ""),
-    ("Pinot Noir", "red", "", "California", "")
-])
-@pytest.mark.django_db
-def test_search_wines(client, wine_type, color, producer, region, viti_area):
-    search_data = {
-        "wine_type": wine_type,
-        "color": color,
-        "producer": producer,
-        "region": region,
-        "viti_area": viti_area
-    }
-    response = client.get(reverse("Wines:Search Wines Results JSON"), search_data)
-    assert response.status_code == 200
-    assert len(response.json()["results"]) > 0
 
 
 @pytest.mark.parametrize("store,price,why,vintage,quantity", [
