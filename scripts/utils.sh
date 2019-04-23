@@ -56,9 +56,6 @@ find_python_env()
     elif [ -f "/opt/anaconda/bin/conda" ]; then
         conda="/opt/anaconda/bin/conda"
         py_env="$($conda env list | grep vinoteca | awk '{print $2}')/bin"
-    elif [ $CI ]; then
-        py_env="/root/miniconda/envs/vinoteca/bin"
-        conda="/root/miniconda/bin/conda"
     else
         error_exit "Failed to find vinoteca Python environment."
     fi
