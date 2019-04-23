@@ -181,7 +181,7 @@ class SearchWines(views.APIView):
             return response.Response(serializer.data)
 
 
-class ProducerList(generics.ListAPIView
+class ProducerList(generics.ListAPIView,
                    mixins.ListModelMixin,
                    mixins.UpdateModelMixin):
     queryset = Producers.objects.all()

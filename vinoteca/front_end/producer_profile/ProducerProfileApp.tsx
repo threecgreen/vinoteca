@@ -1,21 +1,23 @@
 import * as React from "react";
+import { FloatingBtn } from "../../components/Buttons";
+import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
+import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
+import { put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { getProducer, getRegion, getWines } from "../../lib/RestApi";
 import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
 import { Producer } from "./Producer";
-import { FixedActionList } from "../../components/FixedActionList";
 import { ProducerWinesTable } from "./ProducerWinesTable";
-import { FloatingBtn } from "../../components/Buttons";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { put } from "../../lib/ApiHelper";
-import { StatelessSelectInput } from "../../components/StatelessSelectInput";
+import { RegionInput } from "../../components/RegionInput";
 
 interface IProducerProfileAppState {
     isEditing: boolean;
-    producer?: IProducer;
-    region?: IRegion;
+    producer: string;
+    region: string;
+    producerObj?: IProducer;
+    regionObj?: IRegion;
     wines: Wine[];
 }
 
@@ -30,8 +32,10 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         super(props);
         this.state = {
             isEditing: false,
-            producer: undefined,
-            region: undefined,
+            producer: "",
+            region: "",
+            producerObj: undefined,
+            regionObj: undefined,
             wines: [],
         };
         this.logger = new Logger(this.constructor.name, true);
@@ -62,6 +66,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                             producer={ this.state.producer }
                             onProducerChange={ this.onProducerChange }
                             region={ this.state.region }
+                            regionId={ this.state.regionObj ? this.state.regionObj.id : undefined }
                             onRegionChange={ this.onRegionChange }
                             onConfirmClick={ this.onConfirmClick }
                             onCancelClick={ this.onCancelClick }
@@ -98,68 +103,39 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     private async getCurrentProducerData() {
         getProducer({id: this.props.producerId})
             .then((producer) => {
-                this.setState({producer});
+                this.setState({
+                    producerObj: producer,
+                    producer: producer.name,
+                });
                 return producer.region;
             })
             .then((regionId) => {
                 return getRegion({id: regionId});
             })
             .then((region) => {
-                this.setState({region});
+                this.setState({
+                    regionObj: region,
+                    region: region.name,
+                });
             });
     }
 
     private onProducerChange(val: string) {
-        this.setState((state) => {
-            if (state.producer) {
-                return {
-                    producer: {
-                        id: state.producer.id,
-                        region: state.producer.region,
-                        name: val,
-                    },
-                    ...state
-                };
-            }
-            this.logger.logWarning(`Tried to update undefined producer with value '${val}'`);
-            return state;
+        this.setState({
+            producer: val,
         });
     }
 
     private onRegionChange(val: string) {
-        this.setState((state) => {
-            if (state.region) {
-                return {
-                    region: {
-                        id: state.region.id,
-                        is_us: state.region.is_us,
-                        name: val,
-                    },
-                    ...state
-                };
-            }
-            return {
-                region: {
-                    id: -1,
-                    // TODO: have a checkbox for this
-                    is_us: false,
-                    name: val,
-                },
-                ...state
-            };
+        this.setState({
+            region: val,
         });
     }
 
     private onConfirmClick(e: React.MouseEvent) {
+        // TODO: send PUT and GET region id of region (if changed), set regionId
+        // and new producer name and then send PUT for producer
         e.preventDefault();
-        this.setState({ isEditing: false });
-        put(`/rest/producers/${this.props.producerId}/`,
-            {id: this.props.producerId, name: this.state.producer!.name,
-             region_id: this.state.producer!.region})
-            .catch((e) => {
-                this.logger.logError(`Failed to save producer changes with id `
-                                     + `${this.props.producerId} and error ${e}`);
-            });
     }
 
     private onCancelClick(e: React.MouseEvent) {
