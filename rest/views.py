@@ -84,13 +84,6 @@ class ColorList(generics.ListAPIView):
     filterset_fields = ("id",)
 
 
-class RegionList(generics.ListAPIView):
-    r"""Allow queries about Regions based on their id."""
-    queryset = Regions.objects.all()
-    serializer_class = RegionSerializer
-    filterset_fields = ("id", "producers__name")
-
-
 class VitiAreaList(generics.ListAPIView):
     r"""Allow queries about VitiAreas based on their id and Region."""
     queryset = VitiAreas.objects.all()
@@ -181,7 +174,28 @@ class SearchWines(views.APIView):
             return response.Response(serializer.data)
 
 
-class ProducerList(generics.ListAPIView,
+class GrapeView(generics.GenericAPIView,
+                mixins.ListModelMixin,
+                mixins.UpdateModelMixin):
+    queryset = Grapes.objects.all()
+    serializer_class = GrapeSerializer
+    filterset_fields = ("id", "name")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """Grape update API, need to submit both `id` and `name` fields at the
+        same time, or django will prevent to do update for field missing."""
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as e:
+            LOGGER.warn(e)
+            raise e
+
+
+class ProducerView(generics.ListAPIView,
                    mixins.ListModelMixin,
                    mixins.UpdateModelMixin):
     queryset = Producers.objects.all()
@@ -200,22 +214,29 @@ class ProducerList(generics.ListAPIView,
             raise e
 
 
-class GrapeView(generics.GenericAPIView,
-                mixins.ListModelMixin,
-                mixins.UpdateModelMixin):
-    queryset = Grapes.objects.all()
-    serializer_class = GrapeSerializer
-    filterset_fields = ("id", "name")
+class RegionList(generics.ListAPIView,
+                 mixins.ListModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.CreateModelMixin):
+    r"""Allow queries about Regions based on their id."""
+    queryset = Regions.objects.all()
+    serializer_class = RegionSerializer
+    filterset_fields = ("id", "name", "producers__name")
     lookup_field = "id"
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        """Grape update API, need to submit both `id` and `name` fields at the
-        same time, or django will prevent to do update for field missing."""
         try:
             return self.update(request, *args, **kwargs)
+        except Exception as e:
+            LOGGER.warn(e)
+            raise e
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.create(request, *args, **kwargs)
         except Exception as e:
             LOGGER.warn(e)
             raise e

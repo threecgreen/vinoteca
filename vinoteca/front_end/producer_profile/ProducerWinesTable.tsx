@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Table } from "../../components/Table";
 import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell,
 } from "../../components/TableCells";
 import { Wine } from "../../lib/RestTypes";
 
@@ -18,7 +18,7 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
             "Viticultural Area",
             { name: "Total Quantity", isNumCol: true },
             { name: "Avg Price", isNumCol: true },
-            { name: "Rating", isNumCol: true }
+            { name: "Rating", isNumCol: true },
         ]}>
             { props.wines.map((wine) => {
                 return (

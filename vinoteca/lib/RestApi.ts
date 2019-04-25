@@ -1,8 +1,7 @@
-import { get, IQueryParams } from "./ApiHelper";
-import { IProducer, IRegion, IWine } from "./RestTypes";
+import { get, IQueryParams, put, post } from "./ApiHelper";
+import { IProducer, IRegion, IWine, INewRegion } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 import Logger from "./Logger";
-import { number } from "prop-types";
 
 function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
     let q: IQueryParams = {};
@@ -26,6 +25,7 @@ function singleEntityGetter<T, U>(listGetter: (params: T) => Promise<U[]>): (par
     }
 }
 
+/* REGIONS */
 interface IGetRegionsParams {
     id?: number;
     producerName?: string;
@@ -47,6 +47,11 @@ export async function getRegions({id, producerName}: IGetRegionsParams): Promise
 
 export const getRegion = singleEntityGetter(getRegions);
 
+export async function createRegion(region: INewRegion): Promise<IRegion> {
+    return post("/rest/regions/", region);
+}
+
+/* PRODUCERS */
 interface IGetProducersParams {
     id?: number;
     regionId?: number;
@@ -68,6 +73,11 @@ export async function getProducers({id, regionId}: IGetProducersParams): Promise
 
 export const getProducer = singleEntityGetter(getProducers);
 
+export async function updateProducer(producer: IProducer): Promise<IProducer> {
+    return put(`/rest/producers/${producer.id}/`, producer);
+}
+
+/* WINES */
 interface IGetWinesParams {
     id?: number;
     producerId?: number;

@@ -11,6 +11,7 @@ interface IProducerProps {
     onProducerChange: (val: string) => void;
     region: string;
     regionId?: number;
+    isUs?: boolean;
     onRegionChange: (val: string) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
@@ -38,7 +39,7 @@ export class Producer extends React.Component<IProducerProps> {
         if (this.props.region) {
             regionInfo = (
                 <h4 className="light">
-                    <a href={ `/regions/${this.props.regionId}` }
+                    <a href={ `/regions/${this.props.regionId}/` }
                          className="text-link"
                     >
                         { this.props.region }

@@ -156,7 +156,7 @@ LOGGING = {
         },
         "simple": {
             "()": "colorlog.ColoredFormatter",
-            "format": "%(log_color)s%(levelname)-8s %(reset)s%(message)s",
+            "format": "%(log_color)s%(levelname)-8s%(reset)s%(message)s",
             "log_colors": {
                 "DEBUG":    "bold_green",
                 "INFO":     "bold_blue",

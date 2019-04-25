@@ -6,6 +6,10 @@ export interface IRestModel {
     name: string;
 }
 
+export interface INewRestModel {
+    name: string;
+}
+
 export interface IGenericStat {
     [name: string]: number;
 }
@@ -31,9 +35,11 @@ export class GenericStat implements IChartInput {
     }
 }
 
-export interface IRegion extends IRestModel {
+interface _IRegionUnique {
     is_us: boolean;
 }
+export type IRegion = IRestModel & _IRegionUnique;
+export type INewRegion = INewRestModel & _IRegionUnique;
 
 export interface IProducer extends IRestModel {
     region: number;
