@@ -34,13 +34,15 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     }
 
     public componentDidMount() {
+        // tslint:disable-next-line: no-this-assignment
         const context = this;
         const node = document.getElementsByClassName("datepicker")[0];
         const datepicker = new Datepicker(node, {
             autoClose: false,
             defaultDate: new Date(),
             maxDate: new Date(),
-            onClose: function (this) {
+            // tslint:disable-next-line: object-literal-shorthand
+            onClose: function(this) {
                 context.onClose(this);
             },
             yearRange: 15,

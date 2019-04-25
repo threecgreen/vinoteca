@@ -27,7 +27,7 @@ def get_logger(module: str) -> logging.Logger:
 LOGGER = get_logger(__name__)
 
 
-def strip_params(db_func: Callable[Any]) -> Callable[Any]:
+def strip_params(db_func):
     r"""Decorator function that strips all strings passed as arguments to that
     function."""
     def _strip_params(*args, **kwargs):
@@ -44,31 +44,53 @@ def strip_params(db_func: Callable[Any]) -> Callable[Any]:
         return db_func(*new_args, **new_kwargs)
     return _strip_params
 
-
 class RequestLocation(Enum):
     GET = 'GET'
     POST = 'POST'
 
 
-def place_json(location: RequestLocation) -> Callable[http.request, Any]:
+DjangoFuncView = Callable[[http.request.HttpRequest, List[Any]], Any]
+DjangoMethodView = Callable[[Any, http.request.HttpRequest, List[Any]], Any]
+DjangoView = Union[DjangoFuncView, DjangoMethodView]
+
+def place_json(location: RequestLocation) -> DjangoView:
     r"""Decorator function that parses a request that contains JSON in the request
     body and stores it in the given location property of the request object.
     Location should be either 'GET' or 'POST'."""
-    def _place_json(view: Callable[http.request, Any]) -> Callable[http.request, Any]:
+    def _place_json(view: DjangoView) -> DjangoView:
         # Check if method
         spec = getfullargspec(view)
         if spec.args and spec.args[0] == 'self':
-            def _new_view(self, request: http.request, *args, **kwargs):
+            def _new_view(self: Any, request: http.request.HttpRequest, *args, **kwargs):
                 if not getattr(request, location.value) and request.body and request.content_type == "application/json":
                     setattr(request, location.value, json.loads(request.body))
                 return view(self, request, *args, **kwargs)
         else:
-            def _new_view(request: http.request, *args, **kwargs):
+            def _new_view(request: http.request.HttpRequest, *args, **kwargs):
                 if not getattr(request, location.value) and request.body and request.content_type == "application/json":
                     setattr(request, location.value, json.loads(request.body))
                 return view(request, *args, **kwargs)
         return _new_view
     return _place_json
+
+
+class TableColumn(object):
+    r"""Simple class for creating table headers in django templates.
+    DEPRECATED: Use React components instead."""
+    def __init__(self, name: str, placeholder="", num_col=False):
+        self.name = name
+        self.placeholder = placeholder
+        self.num_col = num_col
+
+    @classmethod
+    def from_list(cls, col_list):
+        output = []
+        for col in col_list:
+            if isinstance(col, cls):
+                output.append(col)
+            else:
+                output.append(cls(col))
+        return output
 
 
 @strip_params
