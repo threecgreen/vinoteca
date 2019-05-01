@@ -8,7 +8,7 @@
         "--rcfile={workspaceRoot}/.pylintrc"
     ],
     "python.linting.enabled": true,
-    "python.unitTest.pyTestArgs": [
+    "python.testing.pyTestArgs": [
         "${workspaceRoot}",
     ],
     "files.exclude": {
@@ -22,9 +22,9 @@
         ".coveragerc": false,
         "tags": true,
     },
-    "python.unitTest.unittestEnabled": false,
-    "python.unitTest.nosetestsEnabled": false,
-    "python.unitTest.pyTestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pyTestEnabled": true,
     "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
     "tslint.configFile": "tslint.json",
