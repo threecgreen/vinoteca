@@ -3,6 +3,12 @@ import { IProducer, IRegion, IWine, INewRegion } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 import Logger from "./Logger";
 
+export class EmptyResultError extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
 function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
     let q: IQueryParams = {};
     Object.keys(obj).filter(k => Boolean(obj[k])).forEach((k) => {
@@ -28,18 +34,19 @@ function singleEntityGetter<T, U>(listGetter: (params: T) => Promise<U[]>): (par
 /* REGIONS */
 interface IGetRegionsParams {
     id?: number;
+    name?: string;
     producerName?: string;
 }
 
-export async function getRegions({id, producerName}: IGetRegionsParams): Promise<IRegion[]> {
-    const nonNullParams = nonNulls({id, producers__name: producerName});
+export async function getRegions({id, name, producerName}: IGetRegionsParams): Promise<IRegion[]> {
+    const nonNullParams = nonNulls({id, name, producers__name: producerName});
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
     return get("/rest/regions/", nonNullParams)
         .then((regions: IRegion[]) => {
             if (regions.length === 0) {
-                Promise.reject("Empty result returned for region");
+                Promise.reject(new EmptyResultError("Empty result returned for region"));
             }
             return regions;
         });
@@ -65,7 +72,7 @@ export async function getProducers({id, regionId}: IGetProducersParams): Promise
     return get("/rest/producers/", nonNullParams)
         .then((producers: IProducer[]) => {
             if (producers.length === 0) {
-                Promise.reject("Empty result returned for producer");
+                Promise.reject(new EmptyResultError("Empty result returned for producer"));
             }
             return producers;
         });
@@ -96,7 +103,7 @@ export async function getWines(
     return get("/rest/wines/", nonNullParams)
         .then((wines: IWine[]) => {
             if (wines.length === 0) {
-                Promise.reject("Empty result returned for wines");
+                Promise.reject(new EmptyResultError("Empty result returned for wines"));
             }
             return wines;
         });

@@ -4,15 +4,18 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
+import { IProducer, IRegion } from "../../lib/RestTypes";
+import { StatelessCheckboxInput } from "../../components/StatelessCheckboxInput";
 
 interface IProducerProps {
     isEditing: boolean;
-    producer: string;
+    producerText: string;
+    producer: IProducer;
     onProducerChange: (val: string) => void;
-    region: string;
-    regionId?: number;
-    isUs?: boolean;
-    onRegionChange: (val: string) => void;
+    regionText: string;
+    regionIsUs: boolean;
+    region?: IRegion
+    onRegionChange: (text: string, isUs: boolean) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -23,6 +26,8 @@ export class Producer extends React.Component<IProducerProps> {
         this.state = {
             isEditing: false,
         };
+        this.onRegionTextChange = this.onRegionTextChange.bind(this);
+        this.onRegionIsUsClick = this.onRegionIsUsClick.bind(this);
     }
 
     public render() {
@@ -39,19 +44,19 @@ export class Producer extends React.Component<IProducerProps> {
         if (this.props.region) {
             regionInfo = (
                 <h4 className="light">
-                    <a href={ `/regions/${this.props.regionId}/` }
+                    <a href={ `/regions/${this.props.region.id}/` }
                          className="text-link"
                     >
-                        { this.props.region }
+                        { this.props.region.name }
                     </a>
                 </h4>
-            )
+            );
         } else {
             regionInfo = <h5>This producer currently does not have a region, please add one.</h5>;
         }
         return (
             <Col s={ 12 }>
-                <h3 className="bold">{ this.props.producer }</h3>
+                <h3 className="bold">{ this.props.producer.name }</h3>
                 { regionInfo }
             </Col>
         );
@@ -59,17 +64,22 @@ export class Producer extends React.Component<IProducerProps> {
 
     private renderEdit(): JSX.Element {
         // TODO: special chars
-        // TODO: who should create empty region for producers w/o them?
         return (
             <React.Fragment>
                 <Col s={ 12 }>
-                    <h3 className="bold">{ `Edit Producer ${this.props.producer}` }</h3>
+                    <h3 className="bold">{ `Edit Producer ${this.props.producer.name}` }</h3>
                     <form autoComplete="off">
-                        <ProducerInput value={ this.props.producer }
+                        <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
                         />
-                        <RegionInput value={ this.props.region }
-                            onChange={ this.props.onRegionChange }
+                        <RegionInput value={ this.props.regionText }
+                            onChange={ this.onRegionTextChange }
+                        />
+                        {/* TODO: only show if creating a new region */}
+                        <StatelessCheckboxInput isChecked={ this.props.regionIsUs }
+                            name={ "IsUs" }
+                            text={ "Is in the U.S."}
+                            onClick={ this.onRegionIsUsClick }
                         />
                     </form>
                 </Col>
@@ -88,5 +98,15 @@ export class Producer extends React.Component<IProducerProps> {
                 </Col>
             </React.Fragment>
         )
+    }
+
+    private onRegionTextChange(val: string) {
+        this.props.onRegionChange(val, this.props.regionIsUs);
+    }
+
+    private onRegionIsUsClick(e: React.ChangeEvent) {
+        // e.preventDefault();
+        // TODO: event -> bool translation
+        this.props.onRegionChange(this.props.regionText, this.props.regionIsUs);
     }
 }

@@ -1,13 +1,10 @@
 import * as React from "react";
-import { Col } from "./Grid";
+import { Col, IGridProps } from "./Grid";
 
-interface ICheckboxInputProps {
+interface ICheckboxInputProps extends IGridProps {
     default: boolean;
     id: string;
     text: string;
-    s?: number;
-    m?: number;
-    l?: number;
 }
 
 interface ICheckboxInputState {
@@ -23,16 +20,18 @@ export class CheckboxInput extends React.Component<ICheckboxInputProps, ICheckbo
     }
 
     public render() {
-        return <Col s={ this.props.s } m={ this.props.m } l={ this.props.l }>
-            <div className="switch">
-                <label htmlFor={ this.props.id }>
-                    { this.props.text }
-                    <input type="checkbox" id={ this.props.id } name={ this.props.id }
-                           checked={ this.state.checked } onChange={ () => this.onClick() } />
-                    <span className="lever" />
-                </label>
-            </div>
-        </Col>;
+        return (
+            <Col s={ this.props.s } m={ this.props.m } l={ this.props.l }>
+                <div className="switch">
+                    <label htmlFor={ this.props.id }>
+                        { this.props.text }
+                        <input type="checkbox" id={ this.props.id } name={ this.props.id }
+                            checked={ this.state.checked } onChange={ () => this.onClick() } />
+                        <span className="lever" />
+                    </label>
+                </div>
+            </Col>
+        );
     }
 
     public onClick() {

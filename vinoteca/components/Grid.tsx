@@ -2,11 +2,13 @@ import * as React from "react";
 import { IChildrenProp, IClassesProp } from "./IProps";
 import { capitalizeFirstLetter } from "../lib/utils";
 
-interface IGridProps extends IClassesProp, IChildrenProp {
+export interface IGridProps {
     s?: number;
     m?: number;
     l?: number;
 }
+
+type IAllGridProps = IGridProps & IClassesProp & IChildrenProp;
 
 function joinClasses(grid: string[], classes?: string[]): string {
     let allClasses: string[] = [];
@@ -19,15 +21,15 @@ function joinClasses(grid: string[], classes?: string[]): string {
     return allClasses.join(" ");
 }
 
-function gridClasses(props: IGridProps): string[] {
+function gridClasses(props: IAllGridProps): string[] {
     const sClass = props.s ? `s${props.s}` : "";
     const mClass = props.m ? `m${props.m}` : "";
     const lClass = props.l ? `l${props.l}` : "";
     return [sClass, mClass, lClass];
 }
 
-const GridComponentFactory = (className: string): React.FunctionComponent<IGridProps> => {
-    const component: React.FunctionComponent<IGridProps> = (props: IGridProps) => {
+const GridComponentFactory = (className: string): React.FunctionComponent<IAllGridProps> => {
+    const component: React.FunctionComponent<IAllGridProps> = (props: IAllGridProps) => {
         const otherClasses = joinClasses(gridClasses(props), props.classes);
         return (
             <div className={ `${className} ${otherClasses}` }>
@@ -39,8 +41,8 @@ const GridComponentFactory = (className: string): React.FunctionComponent<IGridP
     return component;
 }
 
-export const Row: React.FunctionComponent<IGridProps> = GridComponentFactory("row");
+export const Row: React.FunctionComponent<IAllGridProps> = GridComponentFactory("row");
 
-export const Col: React.FunctionComponent<IGridProps> = GridComponentFactory("col");
+export const Col: React.FunctionComponent<IAllGridProps> = GridComponentFactory("col");
 
-export const InputField: React.FunctionComponent<IGridProps> = GridComponentFactory("col input-field")
+export const InputField: React.FunctionComponent<IAllGridProps> = GridComponentFactory("col input-field")
