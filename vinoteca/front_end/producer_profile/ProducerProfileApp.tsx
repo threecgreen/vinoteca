@@ -143,15 +143,13 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     }
 
     private onConfirmClick(e: React.MouseEvent) {
-        // TODO: send PUT and GET region id of region (if changed), set regionId
-        // and new producer name and then send PUT for producer
         e.preventDefault();
         this.handleRegionChanges()
             .then(([regionChanged, regionId]) => {
                 if (this.state.producer
                     && (this.state.producerText !== this.state.producer.name || regionChanged)) {
 
-                    this.updateProducer(regionId);
+                    this.updateProducer(regionId === -1 ? null! : regionId);
                 }
             }).catch((err) => {
                 this.logger.logWarning(`Failed to save changes to the database: ${err}`);
@@ -172,7 +170,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     });
                     return [true, region.id];
                 })
-                .catch((err) => {
+                .catch(async (err) => {
                     if (err instanceof EmptyResultError) {
                         // Create
                         return createRegion({ name: this.state.regionText, is_us: this.state.regionIsUs})
@@ -186,12 +184,14 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     }
                     return Promise.reject("Unknown error");
                 }) as Promise<[boolean, number]>;
-
+        }
+        if (this.state.region) {
+            return[false, this.state.region.id];
         }
         return [false, -1];
     }
 
-    private async updateProducer(regionId: number) {
+    private updateProducer(regionId: number) {
         updateProducer({
             id: this.state.producer!.id,
             name: this.state.producerText,

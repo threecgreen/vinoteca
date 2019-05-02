@@ -52,5 +52,5 @@ export async function put(url: string, body: object, params: IQueryParams = {}):
         body: JSON.stringify(body),
         headers,
         method: "PUT",
-    });
+    }).then((response) => response.json());
 }
