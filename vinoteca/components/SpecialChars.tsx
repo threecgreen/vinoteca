@@ -18,7 +18,30 @@ interface ISpecialCharsState {
     currentCase: Case;
 }
 
+interface ILastActiveState<Enum> {
+    lastActiveTextInput?: Enum;
+};
+
 export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCharsState> {
+    public static onTextInputFocus<Enum, State extends ILastActiveState<Enum>>
+            (prevState: Readonly<State>, input: Enum): State {
+        return {
+            lastActiveTextInput: input,
+            ...prevState,
+        };
+    }
+
+    public static onTextInputBlur<Enum, State extends ILastActiveState<Enum>>
+            (prevState: Readonly<State>, input: Enum): State {
+        if (prevState.lastActiveTextInput === input) {
+            return {
+                lastActiveTextInput: undefined,
+                ...prevState,
+            };
+        }
+        return prevState;
+    }
+
     constructor(props: ISpecialCharsProps) {
         super(props);
         this.state = {

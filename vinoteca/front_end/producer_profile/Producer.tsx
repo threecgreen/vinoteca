@@ -5,6 +5,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/RestTypes";
+import { ProducerProfileTextInput } from "./ProducerProfileApp";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -14,6 +15,8 @@ interface IProducerProps {
     regionText: string;
     region?: IRegion
     onRegionChange: (text: string) => void;
+    onTextInputFocus: (input: ProducerProfileTextInput) => void;
+    onTextInputBlur: (input: ProducerProfileTextInput) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -60,7 +63,6 @@ export class Producer extends React.Component<IProducerProps> {
     }
 
     private renderEdit(): JSX.Element {
-        // TODO: special chars
         return (
             <React.Fragment>
                 <Col s={ 12 }>
@@ -68,9 +70,13 @@ export class Producer extends React.Component<IProducerProps> {
                     <form autoComplete="off">
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
+                            onFocus={ () => this.props.onTextInputFocus(ProducerProfileTextInput.Producer) }
+                            onBlur={ () => this.props.onTextInputBlur(ProducerProfileTextInput.Producer) }
                         />
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
+                            onFocus={ () => this.props.onTextInputFocus(ProducerProfileTextInput.Region) }
+                            onBlur={ () => this.props.onTextInputBlur(ProducerProfileTextInput.Region) }
                         />
                     </form>
                 </Col>

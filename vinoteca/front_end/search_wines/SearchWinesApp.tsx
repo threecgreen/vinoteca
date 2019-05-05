@@ -122,26 +122,16 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
             case SearchWinesInput.VitiArea:
                 return this.setState({ vitiAreaText: val }, this.querySearchResults);
             default:
-                this.logger.logWarning(`Tried to unknown property ${input}`);
+                this.logger.logWarning(`Tried to change an unknown property ${input}`);
         }
     }
 
     private onTextInputFocus(input: SearchWinesTextInput) {
-        this.setState({
-            lastActiveTextInput: input,
-        });
+        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
     }
 
     private onTextInputBlur(input: SearchWinesTextInput) {
-        this.setState((prevState) => {
-            if (prevState.lastActiveTextInput === input) {
-                return {
-                    lastActiveTextInput: undefined,
-                    ...prevState
-                };
-            }
-            return prevState;
-        })
+        this.setState(prevState => SpecialChars.onTextInputBlur(prevState, input));
     }
 
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
@@ -150,6 +140,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
             case SearchWinesTextInput.WineType:
                 return this.setState((prevState) => ({
                     wineTypeText: prevState.wineTypeText + char,
+                // callback to query
                 }), this.querySearchResults);
             case SearchWinesTextInput.Producer:
                 return this.setState((prevState) => ({

@@ -16,10 +16,14 @@ function encodeParams(params: IQueryParams): string {
 }
 
 async function checkResponse(response: Response): Promise<any>  {
-    if (response.status > 310) {
-        return Promise.reject(response.json());
+    try {
+        if (response.status > 310) {
+            return Promise.reject(response.json());
+        }
+        return response.json();
+    } catch (err) {
+        return Promise.reject(response);
     }
-    return response.json();
 }
 
 /**

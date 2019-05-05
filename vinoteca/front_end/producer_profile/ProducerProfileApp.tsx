@@ -9,9 +9,16 @@ import { getProducer, getRegion, getWines, createRegion, updateProducer, EmptyRe
 import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
 import { Producer } from "./Producer";
 import { ProducerWinesTable } from "./ProducerWinesTable";
+import { SpecialChars } from "../../components/SpecialChars";
+
+export enum ProducerProfileTextInput {
+    Producer,
+    Region,
+};
 
 interface IProducerProfileAppState {
     isEditing: boolean;
+    lastActiveTextInput?: ProducerProfileTextInput;
     // Editable fields
     producerText: string;
     regionText: string;
@@ -42,6 +49,9 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
+        this.onTextInputFocus = this.onTextInputFocus.bind(this);
+        this.onTextInputBlur = this.onTextInputBlur.bind(this);
+        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
     }
@@ -60,20 +70,23 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         }
         return (
             <div className="container">
-                <Row>
-                    <Col s={ 12 }>
-                        <Producer isEditing={ this.state.isEditing }
-                            producer={ this.state.producer }
-                            producerText={ this.state.producerText }
-                            onProducerChange={ this.onProducerChange }
-                            region={ this.state.region }
-                            regionText={ this.state.regionText }
-                            onRegionChange={ this.onRegionChange }
-                            onConfirmClick={ this.onConfirmClick }
-                            onCancelClick={ this.onCancelClick }
-                        />
-                    </Col>
+                <Row s={ 12 }>
+                    <Producer isEditing={ this.state.isEditing }
+                        producer={ this.state.producer }
+                        producerText={ this.state.producerText }
+                        onProducerChange={ this.onProducerChange }
+                        region={ this.state.region }
+                        regionText={ this.state.regionText }
+                        onRegionChange={ this.onRegionChange }
+                        onTextInputFocus={ this.onTextInputFocus }
+                        onTextInputBlur={ this.onTextInputBlur }
+                        onConfirmClick={ this.onConfirmClick }
+                        onCancelClick={ this.onCancelClick }
+                    />
                 </Row>
+                <SpecialChars onClick={ this.onSpecialCharClick }
+                    display={ this.state.lastActiveTextInput !== undefined }
+                />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
                         <h4>Wines</h4>
@@ -135,6 +148,31 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.setState({
             regionText: text,
         });
+    }
+
+    private onTextInputFocus(input: ProducerProfileTextInput) {
+        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
+    }
+
+    private onTextInputBlur(input: ProducerProfileTextInput) {
+        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, input));
+    }
+
+    private onSpecialCharClick(e: React.MouseEvent, char: string) {
+        e.preventDefault();
+        switch (this.state.lastActiveTextInput) {
+            case ProducerProfileTextInput.Producer:
+                return this.setState((prevState) => ({
+                    producerText: prevState.producerText + char,
+                }));
+            case ProducerProfileTextInput.Region:
+                return this.setState((prevState) => ({
+                    regionText: prevState.regionText + char,
+                }));
+            default:
+                this.logger.logError("The special char controller should not be displayed"
+                                     + " before a text input has come into focus.");
+        }
     }
 
     private onConfirmClick(e: React.MouseEvent) {
