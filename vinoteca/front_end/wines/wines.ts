@@ -1,5 +1,5 @@
 /// <reference path="../../@types/tablesorter.d.ts" />
-
+import * as $ from "jquery";
 import "tablesorter";
 import { navbar } from "../../lib/widgets";
 // import "./jquery.tablesorter.pager";

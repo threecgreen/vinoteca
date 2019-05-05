@@ -1,4 +1,5 @@
-import { Autocomplete } from "materialize-css";
+import * as $ from "jquery";
+import { Autocomplete, Dropdown, Sidenav, FloatingActionButton } from "materialize-css";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";
 import { IDict, nameToId } from "./utils";
@@ -66,7 +67,7 @@ export function datepicker(selector = ".datepicker"): void {
 }
 
 function activateNavbarTab(id: string): void {
-    $(`#${id}`).addClass("active");
+    document.getElementById(id)!.classList.add("active");
 }
 
 /** Enables navbar menus. Should be called on every page. */
@@ -74,8 +75,10 @@ export function navbar(activeNavTabId?: string) {
     if (activeNavTabId) {
         activateNavbarTab(activeNavTabId);
     }
-    $(".sidenav").sidenav();
-    $(".dropdown-trigger").dropdown();
+    const sideNavElem = document.querySelector(".sidenav");
+    const sideNav = new Sidenav(sideNavElem!);
+    const dropdownElem = document.querySelector(".dropdown-trigger");
+    const dropdown = new Dropdown(dropdownElem!);
 }
 
 /** Streamlines the Materialize CSS tab widget. */
@@ -94,7 +97,9 @@ export function setTabAccessibility(tabListElem: JQuery<HTMLUListElement>, abili
 
 /** Activates all horizontal floating action buttons in class fixed-action-btn.  */
 export function hFloatingActnBtn() {
-    $(".fixed-action-btn").floatingActionButton({direction: "left"});
+    document.querySelectorAll(".fixed-action-btn").forEach((elem) => {
+        const instance = new FloatingActionButton(elem, {direction: "left"});
+    });
 }
 
 /** Simplifies displaying of toast messages to user */

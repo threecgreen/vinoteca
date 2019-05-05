@@ -3,7 +3,5 @@ import * as ReactDOM from "react-dom";
 import { navbar } from "../../lib/widgets";
 import { GrapesApp } from "./GrapesApp";
 
-$(() => {
-    navbar();
-    ReactDOM.render(createElement(GrapesApp), document.getElementById("grapes-app-container"));
-});
+navbar();
+ReactDOM.render(createElement(GrapesApp), document.getElementById("grapes-app-container"));

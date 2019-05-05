@@ -1,6 +1,7 @@
+import * as $ from "jquery";
 import { GenericStat, IGenericStat } from "../../lib/RestTypes";
-import { navbar, tabs  } from "../../lib/widgets";
-import { applyChart, barChart, IChartInput, lineChart } from "../../lib/wine_charts";
+import { navbar, tabs } from "../../lib/widgets";
+import { applyChart, barChart, lineChart } from "../../lib/wine_charts";
 
 declare const colorPurchases: IGenericStat;
 declare const colorVarieties: IGenericStat;

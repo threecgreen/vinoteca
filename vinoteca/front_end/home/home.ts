@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { GenericStat, IGenericStat } from "../../lib/RestTypes";
 import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart } from "../../lib/wine_charts";

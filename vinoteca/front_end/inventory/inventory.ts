@@ -1,5 +1,3 @@
 import { navbar } from "../../lib/widgets";
 
-$(() => {
-    navbar("inventory-nav");
-});
+navbar("inventory-nav");

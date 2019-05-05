@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import "chart.js";
 import "materialize-css";
 import { Grape, IWineGrape } from "../../lib/RestTypes";

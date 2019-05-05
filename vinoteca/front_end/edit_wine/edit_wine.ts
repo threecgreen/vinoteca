@@ -1,3 +1,4 @@
+import * as $ from "jquery";
 import { createElement } from "react";
 import { render } from "react-dom";
 import { GrapeFormApp } from "../../components/GrapesFormApp";

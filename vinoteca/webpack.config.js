@@ -74,12 +74,6 @@ module.exports = {
         path: outputPath,
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.$": "jquery",
-            "window.jQuery": "jquery",
-        }),
         new MiniCssExtractPlugin({
             filename: "[name].bundle.css"
         })
@@ -87,7 +81,9 @@ module.exports = {
     resolve: {
         alias: {
             // Avoid moment
-            "chart.js": "chart.js/dist/Chart.js"
+            "chart.js": "chart.js/dist/Chart.js",
+            // Better for deduplication
+            jquery: "jquery/src/jquery"
         },
         extensions: [ ".js", ".json", ".ts", ".tsx" ],
     },
