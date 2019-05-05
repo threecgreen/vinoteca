@@ -25,14 +25,12 @@ class Regions(models.Model):
     r"""Regions which are states of the US and countries other than the US."""
     id = models.AutoField(primary_key=True)
     name = models.TextField(unique=True, db_index=True)
-    is_us = models.IntegerField()
 
     class Meta:
         db_table = 'regions'
 
     def __repr__(self):
-        return (f"<{self.__class__}(id={self.id}, name={self.name}, "
-                f"is_us={self.is_us})>")
+        return (f"<{self.__class__}(id={self.id}, name={self.name})>")
 
 
 class Grapes(models.Model):

@@ -35,11 +35,8 @@ export class GenericStat implements IChartInput {
     }
 }
 
-interface _IRegionUnique {
-    is_us: boolean;
-}
-export type IRegion = IRestModel & _IRegionUnique;
-export type INewRegion = INewRestModel & _IRegionUnique;
+export type IRegion = IRestModel;
+export type INewRegion = INewRestModel;
 
 export interface IProducer extends IRestModel {
     region: number;

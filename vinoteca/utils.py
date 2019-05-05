@@ -141,7 +141,7 @@ def g_or_c_region(region: str) -> Union[Regions, None]:
     except Regions.DoesNotExist:
         LOGGER.debug("Region does not exist")
         LOGGER.info(f"Creating new region with name '{region}'")
-        region = Regions(name=region, is_us=False)
+        region = Regions(name=region)
         region.save()
         LOGGER.debug(f"Created new region with id {region.id}")
         return region

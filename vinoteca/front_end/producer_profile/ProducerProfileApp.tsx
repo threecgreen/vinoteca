@@ -15,7 +15,6 @@ interface IProducerProfileAppState {
     // Editable fields
     producerText: string;
     regionText: string;
-    regionIsUs: boolean;
     // "Pure" state, only mutated on successful changes sent to server
     producer?: IProducer;
     region?: IRegion;
@@ -35,7 +34,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
             isEditing: false,
             producerText: "",
             regionText: "",
-            regionIsUs: false,
             producer: undefined,
             region: undefined,
             wines: [],
@@ -70,7 +68,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                             onProducerChange={ this.onProducerChange }
                             region={ this.state.region }
                             regionText={ this.state.regionText }
-                            regionIsUs={ this.state.regionIsUs }
                             onRegionChange={ this.onRegionChange }
                             onConfirmClick={ this.onConfirmClick }
                             onCancelClick={ this.onCancelClick }
@@ -124,7 +121,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                 this.setState({
                     region: region,
                     regionText: region.name,
-                    regionIsUs: region.is_us
                 });
             });
     }
@@ -135,9 +131,8 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         });
     }
 
-    private onRegionChange(text: string, isUs: boolean) {
+    private onRegionChange(text: string) {
         this.setState({
-            regionIsUs: isUs,
             regionText: text,
         });
     }
@@ -173,7 +168,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                 .catch(async (err) => {
                     if (EmptyResultError.isInstance(err)) {
                         // Create
-                        return createRegion({ name: this.state.regionText, is_us: this.state.regionIsUs})
+                        return createRegion({ name: this.state.regionText})
                             .then((region) => {
                                 this.setState({
                                     region,

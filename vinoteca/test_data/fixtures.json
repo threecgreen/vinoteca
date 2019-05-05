@@ -3,32 +3,28 @@
         "model": "vinoteca.regions",
         "pk": 1,
         "fields": {
-            "name": "California",
-            "is_us": true
+            "name": "California"
         }
     },
     {
         "model": "vinoteca.regions",
         "pk": 2,
         "fields": {
-            "name": "France",
-            "is_us": false
+            "name": "France"
         }
     },
     {
         "model": "vinoteca.regions",
         "pk": 3,
         "fields": {
-            "name": "New Zealand",
-            "is_us": true
+            "name": "New Zealand"
         }
     },
     {
         "model": "vinoteca.regions",
         "pk": 4,
         "fields": {
-            "name": "Spain",
-            "is_us": false
+            "name": "Spain"
         }
     },
     {

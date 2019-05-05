@@ -35,7 +35,7 @@ class GrapeSerializer(serializers.ModelSerializer):
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Regions
-        fields = ("id", "name", "is_us")
+        fields = ("id", "name")
 
 
 class ProducerNameSerializer(serializers.ModelSerializer):

@@ -5,7 +5,6 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/RestTypes";
-import { StatelessCheckboxInput } from "../../components/StatelessCheckboxInput";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -13,9 +12,8 @@ interface IProducerProps {
     producer: IProducer;
     onProducerChange: (val: string) => void;
     regionText: string;
-    regionIsUs: boolean;
     region?: IRegion
-    onRegionChange: (text: string, isUs: boolean) => void;
+    onRegionChange: (text: string) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -27,7 +25,6 @@ export class Producer extends React.Component<IProducerProps> {
             isEditing: false,
         };
         this.onRegionTextChange = this.onRegionTextChange.bind(this);
-        this.onRegionIsUsClick = this.onRegionIsUsClick.bind(this);
     }
 
     public render() {
@@ -75,12 +72,6 @@ export class Producer extends React.Component<IProducerProps> {
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
                         />
-                        {/* TODO: only show if creating a new region */}
-                        <StatelessCheckboxInput isChecked={ this.props.regionIsUs }
-                            name={ "IsUs" }
-                            text={ "Is in the U.S."}
-                            onClick={ this.onRegionIsUsClick }
-                        />
                     </form>
                 </Col>
                 <Col s={ 12 }>
@@ -101,12 +92,6 @@ export class Producer extends React.Component<IProducerProps> {
     }
 
     private onRegionTextChange(val: string) {
-        this.props.onRegionChange(val, this.props.regionIsUs);
-    }
-
-    private onRegionIsUsClick(e: React.ChangeEvent) {
-        // e.preventDefault();
-        // TODO: event -> bool translation
-        this.props.onRegionChange(this.props.regionText, this.props.regionIsUs);
+        this.props.onRegionChange(val);
     }
 }
