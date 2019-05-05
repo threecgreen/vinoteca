@@ -4,8 +4,14 @@ import { IDict, isEmpty } from "./utils";
 import Logger from "./Logger";
 
 export class EmptyResultError extends Error {
+    private static _name = "EmptyResultError";
     constructor(message: string) {
         super(message);
+        this.name = EmptyResultError._name;
+    }
+
+    public static isInstance(err: Error): boolean {
+        return err.name === this._name;
     }
 }
 
@@ -18,17 +24,17 @@ function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryPara
 }
 
 function singleEntityGetter<T, U>(listGetter: (params: T) => Promise<U[]>): (params: T) => Promise<U> {
+    const objName = listGetter.name.substr(3);
     return async (params: T) => {
         const results = await listGetter(params);
-        if (results.length !== 1) {
-            const message = "Received more than one result when one was expected";
+        if (results.length > 1) {
+            const message = `Received more than one ${objName} result when one was expected`;
             const logger = new Logger("RestApi");
             logger.logCritical(message);
-            Promise.reject(message);
+            return Promise.reject(message);
         }
         return results[0];
-        ;
-    }
+    };
 }
 
 /* REGIONS */
@@ -46,7 +52,7 @@ export async function getRegions({id, name, producerName}: IGetRegionsParams): P
     return get("/rest/regions/", nonNullParams)
         .then((regions: IRegion[]) => {
             if (regions.length === 0) {
-                Promise.reject(new EmptyResultError("Empty result returned for region"));
+                return Promise.reject(new EmptyResultError("Empty result returned for region"));
             }
             return regions;
         });
@@ -72,7 +78,7 @@ export async function getProducers({id, regionId}: IGetProducersParams): Promise
     return get("/rest/producers/", nonNullParams)
         .then((producers: IProducer[]) => {
             if (producers.length === 0) {
-                Promise.reject(new EmptyResultError("Empty result returned for producer"));
+                return Promise.reject(new EmptyResultError("Empty result returned for producer"));
             }
             return producers;
         });
@@ -103,7 +109,7 @@ export async function getWines(
     return get("/rest/wines/", nonNullParams)
         .then((wines: IWine[]) => {
             if (wines.length === 0) {
-                Promise.reject(new EmptyResultError("Empty result returned for wines"));
+                return Promise.reject(new EmptyResultError("Empty result returned for wines"));
             }
             return wines;
         });

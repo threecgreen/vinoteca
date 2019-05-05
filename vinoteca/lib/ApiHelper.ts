@@ -15,6 +15,13 @@ function encodeParams(params: IQueryParams): string {
     return "?" + Object.entries(params).map(([k, v]) => `${k}=${v}`).join("&");
 }
 
+async function checkResponse(response: Response): Promise<any>  {
+    if (response.status > 310) {
+        return Promise.reject(response.json());
+    }
+    return response.json();
+}
+
 /**
  * Makes an HTTP GET request to the url with the optional parameters, then parses
  * the JSON response.
@@ -22,7 +29,8 @@ function encodeParams(params: IQueryParams): string {
  * @param params An optional dictionary of parameters to their values
  */
 export async function get(url: string, params: IQueryParams = {}): Promise<any> {
-    return fetch(url + encodeParams(params)).then((response) => response.json());
+    return fetch(url + encodeParams(params))
+        .then((response) => checkResponse(response));
 }
 
 /**
@@ -37,7 +45,7 @@ export async function post(url: string, body: object, params: IQueryParams = {})
         body: JSON.stringify(body),
         headers,
         method: "POST",
-    }).then((response) => response.json());
+    }).then((response) => checkResponse(response));
 }
 
 /**
@@ -52,5 +60,5 @@ export async function put(url: string, body: object, params: IQueryParams = {}):
         body: JSON.stringify(body),
         headers,
         method: "PUT",
-    }).then((response) => response.json());
+    }).then((response) => checkResponse(response));
 }

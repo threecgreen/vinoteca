@@ -171,7 +171,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     return [true, region.id];
                 })
                 .catch(async (err) => {
-                    if (err instanceof EmptyResultError) {
+                    if (EmptyResultError.isInstance(err)) {
                         // Create
                         return createRegion({ name: this.state.regionText, is_us: this.state.regionIsUs})
                             .then((region) => {
