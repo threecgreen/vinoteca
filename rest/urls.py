@@ -4,9 +4,9 @@ GET wine data, not to modify it."""
 from django.urls import path
 
 from rest.views import (
-    generic_all_names, region_all_names, ColorList, RegionList, ProducerView,
+    generic_all_names, region_all_names, ColorList, RegionView, ProducerView,
     GrapeView, VitiAreaList, WineTypeList, WineList, WineGrapeList, SearchWines,
-    write_client_side_logs
+    write_client_side_logs, PurchaseView
 )
 
 app_name = "REST"
@@ -26,10 +26,9 @@ urlpatterns = [
     path("viti-areas/all/", generic_all_names, kwargs={"obj_name": "viti-area"},
          name="VitiAreas"),
 
-    # Graph related views
     path("colors/", ColorList.as_view(), name="Color"),
-    path("regions/", RegionList.as_view(), name="Region-Get"),
-    path("regions/<int:id>/", RegionList.as_view(), name="Region-Put"),
+    path("regions/", RegionView.as_view(), name="Region-Get"),
+    path("regions/<int:id>/", RegionView.as_view(), name="Region-Put"),
     path("producers/", ProducerView.as_view(), name="Producer-Get"),
     path("producers/<int:id>/", ProducerView.as_view(), name="Producer-Put"),
     path("viti-areas/", VitiAreaList.as_view(), name="Viti Area"),
@@ -39,6 +38,7 @@ urlpatterns = [
     path("wine-grapes/", WineGrapeList.as_view(), name="Wine Grape"),
     path("grapes/", GrapeView.as_view(), name="Grape-Get"),
     path("grapes/<int:id>/", GrapeView.as_view(), name="Grape-Put"),
+    path("purchases/", PurchaseView.as_view()),
 
     # Logs
     path("logs/client/", write_client_side_logs)

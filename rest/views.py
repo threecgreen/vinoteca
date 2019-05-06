@@ -11,13 +11,13 @@ from rest_framework import generics, mixins, response, views
 from rest.serializers import (
     ColorSerializer, RegionSerializer, ProducerSerializer,
     VitiAreaSerializer, WineTypeSerializer, WineSearchResultSerializer,
-    ColorNamesSerializer, ProducerNameSerializer, VitiAreaNameSerializer,
-    WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer,
-    WineGrapeSerializer, GrapeSerializer, WineSerializer
+    ColorNamesSerializer, ProducerNameSerializer, PurchaseSerializer,
+    VitiAreaNameSerializer, WineTypeNameSerializer, GrapeNameSerializer,
+    StoreNameSerializer, WineGrapeSerializer, GrapeSerializer, WineSerializer
 )
 from vinoteca.models import (
-    Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineTypes, Wines,
-    WineGrapes
+    Colors, Grapes, Regions, Producers, Purchases, Stores, VitiAreas, WineTypes,
+    Wines, WineGrapes
 )
 from vinoteca.utils import (
     get_connection, get_region_flags, get_logger, place_json, empty_to_none,
@@ -214,7 +214,7 @@ class ProducerView(generics.ListAPIView,
             raise e
 
 
-class RegionList(generics.ListAPIView,
+class RegionView(generics.ListAPIView,
                  mixins.ListModelMixin,
                  mixins.UpdateModelMixin,
                  mixins.CreateModelMixin):
@@ -240,6 +240,21 @@ class RegionList(generics.ListAPIView,
         except Exception as e:
             LOGGER.warn(e)
             raise e
+
+
+class PurchaseView(generics.ListAPIView,
+                   mixins.ListModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.DestroyModelMixin):
+    # TODO: include store name in query
+    queryset = Purchases.objects.all()
+    serializer_class = PurchaseSerializer
+    filterset_fields = ("id", "wine__name", "wine")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 CLIENT_SIDE_LOGGER = get_logger("client_side")

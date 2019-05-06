@@ -24,7 +24,7 @@ $(() => {
                  hasRating);
     updateVitiAreaSelections(region, $("#auto-viti-area"));
     render(createElement(GrapeFormApp),
-        document.getElementById("grapes-form-app-container"));
+           document.getElementById("grapes-form-app-container"));
     $("#delete-modal").modal();
 });
 

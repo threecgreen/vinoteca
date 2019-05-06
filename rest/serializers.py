@@ -50,6 +50,21 @@ class ProducerSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "region")
 
 
+class PurchaseSerializer(serializers.Serializer):
+    # TODO: validations
+    id = serializers.IntegerField()
+    store = serializers.CharField()
+    wine = serializers.IntegerField()
+    price = serializers.FloatField()
+    quantity = serializers.IntegerField()
+    date = serializers.IntegerField()
+    vintage = serializers.IntegerField()
+    memo = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        kwargs
+
+
 class StoreNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stores
