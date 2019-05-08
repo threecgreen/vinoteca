@@ -1,9 +1,9 @@
-import * as $ from "jquery";
 import "chart.js";
+import * as $ from "jquery";
 import "materialize-css";
 import { Grape, IWineGrape } from "../../lib/RestTypes";
 import { hFloatingActnBtn, navbar, tabs } from "../../lib/widgets";
-import { applyChart, pieChart  } from "../../lib/wine_charts";
+import { applyChart, pieChart } from "../../lib/wine_charts";
 
 declare const wineId: number;
 

@@ -1,5 +1,5 @@
-import * as M from "materialize-css";
 import * as $ from "jquery";
+import * as M from "materialize-css";
 import { IRegion, IRestModel, IVitiArea } from "./RestTypes";
 import { IDict, restModelsToNameDict } from "./utils";
 

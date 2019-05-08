@@ -1,29 +1,32 @@
-import { get, IQueryParams, put, post } from "./ApiHelper";
-import { IProducer, IRegion, IWine, INewRegion } from "./RestTypes";
-import { IDict, isEmpty } from "./utils";
+import { get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
+import { INewRegion, IProducer, IRegion, IWine } from "./RestTypes";
+import { IDict, isEmpty } from "./utils";
 
 export class EmptyResultError extends Error {
-    private static _name = "EmptyResultError";
-    constructor(message: string) {
-        super(message);
-        this.name = EmptyResultError._name;
+    public static isInstance(err: Error): boolean {
+        return err.name === this.NAME;
     }
 
-    public static isInstance(err: Error): boolean {
-        return err.name === this._name;
+    private static NAME = "EmptyResultError";
+
+    constructor(message: string) {
+        super(message);
+        this.name = EmptyResultError.NAME;
     }
 }
 
 function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
-    let q: IQueryParams = {};
-    Object.keys(obj).filter(k => Boolean(obj[k])).forEach((k) => {
+    const q: IQueryParams = {};
+    Object.keys(obj).filter((k) => Boolean(obj[k])).forEach((k) => {
         q[k] = obj[k] as string | number | boolean;
     });
     return q;
 }
 
-function singleEntityGetter<T, U>(listGetter: (params: T) => Promise<U[]>): (params: T) => Promise<U> {
+function singleEntityGetter<T, U>(
+    listGetter: (params: T) => Promise<U[]>,
+): (params: T) => Promise<U> {
     const objName = listGetter.name.substr(3);
     return async (params: T) => {
         const results = await listGetter(params);
@@ -99,7 +102,7 @@ interface IGetWinesParams {
 }
 
 export async function getWines(
-    {id, producerId, regionId, wineTypeId}: IGetWinesParams
+    {id, producerId, regionId, wineTypeId}: IGetWinesParams,
 ): Promise<IWine[]> {
     const nonNullParams = nonNulls({id, producer_id: producerId, producer__region_id: regionId,
                                     wine_type_id: wineTypeId});

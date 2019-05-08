@@ -1,5 +1,5 @@
-import * as $ from "jquery";
 import { Chart } from "chart.js";
+import * as $ from "jquery";
 import Logger from "./Logger";
 import { elementExists, pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";

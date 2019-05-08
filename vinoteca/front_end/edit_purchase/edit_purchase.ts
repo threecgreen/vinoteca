@@ -1,8 +1,8 @@
 import * as $ from "jquery";
+import { get } from "../../lib/ApiHelper";
 import { Grape, IWineGrape } from "../../lib/RestTypes";
 import { autocomplete, datepicker, navbar, tabs } from "../../lib/widgets";
 import { applyChart, pieChart } from "../../lib/wine_charts";
-import { get } from "../../lib/ApiHelper";
 
 declare const wineId: number;
 

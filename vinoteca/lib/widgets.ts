@@ -1,5 +1,5 @@
 import * as $ from "jquery";
-import { Autocomplete, Dropdown, Sidenav, FloatingActionButton } from "materialize-css";
+import { Autocomplete, Dropdown, FloatingActionButton, Sidenav } from "materialize-css";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";
 import { IDict, nameToId } from "./utils";
