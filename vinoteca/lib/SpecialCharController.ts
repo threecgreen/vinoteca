@@ -13,7 +13,7 @@ export default class SpecialCharController {
     private lastInput: string;
 
     constructor() {
-        this.specialCharBtns = $(".spec-chars");
+        this.specialCharBtns = $(".spec-char-btn");
         this.shiftBtn = $("#shift");
         this.textInputs = $("[type=text]");
         this.lastInput = "";
