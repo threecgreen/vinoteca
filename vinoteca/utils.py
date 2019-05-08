@@ -2,7 +2,6 @@ r"""Assorted functions used accross vinoteca. Many are database related or deal
 with parsing POST requests."""
 import logging
 import json
-import sqlite3
 from datetime import date, datetime
 from enum import Enum
 from inspect import getfullargspec
@@ -11,6 +10,7 @@ from typing import Any, Callable, List, Type, Union
 
 from dateutil.relativedelta import relativedelta
 from django import http
+from django.db import connections
 
 from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, VitiAreas,
@@ -258,10 +258,29 @@ def empty_to_none(item: str, type_: Type = None) -> Union["type_", str]:
     return item if item else None
 
 
-def get_connection() -> sqlite3.Connection:
-    r"""Get a SQLite database connection."""
-    LOGGER.debug("Creating database connection")
-    return sqlite3.connect(CONFIG_MAN.database_path)
+class DatabaseConnection(object):
+    r"""Simple (hacky) wrapper around django database connection to provide
+    enter and exit methods for more idiomatic use."""
+    def __init__(self, connection):
+        self._connection = connection
+
+    def cursor(self):
+        return self._connection.cursor()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.close(*args, **kwargs)
+
+    def close(self, *args, **kwargs):
+        self._connection.close()
+
+
+def get_connection() -> DatabaseConnection:
+    r"""Get a database connection."""
+    LOGGER.debug("Creating database connection to default database")
+    return DatabaseConnection(connections['default'])
 
 
 def date_str_to_int(date_str: str) -> Union[int]:

@@ -27,7 +27,6 @@ def test_grape_view_put(client):
     ("", "red", "Le Grand Noir", "France", ""),
     ("Pinot Noir", "red", "", "California", "")
 ])
-@pytest.mark.xfail(reason="Need to debug SQL")
 @pytest.mark.django_db
 def test_search_wines(client, wine_type, color, producer, region, viti_area):
     search_data = {

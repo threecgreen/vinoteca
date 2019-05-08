@@ -3,9 +3,7 @@
 from django.urls import path
 
 from wines.create import NewPurchaseView, NewWineView
-from wines.read import (
-    search_wines_view, search_wines_results_view, WineProfileView, wines_view
-)
+from wines.read import search_wines_view, WineProfileView, wines_view
 from wines.update import EditPurchaseView, EditWineView, change_inventory
 from wines.delete import delete_purchase, delete_wine
 
@@ -16,7 +14,6 @@ urlpatterns = [
 
     path("", wines_view, name="Wines"),
     path("search/", search_wines_view, name="Search Wines"),
-    path("search/json-results/", search_wines_results_view, name="Search Wines Results JSON"),
     path("<int:wine_id>/", WineProfileView.as_view(), name="Wine Profile"),
 
     path("<int:wine_id>/edit/", EditWineView.as_view(), name="Edit Wine"),

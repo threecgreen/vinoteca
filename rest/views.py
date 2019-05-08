@@ -135,36 +135,43 @@ class SearchWines(views.APIView):
             producer = empty_to_none(request.GET.get("producer"))
             region = empty_to_none(request.GET.get("region"))
             viti_area = empty_to_none(request.GET.get("viti_area"))
-            # params = [color, wine_type, producer, region, viti_area]
-            # params = [param for param in params if param is not None]
-            # if not params:
-            #     return response.Response({}, 204)
+            params = [color, wine_type, producer, region, viti_area]
+            params = [param for param in params if param is not None]
+            if not params:
+                return response.Response({}, 204)
             query = """
-                SELECT
-                    w.id
-                    , w.name
-                    , cl.name as color
-                    , pro.name as producer
-                    , r.name as region
-                    , t.name as wine_type
-                    , v.name as viti_area
-                FROM wines w
-                    LEFT JOIN producers pro ON w.producer_id = pro.id
-                    LEFT JOIN regions r ON pro.region_id = r.id
-                    LEFT JOIN wine_types t ON w.wine_type_id = t.id
-                    LEFT JOIN colors cl ON w.color_id = cl.id
-                    LEFT JOIN viti_areas v on w.viti_area_id = v.id
-                WHERE
-                    t.name LIKE coalesce(?, t.name)
-                    AND cl.name LIKE coalesce(?, cl.name)
-                    AND pro.name LIKE coalesce(?, pro.name)
-                    AND r.name LIKE coalesce(?, r.name)
-                    AND (
-                        ? IS NULL OR ? LIKE v.name
-                    )
+            SELECT
+                w.id
+                , cl.name as color
+                , w.name
+                , pro.name as producer
+                , r.name as region
+                , t.name as wine_type
+                , v.name as viti_area
+            FROM wines w
+                LEFT JOIN producers pro ON w.producer_id = pro.id
+                LEFT JOIN regions r ON pro.region_id = r.id
+                LEFT JOIN wine_types t ON w.wine_type_id = t.id
+                LEFT JOIN colors cl ON w.color_id = cl.id
+                LEFT JOIN viti_areas v on w.viti_area_id = v.id
+            WHERE
+                t.name LIKE coalesce(%s, t.name)
+                AND cl.name LIKE coalesce(%s, cl.name)
+                AND pro.name LIKE coalesce(%s, pro.name)
+                AND r.name LIKE coalesce(%s, r.name)
+                AND (
+                    w.viti_area_id IS NULL
+                    OR v.name LIKE coalesce(%s, v.name)
+                )
                 ORDER BY coalesce(w.name || ' ', ''"""  """) || t.name;
             """
-            params = (wine_type, color, producer, region, viti_area, viti_area)
+            params = [
+                wine_type,
+                color,
+                producer,
+                region,
+                viti_area,
+            ]
             cursor.execute(query, params)
             # Rerun with wildcards if empty
             serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)

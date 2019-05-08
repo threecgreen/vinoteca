@@ -113,10 +113,6 @@ def test_empty_to_none(item, type_, result):
     assert empty_to_none(item, type_) == result
 
 
-def test_get_connection():
-    assert isinstance(get_connection(), sqlite3.Connection)
-
-
 @pytest.mark.parametrize("date_str,date_int", [
     ("Jul 04, 2017", 20170704),
     ("", None),

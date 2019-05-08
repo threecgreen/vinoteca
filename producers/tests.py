@@ -10,7 +10,7 @@ from vinoteca.models import Producers
 ])
 @pytest.mark.django_db
 def test_get_producer_region(client, producer, region):
-    response = client.get(reverse("REST:Region"), {"producers__name": producer})
+    response = client.get(reverse("REST:Region-Get"), {"producers__name": producer})
     assert response.status_code == 200
     if region:
         assert response.json()[0]["name"] == region

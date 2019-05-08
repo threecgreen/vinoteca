@@ -34,16 +34,16 @@ class WineProfileView(View):
                     FROM purchases p
                     INNER JOIN (
                         SELECT
-                            max(date) as max_date
+                            wine_id
+                            , max(date) as max_date
                         FROM purchases
-                        WHERE wine_id = ?
+                        WHERE wine_id = %s
                     ) sub ON sub.max_date = p.date
-                    WHERE wine_id = ? ;
+                        AND sub.wine_id = p.wine_id;
                 """
-        conn = get_connection()
-        cursor = conn.cursor()
-        recent_vintage = cursor.execute(recent_vintage_query, (wine_id, wine_id)).fetchone()
-        conn.close()
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            recent_vintage = cursor.execute(recent_vintage_query, [wine_id]).fetchone()
         LOGGER.debug(f"Fetching grape data for wine with id {wine_id}")
         grapes = (WineGrapes.objects
                   .filter(wine__id=wine.id)
@@ -77,69 +77,6 @@ def search_wines_view(request):
         "page_name": "Search Wines",
     }
     return render(request, "search_wines.html", context)
-
-
-class WineSearchResult(NamedTuple):
-    r"""Query result attrs object for wine search results. Makes for easier
-    and clearer access to wine attributes in the template."""
-    id: int
-    color: str
-    name: str
-    producer: str
-    region: str
-    wine_type: str
-    viti_area: str
-
-
-def search_wines_results_view(request) -> JsonResponse:
-    r"""Render a search results table inserted into a JSON object for live
-    search results of existing wines."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    wine_type = empty_to_none(request.GET.get("wine_type"))
-    color = empty_to_none(request.GET.get("color"))
-    producer = empty_to_none(request.GET.get("producer"))
-    region = empty_to_none(request.GET.get("region"))
-    viti_area = empty_to_none(request.GET.get("viti_area"))
-    params = [color, wine_type, producer, region, viti_area]
-    params = [param for param in params if param is not None]
-    if params:
-        query = """
-            SELECT
-                w.id
-                , cl.name
-                , w.name
-                , pro.name
-                , r.name
-                , t.name
-                , v.name
-            FROM wines w
-                LEFT JOIN producers pro ON w.producer_id = pro.id
-                LEFT JOIN regions r ON pro.region_id = r.id
-                LEFT JOIN wine_types t ON w.wine_type_id = t.id
-                LEFT JOIN colors cl ON w.color_id = cl.id
-                LEFT JOIN viti_areas v on w.viti_area_id = v.id
-            WHERE
-                t.name LIKE coalesce(?, t.name)
-                AND cl.name LIKE coalesce(?, cl.name)
-                AND pro.name LIKE coalesce(?, pro.name)
-                AND r.name LIKE coalesce(?, r.name)
-                and (
-                    ? is null or ? like v.name
-                );
-        """
-        results = cursor.execute(query, (wine_type, color, producer, region,
-                                         viti_area, viti_area)).fetchall()
-        context = {
-            "wine_results": [WineSearchResult(*item) for item in results]
-        }
-        if context["wine_results"] is not None:
-            conn.close()
-            return JsonResponse({
-                "results": render_to_string("search_wines_results.html", context)
-            })
-    conn.close()
-    return JsonResponse({"results": []})
 
 
 class WineTableDatum(NamedTuple):
