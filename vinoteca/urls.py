@@ -6,7 +6,6 @@ from django.views.static import serve
 
 from dashboards.views import dashboards, inventory
 from places.views import region_profile
-from vinoteca.settings import BASE_DIR
 from vinoteca.views import simple_page, home
 from wine_attrs.views import wine_type_profile
 

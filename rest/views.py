@@ -2,9 +2,10 @@ r"""Still figuring out where exactly the REST framework will be used. It seems
 ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
+# pylint: disable=too-many-ancestors
 from typing import Tuple
 from django.db.models import Max, Sum, Avg
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, mixins, response, views
 
@@ -122,7 +123,7 @@ class SearchWines(views.APIView):
         ]
 
     @staticmethod
-    def wrapInWildCards(params: Tuple[str]) -> Tuple[str]:
+    def wrap_in_wild_cards(params: Tuple[str]) -> Tuple[str]:
         """If exact match fails, we want to try with wildcards. This function
         wraps all non-null query parameters in the SQL wildcard '%'."""
         return tuple(f"%{p}%" if p is not None else p for p in params)
@@ -176,7 +177,7 @@ class SearchWines(views.APIView):
             # Rerun with wildcards if empty
             serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
             if not serializer.data:
-                cursor.execute(query, self.wrapInWildCards(params))
+                cursor.execute(query, self.wrap_in_wild_cards(params))
                 serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
             return response.Response(serializer.data)
 
@@ -197,9 +198,9 @@ class GrapeView(generics.GenericAPIView,
         same time, or django will prevent to do update for field missing."""
         try:
             return self.update(request, *args, **kwargs)
-        except Exception as e:
-            LOGGER.warn(e)
-            raise e
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 class ProducerView(generics.ListAPIView,
@@ -216,9 +217,9 @@ class ProducerView(generics.ListAPIView,
     def put(self, request, *args, **kwargs):
         try:
             return self.update(request, *args, **kwargs)
-        except Exception as e:
-            LOGGER.warn(e)
-            raise e
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 class RegionView(generics.ListAPIView,
@@ -237,16 +238,16 @@ class RegionView(generics.ListAPIView,
     def put(self, request, *args, **kwargs):
         try:
             return self.update(request, *args, **kwargs)
-        except Exception as e:
-            LOGGER.warn(e)
-            raise e
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
     def post(self, request, *args, **kwargs):
         try:
             return self.create(request, *args, **kwargs)
-        except Exception as e:
-            LOGGER.warn(e)
-            raise e
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 class PurchaseView(generics.ListAPIView,

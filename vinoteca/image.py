@@ -21,7 +21,7 @@ class UserImage(object):
         try:
             self.image = Image.open(in_file)
         except IOError:
-            LOGGER.warn("IOError opening the image file for editing.")
+            LOGGER.warning("IOError opening the image file for editing.")
             LOGGER.info(f"File: {in_file}")
             self.image = None
 
@@ -31,7 +31,7 @@ class UserImage(object):
         try:
             self.image.save(out_file)
         except IOError:
-            LOGGER.warn("IOError opening the image file for saving.")
+            LOGGER.warning("IOError opening the image file for saving.")
             return False
         return True
 

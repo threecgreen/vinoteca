@@ -1,10 +1,9 @@
 r"""Contains serializers for vinoteca ORM models."""
+# pylint: disable=abstract-method
 from rest_framework import serializers
-from django_filters import FilterSet, ModelChoiceFilter
 
 from vinoteca.models import (
-    Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineGrapes,
-    WineTypes, Wines
+    Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineGrapes, WineTypes
 )
 
 
@@ -61,8 +60,8 @@ class PurchaseSerializer(serializers.Serializer):
     vintage = serializers.IntegerField()
     memo = serializers.CharField()
 
-    def __init__(self, *args, **kwargs):
-        kwargs
+    # def __init__(self, *args, **kwargs):
+    #     kwargs
 
 
 class StoreNameSerializer(serializers.ModelSerializer):

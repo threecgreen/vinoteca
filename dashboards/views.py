@@ -67,7 +67,7 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
     """
     try:
         mcd_result = cursor.execute(query).fetchone()[0]
-    except (TypeError, IndexError) as e:
+    except (TypeError, IndexError):
         LOGGER.warning("No purchase data found. Returning a blank 'By the numbers'")
         return None
     most_common_date = int_to_date(mcd_result) if mcd_result else None

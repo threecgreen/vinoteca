@@ -30,7 +30,7 @@ class Regions(models.Model):
         db_table = 'regions'
 
     def __repr__(self):
-        return (f"<{self.__class__}(id={self.id}, name={self.name})>")
+        return f"<{self.__class__}(id={self.id}, name={self.name})>"
 
 
 class Grapes(models.Model):

@@ -16,7 +16,7 @@ from vinoteca.models import (
     Colors, Regions, Grapes, Producers, Purchases, Stores, VitiAreas,
     WineGrapes, Wines, WineTypes
 )
-from vinoteca.settings import BASE_DIR, CONFIG_MAN
+from vinoteca.settings import BASE_DIR
 
 
 def get_logger(module: str) -> logging.Logger:
@@ -62,12 +62,14 @@ def place_json(location: RequestLocation) -> DjangoView:
         spec = getfullargspec(view)
         if spec.args and spec.args[0] == 'self':
             def _new_view(self: Any, request: http.request.HttpRequest, *args, **kwargs):
-                if not getattr(request, location.value) and request.body and request.content_type == "application/json":
+                if not getattr(request, location.value) and request.body \
+                        and request.content_type == "application/json":
                     setattr(request, location.value, json.loads(request.body))
                 return view(self, request, *args, **kwargs)
         else:
             def _new_view(request: http.request.HttpRequest, *args, **kwargs):
-                if not getattr(request, location.value) and request.body and request.content_type == "application/json":
+                if not getattr(request, location.value) and request.body \
+                        and request.content_type == "application/json":
                     setattr(request, location.value, json.loads(request.body))
                 return view(request, *args, **kwargs)
         return _new_view
@@ -273,6 +275,7 @@ class DatabaseConnection(object):
     def __exit__(self, *args, **kwargs):
         self.close(*args, **kwargs)
 
+    # pylint: disable=unused-argument
     def close(self, *args, **kwargs):
         self._connection.close()
 

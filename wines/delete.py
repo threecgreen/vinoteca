@@ -9,6 +9,7 @@ from vinoteca.utils import get_logger
 LOGGER = get_logger("wines.delete")
 
 
+# pylint: disable=bad-continuation
 def delete_wine(request, wine_id: int):
     r"""View for deleting a wine."""
     LOGGER.debug(f"Deleting wine with id {wine_id} and associated objects")

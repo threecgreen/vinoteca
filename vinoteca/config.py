@@ -40,8 +40,8 @@ class ConfigurationManager(object):
                                 and setting == "log_path")):
                     setattr(self, setting, str(Path(val).expanduser().resolve()))
                 else:
-                    if len(val) > 0:
-                        LOGGER.warn(f"Invalid path set for {setting} with value '{val}'")
+                    if val:
+                        LOGGER.warning(f"Invalid path set for {setting} with value '{val}'")
                     LOGGER.debug(f"Val {val} is {bool(val)}")
                     LOGGER.debug(f"Path {Path(val).expanduser()}")
                     LOGGER.debug(f"Exists is {Path(val).expanduser().exists()}")
