@@ -14,6 +14,8 @@ module.exports = {
         dashboards: [inputPath + "dashboards/dashboards.ts"],
         // Producers
         producer_profile: [inputPath + "producer_profile/producer_profile.ts"],
+        // Regions
+        region_profile: [inputPath + "region_profile/region_profile.ts"],
         // Wines
         edit_purchase: [inputPath + "edit_purchase/edit_purchase.ts"],
         edit_wine: [inputPath + "edit_wine/edit_wine.ts"],

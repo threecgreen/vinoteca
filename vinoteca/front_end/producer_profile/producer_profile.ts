@@ -7,7 +7,6 @@ declare const producerId: number;
 
 $(() => {
     navbar();
-    // hFloatingActnBtn();
     render(createElement(ProducerProfileApp, {producerId}),
            document.getElementById("producer-profile-app-container"));
 });

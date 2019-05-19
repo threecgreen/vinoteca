@@ -133,3 +133,43 @@ export class Wine {
         this.avgPrice = wine.avg_price;
     }
 }
+
+export interface IVitiAreaStats extends IRestModel {
+    total_wines: number;
+    avg_price: number;
+    avg_rating: number;
+}
+
+export class VitiAreaStats {
+    public id: number;
+    public name: string;
+    public totalWines: number;
+    public avgPrice: number;
+    public avgRating: number;
+
+    constructor(vitiAreaStats: IVitiAreaStats) {
+        this.id = vitiAreaStats.id;
+        this.name = vitiAreaStats.name;
+        this.totalWines = vitiAreaStats.total_wines;
+        this.avgPrice = vitiAreaStats.avg_price;
+        this.avgRating = vitiAreaStats.avg_rating;
+    }
+}
+
+export interface IProfileStats {
+    total_quantity: number;
+    avg_price: number;
+    avg_rating: number;
+}
+
+export class ProfileStats {
+    public totalQuantity: number;
+    public avgPrice: number;
+    public avgRating: number;
+
+    constructor(stats: IProfileStats) {
+        this.totalQuantity = stats.total_quantity;
+        this.avgPrice = stats.avg_price;
+        this.avgRating = stats.avg_rating;
+    }
+}

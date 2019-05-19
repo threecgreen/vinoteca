@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Col, IGridProps } from "./Grid";
 import { nameToId } from "../lib/utils";
+import { Col, IGridProps } from "./Grid";
 
 interface IStatelessCheckboxInputProps extends IGridProps {
     name: string;
@@ -13,7 +13,7 @@ interface IStatelessCheckboxInputProps extends IGridProps {
 export class StatelessCheckboxInput extends React.Component<IStatelessCheckboxInputProps, {}> {
     public static defaultProps = {
         enabled: true,
-    }
+    };
 
     public render() {
         const id = nameToId(this.props.name);
@@ -33,4 +33,4 @@ export class StatelessCheckboxInput extends React.Component<IStatelessCheckboxIn
             </Col>
         );
     }
-};
+}

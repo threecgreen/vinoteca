@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Btn } from "../../components/Buttons";
+import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/RestTypes";
@@ -80,19 +79,10 @@ export class Producer extends React.Component<IProducerProps> {
                         />
                     </form>
                 </Col>
-                <Col s={ 12 }>
-                    <Btn classes={ ["green-bg"] }
-                        onClick={ this.props.onConfirmClick }
-                    >
-                        Confirm Changes
-                        <MaterialIcon iconName="send" className="right" />
-                    </Btn>
-                    <Btn classes={ ["red-bg"] }
-                        onClick={ this.props.onCancelClick }
-                    >
-                        Cancel
-                    </Btn>
-                </Col>
+                <CancelOrConfirmBtns
+                    onConfirmClick={ this.props.onConfirmClick }
+                    onCancelClick={ this.props.onCancelClick }
+                />
             </React.Fragment>
         )
     }

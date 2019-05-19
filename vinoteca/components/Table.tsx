@@ -6,6 +6,12 @@ export interface IColumnHeader {
     isNumCol?: boolean;
 }
 
+export const WineTableNumCols: IColumnHeader[] = [
+    { name: "Total Quantity", isNumCol: true },
+    { name: "Avg Price", isNumCol: true },
+    { name: "Rating", isNumCol: true },
+]
+
 interface ITableProps extends IChildrenProp {
     columns: (string | IColumnHeader)[];
 }

@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% load humanize %}
-{% load vinoteca %}
+{% comment %} {% load humanize %} {% endcomment %}
+{% load static %}
 
 {% block body %}
-<div class="container">
+{% comment %} <div class="container">
   <div class="row">
     <div class="col s10 m11">
       <h3 class="bold">
@@ -56,5 +56,10 @@
       </table>
     </div>
   </div>
-</div>
+</div> {% endcomment %}
+  <div id="region-profile-app-container"></div>
+{% endblock %}
+{% block js %}
+  <script>const regionId = {{ region.id }}</script>
+  <script src="{% static 'region_profile.bundle.js' %}"></script>
 {% endblock %}

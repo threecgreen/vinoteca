@@ -1,5 +1,7 @@
 import * as React from "react";
 import { IChildrenProp, IClassesProp } from "./IProps";
+import { Col } from "./Grid";
+import { MaterialIcon } from "./MaterialIcon";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
@@ -33,5 +35,30 @@ export const Btn: React.FunctionComponent<IBtnProps> = (props) => {
         >
             { props.children }
         </button>
+    );
+}
+
+interface ICancelOrConfirmProps {
+    onConfirmClick: (e: React.MouseEvent) => void;
+    onCancelClick: (e: React.MouseEvent) => void;
+}
+
+export const CancelOrConfirmBtns: React.FunctionComponent<ICancelOrConfirmProps> =
+    (props) => {
+
+    return (
+        <Col s={ 12 }>
+            <Btn classes={ ["green-bg"] }
+                onClick={ props.onConfirmClick }
+            >
+                Confirm Changes
+                <MaterialIcon iconName="send" className="right" />
+            </Btn>
+            <Btn classes={ ["red-bg"] }
+                onClick={ props.onCancelClick }
+            >
+                Cancel
+            </Btn>
+        </Col>
     );
 }

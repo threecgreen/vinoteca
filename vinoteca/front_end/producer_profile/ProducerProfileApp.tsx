@@ -45,7 +45,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
             region: undefined,
             wines: [],
         };
-        this.logger = new Logger(this.constructor.name, true);
+        this.logger = new Logger(this.constructor.name, false);
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
@@ -70,26 +70,24 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         }
         return (
             <div className="container">
-                <Row s={ 12 }>
-                    <Producer isEditing={ this.state.isEditing }
-                        producer={ this.state.producer }
-                        producerText={ this.state.producerText }
-                        onProducerChange={ this.onProducerChange }
-                        region={ this.state.region }
-                        regionText={ this.state.regionText }
-                        onRegionChange={ this.onRegionChange }
-                        onTextInputFocus={ this.onTextInputFocus }
-                        onTextInputBlur={ this.onTextInputBlur }
-                        onConfirmClick={ this.onConfirmClick }
-                        onCancelClick={ this.onCancelClick }
-                    />
-                </Row>
+                <Producer isEditing={ this.state.isEditing }
+                    producer={ this.state.producer }
+                    producerText={ this.state.producerText }
+                    onProducerChange={ this.onProducerChange }
+                    region={ this.state.region }
+                    regionText={ this.state.regionText }
+                    onRegionChange={ this.onRegionChange }
+                    onTextInputFocus={ this.onTextInputFocus }
+                    onTextInputBlur={ this.onTextInputBlur }
+                    onConfirmClick={ this.onConfirmClick }
+                    onCancelClick={ this.onCancelClick }
+                />
                 <SpecialChars onClick={ this.onSpecialCharClick }
                     display={ this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
-                        <h4>Wines</h4>
+                        <h5>Wines</h5>
                     </Col>
                     <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
                         <FixedActionList>
@@ -240,8 +238,10 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
 
     private onCancelClick(e: React.MouseEvent) {
         e.preventDefault();
-        this.setState({
+        this.setState((state) => ({
             isEditing: false,
-        });
+            producerText: state.producer ? state.producer.name : "",
+            regionText: state.region ? state.region.name : "",
+        }));
     }
 }

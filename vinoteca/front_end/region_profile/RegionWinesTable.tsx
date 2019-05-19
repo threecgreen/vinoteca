@@ -1,35 +1,35 @@
 import * as React from "react";
 import { Table, WineTableNumCols } from "../../components/Table";
 import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell,
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
 } from "../../components/TableCells";
 import { Wine } from "../../lib/RestTypes";
 
-interface IProducerWinesTableProps {
+interface IRegionWineTableProps {
     wines: Wine[];
 }
 
-export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProps> = (props) => {
+export const RegionWinesTable: React.FunctionComponent<IRegionWineTableProps> = (props) => {
     return (
         <Table
             columns={ [
                 "Last Purchased Date",
                 "Color",
                 "Name and Type",
-                "Viticultural Area",
+                "Producer",
             // @ts-ignore
             ].concat(WineTableNumCols) }
         >
             { props.wines.map((wine) => {
                 return (
-                    <tr key={ wine.id }>
+                    <tr key={ wine.id}>
                         <DateCell date={ wine.lastPurchasedDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
                             name={ wine.name }
                             wineType={ wine.wineType }
                         />
-                        <TextCell text={ wine.vitiArea } />
+                        <TextCell text={ wine.producer } />
                         <NumCell num={ wine.totalQuantityPurchased } />
                         <PriceCell price={ wine.avgPrice } />
                         <NumCell num={ wine.rating }
@@ -41,4 +41,4 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
         </Table>
     );
 };
-ProducerWinesTable.displayName = "ProducerWinesTable";
+RegionWinesTable.displayName = "RegionWinesTable"
