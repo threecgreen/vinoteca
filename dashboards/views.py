@@ -103,7 +103,7 @@ def top_producers(limit: int) -> List[Producers]:
     return Producers.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
         .annotate(avg_rating=Avg("wines__rating")) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
-        .order_by("-avg_rating", "-quantity")[:limit]
+        .order_by("-quantity")[:limit]
 
 
 class Year(NamedTuple):
