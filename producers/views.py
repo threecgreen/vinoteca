@@ -14,21 +14,8 @@ LOGGER = get_logger("producers")
 def producer_profile(request, producer_id: int):
     r"""View for wine producer information."""
     producer = Producers.objects.get(id=producer_id)
-    wines = Wines.objects.filter(producer__id=producer.id) \
-        .annotate(total_quantity=Sum("purchases__quantity")) \
-        .annotate(avg_price=Avg("purchases__price")) \
-        .annotate(last_purchased_date=Max("purchases__date")) \
-        .prefetch_related("wine_type", "color", "viti_area") \
-        .order_by("-last_purchased_date")
-    columns = TableColumn.from_list([
-        "Last Purchased", "Color", "Name and Type", "Viticultural Area",
-        TableColumn("Total Quantity", num_col=True), TableColumn("Avg Price", num_col=True),
-        TableColumn("Rating", num_col=True)
-    ])
     context = {
-        "columns": columns,
         "producer": producer,
-        "wines": list(wines),
         "page_name": "Producer Profile",
     }
     return render(request, "producer_profile.html", context)

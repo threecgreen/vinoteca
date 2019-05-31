@@ -49,13 +49,11 @@ def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
         * Most common purchase date
         * Total number of purchased wine varieties"""
     cursor = conn.cursor()
-    query = """
-        SELECT
-            sum(coalesce(p.quantity, 1)) * 0.75,
-            count(p.id)
-        FROM purchases p;
-    """
-    liters_of_wine, total_purchase_count = cursor.execute(query).fetchone()
+
+    liters_of_wine = Purchases.objects.aggregate(
+            botlles=Sum(Coalesce("quantity", 1))
+        )["bottles"] * 0.75
+    total_purchase_count = Purchases.objects.aggregate(count=Count("id"))["count"]
     query = """
         SELECT
             (p.date % 10000) + 20000000
