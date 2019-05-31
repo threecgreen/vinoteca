@@ -12,6 +12,8 @@ interface IRegionProps {
     onRegionChange: (val: string) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
+    onTextInputFocus: () => void;
+    onTextInputBlur: () => void;
 }
 
 // TODO: stats component?
@@ -57,6 +59,8 @@ export class Region extends React.Component<IRegionProps, IRegionState> {
                     <form autoComplete="off">
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.props.onRegionChange }
+                            onFocus={ this.props.onTextInputFocus }
+                            onBlur={ this.props.onTextInputBlur }
                         />
                     </form>
                 </Col>

@@ -136,16 +136,16 @@ export class Wine {
 
 export interface IVitiAreaStats extends IRestModel {
     total_wines: number;
-    avg_price: number;
-    avg_rating: number;
+    avg_price?: number;
+    avg_rating?: number;
 }
 
 export class VitiAreaStats {
     public id: number;
     public name: string;
     public totalWines: number;
-    public avgPrice: number;
-    public avgRating: number;
+    public avgPrice?: number;
+    public avgRating?: number;
 
     constructor(vitiAreaStats: IVitiAreaStats) {
         this.id = vitiAreaStats.id;

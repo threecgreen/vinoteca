@@ -20,7 +20,7 @@ export class TextCell extends React.Component<ITextCellProps> {
 };
 
 interface INumCellProps {
-    num: number;
+    num?: number;
     minDecimals?: number;
     maxDecimals?: number;
 }
@@ -39,7 +39,7 @@ export const NumCell: React.FunctionComponent<INumCellProps> = (props) => {
 NumCell.displayName = "NumCell";
 
 interface IPriceCellProps {
-    price: number;
+    price?: number;
 }
 
 export const PriceCell: React.FunctionComponent<IPriceCellProps> = (props) => {

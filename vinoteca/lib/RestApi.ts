@@ -1,6 +1,6 @@
 import { get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { INewRegion, IProducer, IRegion, IWine } from "./RestTypes";
+import { INewRegion, IProducer, IRegion, IWine, IVitiAreaStats } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
 export class EmptyResultError extends Error {
@@ -67,6 +67,10 @@ export async function createRegion(region: INewRegion): Promise<IRegion> {
     return post("/rest/regions/", region);
 }
 
+export async function updateRegion(region: IRegion): Promise<IRegion> {
+    return put(`/rest/regions/${region.id}/`, region);
+}
+
 /* PRODUCERS */
 interface IGetProducersParams {
     id?: number;
@@ -91,6 +95,22 @@ export const getProducer = singleEntityGetter(getProducers);
 
 export async function updateProducer(producer: IProducer): Promise<IProducer> {
     return put(`/rest/producers/${producer.id}/`, producer);
+}
+
+/* VITI AREAS */
+interface IGetVitiAreaStatsParams {
+    id?: number;
+    regionId?: number;
+}
+
+export async function getVitiAreaStats(
+    {id, regionId}: IGetVitiAreaStatsParams
+): Promise<IVitiAreaStats[]> {
+    const nonNullParams = nonNulls({id, region_id: regionId});
+    if (isEmpty(nonNullParams)) {
+        return Promise.reject("No query params provided");
+    }
+    return get("/rest/viti-areas/stats/", nonNullParams);
 }
 
 /* WINES */

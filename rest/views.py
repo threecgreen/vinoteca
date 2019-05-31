@@ -4,7 +4,7 @@ out there. May also move most or all other JSON methods over to this views
 file."""
 # pylint: disable=too-many-ancestors
 from typing import Tuple
-from django.db.models import Max, Sum, Avg
+from django.db.models import Count, Max, Sum, Avg
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, mixins, response, views
@@ -14,7 +14,8 @@ from rest.serializers import (
     VitiAreaSerializer, WineTypeSerializer, WineSearchResultSerializer,
     ColorNamesSerializer, ProducerNameSerializer, PurchaseSerializer,
     VitiAreaNameSerializer, WineTypeNameSerializer, GrapeNameSerializer,
-    StoreNameSerializer, WineGrapeSerializer, GrapeSerializer, WineSerializer
+    StoreNameSerializer, WineGrapeSerializer, GrapeSerializer, WineSerializer,
+    VitiAreaStatsSerializer
 )
 from vinoteca.models import (
     Colors, Grapes, Regions, Producers, Purchases, Stores, VitiAreas, WineTypes,
@@ -110,6 +111,16 @@ class WineList(generics.ListAPIView):
         .order_by("-last_purchased_date")
     serializer_class = WineSerializer
     filterset_fields = ("id", "producer_id", "producer__region_id", "wine_type_id")
+
+
+class VitiAreaStats(generics.ListAPIView):
+    queryset = VitiAreas.objects.all() \
+        .annotate(total_quantity=Count("wines__id")) \
+        .annotate(avg_rating=Avg("wines__rating")) \
+        .annotate(avg_price=Avg("wines__purchases__price")) \
+        .order_by("name")
+    serializer_class = VitiAreaStatsSerializer
+    filterset_fields = ("id", "region_id")
 
 
 class SearchWines(views.APIView):

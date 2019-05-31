@@ -6,7 +6,7 @@ from django.urls import path
 from rest.views import (
     generic_all_names, region_all_names, ColorList, RegionView, ProducerView,
     GrapeView, VitiAreaList, WineTypeList, WineList, WineGrapeList, SearchWines,
-    write_client_side_logs, PurchaseView
+    write_client_side_logs, PurchaseView, VitiAreaStats
 )
 
 app_name = "REST"
@@ -32,6 +32,7 @@ urlpatterns = [
     path("producers/", ProducerView.as_view(), name="Producer-Get"),
     path("producers/<int:id>/", ProducerView.as_view(), name="Producer-Put"),
     path("viti-areas/", VitiAreaList.as_view(), name="Viti Area"),
+    path("viti-areas/stats/", VitiAreaStats.as_view(), name="Viti Area Stats"),
     path("wine-types/", WineTypeList.as_view(), name="Wine Type"),
     path("wines/", WineList.as_view(), name="Wine"),
     path("wines/search/", SearchWines.as_view(), name="Search Wines"),

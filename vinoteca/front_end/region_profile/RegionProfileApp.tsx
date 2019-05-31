@@ -5,20 +5,25 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
-import { getRegion, getWines } from "../../lib/RestApi";
+import { getRegion, getWines, getVitiAreaStats, updateRegion } from "../../lib/RestApi";
 import { IRegion, VitiAreaStats, Wine } from "../../lib/RestTypes";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
 import { RegionWinesTable } from "./RegionWinesTable";
+import { SpecialChars } from "../../components/SpecialChars";
+
+enum TextInputs {
+    Region
+};
 
 interface IRegionProfileState {
     isEditing: boolean;
+    lastActiveTextInput?: TextInputs;
     // Editable
     regionText: string;
     // "Pure" state
     region?: IRegion;
     wines: Wine[];
-    // TODO: viti area type
     vitiAreas: VitiAreaStats[];
 }
 
@@ -33,6 +38,7 @@ export class RegionProfile extends React.Component<IRegionProfileProps, IRegionP
         super(props);
         this.state = {
             isEditing: false,
+            lastActiveTextInput: undefined,
             regionText: "",
             region: undefined,
             wines: [],
@@ -41,18 +47,25 @@ export class RegionProfile extends React.Component<IRegionProfileProps, IRegionP
 
         this.logger = new Logger(this.constructor.name, true);
         this.onRegionChange = this.onRegionChange.bind(this);
+        this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
+        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
+        this.onTextInputFocus = this.onTextInputFocus.bind(this);
+        this.onTextInputBlur = this.onTextInputBlur.bind(this);
     }
 
     public componentDidMount() {
         getRegion({id: this.props.regionId})
-            .then((region) => this.setState({region}));
+            .then((region) => this.setState({region, regionText: region.name}));
         getWines({regionId: this.props.regionId})
             .then((wines) => {
                 this.setState({wines: wines.map((w) => new Wine(w))});
             });
-        // TODO: get viti areas
+        getVitiAreaStats({regionId: this.props.regionId})
+            .then((vitiAreas) => {
+                this.setState({vitiAreas: vitiAreas.map((vA) => new VitiAreaStats(vA))});
+            });
     }
 
     public render() {
@@ -65,8 +78,13 @@ export class RegionProfile extends React.Component<IRegionProfileProps, IRegionP
                     region={ this.state.region }
                     regionText={ this.state.regionText }
                     onRegionChange={ this.onRegionChange }
+                    onTextInputFocus={ this.onTextInputFocus }
+                    onTextInputBlur={ this.onTextInputBlur }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
+                />
+                <SpecialChars onClick={ this.onSpecialCharClick }
+                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
@@ -98,15 +116,21 @@ export class RegionProfile extends React.Component<IRegionProfileProps, IRegionP
     }
 
     private onRegionChange(val: string) {
-        this.setState({regionText: val});
+        this.setState({
+            lastActiveTextInput: TextInputs.Region,
+            regionText: val,
+        });
     }
 
     private onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        // TODO: updateRegion
-        this.setState({
-            isEditing: false,
-        });
+        updateRegion({id: this.props.regionId, name: this.state.regionText})
+            .then((region) => this.setState({
+                isEditing: false,
+                region: region,
+            })).catch((err) => {
+                this.logger.logWarning(`Failed to save changes to database: ${err}`);
+            });
     }
 
     private onCancelClick(e: React.MouseEvent) {
@@ -114,6 +138,21 @@ export class RegionProfile extends React.Component<IRegionProfileProps, IRegionP
         this.setState((state) => ({
             isEditing: false,
             regionText: state.region ? state.region.name : "",
+        }));
+    }
+
+    private onTextInputFocus() {
+        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.Region));
+    }
+
+    private onTextInputBlur() {
+        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.Region));
+    }
+
+    private onSpecialCharClick(e: React.MouseEvent, char: string) {
+        e.preventDefault();
+        this.setState((prevState) => ({
+            regionText: prevState.regionText + char,
         }));
     }
 }
