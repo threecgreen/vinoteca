@@ -5,11 +5,12 @@ import {
 } from "../../components/TableCells";
 import { Wine } from "../../lib/RestTypes";
 
-interface IRegionWineTableProps {
+interface IRegionWinesTableProps {
     wines: Wine[];
 }
 
-export const RegionWinesTable: React.FunctionComponent<IRegionWineTableProps> = (props) => {
+export const RegionWinesTable: React.FunctionComponent<IRegionWinesTableProps> = (props) => {
+    // TODO: get producer id for linking
     return (
         <Table
             columns={ [

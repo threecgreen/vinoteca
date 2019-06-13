@@ -261,8 +261,8 @@ def empty_to_none(item: str, type_: Type = None) -> Union["type_", str]:
 
 
 class DatabaseConnection(object):
-    r"""Simple (hacky) wrapper around django database connection to provide
-    enter and exit methods for more idiomatic use."""
+    r"""Simple wrapper around django database connection to provide enter and
+    exit methods for more idiomatic use."""
     def __init__(self, connection):
         self._connection = connection
 
