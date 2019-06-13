@@ -1,36 +1,43 @@
 import * as React from "react";
+import { MaterialIcon } from "./MaterialIcon";
 
-export interface ISorting<T> {
-    ascending: boolean;
-    sorting: T;
+export enum SortingState {
+    NotSorted,
+    Ascending,
+    Descending,
 }
 
-interface ITableHeaderProps<T> {
-    setSorting: (sorting: ISorting<T>) => void;
-    ascending: boolean;
-    sorting: T;
+interface ITableHeaderProps {
+    className?: string;
+    onClick: (e: React.MouseEvent) => void;
+    sortingState: SortingState;
 }
 
-export class TableHeader<T> extends React.Component<ITableHeaderProps<T>, {}> {
+export class TableHeader extends React.Component<ITableHeaderProps, {}> {
     public constructor(props: ITableHeaderProps) {
         super(props);
-
-        this.onClick = this.onClick.bind(this);
     }
+
     public render() {
         // TODO: show up or down arrow depending on sorting
         return (
-            <th onClick={ this.onClick }>
-
+            <th className={ this.props.className }>
+                { this.renderIcon() }
+                <a href="" onClick={ this.props.onClick }>
+                    { this.props.children }
+                </a>
             </th>
-        )
+        );
     }
 
-    public onClick(e: React.MouseEvent) {
-        e.preventDefault();
-        this.props.setSorting({
-            ascending: !this.props.ascending,
-            sorting: this.props.sorting,
-        });
+    public renderIcon() {
+        switch (this.props.sortingState) {
+            case SortingState.NotSorted:
+                return undefined;
+            case SortingState.Ascending:
+                return <MaterialIcon iconName="arrow_drop_down" />;
+            case SortingState.Descending:
+                return <MaterialIcon iconName="arrow_drop_up" />;
+        }
     }
 }

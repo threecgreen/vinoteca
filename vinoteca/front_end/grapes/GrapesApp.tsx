@@ -3,12 +3,13 @@ import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IRestModel } from "../../lib/RestTypes";
+import { IRestModel, IGrape } from "../../lib/RestTypes";
 import { any } from "../../lib/utils";
 import { GrapesList } from "./GrapesList";
 
 export class GrapeItem {
-    constructor(public id: number, public name: string, public isEditable = false) {
+    constructor(public id: number, public name: string, public wines?: number,
+            public isEditable = false) {
     }
 }
 
@@ -30,26 +31,28 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     public render() {
-        if (this.state) {
-            return <div>
-                <GrapesList grapes={this.state.grapes}
-                            handleEdit={this.handleEdit.bind(this)}
-                            handleSave={this.handleSave.bind(this)}
-                            onChange={this.onChange.bind(this)} />
-                <SpecialChars onClick={this.handleSpecialChar.bind(this)}
-                              display={this.hasEditableGrapes} />
-                <span className="clear" />
-            </div>;
-        } else {
+        if (!this.state) {
             return <Preloader />;
         }
+        return (
+            <div>
+                <GrapesList grapes={this.state.grapes}
+                    handleEdit={this.handleEdit.bind(this)}
+                    handleSave={this.handleSave.bind(this)}
+                    onChange={this.onChange.bind(this)}
+                />
+                <SpecialChars onClick={this.handleSpecialChar.bind(this)}
+                    display={this.hasEditableGrapes}
+                />
+            </div>
+        );
     }
 
     public componentDidMount() {
         get(this.getGrapesUrl())
-            .then((restGrapes: IRestModel[]) => {
+            .then((restGrapes: IGrape[]) => {
                 const grapes: GrapeItem[] = restGrapes.map(
-                    (g) => new GrapeItem(g.id, g.name),
+                    (g) => new GrapeItem(g.id, g.name, g.wines),
                 );
                 this.setState({ grapes });
             });
@@ -113,7 +116,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
             this.setState((state) => ({
                 grapes: state.grapes.map((g) => {
                     return g.id === state.lastActiveId
-                        ? new GrapeItem(g.id, g.name + char, g.isEditable)
+                        ? new GrapeItem(g.id, g.name + char, g.wines, g.isEditable)
                         : g;
                 }),
             }));

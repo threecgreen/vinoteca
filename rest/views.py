@@ -196,7 +196,8 @@ class SearchWines(views.APIView):
 class GrapeView(generics.GenericAPIView,
                 mixins.ListModelMixin,
                 mixins.UpdateModelMixin):
-    queryset = Grapes.objects.all()
+    queryset = Grapes.objects.all() \
+        .annotate(wines=Count("winegrapes__id", distinct=True))
     serializer_class = GrapeSerializer
     filterset_fields = ("id", "name")
     lookup_field = "id"

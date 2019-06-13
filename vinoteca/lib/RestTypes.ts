@@ -53,6 +53,10 @@ export interface IWineGrape {
     percent: number | undefined;
 }
 
+export interface IGrape extends IRestModel {
+    wines: number;
+}
+
 export class Grape implements IChartInput {
     public static fromArray(jsonArray: IWineGrape[]) {
         return jsonArray.map((grapeJ) => {

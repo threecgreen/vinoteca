@@ -72,6 +72,23 @@ export const ColorCell: React.FunctionComponent<IColorCellProps> = (props) => {
 };
 ColorCell.displayName = "ColorCell";
 
+interface ILinkedCellProps {
+    id: number;
+    model: string;
+}
+
+const LinkedCell: React.FunctionComponent<ILinkedCellProps> = (props) => {
+    const url = `/${props.model}/${props.id}/`;
+    return (
+        <td>
+            <a href={ url }>
+                { props.children }
+            </a>
+        </td>
+    )
+}
+LinkedCell.displayName = "LinkedCell"
+
 interface INameAndTypeProps {
     id: number;
     name: string | undefined;
@@ -82,9 +99,27 @@ interface INameAndTypeProps {
 export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (props) => {
     const url = props.url || `/wines/${props.id}/`;
     return (
-        <td>
-            <a href={ url }>{ props.name || "" } { props.wineType }</a>
-        </td>
+        <LinkedCell id={ props.id } model="wines">
+            { props.name || "" } { props.wineType }
+        </LinkedCell>
     );
 };
 NameAndTypeCell.displayName = "NameAndTypeCell";
+
+export const ProducerCell: React.FunctionComponent<{id: number}> = (props) => {
+    return (
+        <LinkedCell id={ props.id } model="producers">
+            { props.children }
+        </LinkedCell>
+    )
+}
+ProducerCell.displayName = "ProducerCell"
+
+export const RegionCell: React.FunctionComponent<{id: number}> = (props) => {
+    return (
+        <LinkedCell id={ props.id } model="regions">
+            { props.children }
+        </LinkedCell>
+    )
+}
+RegionCell.displayName = "RegionCell"

@@ -26,9 +26,11 @@ class GrapeNameSerializer(serializers.ModelSerializer):
 
 
 class GrapeSerializer(serializers.ModelSerializer):
+    wines = serializers.IntegerField(required=False)
     class Meta:
         model = Grapes
-        fields = ("id", "name")
+        fields = ("id", "name", "wines")
+        read_only_fields = ('wines',)
 
 
 class RegionSerializer(serializers.ModelSerializer):
