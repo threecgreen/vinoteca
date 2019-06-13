@@ -1,13 +1,13 @@
 r"""Implements views (business logic) for the various dashboards displayed on the
 home page and the dashboard page."""
-import sqlite3
 from datetime import date
 from typing import List, NamedTuple
 
-from django.db.models import Avg, Count, Sum
+from django.db.models import Avg, Count, F, Sum
 from django.db.models.functions import Coalesce
 from django.shortcuts import render
 
+from dashboards.models import InventoryWine, Year
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
 from vinoteca.utils import get_connection, get_logger, int_to_date, TableColumn
@@ -42,29 +42,22 @@ class ByTheNumbers(NamedTuple):
     variety_count: int
 
 
-def by_the_numbers(conn: sqlite3.Connection) -> ByTheNumbers:
+def by_the_numbers() -> ByTheNumbers:
     r"""Fetches some basic statistics on the user's wine library including:
         * Number of liters of wine consumed
         * Total number of purchases
         * Most common purchase date
         * Total number of purchased wine varieties"""
-    cursor = conn.cursor()
 
     liters_of_wine = Purchases.objects.aggregate(
-            botlles=Sum(Coalesce("quantity", 1))
+            bottles=Sum(Coalesce("quantity", 1))
         )["bottles"] * 0.75
     total_purchase_count = Purchases.objects.aggregate(count=Count("id"))["count"]
-    query = """
-        SELECT
-            (p.date % 10000) + 20000000
-        FROM purchases p
-        WHERE p.date IS NOT NULL
-        GROUP BY (p.date % 10000)
-        ORDER BY count(p.id) DESC
-        LIMIT 1;
-    """
     try:
-        mcd_result = cursor.execute(query).fetchone()[0]
+        mcd_result = Purchases.objects.filter(date__isnull=False) \
+            .values(day_of_year=F("date") % 10_000 + 20_000_000) \
+            .annotate(purchases=Count("id")) \
+            .order_by("purchases")[0]["day_of_year"]
     except (TypeError, IndexError):
         LOGGER.warning("No purchase data found. Returning a blank 'By the numbers'")
         return None
@@ -104,32 +97,29 @@ def top_producers(limit: int) -> List[Producers]:
         .order_by("-quantity")[:limit]
 
 
-class Year(NamedTuple):
-    r"""Return attrs object for the purchases_by_year function."""
-    year: str
-    quantity: int
-    price: float
-    avg_price: float
-    avg_vintage: float
+def extrapolate(val):
+    today = date.today().timetuple().tm_yday
+    year = date.today().year
+    days_this_year = date(year, 12, 31).timetuple().tm_yday
+    return val / (today / days_this_year)
 
 
-def purchases_by_year(conn: sqlite3.Connection) -> List[Year]:
+def purchases_by_year() -> List[Year]:
     r"""Fetches information about the wine purchases grouped by purchase
-    year. Takes a SQLite connection as an argument."""
-    query = """
+    year."""
+    # TODO: use extrapolate
+    return Year.objects.raw("""
         SELECT
-            p.date / 10000
-            , sum(coalesce(p.quantity, 1))
-            , sum(p.price)
-            , avg(p.price)
-            , avg(p.vintage)
+            p.date / 10000 AS year
+            , sum(coalesce(p.quantity, 1)) AS quantity
+            , sum(p.price) AS price
+            , avg(p.price) AS avg_price
+            , avg(p.vintage) AS avg_vintage
         FROM purchases p
         WHERE p.date IS NOT NULL
         GROUP BY p.date / 10000
         ORDER BY p.date / 10000;
-    """
-    cursor = conn.cursor()
-    return [Year(*row) for row in cursor.execute(query).fetchall()]
+    """)
 
 
 def top_grape_varieties(limit: int) -> List[Grapes]:
@@ -159,9 +149,8 @@ def top_viti_areas(limit: int) -> List[VitiAreas]:
 def dashboards(request):
     r"""Collective dashboard view function that calls all the data functions
     and assembles them into a context for rendering in the template."""
-    conn = get_connection()
     context = {
-        "btn": by_the_numbers(conn),
+        "btn": by_the_numbers(),
         "colors": purchases_by_color(),
         "grapes": top_grape_varieties(6),
         "regions": top_regions(10),
@@ -169,50 +158,31 @@ def dashboards(request):
         "purchases": recent_purchases(10),
         "top_wine_types": top_wine_types(10),
         "viti_areas": top_viti_areas(5),
-        "years": purchases_by_year(conn),
+        "years": purchases_by_year(),
         "wine_count": Wines.objects.count(),
         "page_name": "Dashboards",
     }
-    conn.close()
     return render(request, "dashboards.html", context)
-
-
-class InventoryItem(NamedTuple):
-    r"""Denotes one row of the table."""
-    color: str
-    name: str
-    wine_type: str
-    producer: str
-    region: str
-    vintage: int
-    last_purchase_date: int
-    inventory_cnt: int
-    wine_id: int
-    producer_id: int
-    region_id: int
-    wine_type_id: int
-    last_price: float
 
 
 def inventory(request):
     r"""View what wines and how many bottles are in the user's inventory/
     collection."""
-
-    query = """
+    wine_inventory = InventoryWine.objects.raw("""
         SELECT
-            c.name
-            , w.name
-            , wt.name
-            , p.name
-            , r.name
+            c.name AS color
+            , w.name AS name
+            , wt.name AS wine_type
+            , p.name AS producer
+            , r.name AS region
             , p3.vintage
-            , max(pu.date)
-            , w.inventory
-            , w.id
-            , p.id
-            , r.id
-            , wt.id
-            , p3.price
+            , max(pu.date) AS last_purchase_date
+            , w.inventory AS inventory_cnt
+            , w.id AS wine_id
+            , p.id AS producer_id
+            , r.id AS region_id
+            , wt.id AS wine_type_id
+            , p3.price AS last_price
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN regions r ON p.region_id = r.id
@@ -234,13 +204,7 @@ def inventory(request):
         WHERE w.inventory > 0
         GROUP BY w.id
         ORDER BY sub.last_purchase_date DESC;
-    """
-    connection = get_connection()
-    cursor = connection.cursor()
-    wine_inventory = []
-    for item in cursor.execute(query).fetchall():
-        # Convert YYYYMMDD date format to date object for formatting
-        wine_inventory.append(InventoryItem(*item))
+    """)
     columns = TableColumn.from_list([
         "Modify", TableColumn("Quantity", num_col=True), "Color", "Name and Type",
         "Producer", "Region", TableColumn("Vintage", num_col=True),
@@ -251,5 +215,4 @@ def inventory(request):
         "columns": columns,
         "page_name": "Inventory",
     }
-    connection.close()
     return render(request, "inventory.html", context)
