@@ -10,7 +10,7 @@ from django.shortcuts import render
 from dashboards.models import InventoryWine, Year
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
-from vinoteca.utils import get_connection, get_logger, int_to_date, TableColumn
+from vinoteca.utils import get_logger, int_to_date, TableColumn
 
 
 LOGGER = get_logger("dashboards")

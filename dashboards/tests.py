@@ -5,11 +5,6 @@ from dashboards.views import *
 from vinoteca.models import Purchases, Wines
 
 
-@pytest.fixture
-def connection():
-    return get_connection()
-
-
 @pytest.mark.django_db
 def test_dash_page(client):
     response = client.get(reverse("Dashboards"))
@@ -26,8 +21,8 @@ def test_recent_purchases(limit):
 
 @pytest.mark.xfail(pytest.CI, reason="Purchase queries aren't working in CI.")
 @pytest.mark.django_db
-def test_by_the_numbers(connection):
-    assert isinstance(by_the_numbers(connection), ByTheNumbers)
+def test_by_the_numbers():
+    assert isinstance(by_the_numbers(), ByTheNumbers)
 
 
 @pytest.mark.django_db
@@ -62,8 +57,8 @@ def test_producers(limit):
 
 @pytest.mark.xfail(pytest.CI, reason="Purchase queries aren't working in CI.")
 @pytest.mark.django_db
-def test_purchase_by_year(connection):
-    years = purchases_by_year(connection)
+def test_purchase_by_year():
+    years = purchases_by_year()
     assert isinstance(years[0], Year)
 
 
