@@ -20,6 +20,9 @@ async function checkResponse(response: Response): Promise<any>  {
         if (response.status > 310) {
             return Promise.reject(response.json());
         }
+        if (response.status === 204) {
+            return [];
+        }
         return response.json();
     } catch (err) {
         return Promise.reject(response);

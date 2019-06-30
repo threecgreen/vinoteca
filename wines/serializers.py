@@ -5,6 +5,7 @@ from .models import WineSearchResult
 class WineSearchResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = WineSearchResult
+        fields = "__all__"
 
 
 class WineSerializer(serializers.Serializer):

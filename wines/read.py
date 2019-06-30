@@ -120,7 +120,7 @@ class SearchWines(views.APIView):
         params = [color, wine_type, producer, region, viti_area]
         params = [param for param in params if param is not None]
         if not params:
-            return response.Response({}, 204)
+            return response.Response([], 204, content_type='application/json')
         params = [
             wine_type,
             color,

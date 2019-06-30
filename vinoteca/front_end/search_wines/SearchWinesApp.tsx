@@ -178,6 +178,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                 results: results.map((r) => new WineResult(r)),
                 resultState: ResultState.HasSearched,
             });
+            }
         }).catch((error) => {
             this.logger.logError(`"Error fetching search results: ${error}`)
         });

@@ -5,7 +5,7 @@ import { IDict, nameToId, areEqual } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
-import { getRegions } from "../lib/RestApi";
+import { getRegions, EmptyResultError } from "../lib/RestApi";
 
 interface IRegionInputProps extends IOnChange {
     value: string;
@@ -47,6 +47,12 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
                             this.setState({ enabled: false });
                         } else if (!this.state.enabled) {
                             this.setState({ enabled: true });
+                        }
+                    })
+                    .catch((e) => {
+                        // Ignore empty result errors
+                        if (!EmptyResultError.isInstance(e)) {
+                            Promise.reject(e);
                         }
                     })
                     .catch((e) => {
