@@ -43,11 +43,25 @@ class ColorList(generics.ListAPIView):
     filterset_fields = ("id",)
 
 
-class WineTypeList(generics.ListAPIView):
-    r"""Allow queries about WineTypes based on their id."""
+class WineTypeView(generics.GenericAPIView,
+                   mixins.ListModelMixin,
+                   mixins.UpdateModelMixin):
     queryset = WineTypes.objects.all()
     serializer_class = WineTypeSerializer
-    filterset_fields = ("id",)
+    filterset_fields = ("id", "name")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """Grape update API, need to submit both `id` and `name` fields at the
+        same time, or django will prevent to do update for field missing."""
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 class GrapeView(generics.GenericAPIView,

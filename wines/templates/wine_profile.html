@@ -49,7 +49,11 @@
             <h5><b>Vintage:</b> {{ recent_vintage }}</h5>
           {% endif %}
           {% if wine.viti_area %}
-            <h5><b>Viticultural Area:</b> {{ wine.viti_area.name }}</h5>
+            <h5><b>Viticultural Area:</b>
+              <a class="text-link" href='{% url "Viti Area Profile" viti_area_id=wine.viti_area.id %}'>
+                {{ wine.viti_area.name }}
+              </a>
+            </h5>
           {% endif %}
           {% if wine.description %}
             <h6><b>Description:</b> {{ wine.description }}</h6>

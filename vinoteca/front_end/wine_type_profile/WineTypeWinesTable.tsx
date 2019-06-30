@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Table, WineTableNumCols } from "../../components/Table";
 import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, VitiAreaCell
 } from "../../components/TableCells";
 import { Wine } from "../../lib/RestTypes";
 
@@ -17,6 +17,8 @@ export const WineTypeWinesTable: React.FunctionComponent<IWineTypeWineTableProps
                 "Color",
                 "Name and Type",
                 "Producer",
+                "Region",
+                "Viticultural Area",
             // @ts-ignore
             ].concat(WineTableNumCols) }
         >
@@ -29,7 +31,15 @@ export const WineTypeWinesTable: React.FunctionComponent<IWineTypeWineTableProps
                             name={ wine.name }
                             wineType={ wine.wineType }
                         />
-                        <TextCell text={ wine.producer } />
+                        <ProducerCell id={ wine.producerId }>
+                            { wine.producer }
+                        </ProducerCell>
+                        <RegionCell id={ wine.regionId }>
+                            { wine.region }
+                        </RegionCell>
+                        <VitiAreaCell id={ wine.vitiAreaId }>
+                            { wine.vitiArea }
+                        </VitiAreaCell>
                         <NumCell num={ wine.totalQuantityPurchased } />
                         <PriceCell price={ wine.avgPrice } />
                         <NumCell num={ wine.rating }
