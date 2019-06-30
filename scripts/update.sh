@@ -51,6 +51,7 @@ info_text "Updating dependencies..."
 "$conda" env update -f environment.yml || error_exit "Failed to update Python"
 info_text "Migrating database..."
 "$py_env/python" "$root_dir/manage.py" migrate || error_exit "Failed to migrate database"
+"$py_env/python" "$root_dir/manage.py" migrate dashboards || error_exit "Failed to migrate database"
 
 check_for_install
 
