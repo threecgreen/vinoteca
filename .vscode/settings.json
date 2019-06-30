@@ -5,7 +5,7 @@
     "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
-        "--rcfile={workspaceRoot}/.pylintrc"
+        "--rcfile=${workspaceFolder}/.pylintrc"
     ],
     "python.linting.enabled": true,
     "python.testing.pytestArgs": [
