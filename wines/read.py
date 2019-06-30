@@ -1,13 +1,17 @@
 # pylint: disable=unused-argument
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 from django.conf import settings
+from django.db.models import Count, Max, Sum, Avg
 from django.shortcuts import render
 from django.views import View
+from rest_framework import generics, views
 
 from vinoteca.models import Colors, Purchases, Wines, WineGrapes
-from vinoteca.utils import get_connection, get_logger, TableColumn
+from vinoteca.utils import empty_to_none, get_connection, get_logger, TableColumn
+from .serializers import WineSearchResultSerializer, WineSerializer
+from .models import WineSearchResult
 
 
 LOGGER = get_logger("wines.read")
@@ -75,6 +79,88 @@ def search_wines_view(request):
         "page_name": "Search Wines",
     }
     return render(request, "search_wines.html", context)
+
+
+class WineList(generics.ListAPIView):
+    r"""Allow queries about Wines based on their id, Color, Producer, VitiArea,
+    and WineType."""
+    queryset = Wines.objects.all() \
+        .annotate(total_quantity=Sum("purchases__quantity")) \
+        .annotate(avg_price=Avg("purchases__price")) \
+        .annotate(last_purchased_date=Max("purchases__date")) \
+        .prefetch_related("wine_type", "color", "viti_area", "producer") \
+        .order_by("-last_purchased_date")
+    serializer_class = WineSerializer
+    filterset_fields = ("id", "producer_id", "producer__region_id", "wine_type_id")
+
+
+class SearchWines(views.APIView):
+    @staticmethod
+    def dictfetchall(cursor):
+        """Returns all rows from a cursor as a dict"""
+        desc = cursor.description
+        return [
+            dict(zip([col[0] for col in desc], row))
+            for row in cursor.fetchall()
+        ]
+
+    @staticmethod
+    def wrap_in_wild_cards(params: Tuple[str]) -> Tuple[str]:
+        """If exact match fails, we want to try with wildcards. This function
+        wraps all non-null query parameters in the SQL wildcard '%'."""
+        return tuple(f"%{p}%" if p is not None else p for p in params)
+
+    def get(self, request):
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            wine_type = empty_to_none(request.GET.get("wine_type"))
+            color = empty_to_none(request.GET.get("color"))
+            producer = empty_to_none(request.GET.get("producer"))
+            region = empty_to_none(request.GET.get("region"))
+            viti_area = empty_to_none(request.GET.get("viti_area"))
+            params = [color, wine_type, producer, region, viti_area]
+            params = [param for param in params if param is not None]
+            if not params:
+                return response.Response({}, 204)
+            results = WineSearchResult.objects.raw("""
+            SELECT
+                w.id
+                , cl.name as color
+                , w.name
+                , pro.name as producer
+                , r.name as region
+                , t.name as wine_type
+                , v.name as viti_area
+            FROM wines w
+                LEFT JOIN producers pro ON w.producer_id = pro.id
+                LEFT JOIN regions r ON pro.region_id = r.id
+                LEFT JOIN wine_types t ON w.wine_type_id = t.id
+                LEFT JOIN colors cl ON w.color_id = cl.id
+                LEFT JOIN viti_areas v on w.viti_area_id = v.id
+            WHERE
+                t.name LIKE coalesce(%s, t.name)
+                AND cl.name LIKE coalesce(%s, cl.name)
+                AND pro.name LIKE coalesce(%s, pro.name)
+                AND r.name LIKE coalesce(%s, r.name)
+                AND (
+                    w.viti_area_id IS NULL
+                    OR v.name LIKE coalesce(%s, v.name)
+                )
+                ORDER BY coalesce(w.name || ' ', ''"""  """) || t.name;
+            """)
+            params = [
+                wine_type,
+                color,
+                producer,
+                region,
+                viti_area,
+            ]
+            # Rerun with wildcards if empty
+            serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
+            if not serializer.data:
+                cursor.execute(query, self.wrap_in_wild_cards(params))
+                serializer = WineSearchResultSerializer(self.dictfetchall(cursor), many=True)
+            return response.Response(serializer.data)
 
 
 class WineTableDatum(NamedTuple):

@@ -2,7 +2,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.tslint": true,
     },
-    "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
+    "python.pythonPath": "/home/carter/miniconda3/envs/vinoteca/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
         "--rcfile={workspaceRoot}/.pylintrc"

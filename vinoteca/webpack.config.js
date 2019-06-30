@@ -29,7 +29,8 @@ module.exports = {
                 inputPath + "wines/jquery.tablesorter.widgets.js",
                 inputPath + "wines/jquery.tablesorter.pager.css"],
         // Wine Attrs
-        grapes: [inputPath + "grapes/grapes.ts"]
+        grapes: [inputPath + "grapes/grapes.ts"],
+        wine_type_profile: [inputPath + "wine_type_profile/wine_type_profile.ts"]
     },
     module: {
         rules: [
