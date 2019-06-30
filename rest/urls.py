@@ -3,10 +3,10 @@ GET wine data, not to modify it."""
 # pylint: disable=invalid-name
 from django.urls import path
 
-from rest.views import (
-    generic_all_names, region_all_names, ColorList, RegionView, ProducerView,
-    GrapeView, VitiAreaList, WineTypeList, WineGrapeList, write_client_side_logs, PurchaseView, VitiAreaStats
-)
+from places.views import RegionView, VitiAreaList, VitiAreaStats, region_all_names
+from producers.views import ProducerView
+from rest.views import generic_all_names, write_client_side_logs
+from wine_attrs.views import ColorList, GrapeView, WineTypeList, WineGrapeList, PurchaseView
 from wines.read import WineList, SearchWines
 
 

@@ -1,14 +1,32 @@
 """Contains views for interacting with data regarding wine producers."""
-from django.db.models import Max, Sum, Avg
 from django.shortcuts import render, redirect
+from rest_framework import generics, mixins
 
-from vinoteca.models import (
-    Producers, Wines
-)
-from vinoteca.utils import empty_to_none, g_or_c_region, get_logger, TableColumn
+from vinoteca.models import Producers
+from vinoteca.utils import empty_to_none, g_or_c_region, get_logger
+from .serializers import ProducerSerializer
 
 
 LOGGER = get_logger("producers")
+
+
+class ProducerView(generics.ListAPIView,
+                   mixins.ListModelMixin,
+                   mixins.UpdateModelMixin):
+    queryset = Producers.objects.all()
+    serializer_class = ProducerSerializer
+    filterset_fields = ("id", "region_id")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 def producer_profile(request, producer_id: int):

@@ -3,42 +3,19 @@ ideal for the wine graph idea, but there's still a lot of design work to figure
 out there. May also move most or all other JSON methods over to this views
 file."""
 # pylint: disable=too-many-ancestors
-from typing import Tuple
-from django.db.models import Count, Max, Sum, Avg
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, mixins, response, views
 
-from rest.serializers import (
-    ColorSerializer, RegionSerializer, ProducerSerializer,
-    VitiAreaSerializer, WineTypeSerializer, ColorNamesSerializer, ProducerNameSerializer, PurchaseSerializer,
-    VitiAreaNameSerializer, WineTypeNameSerializer, GrapeNameSerializer,
-    StoreNameSerializer, WineGrapeSerializer, GrapeSerializer, VitiAreaStatsSerializer
+from places.serializers import VitiAreaNameSerializer
+from producers.serializers import ProducerNameSerializer
+from wine_attrs.serializers import (
+    ColorNamesSerializer, WineTypeNameSerializer, GrapeNameSerializer, StoreNameSerializer
 )
-from vinoteca.models import (
-    Colors, Grapes, Regions, Producers, Purchases, Stores, VitiAreas, WineTypes,
-    Wines, WineGrapes
-)
-from vinoteca.utils import (
-    get_connection, get_region_flags, get_logger, place_json, empty_to_none,
-    RequestLocation
-)
+from vinoteca.models import Colors, Grapes, Producers, Stores, VitiAreas, WineTypes
+from vinoteca.utils import get_logger, place_json, RequestLocation
 
 
 LOGGER = get_logger("rest")
-
-
-def region_all_names(_) -> JsonResponse:
-    r"""Return regions in JSON with the following format:
-    {
-        region_name: has_stored_flag
-    }"""
-    region_flags = get_region_flags()
-    regions = {}
-    for region in Regions.objects.all():
-        regions[region.name] = f"/static/img/flags/{region.name}.svg" if region.name \
-                in region_flags else None
-    return JsonResponse(regions)
 
 
 def generic_all_names(_, obj_name: str) -> JsonResponse:
@@ -54,142 +31,6 @@ def generic_all_names(_, obj_name: str) -> JsonResponse:
     model, serializer = relations[obj_name]
     objs = model.objects.all()
     return JsonResponse({serializer(obj).data["name"]: None for obj in objs}, safe=False)
-
-
-def grape(request):
-    r"""Creates combined serialization of WineGrapes and Grapes objects
-    given a wine id as a HTTP request argument 'id'."""
-    wine_id = request.GET.get("id")
-    wine_grapes = WineGrapes.objects.filter(wine_id=wine_id)
-    content = []
-    for wine_grape in wine_grapes:
-        content.append({
-            "wine": wine_id,
-            "grape": wine_grape.grape.name,
-            "percent": wine_grape.percent
-        })
-    return JsonResponse(content, safe=False)
-
-
-class WineGrapeList(generics.ListAPIView):
-    queryset = WineGrapes.objects.all().prefetch_related("grape")
-    serializer_class = WineGrapeSerializer
-    filterset_fields = ("wine", "grape")
-
-
-class ColorList(generics.ListAPIView):
-    r"""Allows queries about Colors based on their id."""
-    queryset = Colors.objects.all()
-    serializer_class = ColorSerializer
-    filterset_fields = ("id",)
-
-
-class VitiAreaList(generics.ListAPIView):
-    r"""Allow queries about VitiAreas based on their id and Region."""
-    queryset = VitiAreas.objects.all()
-    serializer_class = VitiAreaSerializer
-    filterset_fields = ("id", "region__name")
-
-
-class WineTypeList(generics.ListAPIView):
-    r"""Allow queries about WineTypes based on their id."""
-    queryset = WineTypes.objects.all()
-    serializer_class = WineTypeSerializer
-    filterset_fields = ("id",)
-
-
-class VitiAreaStats(generics.ListAPIView):
-    queryset = VitiAreas.objects.all() \
-        .annotate(total_quantity=Count("wines__id")) \
-        .annotate(avg_rating=Avg("wines__rating")) \
-        .annotate(avg_price=Avg("wines__purchases__price")) \
-        .order_by("name")
-    serializer_class = VitiAreaStatsSerializer
-    filterset_fields = ("id", "region_id")
-
-
-class GrapeView(generics.GenericAPIView,
-                mixins.ListModelMixin,
-                mixins.UpdateModelMixin):
-    queryset = Grapes.objects.all() \
-        .annotate(wines=Count("winegrapes__id", distinct=True))
-    serializer_class = GrapeSerializer
-    filterset_fields = ("id", "name")
-    lookup_field = "id"
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        """Grape update API, need to submit both `id` and `name` fields at the
-        same time, or django will prevent to do update for field missing."""
-        try:
-            return self.update(request, *args, **kwargs)
-        except Exception as err:
-            LOGGER.warning(err)
-            raise err
-
-
-class ProducerView(generics.ListAPIView,
-                   mixins.ListModelMixin,
-                   mixins.UpdateModelMixin):
-    queryset = Producers.objects.all()
-    serializer_class = ProducerSerializer
-    filterset_fields = ("id", "region_id")
-    lookup_field = "id"
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        try:
-            return self.update(request, *args, **kwargs)
-        except Exception as err:
-            LOGGER.warning(err)
-            raise err
-
-
-class RegionView(generics.ListAPIView,
-                 mixins.ListModelMixin,
-                 mixins.UpdateModelMixin,
-                 mixins.CreateModelMixin):
-    r"""Allow queries about Regions based on their id."""
-    queryset = Regions.objects.all()
-    serializer_class = RegionSerializer
-    filterset_fields = ("id", "name", "producers__name")
-    lookup_field = "id"
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        try:
-            return self.update(request, *args, **kwargs)
-        except Exception as err:
-            LOGGER.warning(err)
-            raise err
-
-    def post(self, request, *args, **kwargs):
-        try:
-            return self.create(request, *args, **kwargs)
-        except Exception as err:
-            LOGGER.warning(err)
-            raise err
-
-
-class PurchaseView(generics.ListAPIView,
-                   mixins.ListModelMixin,
-                   mixins.UpdateModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.DestroyModelMixin):
-    # TODO: include store name in query
-    queryset = Purchases.objects.all()
-    serializer_class = PurchaseSerializer
-    filterset_fields = ("id", "wine__name", "wine")
-    lookup_field = "id"
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 
 CLIENT_SIDE_LOGGER = get_logger("client_side")

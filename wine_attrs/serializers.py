@@ -1,10 +1,6 @@
-r"""Contains serializers for vinoteca ORM models."""
-# pylint: disable=abstract-method
 from rest_framework import serializers
 
-from vinoteca.models import (
-    Colors, Grapes, Regions, Producers, Stores, VitiAreas, WineGrapes, WineTypes
-)
+from vinoteca.models import Colors, Grapes, Stores, WineGrapes, WineTypes
 
 
 class ColorNamesSerializer(serializers.ModelSerializer):
@@ -33,24 +29,6 @@ class GrapeSerializer(serializers.ModelSerializer):
         read_only_fields = ('wines',)
 
 
-class RegionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Regions
-        fields = ("id", "name")
-
-
-class ProducerNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Producers
-        fields = ("name",)
-
-
-class ProducerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Producers
-        fields = ("id", "name", "region")
-
-
 class PurchaseSerializer(serializers.Serializer):
     # TODO: validations
     id = serializers.IntegerField()
@@ -62,9 +40,6 @@ class PurchaseSerializer(serializers.Serializer):
     vintage = serializers.IntegerField()
     memo = serializers.CharField()
 
-    # def __init__(self, *args, **kwargs):
-    #     kwargs
-
 
 class StoreNameSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,27 +47,6 @@ class StoreNameSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
-class VitiAreaNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VitiAreas
-        fields = ("name",)
-
-
-class VitiAreaStatsSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField()
-    total_wines = serializers.IntegerField(source='total_quantity')
-    avg_price = serializers.FloatField(allow_null=True)
-    avg_rating = serializers.FloatField(allow_null=True)
-
-
-class VitiAreaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VitiAreas
-        fields = ("id", "name", "region")
-
-
-# pylint: disable=missing-docstring
 class WineGrapeSerializer(serializers.ModelSerializer):
     grape = serializers.StringRelatedField()
 
