@@ -11,6 +11,7 @@
     "include": [
         "front_end",
         "lib",
+        "components",
         "node_modules/@types",
     ],
 }

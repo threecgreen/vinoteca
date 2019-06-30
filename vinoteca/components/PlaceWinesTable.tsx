@@ -1,15 +1,15 @@
 import * as React from "react";
-import { Table, WineTableNumCols } from "../../components/Table";
+import { Table, WineTableNumCols } from "./Table";
 import {
     ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
-} from "../../components/TableCells";
-import { Wine } from "../../lib/RestTypes";
+} from "./TableCells";
+import { Wine } from "../lib/RestTypes";
 
-interface IRegionWinesTableProps {
+interface IProps {
     wines: Wine[];
 }
 
-export const RegionWinesTable: React.FunctionComponent<IRegionWinesTableProps> = (props) => {
+export const PlaceWinesTable: React.FunctionComponent<IProps> = (props) => {
     // TODO: get producer id for linking
     return (
         <Table
@@ -42,4 +42,4 @@ export const RegionWinesTable: React.FunctionComponent<IRegionWinesTableProps> =
         </Table>
     );
 };
-RegionWinesTable.displayName = "RegionWinesTable"
+PlaceWinesTable.displayName = "PlaceWinesTable"

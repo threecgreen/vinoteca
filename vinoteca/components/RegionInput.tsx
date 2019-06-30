@@ -40,7 +40,7 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
         }
         if (prevProps.producerFilter !== this.props.producerFilter) {
             if (this.props.producerFilter) {
-                getRegions({producerName: this.props.producerFilter})
+                getRegions({regionName: this.props.producerFilter})
                     .then((regions) => {
                         if (regions.length === 1) {
                             this.props.onChange(regions[0].name);

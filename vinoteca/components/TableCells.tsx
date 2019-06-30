@@ -97,10 +97,17 @@ interface INameAndTypeProps {
 }
 
 export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (props) => {
-    const url = props.url || `/wines/${props.id}/`;
+    const content = `${props.name || ""} ${props.wineType}`;
+    if (props.url) {
+        <td>
+            <a href={ props.url }>
+                { content }
+            </a>
+        </td>
+    }
     return (
         <LinkedCell id={ props.id } model="wines">
-            { props.name || "" } { props.wineType }
+            { content }
         </LinkedCell>
     );
 };
@@ -123,3 +130,15 @@ export const RegionCell: React.FunctionComponent<{id: number}> = (props) => {
     )
 }
 RegionCell.displayName = "RegionCell"
+
+export const VitiAreaCell: React.FunctionComponent<{id?: number}> = (props) => {
+    if (!props.id) {
+        return <td />;
+    }
+    return (
+        <LinkedCell id={ props.id } model="viti-areas">
+            { props.children }
+        </LinkedCell>
+    )
+}
+VitiAreaCell.displayName = "VitiAreaCell"

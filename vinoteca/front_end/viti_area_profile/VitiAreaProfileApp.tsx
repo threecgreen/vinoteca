@@ -5,48 +5,48 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
-import { getRegion, getWines, getVitiAreaStats, updateRegion } from "../../lib/RestApi";
-import { IRegion, VitiAreaStats, Wine } from "../../lib/RestTypes";
-import { Region } from "./Region";
-import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
+import { getVitiArea, getWines, updateVitiArea, getVitiAreaStats } from "../../lib/RestApi";
+import { IVitiArea, VitiAreaStats, Wine, IVitiAreaStats } from "../../lib/RestTypes";
+import { VitiArea } from "./VitiArea";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
 import { SpecialChars } from "../../components/SpecialChars";
+import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 
 enum TextInputs {
-    Region
+    VitiArea
 };
 
-interface IState {
+interface IVitiAreaProfileState {
     isEditing: boolean;
     lastActiveTextInput?: TextInputs;
     // Editable
-    regionText: string;
+    vitiAreaText: string;
     // "Pure" state
-    region?: IRegion;
+    vitiArea?: IVitiArea;
     wines: Wine[];
-    vitiAreas: VitiAreaStats[];
+    stats?: VitiAreaStats;
 }
 
-interface IProps {
-    regionId: number;
+interface IVitiAreaProfileProps {
+    vitiAreaId: number;
 }
 
-export class RegionProfile extends React.Component<IProps, IState> {
+export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVitiAreaProfileState> {
     private logger: Logger;
 
-    constructor(props: IProps) {
+    constructor(props: IVitiAreaProfileProps) {
         super(props);
         this.state = {
             isEditing: false,
             lastActiveTextInput: undefined,
-            regionText: "",
-            region: undefined,
+            vitiAreaText: "",
+            vitiArea: undefined,
             wines: [],
-            vitiAreas: [],
+            stats: undefined,
         }
 
         this.logger = new Logger(this.constructor.name, true);
-        this.onRegionChange = this.onRegionChange.bind(this);
+        this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
@@ -56,28 +56,28 @@ export class RegionProfile extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        getRegion({id: this.props.regionId})
-            .then((region) => this.setState({region, regionText: region.name}));
-        getWines({regionId: this.props.regionId})
+        getVitiArea({id: this.props.vitiAreaId})
+            .then((vitiArea) => this.setState({vitiArea, vitiAreaText: vitiArea.name}));
+        getWines({vitiAreaId: this.props.vitiAreaId})
             .then((wines) => {
                 this.setState({wines: wines.map((w) => new Wine(w))});
             });
-        getVitiAreaStats({regionId: this.props.regionId})
-            .then((vitiAreas) => {
-                this.setState({vitiAreas: vitiAreas.map((vA) => new VitiAreaStats(vA))});
+        getVitiAreaStats({id: this.props.vitiAreaId})
+            .then((stats: IVitiAreaStats[]) => {
+                this.setState({stats: new VitiAreaStats(stats[0])})
             });
     }
 
     public render() {
-        if (!this.state.region) {
+        if (!this.state.vitiArea) {
             return <Preloader />;
         }
         return (
             <div className="container">
-                <Region isEditing={ this.state.isEditing }
-                    region={ this.state.region }
-                    regionText={ this.state.regionText }
-                    onRegionChange={ this.onRegionChange }
+                <VitiArea isEditing={ this.state.isEditing }
+                    vitiArea={ this.state.vitiArea }
+                    vitiAreaText={ this.state.vitiAreaText }
+                    onVitiAreaChange={ this.onVitiAreaChange }
                     onTextInputFocus={ this.onTextInputFocus }
                     onTextInputBlur={ this.onTextInputBlur }
                     onConfirmClick={ this.onConfirmClick }
@@ -87,11 +87,10 @@ export class RegionProfile extends React.Component<IProps, IState> {
                     display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
-                    <Col s={ 12 } l={ 9 }>
-                        <h5>Viticultural Areas</h5>
-                        <RegionVitiAreasTable vitiAreas={ this.state.vitiAreas } />
+                    <Col s={ 6 }>
+                        <VitiAreaStatsTable stats={ this.state.stats } />
                     </Col>
-                    <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
+                    <Col s={ 6 } classes={ ["fixed-action-div"] }>
                         <FixedActionList>
                             <FloatingBtn onClick={ this.onEditClick }
                                 classes={ ["yellow-bg"] }
@@ -115,19 +114,19 @@ export class RegionProfile extends React.Component<IProps, IState> {
         this.setState({isEditing: true});
     }
 
-    private onRegionChange(val: string) {
+    private onVitiAreaChange(val: string) {
         this.setState({
-            lastActiveTextInput: TextInputs.Region,
-            regionText: val,
+            lastActiveTextInput: TextInputs.VitiArea,
+            vitiAreaText: val,
         });
     }
 
     private onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        updateRegion({id: this.props.regionId, name: this.state.regionText})
-            .then((region) => this.setState({
+        updateVitiArea({id: this.props.vitiAreaId, name: this.state.vitiAreaText, region: this.state.vitiArea!.region})
+            .then((vitiArea) => this.setState({
                 isEditing: false,
-                region: region,
+                vitiArea: vitiArea,
             })).catch((err) => {
                 this.logger.logWarning(`Failed to save changes to database: ${err}`);
             });
@@ -137,22 +136,22 @@ export class RegionProfile extends React.Component<IProps, IState> {
         e.preventDefault();
         this.setState((state) => ({
             isEditing: false,
-            regionText: state.region ? state.region.name : "",
+            vitiAreaText: state.vitiArea ? state.vitiArea.name : "",
         }));
     }
 
     private onTextInputFocus() {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.Region));
+        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.VitiArea));
     }
 
     private onTextInputBlur() {
-        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.Region));
+        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.VitiArea));
     }
 
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
         e.preventDefault();
         this.setState((prevState) => ({
-            regionText: prevState.regionText + char,
+            vitiAreaText: prevState.vitiAreaText + char,
         }));
     }
 }

@@ -5,7 +5,7 @@ from django.urls import include, path, re_path
 from django.views.static import serve
 
 from dashboards.views import dashboards, inventory
-from places.views import region_profile
+from places.views import region_profile, viti_area_profile
 from vinoteca.views import simple_page, home
 from wine_attrs.views import wine_type_profile
 
@@ -20,6 +20,7 @@ urlpatterns = [
 
     # Places URLs
     path("regions/<int:region_id>/", region_profile, name="Region Profile"),
+    path("viti-areas/<int:viti_area_id>/", viti_area_profile, name="Viti Area Profile"),
 
     # Wine attrs URLs
     path("wine-types/<int:wine_type_id>/", wine_type_profile, name="Wine Type Profile"),

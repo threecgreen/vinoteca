@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Table } from "../../components/Table";
-import { NumCell, PriceCell, TextCell } from "../../components/TableCells";
+import { NumCell, PriceCell, VitiAreaCell } from "../../components/TableCells";
 import { VitiAreaStats } from "../../lib/RestTypes";
 
 interface IRegionWineTableProps {
@@ -20,7 +20,9 @@ export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps
             { props.vitiAreas.map((vitiArea) => {
                 return (
                     <tr key={ vitiArea.id }>
-                        <TextCell text={ vitiArea.name } />
+                        <VitiAreaCell id={ vitiArea.id }>
+                            { vitiArea.name }
+                        </VitiAreaCell>
                         <NumCell num={ vitiArea.totalWines } />
                         <PriceCell price={ vitiArea.avgPrice } />
                         <NumCell num={ vitiArea.avgRating }

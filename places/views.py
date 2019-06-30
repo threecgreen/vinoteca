@@ -1,5 +1,6 @@
 """Contains views for interacting with Places: ie, regions, viticultural areas,
 and stores."""
+# pylint: disable=too-many-ancestors
 from typing import List
 from django.db.models import Count, Avg
 from django.http import JsonResponse
@@ -42,11 +43,31 @@ class RegionView(generics.ListAPIView,
             raise err
 
 
-class VitiAreaList(generics.ListAPIView):
-    r"""Allow queries about VitiAreas based on their id and Region."""
+class VitiAreaView(generics.ListAPIView,
+                   mixins.ListModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.CreateModelMixin):
     queryset = VitiAreas.objects.all()
     serializer_class = VitiAreaSerializer
-    filterset_fields = ("id", "region__name")
+    filterset_fields = ("id", "name", "region__name")
+    lookup_field = "id"
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        try:
+            return self.update(request, *args, **kwargs)
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self.create(request, *args, **kwargs)
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
 
 
 class VitiAreaStats(generics.ListAPIView):
@@ -82,3 +103,11 @@ def region_profile(request, region_id: int):
         "page_name": "Region Profile",
     }
     return render(request, "region_profile.html", context)
+
+def viti_area_profile(request, viti_area_id: int):
+    viti_area = VitiAreas.objects.get(id=viti_area_id)
+    context = {
+        "viti_area": viti_area,
+        "page_name": "Viti Area Profile",
+    }
+    return render(request, "viti_area_profile.html", context)

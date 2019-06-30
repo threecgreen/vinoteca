@@ -3,10 +3,10 @@ GET wine data, not to modify it."""
 # pylint: disable=invalid-name
 from django.urls import path
 
-from places.views import RegionView, VitiAreaList, VitiAreaStats, region_all_names
+from places.views import RegionView, VitiAreaView, VitiAreaStats, region_all_names
 from producers.views import ProducerView
 from rest.views import generic_all_names, write_client_side_logs
-from wine_attrs.views import ColorList, GrapeView, WineTypeList, WineGrapeList, PurchaseView
+from wine_attrs.views import ColorList, GrapeView, WineTypeView, WineGrapeList, PurchaseView
 from wines.read import WineList, SearchWines
 
 
@@ -32,9 +32,11 @@ urlpatterns = [
     path("regions/<int:id>/", RegionView.as_view(), name="Region-Put"),
     path("producers/", ProducerView.as_view(), name="Producer-Get"),
     path("producers/<int:id>/", ProducerView.as_view(), name="Producer-Put"),
-    path("viti-areas/", VitiAreaList.as_view(), name="Viti Area"),
+    path("viti-areas/", VitiAreaView.as_view(), name="Viti Area-Get"),
+    path("viti-areas/<int:id>/", VitiAreaView.as_view(), name="Viti Area-Put"),
     path("viti-areas/stats/", VitiAreaStats.as_view(), name="Viti Area Stats"),
-    path("wine-types/", WineTypeList.as_view(), name="Wine Type"),
+    path("wine-types/", WineTypeView.as_view(), name="Wine Type-Get"),
+    path("wine-types/<int:id>/", WineTypeView.as_view(), name="Wine Type-Put"),
     path("wines/", WineList.as_view(), name="Wine"),
     path("wines/search/", SearchWines.as_view(), name="Search Wines"),
     path("wine-grapes/", WineGrapeList.as_view(), name="Wine Grape"),

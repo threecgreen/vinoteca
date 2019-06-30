@@ -45,6 +45,9 @@ export interface IProducer extends IRestModel {
 export interface IVitiArea extends IRestModel {
     region: number;
 }
+export interface INewVitiArea extends INewRestModel {
+    region: number;
+}
 
 export interface IWineGrape {
     id: number;
@@ -101,8 +104,11 @@ export interface IWine {
     color: string;
     wine_type: string;
     producer: string;
+    producer_id: number;
     region: string;
+    region_id: number;
     viti_area?: string;
+    viti_area_id?: number;
     last_purchased_date: number;
     total_quantity: number;
     avg_price: number;
@@ -116,8 +122,11 @@ export class Wine {
     public color: string;
     public wineType: string;
     public producer: string;
+    public producerId: number;
     public region: string;
+    public regionId: number;
     public vitiArea?: string;
+    public vitiAreaId?: number;
     public lastPurchasedDate: number;
     public totalQuantityPurchased: number;
     public avgPrice: number;
@@ -130,8 +139,11 @@ export class Wine {
         this.color = wine.color;
         this.wineType = wine.wine_type;
         this.producer = wine.producer;
+        this.producerId = wine.producer_id;
         this.region = wine.region;
+        this.regionId = wine.region_id;
         this.vitiArea = wine.viti_area;
+        this.vitiAreaId = wine.viti_area_id;
         this.lastPurchasedDate = wine.last_purchased_date;
         this.totalQuantityPurchased = wine.total_quantity;
         this.avgPrice = wine.avg_price;
