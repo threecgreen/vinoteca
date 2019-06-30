@@ -2,13 +2,13 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.tslint": true,
     },
-    "python.pythonPath": "/home/carter/miniconda3/envs/vinoteca/bin/python",
+    "python.pythonPath": "/home/carter/.conda/envs/vinoteca/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
         "--rcfile={workspaceRoot}/.pylintrc"
     ],
     "python.linting.enabled": true,
-    "python.testing.pyTestArgs": [
+    "python.testing.pytestArgs": [
         "${workspaceRoot}",
     ],
     "files.exclude": {
@@ -24,7 +24,7 @@
     },
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    "python.testing.pyTestEnabled": true,
+    "python.testing.pytestEnabled": true,
     "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
     "tslint.configFile": "tslint.json",
