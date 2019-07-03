@@ -180,7 +180,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
             });
             }
         }).catch((error) => {
-            this.logger.logError(`"Error fetching search results: ${error}`)
+            this.logger.logError(`"Error fetching search results: ${error}`);
         });
     }
 }

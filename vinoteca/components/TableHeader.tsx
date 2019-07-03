@@ -23,7 +23,10 @@ export class TableHeader extends React.Component<ITableHeaderProps, {}> {
         return (
             <th className={ this.props.className }>
                 { this.renderIcon() }
-                <a href="" onClick={ this.props.onClick }>
+                <a href=""
+                    onClick={ this.props.onClick }
+                    className="table-header"
+                >
                     { this.props.children }
                 </a>
             </th>
@@ -33,7 +36,7 @@ export class TableHeader extends React.Component<ITableHeaderProps, {}> {
     public renderIcon() {
         switch (this.props.sortingState) {
             case SortingState.NotSorted:
-                return undefined;
+                return <MaterialIcon iconName="arrow_drop_down" className="invisible" />;
             case SortingState.Ascending:
                 return <MaterialIcon iconName="arrow_drop_down" />;
             case SortingState.Descending:

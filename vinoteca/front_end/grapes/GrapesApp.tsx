@@ -3,9 +3,10 @@ import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IRestModel, IGrape } from "../../lib/RestTypes";
+import { IGrape } from "../../lib/RestTypes";
 import { any } from "../../lib/utils";
 import { GrapesList } from "./GrapesList";
+import { Col, Row } from "../../components/Grid";
 
 export class GrapeItem {
     constructor(public id: number, public name: string, public wines?: number,
@@ -35,15 +36,22 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
             return <Preloader />;
         }
         return (
-            <div>
-                <GrapesList grapes={this.state.grapes}
-                    handleEdit={this.handleEdit.bind(this)}
-                    handleSave={this.handleSave.bind(this)}
-                    onChange={this.onChange.bind(this)}
-                />
-                <SpecialChars onClick={this.handleSpecialChar.bind(this)}
-                    display={this.hasEditableGrapes}
-                />
+            <div className="container">
+                <Row>
+                    <Col s={ 12 }>
+                        <h3 className="page-title">Grapes</h3>
+                        <div>
+                            <GrapesList grapes={this.state.grapes}
+                                handleEdit={this.handleEdit.bind(this)}
+                                handleSave={this.handleSave.bind(this)}
+                                onChange={this.onChange.bind(this)}
+                            />
+                            <SpecialChars onClick={this.handleSpecialChar.bind(this)}
+                                display={this.hasEditableGrapes}
+                            />
+                        </div>
+                    </Col>
+                </Row>
             </div>
         );
     }
