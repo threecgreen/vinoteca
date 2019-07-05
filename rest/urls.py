@@ -3,11 +3,13 @@ GET wine data, not to modify it."""
 # pylint: disable=invalid-name
 from django.urls import path
 
+from dashboards.views import InventoryView
 from places.views import RegionView, VitiAreaView, VitiAreaStats, region_all_names
 from producers.views import ProducerView
 from rest.views import generic_all_names, write_client_side_logs
 from wine_attrs.views import ColorList, GrapeView, WineTypeView, WineGrapeList, PurchaseView
 from wines.read import WineList, SearchWines
+from wines.update import rest_change_inventory
 
 
 app_name = "REST"
@@ -38,7 +40,10 @@ urlpatterns = [
     path("wine-types/", WineTypeView.as_view(), name="Wine Type-Get"),
     path("wine-types/<int:id>/", WineTypeView.as_view(), name="Wine Type-Put"),
     path("wines/", WineList.as_view(), name="Wine"),
+    path("wines/inventory/", InventoryView.as_view(), name="Wine Inventory"),
     path("wines/search/", SearchWines.as_view(), name="Search Wines"),
+    # This isn't super resty and should be refactored
+    path("wines/<int:wine_id>/change/<slug:sign>/", rest_change_inventory, name="Change Inventory"),
     path("wine-grapes/", WineGrapeList.as_view(), name="Wine Grape"),
     path("grapes/", GrapeView.as_view(), name="Grape-Get"),
     path("grapes/<int:id>/", GrapeView.as_view(), name="Grape-Put"),

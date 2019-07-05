@@ -22,3 +22,5 @@ class WineSerializer(serializers.Serializer):
     total_quantity = serializers.IntegerField()
     avg_price = serializers.FloatField()
     last_purchased_date = serializers.IntegerField()
+    vintage = serializers.IntegerField(allow_null=True)
+    last_purchased_price = serializers.IntegerField(allow_null=True)

@@ -11,9 +11,14 @@ interface ITableHeaderProps {
     className?: string;
     onClick: (e: React.MouseEvent) => void;
     sortingState: SortingState;
+    isNumCol: boolean;
 }
 
 export class TableHeader extends React.Component<ITableHeaderProps, {}> {
+    public static defaultProps = {
+        isNumCol: false,
+    };
+
     public constructor(props: ITableHeaderProps) {
         super(props);
     }
@@ -21,19 +26,36 @@ export class TableHeader extends React.Component<ITableHeaderProps, {}> {
     public render() {
         // TODO: show up or down arrow depending on sorting
         return (
-            <th className={ this.props.className }>
-                { this.renderIcon() }
-                <a href=""
-                    onClick={ this.props.onClick }
-                    className="table-header"
-                >
-                    { this.props.children }
-                </a>
+            <th className={ this.props.className + `${this.props.isNumCol ? " num-col" : "" }` }>
+                { this.renderContent() }
             </th>
         );
     }
 
-    public renderIcon() {
+    private renderContent() {
+        const text = (
+            <a href=""
+                onClick={ this.props.onClick }
+                className="table-header"
+            >
+                { this.props.children }
+            </a>
+        );
+        return this.props.isNumCol
+            ? (
+                <React.Fragment>
+                    { this.renderIcon() }
+                    { text }
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    { text }
+                    { this.renderIcon() }
+                </React.Fragment>
+            )
+    }
+
+    private renderIcon() {
         switch (this.props.sortingState) {
             case SortingState.NotSorted:
                 return <MaterialIcon iconName="arrow_drop_down" className="invisible" />;

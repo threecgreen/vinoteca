@@ -27,8 +27,7 @@ export const PlaceWinesTable: React.FunctionComponent<IProps> = (props) => {
                         <DateCell date={ wine.lastPurchasedDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
-                            name={ wine.name }
-                            wineType={ wine.wineType }
+                            nameAndType={ wine.nameAndType }
                         />
                         <TextCell text={ wine.producer } />
                         <NumCell num={ wine.totalQuantityPurchased } />

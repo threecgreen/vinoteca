@@ -64,7 +64,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
             resultState: ResultState.HasNotSearched,
             results: [],
         };
-    private logger: Logger;
+    private readonly logger: Logger;
 
     constructor(props: {}) {
         super(props);
@@ -178,9 +178,9 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                 results: results.map((r) => new WineResult(r)),
                 resultState: ResultState.HasSearched,
             });
-            }
         }).catch((error) => {
             this.logger.logError(`"Error fetching search results: ${error}`);
+            return false;
         });
     }
 }

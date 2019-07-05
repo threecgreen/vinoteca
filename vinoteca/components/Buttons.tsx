@@ -22,6 +22,7 @@ export const FloatingBtn: React.FunctionComponent<IFloatingBtnProps> = (props) =
         </a>
     );
 };
+FloatingBtn.displayName = "FloatingBtn";
 
 interface IBtnProps extends IChildrenProp, IClassesProp {
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -37,6 +38,7 @@ export const Btn: React.FunctionComponent<IBtnProps> = (props) => {
         </button>
     );
 }
+Btn.displayName = "Btn";
 
 interface ICancelOrConfirmProps {
     onConfirmClick: (e: React.MouseEvent) => void;
@@ -62,3 +64,4 @@ export const CancelOrConfirmBtns: React.FunctionComponent<ICancelOrConfirmProps>
         </Col>
     );
 }
+CancelOrConfirmBtns.displayName = "CancelOrConfirmBtns";

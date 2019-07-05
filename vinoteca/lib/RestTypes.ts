@@ -112,9 +112,15 @@ export interface IWine {
     last_purchased_date: number;
     total_quantity: number;
     avg_price: number;
+    last_purchased_price: number;
+    vintage?: number;
 }
 
 export class Wine {
+    public static getNameAndType(name: string | undefined, wineType: string): string {
+        return `${(name ? name + " " : "")}${wineType}`;
+    }
+
     public id: number;
     public name?: string;
     public inventory: number;
@@ -130,6 +136,8 @@ export class Wine {
     public lastPurchasedDate: number;
     public totalQuantityPurchased: number;
     public avgPrice: number;
+    public lastPurchasedPrice?: number;
+    public vintage?: number;
 
     constructor(wine: IWine) {
         this.id = wine.id;
@@ -147,6 +155,12 @@ export class Wine {
         this.lastPurchasedDate = wine.last_purchased_date;
         this.totalQuantityPurchased = wine.total_quantity;
         this.avgPrice = wine.avg_price;
+        this.lastPurchasedPrice = wine.last_purchased_price;
+        this.vintage = wine.vintage;
+    }
+
+    public get nameAndType(): string {
+        return Wine.getNameAndType(this.name, this.wineType);
     }
 }
 

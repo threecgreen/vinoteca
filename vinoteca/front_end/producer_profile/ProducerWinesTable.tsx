@@ -26,8 +26,7 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
                         <DateCell date={ wine.lastPurchasedDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
-                            name={ wine.name }
-                            wineType={ wine.wineType }
+                            nameAndType={ wine.nameAndType }
                         />
                         <VitiAreaCell id={ wine.vitiAreaId }>
                             { wine.vitiArea }

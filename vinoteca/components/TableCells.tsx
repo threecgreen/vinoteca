@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import * as React from "react";
 import { capitalizeFirstLetter, numToDate } from "../lib/utils";
+import { Wine } from "../lib/RestTypes";
 
 const EN_DASH: string = "–";
 
@@ -52,6 +53,16 @@ export const PriceCell: React.FunctionComponent<IPriceCellProps> = (props) => {
 }
 PriceCell.displayName = "PriceCell";
 
+export const YearCell: React.FunctionComponent<{year?: number}> = (props) => {
+    const year = props.year ? props.year.toString() : EN_DASH;
+    return (
+        <td className="num-col">
+            { year }
+        </td>
+    );
+}
+YearCell.displayName = "YearCell";
+
 interface IDateCellProps {
     date?: number;
 }
@@ -91,23 +102,21 @@ LinkedCell.displayName = "LinkedCell"
 
 interface INameAndTypeProps {
     id: number;
-    name: string | undefined;
-    wineType: string;
+    nameAndType: string;
     url?: string;
 }
 
 export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (props) => {
-    const content = `${props.name || ""} ${props.wineType}`;
     if (props.url) {
         <td>
             <a href={ props.url }>
-                { content }
+                { props.nameAndType }
             </a>
         </td>
     }
     return (
         <LinkedCell id={ props.id } model="wines">
-            { content }
+            { props.nameAndType }
         </LinkedCell>
     );
 };

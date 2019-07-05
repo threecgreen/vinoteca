@@ -41,7 +41,7 @@ export class GrapesList extends React.Component<IGrapesListProps, IGrapesListSta
                         </TableHeader>
                         <TableHeader sortingState={ this.sortingStateForHeader(SortingValue.Wine) }
                             onClick={ (e) => this.onHeaderClick(e, SortingValue.Wine) }
-                            className="num-col"
+                            isNumCol
                         >
                             Wines
                         </TableHeader>

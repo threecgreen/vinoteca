@@ -6,11 +6,13 @@ from typing import List, NamedTuple
 from django.db.models import Avg, Count, F, Sum
 from django.db.models.functions import Coalesce
 from django.shortcuts import render
+from rest_framework import generics
 
-from dashboards.models import InventoryWine, Year
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
-from vinoteca.utils import get_logger, int_to_date, TableColumn
+from vinoteca.utils import get_logger, int_to_date
+from .models import InventoryWine, Year
+from .serializers import InventoryWineSerializer
 
 
 LOGGER = get_logger("dashboards")
@@ -165,10 +167,8 @@ def dashboards(request):
     return render(request, "dashboards.html", context)
 
 
-def inventory(request):
-    r"""View what wines and how many bottles are in the user's inventory/
-    collection."""
-    wine_inventory = InventoryWine.objects.raw("""
+class InventoryView(generics.ListAPIView):
+    queryset = InventoryWine.objects.raw("""
         SELECT
             c.name AS color
             , w.name AS name
@@ -176,13 +176,13 @@ def inventory(request):
             , p.name AS producer
             , r.name AS region
             , p3.vintage
-            , max(pu.date) AS last_purchase_date
-            , w.inventory AS inventory_cnt
-            , w.id AS wine_id
+            , max(pu.date) AS last_purchased_date
+            , w.inventory AS inventory
+            , w.id
             , p.id AS producer_id
             , r.id AS region_id
             , wt.id AS wine_type_id
-            , p3.price AS last_price
+            , p3.price AS last_purchased_price
         FROM wines w
             LEFT JOIN producers p ON w.producer_id = p.id
             LEFT JOIN regions r ON p.region_id = r.id
@@ -205,14 +205,16 @@ def inventory(request):
         GROUP BY w.id
         ORDER BY sub.last_purchase_date DESC;
     """)
-    columns = TableColumn.from_list([
-        "Modify", TableColumn("Quantity", num_col=True), "Color", "Name and Type",
-        "Producer", "Region", TableColumn("Vintage", num_col=True),
-        TableColumn("Purchase Date", num_col=True), TableColumn("Price", num_col=True)
-    ])
+    serializer_class = InventoryWineSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+def inventory(request):
+    r"""View what wines and how many bottles are in the user's inventory/
+    collection."""
     context = {
-        "inventory": wine_inventory,
-        "columns": columns,
         "page_name": "Inventory",
     }
     return render(request, "inventory.html", context)

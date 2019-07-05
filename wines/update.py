@@ -3,6 +3,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from vinoteca.image import UserImage
@@ -98,10 +99,22 @@ class EditPurchaseView(WineProfileView):
         return redirect("Wines:Edit Wine", wine_id=wine_id)
 
 
+def rest_change_inventory(_, wine_id: int, sign: str):
+    _change_inventory(wine_id, sign)
+    return JsonResponse({"changed": True})
+
+
 # pylint: disable=unused-argument
 def change_inventory(request, wine_id: int, sign: str,
                      return_to_inventory: bool = False):
     r"""Change the current inventory number for a wine."""
+    _change_inventory(wine_id, sign)
+    if return_to_inventory:
+        return redirect("Inventory")
+    wine = Wines.objects.get(id=wine_id)
+    return redirect("Wines:Wine Profile", wine_id=wine.id)
+
+def _change_inventory(wine_id, sign):
     assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":
@@ -111,6 +124,3 @@ def change_inventory(request, wine_id: int, sign: str,
         LOGGER.debug(f"Removing one from inventory of wine with id {wine_id}")
         wine.inventory -= 1
     wine.save()
-    if return_to_inventory:
-        return redirect("Inventory")
-    return redirect("Wines:Wine Profile", wine_id=wine.id)

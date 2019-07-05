@@ -104,20 +104,7 @@ class PurchaseView(generics.ListAPIView,
 def wine_type_profile(request, wine_type_id: int):
     r"""View for profiles of types of wine or wine types."""
     wine_type = WineTypes.objects.get(id=wine_type_id)
-    wines = Wines.objects.filter(wine_type__id=wine_type_id) \
-        .annotate(last_purchased_date=Max("purchases__date")) \
-        .annotate(total_quantity=Sum("purchases__quantity")) \
-        .annotate(avg_price=Avg("purchases__price")) \
-        .prefetch_related("producer", "color", "producer__region", "viti_area") \
-        .order_by("-last_purchased_date")
-    columns = TableColumn.from_list([
-        "Last Purchased", "Color", "Name", "Producer", "Region",
-        "Viticultural Area", TableColumn("Total Quantity", num_col=True),
-        TableColumn("Avg Price", num_col=True), TableColumn("Rating", num_col=True)
-    ])
     context = {
-        "wines": wines,
-        "columns": columns,
         "wine_type": wine_type,
         "page_name": "Wine Type Profile",
     }
