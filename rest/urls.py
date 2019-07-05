@@ -40,7 +40,7 @@ urlpatterns = [
     path("wine-types/", WineTypeView.as_view(), name="Wine Type-Get"),
     path("wine-types/<int:id>/", WineTypeView.as_view(), name="Wine Type-Put"),
     path("wines/", WineList.as_view(), name="Wine"),
-    path("wines/inventory/", InventoryView.as_view(), name="Wine Inventory"),
+    path("wines/inventory/", InventoryView.as_view({'get': 'list'}), name="Wine Inventory"),
     path("wines/search/", SearchWines.as_view(), name="Search Wines"),
     # This isn't super resty and should be refactored
     path("wines/<int:wine_id>/change/<slug:sign>/", rest_change_inventory, name="Change Inventory"),

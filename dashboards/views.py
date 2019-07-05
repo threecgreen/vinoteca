@@ -6,7 +6,8 @@ from typing import List, NamedTuple
 from django.db.models import Avg, Count, F, Sum
 from django.db.models.functions import Coalesce
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import viewsets
+from rest_framework.response import Response
 
 from vinoteca.models import Purchases, Wines, WineTypes, Regions, Colors, \
         Producers, Grapes, VitiAreas
@@ -167,48 +168,50 @@ def dashboards(request):
     return render(request, "dashboards.html", context)
 
 
-class InventoryView(generics.ListAPIView):
-    queryset = InventoryWine.objects.raw("""
-        SELECT
-            c.name AS color
-            , w.name AS name
-            , wt.name AS wine_type
-            , p.name AS producer
-            , r.name AS region
-            , p3.vintage
-            , max(pu.date) AS last_purchased_date
-            , w.inventory AS inventory
-            , w.id
-            , p.id AS producer_id
-            , r.id AS region_id
-            , wt.id AS wine_type_id
-            , p3.price AS last_purchased_price
-        FROM wines w
-            LEFT JOIN producers p ON w.producer_id = p.id
-            LEFT JOIN regions r ON p.region_id = r.id
-            LEFT JOIN colors c ON w.color_id = c.id
-            LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
-            LEFT JOIN purchases pu ON w.id = pu.wine_id
-            LEFT JOIN (
-                SELECT
-                    w2.id
-                    , max(p2.date) as last_purchase_date
-                FROM wines w2
-                    INNER JOIN purchases p2 ON w2.id = p2.wine_id
-                WHERE p2.vintage IS NOT NULL
-                GROUP BY w2.id
-            ) AS sub ON sub.id = w.id
-            LEFT JOIN purchases p3 ON w.id = p3.wine_id
-                AND (p3.date = sub.last_purchase_date
-                    OR sub.last_purchase_date IS NULL)
-        WHERE w.inventory > 0
-        GROUP BY w.id
-        ORDER BY sub.last_purchase_date DESC;
-    """)
-    serializer_class = InventoryWineSerializer
+class InventoryView(viewsets.ModelViewSet):
+    model = InventoryWine
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
+    def list(self, request):
+        # Inside the method so it runs every time
+        queryset = InventoryWine.objects.raw("""
+            SELECT
+                c.name AS color
+                , w.name AS name
+                , wt.name AS wine_type
+                , p.name AS producer
+                , r.name AS region
+                , p3.vintage
+                , max(pu.date) AS last_purchased_date
+                , w.inventory AS inventory
+                , w.id
+                , p.id AS producer_id
+                , r.id AS region_id
+                , wt.id AS wine_type_id
+                , p3.price AS last_purchased_price
+            FROM wines w
+                LEFT JOIN producers p ON w.producer_id = p.id
+                LEFT JOIN regions r ON p.region_id = r.id
+                LEFT JOIN colors c ON w.color_id = c.id
+                LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+                LEFT JOIN purchases pu ON w.id = pu.wine_id
+                LEFT JOIN (
+                    SELECT
+                        w2.id
+                        , max(p2.date) as last_purchase_date
+                    FROM wines w2
+                        INNER JOIN purchases p2 ON w2.id = p2.wine_id
+                    WHERE p2.vintage IS NOT NULL
+                    GROUP BY w2.id
+                ) AS sub ON sub.id = w.id
+                LEFT JOIN purchases p3 ON w.id = p3.wine_id
+                    AND (p3.date = sub.last_purchase_date
+                        OR sub.last_purchase_date IS NULL)
+            WHERE w.inventory > 0
+            GROUP BY w.id
+            ORDER BY sub.last_purchase_date DESC;
+        """)
+        serializer = InventoryWineSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 def inventory(request):
