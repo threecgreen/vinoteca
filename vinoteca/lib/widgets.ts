@@ -17,7 +17,8 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
             data: completions,
             limit,
             minLength,
-            onAutocomplete: function(this, text) {
+
+            onAutocomplete: function(this, text) {  // tslint:disable-line object-literal-shorthand
                 onChange(text);
             },
         });

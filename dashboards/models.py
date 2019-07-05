@@ -25,8 +25,9 @@ class InventoryWine(models.Model):
     def __repr__(self):
         return (f"<InventoryWine(id={self.id}, color={self.color}, "
                 f"name={self.name}, wine_type_id={self.wine_type_id}, wine_type={self.wine_type}, "
-                f"producer_id={self.producer_id}, producer={self.producer}, region_id={self.region_id}, "
-                f"region={self.region}, vintage={self.vintage}, last_purchased_date={self.last_purchased_date}, "
+                f"producer_id={self.producer_id}, producer={self.producer}, "
+                f"region_id={self.region_id}, region={self.region}, vintage={self.vintage}, "
+                f"last_purchased_date={self.last_purchased_date}, "
                 f"inventory={self.inventory}, last_purchased_price={self.last_purchased_price})>")
 
 

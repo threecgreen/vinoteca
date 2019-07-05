@@ -79,8 +79,9 @@ def test_inventory_nvs(client):
     purchase = Purchases.objects.filter(wine__id=3)[0]
     purchase.date = None
     purchase.save()
-    response = client.get(reverse("Inventory"))
-    inventory = response.context["inventory"]
-    for item in inventory:
-        if item.wine_id == wine.id:
-            assert item.vintage == purchase.vintage
+    inventory = client.get(reverse("REST:Wine Inventory"))
+    # response = client.get(reverse("Inventory"))
+    # inventory = response.context["inventory"]
+    for item in inventory.data:
+        if item["id"] == wine.id:
+            assert item["vintage"] == purchase.vintage

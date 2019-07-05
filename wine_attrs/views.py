@@ -1,11 +1,11 @@
 r"""Contains views for CRUD functionality for WineTypes and Colors which are
 'wine attributes.'"""
-from django.db.models import Avg, Count, Max, Sum
+from django.db.models import Count
 from django.shortcuts import render
 from rest_framework import generics, mixins
 
-from vinoteca.models import Colors, Grapes, Purchases, Wines, WineTypes, WineGrapes
-from vinoteca.utils import c_or_u_wine_grapes, empty_to_none, get_logger, TableColumn
+from vinoteca.models import Colors, Grapes, Purchases, WineTypes, WineGrapes
+from vinoteca.utils import c_or_u_wine_grapes, empty_to_none, get_logger
 from .serializers import (
     ColorSerializer, GrapeSerializer, PurchaseSerializer, WineGrapeSerializer,
     WineTypeSerializer
@@ -86,6 +86,7 @@ class GrapeView(generics.GenericAPIView,
             raise err
 
 
+# pylint: disable=too-many-ancestors
 class PurchaseView(generics.ListAPIView,
                    mixins.ListModelMixin,
                    mixins.UpdateModelMixin,

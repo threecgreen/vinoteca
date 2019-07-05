@@ -2,7 +2,7 @@ import pytest
 from django.test import TestCase
 from django.urls import reverse
 
-from vinoteca.models import WineGrapes
+from vinoteca.models import Grapes, WineGrapes
 from wine_attrs.views import handle_grapes
 
 
@@ -55,3 +55,16 @@ def test_many_grapes(mocker, grapes_post_data):
             handle_grapes(mock_request, mock_wine)
             # while check x8, grape name x7, grape percent x7
             assert mock_request.POST.get.call_count == 22
+
+
+@pytest.mark.django_db
+def test_grape_view_put(client):
+    assert Grapes.objects.get(id=1).name == "Syrah"
+    data = {
+        "id": 1,
+        "name": "Syrahh"
+    }
+    response = client.put(reverse("REST:Grape-Put", kwargs={"id": 1}), data,
+                          content_type="application/json")
+    assert response.status_code == 200
+    assert Grapes.objects.get(id=1).name == "Syrahh"

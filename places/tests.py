@@ -8,7 +8,7 @@ from vinoteca.models import VitiAreas
 @pytest.mark.parametrize("region", ["France", "California"])
 @pytest.mark.django_db
 def test_get_region_viti_area(client, region):
-    response = client.get(reverse("REST:Viti Area"), {"region__name": region})
+    response = client.get(reverse("REST:Viti Area-Get"), {"region__name": region})
     assert response.status_code == 200
     assert len(response.json()) == VitiAreas.objects.filter(region__name=region).count()
 

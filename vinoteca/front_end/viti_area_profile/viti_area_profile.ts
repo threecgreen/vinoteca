@@ -7,6 +7,6 @@ declare const vitiAreaId: number;
 
 $(() => {
     navbar();
-    render(createElement(VitiAreaProfile, {vitiAreaId: vitiAreaId}),
+    render(createElement(VitiAreaProfile, {vitiAreaId}),
            document.getElementById("viti-area-profile-app-container"));
 });

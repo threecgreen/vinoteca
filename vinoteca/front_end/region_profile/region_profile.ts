@@ -7,6 +7,6 @@ declare const regionId: number;
 
 $(() => {
     navbar();
-    render(createElement(RegionProfile, {regionId: regionId}),
+    render(createElement(RegionProfile, {regionId}),
            document.getElementById("region-profile-app-container"));
 });

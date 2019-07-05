@@ -53,8 +53,8 @@ def by_the_numbers() -> ByTheNumbers:
         * Total number of purchased wine varieties"""
 
     liters_of_wine = Purchases.objects.aggregate(
-            bottles=Sum(Coalesce("quantity", 1))
-        )["bottles"] * 0.75
+        bottles=Sum(Coalesce("quantity", 1))
+    )["bottles"] * 0.75
     total_purchase_count = Purchases.objects.aggregate(count=Count("id"))["count"]
     try:
         mcd_result = Purchases.objects.filter(date__isnull=False) \
@@ -168,9 +168,11 @@ def dashboards(request):
     return render(request, "dashboards.html", context)
 
 
+# pylint: disable=too-many-ancestors
 class InventoryView(viewsets.ModelViewSet):
     model = InventoryWine
 
+    # pylint: disable=arguments-differ
     def list(self, request):
         # Inside the method so it runs every time
         queryset = InventoryWine.objects.raw("""
