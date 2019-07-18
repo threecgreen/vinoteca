@@ -1,7 +1,7 @@
 import * as React from "react";
-import { CSRFToken } from "./CSRFToken";
-import { Row } from "./Grid";
-import { PurchaseInputs } from "./PurchaseInputs";
+import { CSRFToken } from "../../components/CSRFToken";
+import { Row } from "../../components/Grid";
+import { PurchaseInputs } from "../../components/PurchaseInputs";
 
 export class NewWineApp extends React.Component<{}, {}> {
     public render() {
