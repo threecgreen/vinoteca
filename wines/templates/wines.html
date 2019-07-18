@@ -4,7 +4,7 @@
 {% block view-nav %}class="active"{% endblock %}
 
 {% block body %}
-  <div class="container">
+  {% comment %} <div class="container">
     <div class="row">
       <div class="col s12">
         <h3 class="page-title">Wines</h3>
@@ -61,7 +61,8 @@
         {% endif %}
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
+  <div id="wines-app-container"></div>
 {% endblock %}
 
 {% if wines %}

@@ -164,3 +164,39 @@ export function areEqual(a: any, b: any): boolean {
     }
     return true;
 }
+
+interface RangeArgs {
+    start?: number;
+    stop?: number;
+    step?: number;
+}
+
+/**
+ * Creates an iterable range of numbersonClick.
+ * @param start First number of the range
+ * @param stop End of the range (non-inclusive)
+ * @param step Increment of the range
+ */
+export function* range({start, stop, step}: RangeArgs): IterableIterator<number> {
+    step = step || 1;
+    start = start || 0;
+    stop = stop || Number.MAX_SAFE_INTEGER;
+    for (let i = start; i < stop; i += step) {
+        yield i;
+    }
+}
+
+declare global {
+    interface Array<T> {
+        any<T>(predicate: (elem: T) => boolean): boolean;
+    }
+}
+
+/**
+ * Finds the maximum element by one the properties of the type of element
+ * @param arr An array of objcects
+ * @param accessor A function for accessing a number property of the objects
+ */
+Array.prototype.any = function<T> (this: T[], predicate: (elem: T) => boolean): boolean {
+    return any(this, predicate);
+}

@@ -9,7 +9,7 @@
     ],
     "python.linting.enabled": true,
     "python.testing.pytestArgs": [
-        "${workspaceRoot}",
+        "${workspaceFolder}",
     ],
     "files.exclude": {
         "**/.git": true,

@@ -7,6 +7,7 @@
         "noUnusedParameters": true,
         "strict": true,
         "jsx": "react",
+        "downlevelIteration": true  // ES6-style generators
     },
     "include": [
         "front_end",
