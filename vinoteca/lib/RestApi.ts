@@ -164,9 +164,6 @@ export async function getWines(
 ): Promise<IWine[]> {
     const nonNullParams = nonNulls({id, producer__region_id: regionId, producer_id: producerId,
                                     viti_area_id: vitiAreaId, wine_type_id: wineTypeId});
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     return get("/rest/wines/", nonNullParams)
         .then((wines: IWine[]) => {
             if (wines.length === 0) {

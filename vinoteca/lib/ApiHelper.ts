@@ -1,9 +1,9 @@
-import * as Cookies from "js-cookie";
 import { IDict, isEmpty } from "./utils";
+import { readCookie } from "./Cookies";
 
 const headers = {
     "Content-Type": "application/json",
-    "X-CSRFToken": Cookies.get("csrftoken") || "",
+    "X-CSRFToken": readCookie("csrftoken") || "",
 };
 
 export type IQueryParams = IDict<string | number | boolean>;

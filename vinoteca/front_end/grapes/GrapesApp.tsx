@@ -4,7 +4,6 @@ import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IGrape } from "../../lib/RestTypes";
-import { any } from "../../lib/utils";
 import { GrapesList } from "./GrapesList";
 import { Col, Row } from "../../components/Grid";
 
@@ -132,7 +131,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     private get hasEditableGrapes(): boolean {
-        return any(this.state.grapes, (g: GrapeItem) => g.isEditable);
+        return this.state.grapes.any((g: GrapeItem) => g.isEditable);
     }
 
     private getGrapesUrl(id?: number): string {
