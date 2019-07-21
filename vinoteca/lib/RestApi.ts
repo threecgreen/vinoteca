@@ -5,6 +5,7 @@ import {
     IWine,
 } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
+import { func } from "prop-types";
 
 export class EmptyResultError extends Error {
     public static isInstance(err: Error): boolean {
@@ -44,15 +45,13 @@ function singleEntityGetter<T, U>(
 }
 
 /* REGIONS */
-interface IGetVitiAreasParams {
+interface IGetRegionParams {
     id?: number;
     name?: string;
-    regionName?: string;
+    producerName?: string;
 }
 
-export async function getRegions(
-    {id, name, regionName: producerName}: IGetVitiAreasParams,
-): Promise<IRegion[]> {
+export async function getRegions({id, name, producerName}: IGetRegionParams): Promise<IRegion[]> {
     const nonNullParams = nonNulls({id, name, producers__name: producerName});
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
@@ -171,6 +170,10 @@ export async function getWines(
             }
             return wines;
         });
+}
+
+export async function getWinesTable(): Promise<IWine[]> {
+    return get("/rest/wines/table/");
 }
 
 /* WINE TYPES */

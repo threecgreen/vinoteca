@@ -1,8 +1,8 @@
-import * as $ from "jquery";
-import { Autocomplete, Dropdown, FloatingActionButton, Sidenav } from "materialize-css";
+import { Autocomplete, Dropdown, FloatingActionButton, Sidenav, Modal, Datepicker, Tabs } from "materialize-css";
 import { get } from "./ApiHelper";
 import Logger from "./Logger";
 import { IDict, nameToId } from "./utils";
+import { selectById } from "./JQueryCompat";
 
 type OnChange = (text: string) => void;
 
@@ -11,7 +11,7 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
                                    onChange: OnChange,
                                    minLength = 1, limit = 5) {
     const logger = new Logger("widgets");
-    const elem = document.getElementById(elementId);
+    const elem = selectById(elementId);
     if (elem) {
         const instance = new Autocomplete(elem, {
             data: completions,
@@ -47,13 +47,15 @@ export function rAutocomplete(modelName: string, onChange: OnChange,
  * favor of rAutocomplete which doesn't use JQuery.
  */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
-    $.getJSON(`/rest/${modelName.toLowerCase()}s/all/`, (responseJSON: IDict<string>) => {
-        $(selector ? selector : `#auto-${modelName}`).autocomplete({
-            data: responseJSON,
-            limit,
-            minLength,
+    get(`/rest/${modelName.toLowerCase()}s/all/`)
+        .then((completionData: IDict<string>) => {
+            const elem = selectById(selector ? selector : `auto-${modelName}`);
+            const instances = new Autocomplete(elem, {
+                data: completionData,
+                limit,
+                minLength,
+            });
         });
-    });
 }
 
 /**
@@ -61,14 +63,15 @@ export function autocomplete(modelName: string, limit = 5, minLength = 1, select
  * isn't changed.
  */
 export function datepicker(selector = ".datepicker"): void {
-    $(selector).datepicker({
+    const elem = document.querySelector(selector) as HTMLElement;
+    const instance = new Datepicker(elem, {
         autoClose: false,            // Close upon selecting a date,
         yearRange: 15,               // Creates a dropdown of 5 years to control year,
     });
 }
 
 function activateNavbarTab(id: string): void {
-    document.getElementById(id)!.classList.add("active");
+    selectById(id).classList.add("active");
 }
 
 /** Enables navbar menus. Should be called on every page. */
@@ -84,15 +87,16 @@ export function navbar(activeNavTabId?: string) {
 
 /** Streamlines the Materialize CSS tab widget. */
 export function tabs(selector = ".tabs"): void {
-    $(selector).tabs();
+    const elem = document.querySelectorAll(selector);
+    elem.forEach((e) => new Tabs(e));
 }
 
 /** Either enable or disable a Materialize CSS tab. */
-export function setTabAccessibility(tabListElem: JQuery<HTMLUListElement>, ability: boolean) {
+export function setTabAccessibility(tabListElem: HTMLUListElement, ability: boolean) {
     if (ability) {
-        $(tabListElem).removeClass("disabled");
+        tabListElem.classList.remove("disabled");
     } else {
-        $(tabListElem).addClass("disabled");
+        tabListElem.classList.add("disabled");
     }
 }
 
@@ -110,4 +114,9 @@ export function toast(message: string) {
         displayLength: 10000,
         html: message,
     });
+}
+
+export function modal(id: string) {
+    const modal = selectById(id);
+    const instance = new Modal(modal);
 }

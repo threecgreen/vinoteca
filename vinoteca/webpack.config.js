@@ -25,10 +25,7 @@ module.exports = {
         new_wine: [inputPath + "new_wine/new_wine.ts"],
         search_wines: [inputPath + "search_wines/search_wines.ts"],
         wine_profile: [inputPath + "wine_profile/wine_profile.ts"],
-        wines: [inputPath + "wines/wines.ts",
-                inputPath + "wines/jquery.tablesorter.pager.js",
-                inputPath + "wines/jquery.tablesorter.widgets.js",
-                inputPath + "wines/jquery.tablesorter.pager.css"],
+        wines: [inputPath + "wines/wines.ts"],
         // Wine Attrs
         grapes: [inputPath + "grapes/grapes.ts"],
         wine_type_profile: [inputPath + "wine_type_profile/wine_type_profile.ts"]
@@ -85,9 +82,8 @@ module.exports = {
     resolve: {
         alias: {
             // Avoid moment
-            "chart.js": "chart.js/dist/Chart.js",
+            "chart.js": "chart.js/dist/Chart.js"
             // Better for deduplication
-            jquery: "jquery/src/jquery"
         },
         extensions: [ ".js", ".json", ".ts", ".tsx" ],
     },

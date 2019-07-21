@@ -1,17 +1,18 @@
 # pylint: disable=unused-argument
 from pathlib import Path
-from typing import NamedTuple, Tuple
+from typing import Tuple
 
 from django.conf import settings
 from django.db.models import Max, Sum, Avg
 from django.shortcuts import render
 from django.views import View
+from rest_framework import viewsets
 from rest_framework import generics, response, views
 
 from vinoteca.models import Colors, Purchases, Wines, WineGrapes
-from vinoteca.utils import empty_to_none, get_connection, get_logger, TableColumn
-from .serializers import WineSearchResultSerializer, WineSerializer
-from .models import WineSearchResult
+from vinoteca.utils import empty_to_none, get_connection, get_logger
+from .serializers import WineSearchResultSerializer, WineSerializer, WineTableWineSerializer
+from .models import WineSearchResult, WineTableWine
 
 
 LOGGER = get_logger("wines.read")
@@ -163,72 +164,49 @@ class SearchWines(views.APIView):
         return response.Response(serializer.data)
 
 
-class WineTableDatum(NamedTuple):
-    r"""Attrs object for wine table data. Each instance contains the
-    information required about one wine for one row in the table."""
-    id: int
-    description: str
-    rating: int
-    region: str
-    producer: str
-    name: str
-    type: str
-    color: str
-    inventory: int
-    vintage: int
-    viti_area: str
-    producer_id: int
-    region_id: int
-    wine_type_id: int
+# pylint: disable=too-many-ancestors
+class WinesTableView(viewsets.ModelViewSet):
+    r"""View for viewing all wines together in a tabular, filterable format."""
+    model = WineTableWine
 
+    # pylint: disable=arguments-differ
+    def list(self, request):
+        queryset = WineTableWine.objects.raw("""
+            SELECT
+                w.id
+                , w.description
+                , w.rating
+                , r.name AS region
+                , p.name AS producer
+                , w.name
+                , wt.name AS wine_type
+                , c2.name AS color
+                , w.inventory
+                , pu.vintage
+                , v.name AS viti_area
+                , v.id AS viti_area_id
+                , p.id AS producer_id
+                , r.id AS region_id
+                , wt.id AS wine_type_id
+            FROM wines w
+                LEFT JOIN producers p ON w.producer_id = p.id
+                LEFT JOIN regions r ON p.region_id = r.id
+                LEFT JOIN colors c2 ON w.color_id = c2.id
+                LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+                LEFT JOIN purchases pu ON pu.wine_id = w.id
+                /* LEFT JOIN (
+                    SELECT
+                        id
+                        , max(date) as recent_purchase
+                    FROM purchases
+                    GROUP BY id
+                ) as sub on pu.id = sub.id */
+                LEFT JOIN viti_areas v on w.viti_area_id = v.id
+            GROUP BY w.id
+            /* ORDER BY sub.recent_purchase DESC */ ;
+        """)
+        serializer = WineTableWineSerializer(queryset, many=True)
+        return response.Response(serializer.data)
 
 def wines_view(request):
-    r"""View for viewing all wines together in a tabular, filterable format."""
-    wine_query = """
-        SELECT
-            w.id
-            , w.description
-            , w.rating
-            , r.name
-            , p.name
-            , w.name
-            , wt.name
-            , c2.name
-            , w.inventory
-            , pu.vintage
-            , v.name
-            , p.id
-            , r.id
-            , wt.id
-        FROM wines w
-            LEFT JOIN producers p ON w.producer_id = p.id
-            LEFT JOIN regions r ON p.region_id = r.id
-            LEFT JOIN colors c2 ON w.color_id = c2.id
-            LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
-            LEFT JOIN purchases pu ON pu.wine_id = w.id
-            LEFT JOIN (
-                SELECT
-                    id
-                    , max(date) as recent_purchase
-                FROM purchases
-                GROUP BY id
-            ) as sub on pu.id = sub.id
-            LEFT JOIN viti_areas v on w.viti_area_id = v.id
-        GROUP BY w.id
-        ORDER BY sub.recent_purchase DESC;
-    """
-    conn = get_connection()
-    cursor = conn.cursor()
-    wines_ = [WineTableDatum(*row) for row in cursor.execute(wine_query).fetchall()]
-    conn.close()
-    columns = TableColumn.from_list([
-        TableColumn("Color", placeholder="Select a color"), "Inventory", "Name and Type",
-        "Producer", "Region", "Viticultural Area", TableColumn("Vintage", num_col=True),
-        "Description", TableColumn("Rating", num_col=True)
-    ])
-    context = {
-        "columns": columns,
-        "wines": wines_,
-        "page_name": "Wines Table",
-    }
-    return render(request, "wines.html", context)
+    return render(request, "wines.html", {"page_name": "Wines"})

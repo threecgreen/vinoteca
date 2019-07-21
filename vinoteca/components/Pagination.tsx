@@ -16,7 +16,7 @@ enum Arrow {
 export class Pagination extends React.Component<IProps> {
     public render() {
         return (
-            <ul className="pagination">
+            <ul className="pagination center-align">
                 <li className={ this.arrowIsEnabled(Arrow.Left) ? "waves-effect" : "disabled "}>
                     <a onClick={ (e) => this.onArrowClick(e, Arrow.Left) }>
                         <MaterialIcon iconName="chevron_left" />
@@ -24,7 +24,7 @@ export class Pagination extends React.Component<IProps> {
                 </li>
                 { [...range({start: 1, stop: this.props.pageCount + 1})].map((pgNum) => {
                     return (
-                        <li className={ this.props.currentPage === pgNum ? "active" : "waves-effect"}
+                        <li className={ this.props.currentPage === pgNum ? "active red-bg" : "waves-effect"}
                             key={ pgNum }
                         >
                             <a onClick={ (e) => this.props.onClick(e, pgNum) }>
