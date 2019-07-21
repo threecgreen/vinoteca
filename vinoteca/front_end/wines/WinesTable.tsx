@@ -17,7 +17,7 @@ enum SortingValue {
 interface IProps {
     wines: Wine[];
     predicates: Map<keyof Wine, (val: any) => boolean>;
-    onFilterChange: (column: keyof Wine, pred: (val: any) => boolean) => void;
+    onFilterChange: (column: keyof Wine, pred: (val: number | string) => boolean) => void;
     onEmptyFilter(columnName: keyof Wine): void;
     currentPage: number;
     winesPerPage: number;
@@ -26,6 +26,7 @@ interface IProps {
 interface IState {
     ascending: boolean;
     sorting: SortingValue;
+    colorSelection: string;
 }
 
 export class WinesTable extends React.Component<IProps, IState> {
@@ -34,6 +35,7 @@ export class WinesTable extends React.Component<IProps, IState> {
         this.state = {
             ascending: true,
             sorting: SortingValue.NameAndType,
+            colorSelection: "",
         };
     }
 
@@ -41,7 +43,7 @@ export class WinesTable extends React.Component<IProps, IState> {
         return (
             <table className="responsive highlight condensed">
                 <thead>
-                    <tr>
+                    <tr key="headers">
                         <TableHeader {...this.tableHeaderProps(SortingValue.Inventory)} isNumCol >
                             Inventory
                         </TableHeader>
@@ -67,29 +69,15 @@ export class WinesTable extends React.Component<IProps, IState> {
                             Rating
                         </TableHeader>
                     </tr>
-                    <tr>
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("inventory", pred) }
-                        />
-                        <td />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("nameAndType", pred) }
-                        />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("producer", pred) }
-                        />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("region", pred) }
-                        />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("vitiArea", pred) }
-                        />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("vintage", pred) }
-                        />
-                        <FilterHeader
-                            onFilterChange={ (pred) => this.props.onFilterChange("rating", pred) }
-                        />
+                    <tr key="filters">
+                        <FilterHeader { ...this.filterHeaderProps("inventory") } />
+                        <FilterHeader { ...this.filterHeaderProps("color") } />
+                        <FilterHeader { ...this.filterHeaderProps("nameAndType") } />
+                        <FilterHeader { ...this.filterHeaderProps("producer") } />
+                        <FilterHeader { ...this.filterHeaderProps("region") } />
+                        <FilterHeader { ...this.filterHeaderProps("vitiArea") } />
+                        <FilterHeader { ...this.filterHeaderProps("vintage") } />
+                        <FilterHeader { ...this.filterHeaderProps("rating") } />
                     </tr>
                 </thead>
                 <tbody>
@@ -124,7 +112,8 @@ export class WinesTable extends React.Component<IProps, IState> {
 
     private get winesForPage(): Wine[] {
         const start = (this.props.currentPage - 1) * this.props.winesPerPage;
-        return this.props.wines.slice(start,  Math.min(this.props.wines.length,
+        const sortedWines = this.sortedWines;
+        return sortedWines.slice(start,  Math.min(sortedWines.length,
             start + this.props.winesPerPage));
     }
 
@@ -206,7 +195,7 @@ export class WinesTable extends React.Component<IProps, IState> {
     }
 
     private filterHeaderProps(columnName: keyof Wine):
-        {onFilterChange: (column: keyof Wine, pred: (val: any) => boolean) => void,
+        {onFilterChange: (pred: (val: any) => boolean) => void,
          onEmptyFilter: () => void} {
 
         return {

@@ -3,7 +3,7 @@ import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
-import { getWines } from "../../lib/RestApi";
+import { getWinesTable } from "../../lib/RestApi";
 import { Wine } from "../../lib/RestTypes";
 import { WinesTable } from "./WinesTable";
 
@@ -47,7 +47,8 @@ export class WinesApp extends React.Component<{}, IState> {
             wines = (
                 <React.Fragment>
                     <h3 className="page-title">Wines</h3>
-                    <WinesTable onFilterChange={ this.onFilterChange.bind(this) }
+                    <WinesTable onFilterChange={ (c, pred) => this.onFilterChange(c, pred) }
+                        onEmptyFilter={ (c) => this.onEmptyFilter(c) }
                         { ...this.state }
                     />
                     <Pagination currentPage={ this.state.currentPage }
@@ -71,7 +72,7 @@ export class WinesApp extends React.Component<{}, IState> {
     }
 
     public componentDidMount() {
-        getWines({})
+        getWinesTable()
             .then((wines) => {
                 this.setState({
                     wines: wines.map((w) => new Wine(w)),
@@ -82,20 +83,18 @@ export class WinesApp extends React.Component<{}, IState> {
 
     private onFilterChange(columnName: keyof Wine, pred: (val: any) => boolean) {
         this.setState((prevState) => {
-            const newPredicates = new Map(prevState.predicates);
+            prevState.predicates.set(columnName, pred);
             return {
-                predicates: newPredicates.set(columnName, pred),
-                ...prevState
+                predicates: prevState.predicates,
             };
         });
     }
 
     private onEmptyFilter(columnName: keyof Wine) {
         this.setState((prevState) => {
-            const newPredicates = new Map(prevState.predicates);
-            newPredicates.delete(columnName);
+            prevState.predicates.delete(columnName);
             return {
-                predicates: newPredicates,
+                predicates: prevState.predicates,
             }
         })
     }

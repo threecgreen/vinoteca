@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import WineSearchResult
+
+from .models import WineSearchResult, WineTableWine
 
 
 class WineSearchResultSerializer(serializers.ModelSerializer):
@@ -24,3 +25,8 @@ class WineSerializer(serializers.Serializer):
     last_purchased_date = serializers.IntegerField()
     vintage = serializers.IntegerField(allow_null=True)
     last_purchased_price = serializers.IntegerField(allow_null=True)
+
+class WineTableWineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WineTableWine
+        fields = "__all__"

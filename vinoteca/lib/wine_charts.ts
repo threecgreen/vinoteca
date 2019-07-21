@@ -1,8 +1,8 @@
 import { Chart } from "chart.js";
-import * as $ from "jquery";
 import Logger from "./Logger";
-import { elementExists, pipe } from "./utils";
+import { pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";
+import { selectById } from "./JQueryCompat";
 
 const logger =  new Logger("wine_charts.ts");
 
@@ -130,13 +130,9 @@ function splitData(data: IChartInput[]): [string[], number[]] {
 }
 
 /** Helper function to determine whether to proceed with chart creation. */
-function validateChartInput(canvas: JQuery<HTMLCanvasElement>, chartData: number[]) {
+function validateChartInput(_: HTMLCanvasElement, chartData: number[]) {
     // Only create chart if one or more grapes has a non-zero value
     if (chartData.length === 0 || allZero(chartData)) {
-        return false;
-    }
-    // Only create chart if the canvas element is valid
-    if (!elementExists(canvas)) {
         return false;
     }
     return true;
@@ -155,11 +151,15 @@ function validateChartInput(canvas: JQuery<HTMLCanvasElement>, chartData: number
  *  * Chart div `${dashboardName}-${chartName}-chart-tab`
  */
 export function applyChart(
-        chartFn: (canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]) => boolean,
+        chartFn: (canvas: HTMLCanvasElement, data: IChartInput[]) => boolean,
         data: IChartInput[], chartNamePrefix: string,
     ) {
-    const canvas: JQuery<HTMLCanvasElement> = $(`#${chartNamePrefix}-chart`);
-    const chartLi: JQuery<HTMLUListElement> = $(`#${chartNamePrefix}-chart-li`);
+    const canvas = selectById(`${chartNamePrefix}-chart`) as HTMLCanvasElement | null;
+    const chartLi = selectById(`${chartNamePrefix}-chart-li`) as HTMLUListElement | null;
+    if (!canvas || !chartLi) {
+        new Logger('wine_charts').logError(`Could not find canvas element(s) with prefix ${chartNamePrefix}`);
+        return;
+    }
 
     pipe(
         chartFn(canvas, data),
@@ -172,7 +172,7 @@ export function applyChart(
  * Creates a pie chart on the provided canvas using the provided data.
  * Returns a boolean as to whether the chart was successfully created.
  */
-export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]): boolean {
+export function pieChart(canvas: HTMLCanvasElement, data: IChartInput[]): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!validateChartInput(canvas, chartData)) {
@@ -234,7 +234,7 @@ export function pieChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
  * Creates a horizontal bar chart on the provided canvas using the provided data.
  * Returns a boolean indicating whether the chart was created successfully.
  */
-export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[]): boolean {
+export function barChart(canvas: HTMLCanvasElement, data: IChartInput[]): boolean {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!validateChartInput(canvas, chartData)) {
@@ -308,15 +308,11 @@ export function barChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[])
  * @param data chart data
  * @param seriesLabels labels of each series or line present on the chart
  */
-export function lineChart(canvas: JQuery<HTMLCanvasElement>, data: IChartInput[][],
+export function lineChart(canvas: HTMLCanvasElement, data: IChartInput[][],
                           seriesLabels: string[]): boolean {
     // const chartLabels = splitData(data[0])[0].map((x) => parseInt(x, 10));
     const chartLabels = splitData(data[0])[0];
     // Error checking
-    if (!elementExists(canvas)) {
-        logger.logWarning(`Canvas element ${canvas} does not exist.`);
-        return false;
-    }
     if (data.length !== seriesLabels.length) {
         logger.logWarning(`Data and seriesLabels have different lenghts. ` +
                    `${data.length} and ${seriesLabels.length} respectively.`);

@@ -164,6 +164,49 @@ export class Wine {
     }
 }
 
+export class WineTableWine {
+    public static getNameAndType(name: string | undefined, wineType: string): string {
+        return `${(name ? name + " " : "")}${wineType}`;
+    }
+
+    public id: number;
+    public name?: string;
+    public inventory: number;
+    public rating: number;
+    public color: string;
+    public wineType: string;
+    public producer: string;
+    public producerId: number;
+    public region: string;
+    public regionId: number;
+    public vitiArea?: string;
+    public vitiAreaId?: number;
+    public lastPurchasedPrice?: number;
+    public vintage?: number;
+
+    constructor(wine: IWine) {
+        this.id = wine.id;
+        this.name = wine.name;
+        this.inventory = wine.inventory;
+        this.rating = wine.rating;
+        this.color = wine.color;
+        this.wineType = wine.wine_type;
+        this.producer = wine.producer;
+        this.producerId = wine.producer_id;
+        this.region = wine.region;
+        this.regionId = wine.region_id;
+        this.vitiArea = wine.viti_area;
+        this.vitiAreaId = wine.viti_area_id;
+        this.lastPurchasedPrice = wine.last_purchased_price;
+        this.vintage = wine.vintage;
+    }
+
+    public get nameAndType(): string {
+        return Wine.getNameAndType(this.name, this.wineType);
+    }
+}
+
+
 export interface IVitiAreaStats extends IRestModel {
     total_wines: number;
     avg_price?: number;

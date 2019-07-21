@@ -8,7 +8,7 @@ from places.views import RegionView, VitiAreaView, VitiAreaStats, region_all_nam
 from producers.views import ProducerView
 from rest.views import generic_all_names, write_client_side_logs
 from wine_attrs.views import ColorList, GrapeView, WineTypeView, WineGrapeList, PurchaseView
-from wines.read import WineList, SearchWines
+from wines.read import WineList, SearchWines, WinesTableView
 from wines.update import rest_change_inventory
 
 
@@ -42,6 +42,7 @@ urlpatterns = [
     path("wines/", WineList.as_view(), name="Wine"),
     path("wines/inventory/", InventoryView.as_view({'get': 'list'}), name="Wine Inventory"),
     path("wines/search/", SearchWines.as_view(), name="Search Wines"),
+    path("wines/table/", WinesTableView.as_view({'get': 'list'}), name="Wines Table"),
     # This isn't super resty and should be refactored
     path("wines/<int:wine_id>/change/<slug:sign>/", rest_change_inventory, name="Change Inventory"),
     path("wine-grapes/", WineGrapeList.as_view(), name="Wine Grape"),
