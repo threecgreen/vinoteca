@@ -10,6 +10,7 @@ enum Case {
 
 interface ISpecialCharsProps {
     onClick: (e: React.MouseEvent, char: string) => void;
+    classes?: string[];
     display: boolean;
 }
 
@@ -54,10 +55,10 @@ export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCh
     }
 
     public render() {
-        const classes = ["special-chars", "z-depth-2"];
+        const classes = ["special-chars"];
         if (this.props.display) {
             return (
-                <Row classes={ classes }>
+                <Row classes={ classes.concat(this.props.classes || []) }>
                     {/* Shift button */}
                     <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
                                  onClick={ this.handleShift.bind(this) } >

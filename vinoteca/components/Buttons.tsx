@@ -31,7 +31,7 @@ interface IBtnProps extends IChildrenProp, IClassesProp {
 export const Btn: React.FunctionComponent<IBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
     return (
-        <button className={ `btn waves-effect waves-light ${classes}` }
+        <button className={ `btn rbtn waves-effect waves-light ${classes}` }
             onClick={ props.onClick }
         >
             { props.children }

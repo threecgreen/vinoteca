@@ -26,7 +26,7 @@ export class WinesApp extends React.Component<{}, IState> {
             predicates: new Map(),
             hasLoaded: false,
             currentPage: 1,
-            winesPerPage: 10,
+            winesPerPage: 50,
         };
 
         this.logger = new Logger(this.constructor.name);

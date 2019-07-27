@@ -50,7 +50,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
         this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        this.onTextInputBlur = this.onTextInputBlur.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
@@ -78,12 +77,11 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     regionText={ this.state.regionText }
                     onRegionChange={ this.onRegionChange }
                     onTextInputFocus={ this.onTextInputFocus }
-                    onTextInputBlur={ this.onTextInputBlur }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
                 />
                 <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.lastActiveTextInput !== undefined }
+                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
@@ -149,11 +147,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     }
 
     private onTextInputFocus(input: ProducerProfileTextInput) {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
-    }
-
-    private onTextInputBlur(input: ProducerProfileTextInput) {
-        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, input));
+        this.setState({lastActiveTextInput: input});
     }
 
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
