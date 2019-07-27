@@ -1,11 +1,11 @@
 import * as React from "react";
+import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IGrape } from "../../lib/RestTypes";
 import { GrapesList } from "./GrapesList";
-import { Col, Row } from "../../components/Grid";
 
 export class GrapeItem {
     constructor(public id: number, public name: string, public wines?: number,
@@ -47,6 +47,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
                             />
                             <SpecialChars onClick={this.handleSpecialChar.bind(this)}
                                 display={this.hasEditableGrapes}
+                                classes={ ["floating-bar", "z-depth-2"] }
                             />
                         </div>
                     </Col>

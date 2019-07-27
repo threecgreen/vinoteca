@@ -15,7 +15,6 @@ interface IProducerProps {
     region?: IRegion
     onRegionChange: (text: string) => void;
     onTextInputFocus: (input: ProducerProfileTextInput) => void;
-    onTextInputBlur: (input: ProducerProfileTextInput) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -70,12 +69,10 @@ export class Producer extends React.Component<IProducerProps> {
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
                             onFocus={ () => this.props.onTextInputFocus(ProducerProfileTextInput.Producer) }
-                            onBlur={ () => this.props.onTextInputBlur(ProducerProfileTextInput.Producer) }
                         />
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
                             onFocus={ () => this.props.onTextInputFocus(ProducerProfileTextInput.Region) }
-                            onBlur={ () => this.props.onTextInputBlur(ProducerProfileTextInput.Region) }
                         />
                     </form>
                 </Col>

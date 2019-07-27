@@ -1,6 +1,7 @@
 import * as React from "react"
 import { VitiAreaStats } from "../../lib/RestTypes";
 import { Table } from "../../components/Table";
+import { NumCell } from "../../components/TableCells";
 
 interface IProps {
     stats?: VitiAreaStats
@@ -14,15 +15,15 @@ export const VitiAreaStatsTable: React.FunctionComponent<IProps> = (props) => {
         <Table columns={[]}>
             <tr>
                 <td>Total Wines</td>
-                <td className="num-col">{ props.stats.totalWines }</td>
+                <NumCell num={ props.stats.totalWines } maxDecimals={ 0 } />
             </tr>
             <tr>
                 <td>Avg Price</td>
-                <td className="num-col">{ props.stats.avgPrice }</td>
+                <NumCell num={ props.stats.avgPrice } maxDecimals={ 2 } />
             </tr>
             <tr>
                 <td>Avg Rating</td>
-                <td className="num-col">{ props.stats.avgRating }</td>
+                <NumCell num={ props.stats.avgRating } maxDecimals={ 1 } />
             </tr>
         </Table>
     )

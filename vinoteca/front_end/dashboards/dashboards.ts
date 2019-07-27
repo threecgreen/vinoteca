@@ -30,9 +30,9 @@ onLoad(() => {
     applyChart(barChart, GenericStat.fromJSON(colorPrice), "pb-color-price");
 
     // Top Wine Types
-    applyChart(barChart, GenericStat.fromJSON(wineTypePurchases), "top-wt-purchases");
-    applyChart(barChart, GenericStat.fromJSON(wineTypeVarieties), "top-wt-varieties");
-    applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");
+    // applyChart(barChart, GenericStat.fromJSON(wineTypePurchases), "top-wt-purchases");
+    // applyChart(barChart, GenericStat.fromJSON(wineTypeVarieties), "top-wt-varieties");
+    // applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");
 
     // Top Grape Varieties
     applyChart(barChart, GenericStat.fromJSON(grapeVarieties), "grapes-varieties");

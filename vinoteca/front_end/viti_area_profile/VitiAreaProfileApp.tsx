@@ -38,7 +38,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         super(props);
         this.state = {
             isEditing: false,
-            lastActiveTextInput: undefined,
+            lastActiveTextInput: TextInputs.VitiArea,
             vitiAreaText: "",
             vitiArea: undefined,
             wines: [],
@@ -84,7 +84,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
                     onCancelClick={ this.onCancelClick }
                 />
                 <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
+                    display={ this.state.isEditing }
                 />
                 <Row>
                     <Col s={ 6 }>
@@ -116,7 +116,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
 
     private onVitiAreaChange(val: string) {
         this.setState({
-            lastActiveTextInput: TextInputs.VitiArea,
             vitiAreaText: val,
         });
     }

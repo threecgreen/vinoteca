@@ -17,6 +17,8 @@ onLoad(() => {
     // Grape chart
     get("/rest/wine-grapes/", {wine: wineId})
         .then((wineGrapeJSON: IWineGrape[]) => {
-            applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
+            if (wineGrapeJSON.length > 0) {
+                applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
+            }
         });
 });

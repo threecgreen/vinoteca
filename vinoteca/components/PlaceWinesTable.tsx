@@ -1,9 +1,7 @@
 import * as React from "react";
-import { Table, WineTableNumCols } from "./Table";
-import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell
-} from "./TableCells";
 import { Wine } from "../lib/RestTypes";
+import { Table, WineTableNumCols } from "./Table";
+import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell } from "./TableCells";
 
 interface IProps {
     wines: Wine[];
@@ -29,7 +27,9 @@ export const PlaceWinesTable: React.FunctionComponent<IProps> = (props) => {
                         <NameAndTypeCell id={ wine.id }
                             nameAndType={ wine.nameAndType }
                         />
-                        <TextCell text={ wine.producer } />
+                        <ProducerCell id={ wine.producerId }>
+                            { wine.producer }
+                        </ProducerCell>
                         <NumCell num={ wine.totalQuantityPurchased } />
                         <PriceCell price={ wine.avgPrice } />
                         <NumCell num={ wine.rating }
