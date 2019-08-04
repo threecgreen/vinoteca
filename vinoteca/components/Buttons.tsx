@@ -53,7 +53,7 @@ export const CancelOrConfirmBtns: React.FunctionComponent<ICancelOrConfirmProps>
             <Btn classes={ ["green-bg"] }
                 onClick={ props.onConfirmClick }
             >
-                Confirm Changes
+                Confirm
                 <MaterialIcon iconName="send" className="right" />
             </Btn>
             <Btn classes={ ["red-bg"] }

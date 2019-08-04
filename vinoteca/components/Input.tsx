@@ -3,7 +3,7 @@ import * as M from "materialize-css";
 import { nameToId } from "../lib/utils";
 import { InputField } from "./Grid";
 
-type IInputValue = string | number | string[];
+type IInputValue = string | number | string[] | File;
 
 export interface IInputProps<T extends IInputValue> {
     name: string;

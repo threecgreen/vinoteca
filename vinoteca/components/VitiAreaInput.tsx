@@ -35,7 +35,7 @@ export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAre
         return (
             <StatelessTextInput name="VitiArea"
                 className="autocomplete"
-                s={ 6 } l={ 3 }
+                s={ 8 } l={ 4 }
                 { ...this.props }
             />
         );

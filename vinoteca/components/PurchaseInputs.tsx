@@ -1,32 +1,29 @@
 import * as React from "react";
+import { defaultVintageYear } from "../lib/utils";
 import { CheckboxInput } from "./CheckboxInput";
 import { DateInput } from "./DateInput";
-import { Row } from "./Grid";
 import { NumberInput } from "./NumberInput";
 import { TextInput } from "./TextInput";
-import { defaultVintageYear } from "../lib/utils";
 
-interface IPurchaseInputsProps {
+interface IProps {
     displayInventoryBtn: boolean;
-}
-
-interface IPurchaseInputsState {
-    date: Date;
     memo: string;
-    price: number;
-    quantity: number;
     storeName: string;
 }
 
-export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurchaseInputsState> {
-    constructor(props: IPurchaseInputsProps) {
+interface IState {
+    date: Date;
+    price: number;
+    quantity: number;
+}
+
+export class PurchaseInputs extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             date: new Date(),
-            memo: "",
             price: 0.00,
             quantity: 1,
-            storeName: "",
         };
     }
 
@@ -37,7 +34,7 @@ export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurch
             : null;
         const [quantityS, quantityL] = this.calcQuantitySize();
         return (
-            <Row>
+            <React.Fragment>
                 <DateInput />
                 <NumberInput id="quantity" name="Quantity" className="validate"
                              initNumber={ this.state.quantity } enabled={ true }
@@ -51,12 +48,12 @@ export class PurchaseInputs extends React.Component<IPurchaseInputsProps, IPurch
                              min={ 1900 } step="1" max={ new Date().getFullYear() }
                              s={ 6 } l={ 3 } />
                 <TextInput name="Store" autocomplete enabled
-                    initText={ this.state.storeName } className="autocomplete" s={ 6 } l={ 3 }
+                    initText={ this.props.storeName } className="autocomplete" s={ 6 } l={ 3 }
                 />
                 <TextInput name="Memo" autocomplete={ false }
-                    initText={ this.state.memo } enabled className="" s={ 6 } l={ 3 }
+                    initText={ this.props.memo } enabled className="" s={ 6 } l={ 3 }
                 />
-            </Row>
+            </React.Fragment>
         );
     }
 

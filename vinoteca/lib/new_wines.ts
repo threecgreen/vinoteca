@@ -56,21 +56,3 @@ export function toggleRating(hasRatingSelector: HTMLInputElement,
         ratingSelector.disabled = !hasRatingSelector.checked;
     };
 }
-
-// /** Helper function for clearing table */
-// export function clearTable() {
-//     const table = document.getElementsByTagName("table")[0];
-//     table.hidden = true;
-//     const table =
-//     $("table").hide();
-//     $("#no-results").hide();
-//     $("table tbody").empty();
-// }
-
-// /** Empty all fields when reset button is clicked */
-// export function resetFormBtn(): void {
-//     $("#reset-btn").on("click", () => {
-//         ($("form")[0] as HTMLFormElement).reset();
-//         clearTable();
-//     });
-// }

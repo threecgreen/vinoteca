@@ -5,13 +5,13 @@ import { toggleRating, toggleRegion, updateVitiAreaSelections} from "../../lib/n
 import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, hFloatingActnBtn, navbar, modal } from "../../lib/widgets";
 import { FormSelect } from "materialize-css";
-import { selectById } from "../../lib/JQueryCompat";
+import { selectById, onLoad } from "../../lib/JQueryCompat";
 
 declare const hasRating: boolean;
 
-const region = selectById("auto-region") as HTMLInputElement;
+const REGION = selectById("auto-region") as HTMLInputElement;
 
-document.addEventListener('DOMContentLoaded', () => {
+onLoad(() => {
     navbar();
     const specCharCtl = new SpecialCharController();
     hFloatingActnBtn();
@@ -20,18 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     autocomplete("wine-type");
     autocomplete("producer");
-    toggleRegion(selectById("auto-producer") as HTMLInputElement, region);
+    toggleRegion(selectById("auto-producer") as HTMLInputElement, REGION);
     autocomplete("region");
     toggleRating(selectById("has-rating") as HTMLInputElement, selectById("rating") as HTMLInputElement,
                  hasRating);
-    updateVitiAreaSelections(region, selectById("auto-viti-area") as HTMLInputElement);
+    updateVitiAreaSelections(REGION, selectById("auto-viti-area") as HTMLInputElement);
     render(createElement(GrapeFormApp),
            document.getElementById("grapes-form-app-container"));
     modal("delete-modal")
 });
 
 // Gave weird error when in same document ready function
-document.addEventListener('DOMContentLoaded', () => {
+onLoad(() => {
     // Run first for initial region
-    $(region).trigger("change");
+    REGION.triggerChange();
 });
