@@ -69,11 +69,11 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     constructor(props: {}) {
         super(props);
         this.state = SearchWinesApp.defaultState;
-        this.logger = new Logger(this.constructor.name, true),
+        this.logger = new Logger(this.constructor.name),
         this.querySearchResults = this.querySearchResults.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        this.onTextInputBlur = this.onTextInputBlur.bind(this);
+        // this.onTextInputBlur = this.onTextInputBlur.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onResetClick = this.onResetClick.bind(this);
     }
@@ -100,7 +100,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                     vitiAreaText={ this.state.vitiAreaText }
                     onInputChange={ this.onInputChange }
                     onTextInputFocus={ this.onTextInputFocus }
-                    onTextInputBlur={ this.onTextInputBlur }
+                    // onTextInputBlur={ this.onTextInputBlur }
                 />
                 <SearchWinesResults results={ this.state.results }
                     resultState={ this.state.resultState }
@@ -130,9 +130,9 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
     }
 
-    private onTextInputBlur(input: SearchWinesTextInput) {
-        this.setState(prevState => SpecialChars.onTextInputBlur(prevState, input));
-    }
+    // private onTextInputBlur(input: SearchWinesTextInput) {
+    //     this.setState(prevState => SpecialChars.onTextInputBlur(prevState, input));
+    // }
 
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
         e.preventDefault();

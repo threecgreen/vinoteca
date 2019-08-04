@@ -1,7 +1,5 @@
 import { selectById } from "./JQueryCompat";
 
-// import * as $ from "jquery";
-
 /**
  * Sets up special character buttons to insert their respective character
  * into the last input field that was in focus. Also defines a function that
