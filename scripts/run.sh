@@ -60,4 +60,4 @@ fi
 
 # Run django server
 info_text "Starting server..."
-"$py_env/python" "$root_dir/manage.py" runserver
+"$py_env/python" "$root_dir/manage.py" runserver 0.0.0.0:8000

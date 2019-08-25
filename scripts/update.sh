@@ -47,6 +47,8 @@ if [ -f $HOME/miniconda/lib/libcrypto.so.1.0.0 ]; then
 fi
 
 find_python_env
+info_text "Updating conda..."
+"$conda" update -n base -c defaults conda -y
 info_text "Updating dependencies..."
 "$conda" env update -f environment.yml || error_exit "Failed to update Python"
 info_text "Migrating database..."
