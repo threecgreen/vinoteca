@@ -75,25 +75,6 @@
         </div>
       </div>
     </div>
-
-    {% comment %} <div class="row dashboard-row">
-      <div class="col s12 xl7">
-        <div class="card golden-yellow-card dashboard-top-card">
-          <div class="card-content">
-            <h2 class="card-title">Recent Purchases</h2>
-            {% include "recent_purchases.html" %}
-          </div>
-        </div>
-      </div>
-      <div class="col s12 xl5">
-        <div class="card wine-red-card dashboard-top-card">
-          <div class="card-content">
-            <h2 class="card-title">Top Wine Types</h2>
-            {% include "top_wine_types.html" %}
-          </div>
-        </div>
-      </div>
-    </div> {% endcomment %}
   </div>
 {% endblock %}
 
@@ -134,9 +115,9 @@
     };
 
     // Top Grape Varieties
-    const grapeVarieties = {
+    const grapePurchases = {
         {% for grape in grapes  %}
-            "{{ grape.name }}": {{ grape.wine_varieties }},
+            "{{ grape.name }}": {{ grape.quantity }},
         {% endfor %}
     };
     const grapePrice = {
@@ -151,9 +132,9 @@
     };
 
     // Top Viti Areas
-    const vitiAreasVarieties = {
+    const vitiAreasPurchases = {
         {% for viti_area in viti_areas %}
-            "{{ viti_area.name }}": {{ viti_area.varieties|default_if_none:0 }},
+            "{{ viti_area.name }}": {{ viti_area.quantity|default_if_none:0 }},
         {% endfor %}
     };
     const vitiAreasProducers = {

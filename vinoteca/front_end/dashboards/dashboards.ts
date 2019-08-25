@@ -9,10 +9,10 @@ declare const colorPrice: IGenericStat;
 declare const wineTypePurchases: IGenericStat;
 declare const wineTypeVarieties: IGenericStat;
 declare const wineTypePrice: IGenericStat;
-declare const grapeVarieties: IGenericStat;
+declare const grapePurchases: IGenericStat;
 declare const grapePrice: IGenericStat;
 declare const grapePct: IGenericStat;
-declare const vitiAreasVarieties: IGenericStat;
+declare const vitiAreasPurchases: IGenericStat;
 declare const vitiAreasProducers: IGenericStat;
 declare const vitiAreasPrice: IGenericStat;
 
@@ -35,12 +35,12 @@ $(() => {
     applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");
 
     // Top Grape Varieties
-    applyChart(barChart, GenericStat.fromJSON(grapeVarieties), "grapes-varieties");
+    applyChart(barChart, GenericStat.fromJSON(grapePurchases), "grapes-varieties");
     applyChart(barChart, GenericStat.fromJSON(grapePrice), "grapes-price");
     applyChart(barChart, GenericStat.fromJSON(grapePct), "grapes-pct");
 
     // Top Viti Areas
-    applyChart(barChart, GenericStat.fromJSON(vitiAreasVarieties), "viti-areas-varieties");
+    applyChart(barChart, GenericStat.fromJSON(vitiAreasPurchases), "viti-areas-varieties");
     applyChart(barChart, GenericStat.fromJSON(vitiAreasProducers), "viti-areas-producers");
     applyChart(barChart, GenericStat.fromJSON(vitiAreasPrice), "viti-areas-price");
 
