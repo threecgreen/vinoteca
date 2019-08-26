@@ -4,7 +4,7 @@
         {
             "label": "Run Server",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/run.sh",
+            "command": "${workspaceFolder}/scripts/run.sh",
             "args": [
                 "--no-tab"
             ],
@@ -24,7 +24,7 @@
         {
             "label": "Pylint",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/lint.sh",
+            "command": "${workspaceFolder}/scripts/lint.sh",
             "args": [
                 "python"
             ],
@@ -40,7 +40,7 @@
         {
             "label": "Tslint",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/lint.sh",
+            "command": "${workspaceFolder}/scripts/lint.sh",
             "args": [
                 "typescript"
             ],
@@ -56,7 +56,7 @@
         {
             "label": "Pytest",
             "type": "shell",
-            "command": "${workspaceRoot}/scripts/test.sh",
+            "command": "${workspaceFolder}/scripts/test.sh",
             "group": "test",
             "presentation": {
                 "echo": true,
