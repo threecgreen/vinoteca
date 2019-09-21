@@ -48,12 +48,13 @@ def main():
     if len(sys.argv) == 1:
         print_error("Missing subcommand.\n")
         print_subcommands(options)
-        return
+        exit(1)
     subcommand = sys.argv[1]
     if subcommand not in options.keys():
         # Invalid argument
         print_error(f"Invalid subcommand '{sys.argv[1]}'.\n")
         print_subcommands(options)
+        exit(2)
     elif subcommand == "help":
         vinoteca_help(options)
     else:
