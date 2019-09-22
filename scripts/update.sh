@@ -54,7 +54,7 @@ find_python_env
 info_text "Updating conda..."
 "$conda" update -n base -c defaults conda -y
 info_text "Updating dependencies..."
-"$conda" env update -f environment.yml || error_exit "Failed to update Python"
+"$conda" env update -f "$root_dir/environment.yml" || error_exit "Failed to update Python"
 info_text "Migrating database..."
 "$py_env/python" "$root_dir/manage.py" migrate || error_exit "Failed to migrate database"
 "$py_env/python" "$root_dir/manage.py" migrate dashboards || error_exit "Failed to migrate database"
