@@ -1,3 +1,4 @@
+import os
 import pytest
 from django.urls import reverse
 
@@ -19,7 +20,7 @@ def test_recent_purchases(limit):
     assert len(result) == limit
 
 
-@pytest.mark.xfail(pytest.CI, reason="Purchase queries aren't working in CI.")
+@pytest.mark.xfail(os.environ.get("CI", False), reason="Purchase queries aren't working in CI.")
 @pytest.mark.django_db
 def test_by_the_numbers():
     assert isinstance(by_the_numbers(), ByTheNumbers)
@@ -55,7 +56,7 @@ def test_producers(limit):
     assert len(producers) == limit
 
 
-@pytest.mark.xfail(pytest.CI, reason="Purchase queries aren't working in CI.")
+@pytest.mark.xfail(os.environ.get("CI", False), reason="Purchase queries aren't working in CI.")
 @pytest.mark.django_db
 def test_purchase_by_year():
     years = purchases_by_year()
