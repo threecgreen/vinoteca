@@ -14,7 +14,7 @@ export default class SpecialCharController {
 
     constructor() {
         this.specialCharBtns = document.querySelectorAll(".spec-char-btn");
-        this.shiftBtn = selectById("#shift") as HTMLLinkElement;
+        this.shiftBtn = selectById("shift") as HTMLLinkElement;
         const inputs = document.getElementsByTagName("input");
         this.textInputs = []
         for (let i = 0; i < inputs.length; i++) {
@@ -49,27 +49,36 @@ export default class SpecialCharController {
      * Change special character buttons between upper and lowercase
      */
     private setUpShiftBtnListener() {
-        $(this.shiftBtn).on("click", () => {
-            if ($(this.shiftBtn).text() === "↑") {
-                $(this.specialCharBtns).each((_, btn) => {
-                    $(btn).text($(btn).text().toUpperCase());
-                });
-                $(this.shiftBtn).text("↓");
+        this.shiftBtn.onclick = () => {
+            if (this.shiftBtn.textContent === "↑") {
+                this.shiftBtn.textContent = "↓";
+                this.specialCharBtns.forEach((btn) => {
+                    if (btn.textContent) {
+                        btn.textContent = btn.textContent.toUpperCase();
+                    }
+                })
             } else {
-                $(this.specialCharBtns).each((_, btn) => {
-                    $(btn).text($(btn).text().toLowerCase());
-                });
-                $(this.shiftBtn).text("↑");
+                this.specialCharBtns.forEach((btn) => {
+                    if (btn.textContent) {
+                        btn.textContent = btn.textContent.toLowerCase();
+                    }
+                })
+                this.shiftBtn.textContent = "↑";
             }
-        });
+        }
     }
 
     /**
      * Update last active input field each time the focus changes
      */
     private updateLastInputListener() {
-        $(this.textInputs).on("focusout", (event) => {
-            this.lastInputId = event.target.id;
-        });
+        this.textInputs.forEach((input) => {
+            input.addEventListener("focusout", (event) => {
+                if (event.target) {
+                    // @ts-ignore
+                    this.lastInputId = event.target.getAttribute("id");
+                }
+            })
+        })
     }
 }
