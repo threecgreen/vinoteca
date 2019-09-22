@@ -6,10 +6,14 @@ parse_args()
 # Parses command-line arguments by assigning them a variable. Pass with $@
 {
     GIT_PULL="true"
+    FORCE_UPDATE="false"
     while [ "$1" != "" ]; do
         case "$1" in
             -g | --no-git-pull)
                 GIT_PULL="false"
+                ;;
+            -f | --force)
+                FORCE_UPDATE="true"
                 ;;
             *)
                 error_exit "Invalid argument $1"
@@ -35,7 +39,7 @@ if [ "$GIT_PULL" = true ]; then
     git status -uno | grep 'behind'
     if [ $? = 0 ]; then
         git pull -r || error_exit "Failed to update source code."
-    else
+    elif [ "$FORCE_UPDATE" != true ]; then
         info_text "Up to date."
         exit 0;
     fi
