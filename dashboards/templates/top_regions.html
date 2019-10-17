@@ -5,7 +5,7 @@
     <thead>
       <tr>
         <th>Region</th>
-        <th class="num-col">Varieties</th>
+        <th class="num-col">Purchases</th>
         <th class="num-col">Producers</th>
         <th class="num-col">Avg Price</th>
       </tr>
@@ -14,7 +14,7 @@
       {% for region in regions %}
         <tr>
           {% include "region_cell.html" with name=region.name id=region.id %}
-          {% include "number_cell.html" with number=region.variety %}
+          {% include "number_cell.html" with number=region.quantity %}
           {% include "number_cell.html" with number=region.producer_count %}
           {% include "number_cell.html" with number=region.avg_price decpoint=True %}
         </tr>

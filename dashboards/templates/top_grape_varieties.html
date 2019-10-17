@@ -3,7 +3,7 @@
 {% else %}
 <ul class="tabs z-depth-1">
   <li class="wine-red-tab tab" id="grapes-table-li"><a href="#grapes-table-tab">Table</a></li>
-  <li class="wine-green-tab tab" id="grapes-varieties-chart-li"><a href="#grapes-varieties-chart-tab">Varieties</a></li>
+  <li class="wine-green-tab tab" id="grapes-varieties-chart-li"><a href="#grapes-varieties-chart-tab">Purchases</a></li>
   <li class="wine-green-tab tab" id="grapes-price-chart-li"><a href="#grapes-price-chart-tab">Avg Price</a></li>
   <li class="wine-green-tab tab" id="grapes-pct-chart-li"><a href="#grapes-pct-chart-tab">Avg Pct</a></li>
 </ul>
@@ -12,7 +12,7 @@
     <thead>
     <tr>
       <th>Grape</th>
-      <th class="num-col">Varieties</th>
+      <th class="num-col">Purchases</th>
       <th class="num-col">Avg Price</th>
       <th class="num-col">Avg Pct</th>
     </tr>
@@ -21,7 +21,7 @@
     {% for grape in grapes %}
       <tr>
         {% include "basic_cell.html" with name=grape.name %}
-        {% include "number_cell.html" with number=grape.wine_varieties %}
+        {% include "number_cell.html" with number=grape.quantity %}
         {% include "number_cell.html" with number=grape.avg_price decpoint=True %}
         {% include "number_cell.html" with number=grape.avg_pct decpoint=True %}
       </tr>

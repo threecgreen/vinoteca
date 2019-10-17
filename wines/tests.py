@@ -38,9 +38,9 @@ def wine_and_post_data(a_wine):
     post_data = {
         "producer": a_wine.producer.name,
         "region": a_wine.producer.region.name,
-        "description": a_wine.description,
+        "description": a_wine.description or "",
         "notes": a_wine.notes,
-        "rating": a_wine.rating,
+        "rating": a_wine.rating or "",
         "color": a_wine.color.name,
         "wine-type": a_wine.wine_type.name,
         "viti-area": a_wine.viti_area.name if a_wine.viti_area else None,
@@ -96,8 +96,8 @@ def test_insert_new_wine(client, store, wine_type, producer, region, description
         "purchase-date": date.today().strftime("%b %d, %Y"),
         "wine-type": wine_type,
         "producer": producer,
-        "region": region,
-        "description": description,
+        "region": region or "",
+        "description": description or "",
         "price": price,
         "viti-area": viti_area,
         "why": why,
@@ -197,9 +197,9 @@ def test_edit_wine_image(a_wine, client, upload_file):
     post_data = {
         "producer": a_wine.producer.name,
         "region": a_wine.producer.region.name,
-        "description": a_wine.description,
+        "description": a_wine.description or "",
         "notes": a_wine.notes,
-        "rating": a_wine.rating,
+        "rating": a_wine.rating or "",
         "color": a_wine.color.name,
         "wine-type": a_wine.wine_type.name,
         "wine-image": upload_file
@@ -250,7 +250,7 @@ def test_edit_purchases(client, attr, val, a_wine):
         "quantity": purchase.quantity,
         "price": purchase.price,
         "vintage": purchase.vintage,
-        "memo": purchase.memo,
+        "memo": purchase.memo or "",
         "store": purchase.store
     }
     post_data[attr] = val

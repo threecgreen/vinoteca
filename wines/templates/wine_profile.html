@@ -32,86 +32,36 @@
             {% endif %}
           </h4>
         </div>
-        <div class="col s12 l6">
-          <h5 class="light">{{ wine.color.name|title }}</h5>
-          <h5 class="inline-h"><b>Inventory: </b> {{ wine.inventory }}</h5> &thinsp;
-          <a class="waves-effect waves-light btn-floating btn-floating-small green-bg"
-            href="{% url "Wines:Change Inventory" wine_id=wine.id sign="add" %}">
-            <i class="material-icons">add_circle</i>
-          </a>
-          {% if wine.inventory > 0 %}
-            <a class="waves-effect waves-light btn-floating btn-floating-small red-bg"
-              href="{% url "Wines:Change Inventory" wine_id=wine.id sign="subtract" %}">
-              <i class="material-icons">do_not_disturb_on</i>
-            </a>
-          {% endif %}
-          {% if recent_vintage %}
-            <h5><b>Vintage:</b> {{ recent_vintage }}</h5>
-          {% endif %}
-          {% if wine.viti_area %}
-            <h5><b>Viticultural Area:</b>
-              <a class="text-link" href='{% url "Viti Area Profile" viti_area_id=wine.viti_area.id %}'>
-                {{ wine.viti_area.name }}
-              </a>
-            </h5>
-          {% endif %}
-          {% if wine.description %}
-            <h6><b>Description:</b> {{ wine.description }}</h6>
-          {% endif %}
-          {% if wine.rating %}
-            <h6><b>Rating:</b> {{ wine.rating|floatformat:0 }}</h6>
-          {% endif %}
-          {% if wine.notes %}
-            <h6><b>Notes:</b> {{ wine.notes }}</h6>
-          {% endif %}
-          {% if wine.why %}
-            <h6><b>Why:</b> {{ wine.why }}</h6>
-          {% endif %}
-        </div>
-        <div class="col s12 l6">
-          {% if grapes %}
-            <h5 class="light">Grape composition</h5>
-            <ul class="tabs tabs-fixed-width z-depth-1">
-              <li class="wine-red-tab tab col s6" id="grape-comp-table-li">
-                <a href="#grape-comp-table-tab">Table</a>
-              </li>
-              <li class="wine-green-tab tab col s6" id="grape-comp-chart-li">
-                <a href="#grape-comp-chart-tab">Pie chart</a>
-              </li>
-            </ul>
-            <div id="grape-comp-table-tab" class="s12">
-              <table class="highlight responsive">
-                <thead>
-                  <tr>
-                    <th>Grape</th>
-                    <th class="num-col">Percentage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for grape in grapes %}
-                    <tr>
-                      <td>{{ grape.grape.name }}</td>
-                      <td class="num-col">{{ grape.percent|default_if_none:"" }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-            <div id="grape-comp-chart-tab" class="s12">
-              <canvas id="grape-comp-chart"></canvas>
-            </div>
-          {% elif has_img %}
-            {% include "wine_image.html" %}
-          {% endif %}
-        </div>
-      </div>
-      {% if has_img and grapes %}
-        <div class="row">
-          <div class="col s12 l6 offset-l3">
-          {% include "wine_image.html" %}
+        {% if has_img and grapes %}
+          <div class="col s12 l4">
+            {% include "wine_data.html" %}
           </div>
-        </div>
-      {% endif %}
+          <div class="col s12 l4">
+            {% include "wine_grapes.html" %}
+          </div>
+          <div class="col s12 l4">
+            {% include "wine_image.html" %}
+          </div>
+        {% elif has_img %}
+          <div class="col s12 l6">
+            {% include "wine_data.html" %}
+          </div>
+          <div class="col s12 l6">
+            {% include "wine_image.html" %}
+          </div>
+        {% elif grapes %}
+          <div class="col s12 l6">
+            {% include "wine_data.html" %}
+          </div>
+          <div class="col s12 l6">
+            {% include "wine_grapes.html" %}
+          </div>
+        {% else %}
+          <div class="col s12">
+            {% include "wine_data.html" %}
+          </div>
+        {% endif %}
+      </div>
     {% endblock %}
 
     {% block prev_purchases %}

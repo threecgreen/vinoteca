@@ -32,9 +32,9 @@ def top_wine_types(limit: int) -> List[WineTypes]:
     different wines of that type. The number is controlled by the `limit`
     argument."""
     return WineTypes.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
-        .annotate(variety=Count('wines')) \
+        .annotate(variety=Count('wines', distinct=True)) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
-        .order_by("-variety")[:limit]
+        .order_by("-quantity")[:limit]
 
 
 class ByTheNumbers(NamedTuple):
@@ -73,12 +73,13 @@ def top_regions(limit: int) -> List[Regions]:
     r"""Fetches informations about the most popular wine regions in the user's
     data based on the number of purchased wine varieties from each region.
     The number of regions is controlled by the `limit` parameter."""
-    return Regions.objects.annotate(producer_count=Count("producers", distinct=True)) \
-        .annotate(variety=Count("producers__wines", distinct=True)) \
-        .annotate(avg_rating=Avg("producers__wines__rating")) \
-        .annotate(avg_price=Avg("producers__wines__purchases__price")) \
-        .order_by("-variety")[:limit]
-
+    return (
+        Regions.objects.annotate(producer_count=Count("producers", distinct=True))
+        .annotate(quantity=Sum(Coalesce("producers__wines__purchases__quantity", 1)))
+        .annotate(avg_rating=Avg("producers__wines__rating"))
+        .annotate(avg_price=Avg("producers__wines__purchases__price"))
+        .order_by("-quantity")
+    )[:limit]
 
 def purchases_by_color() -> List[Colors]:
     r"""Fetches information about the most popular wine colors in the user's
@@ -132,10 +133,11 @@ def top_grape_varieties(limit: int) -> List[Grapes]:
     `limit` parameter."""
     # TODO: possibly rewrite in SQL to better calculate average pct with
     # coalesce and wine-weighted avg price
-    return Grapes.objects.annotate(wine_varieties=Count("winegrapes__wine", distinct=True)) \
+    return Grapes.objects.annotate(
+            quantity=Sum(Coalesce("winegrapes__wine__purchases__quantity", 1))) \
         .annotate(avg_price=Avg("winegrapes__wine__purchases__price")) \
         .annotate(avg_pct=Avg("winegrapes__percent")) \
-        .order_by("-wine_varieties", "-avg_price")[:limit]
+        .order_by("-quantity")[:limit]
 
 
 def top_viti_areas(limit: int) -> List[VitiAreas]:
@@ -143,10 +145,10 @@ def top_viti_areas(limit: int) -> List[VitiAreas]:
     user's data based on the number of the number of different wine varieties
     and the number of producers from the area. The number of viticultural areas
     is controlled by the `limit` parameter."""
-    return VitiAreas.objects.annotate(varieties=Count("wines", distinct=True)) \
+    return VitiAreas.objects.annotate(quantity=Sum(Coalesce("wines__purchases__quantity", 1))) \
         .annotate(producers=Count("wines__producer", distinct=True)) \
         .annotate(avg_price=Avg("wines__purchases__price")) \
-        .order_by("-varieties", "-producers")[:limit]
+        .order_by("-quantity")[:limit]
 
 
 def dashboards(request):
