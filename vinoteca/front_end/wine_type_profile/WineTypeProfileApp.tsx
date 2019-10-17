@@ -18,6 +18,7 @@ enum TextInputs {
 interface IState {
     isEditing: boolean;
     lastActiveTextInput?: TextInputs;
+    position?: number;
     // Editable
     wineTypeText: string;
     // "Pure" state
@@ -37,13 +38,14 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.state = {
             isEditing: false,
             lastActiveTextInput: undefined,
+            position: undefined,
             wineTypeText: "",
             wineType: undefined,
             wines: [],
         }
 
         this.logger = new Logger(this.constructor.name, true);
-        this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
+        this.onWineTypeChange = this.onWineTypeChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
@@ -70,7 +72,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
                 <WineType isEditing={ this.state.isEditing }
                     wineType={ this.state.wineType }
                     wineTypeText={ this.state.wineTypeText }
-                    onWineTypeChange={ this.onVitiAreaChange }
+                    onWineTypeChange={ this.onWineTypeChange }
                     onTextInputFocus={ this.onTextInputFocus }
                     onTextInputBlur={ this.onTextInputBlur }
                     onConfirmClick={ this.onConfirmClick }
@@ -104,10 +106,11 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.setState({isEditing: true});
     }
 
-    private onVitiAreaChange(val: string) {
+    private onWineTypeChange(e: React.ChangeEvent<HTMLInputElement>) {
         this.setState({
+            position: e.target.selectionStart || undefined,
             lastActiveTextInput: TextInputs.VitiArea,
-            wineTypeText: val,
+            wineTypeText: e.target.value,
         });
     }
 

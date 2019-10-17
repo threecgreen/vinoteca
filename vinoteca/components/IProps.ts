@@ -9,7 +9,7 @@ export interface IClassesProp {
 }
 
 export interface IOnChange {
-    onChange: (val: string) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onFocus?: () => void;
     onBlur?: () => void;
 }

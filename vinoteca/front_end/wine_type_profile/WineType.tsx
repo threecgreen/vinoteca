@@ -8,7 +8,7 @@ interface IProps {
     isEditing: boolean;
     wineTypeText: string;
     wineType: IRestModel;
-    onWineTypeChange: (val: string) => void;
+    onWineTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
     onTextInputFocus: () => void;

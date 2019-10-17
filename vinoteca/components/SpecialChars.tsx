@@ -21,9 +21,18 @@ interface ISpecialCharsState {
 
 interface ILastActiveState<Enum> {
     lastActiveTextInput?: Enum;
+    position?: number;
 };
 
 export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCharsState> {
+    public static onInputChange<Enum, State extends ILastActiveState<Enum>>
+            (prevState: Readonly<State>, event: React.ChangeEvent<HTMLInputElement>): State {
+        return {
+            position: event.target.selectionStart,
+            ...prevState
+        };
+    }
+
     public static onTextInputFocus<Enum, State extends ILastActiveState<Enum>>
             (prevState: Readonly<State>, input: Enum): State {
         return {
