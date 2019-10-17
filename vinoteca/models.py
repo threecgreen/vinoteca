@@ -153,7 +153,7 @@ class Wines(models.Model):
                                   db_index=True)
     color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id",
                               null=True, db_index=True)
-    rating = models.FloatField(null=True)
+    rating = models.IntegerField(null=True)
     inventory = models.IntegerField(db_index=True)
     viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING,
                                   db_column="viti_area_id", null=True,
