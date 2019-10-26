@@ -8,7 +8,7 @@ interface IStatelessSelectInputProps {
     selection: string;
     selectText?: string;
     selectRef: React.RefObject<HTMLSelectElement>;
-    onChange: (e: string) => void;
+    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     s?: number;
     m?: number;
     l?: number;
@@ -26,7 +26,7 @@ export const StatelessSelectInput: React.FunctionComponent<IStatelessSelectInput
         <InputField s={ props.s } m={ props.m } l={ props.l }>
             <select id={ id }
                 name={ id }
-                onChange={ (e) => props.onChange(e.target.value) }
+                onChange={ props.onChange }
                 value={ props.selection || props.selectText }
                 ref={ props.selectRef }
             >

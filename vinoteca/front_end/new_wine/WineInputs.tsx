@@ -78,7 +78,7 @@ export class WineInputs extends React.Component<IProps, IState> {
         )
     }
 
-    private onColorChange(val: string) {
-        this.setState({color: val})
+    private onColorChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        this.setState({color: e.target.value})
     }
 }

@@ -4,7 +4,7 @@ import Logger from "./Logger";
 import { IDict, nameToId } from "./utils";
 import { selectById } from "./JQueryCompat";
 
-type OnChange = (text: string) => void;
+type OnChange = (e: string) => void;
 
 /** Setup autocompletion with provided completion options. */
 export function staticAutocomplete(elementId: string, completions: IDict<string | null>,

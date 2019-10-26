@@ -8,7 +8,7 @@ interface IProps {
     isEditing: boolean;
     vitiAreaText: string;
     vitiArea: IVitiArea;
-    onVitiAreaChange: (val: string) => void;
+    onVitiAreaChange: (val: React.ChangeEvent<HTMLInputElement>) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
     onTextInputFocus: () => void;

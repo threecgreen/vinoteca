@@ -4,5 +4,5 @@ import { PurchaseInputs } from "../../components/PurchaseInputs";
 import { navbar } from "../../lib/widgets";
 
 navbar("new-wine-nav");
-ReactDOM.render(createElement(PurchaseInputs, {displayInventoryBtn: true}),
+ReactDOM.render(createElement(PurchaseInputs, {displayInventoryBtn: true, memo: "", storeName: ""}),
                 document.getElementById("new-purchase-container"));

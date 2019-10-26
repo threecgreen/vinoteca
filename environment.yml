@@ -2,15 +2,15 @@ name: vinoteca
 channels:
   - defaults
 dependencies:
-  - ca-certificates=2019.5.15
-  - certifi=2019.6.16
+  - ca-certificates=2019.10.16
+  - certifi=2019.9.11
   - libedit=3.1.20170329
   - libffi=3.2.1
   - libgcc-ng=8.2.0
   - libstdcxx-ng=8.2.0
   - ncurses=6.1
   - nodejs=10.13.0
-  - openssl=1.1.1c
+  - openssl=1.1.1
   - python=3.7.1
   - readline=7.0
   - setuptools=39.2.0
@@ -37,7 +37,7 @@ dependencies:
     - more-itertools==4.2.0
     - packaging==19.1
     - pbr==5.1.1
-    - pillow==5.2.0
+    - pillow==6.2.1
     - pip==18.1
     - pluggy==0.12.0
     - py==1.5.4
@@ -59,3 +59,4 @@ dependencies:
     - wcwidth==0.1.7
     - wrapt==1.10.11
     - zipp==0.6.0
+
