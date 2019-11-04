@@ -1,0 +1,11 @@
+[package]
+name = "vinoteca"
+version = "5.0.0"
+authors = ["Carter Green <cartergr@usc.edu>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = "0.4.2"
+diesel = { version = "1.0", features = ["sqlite"] }
+dotenv = "0.9"
