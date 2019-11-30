@@ -92,7 +92,8 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
     /** Determine whether any grape has a percentage set. */
     private get hasGrapePct(): boolean {
         const len = this.state.wineGrapes.length;
-        return len > 0 && this.state.wineGrapes[len - 1].percent !== undefined;
+        const lastWineGrape = this.state.wineGrapes[len - 1];
+        return len > 0 && lastWineGrape.percent !== undefined && !isNaN(lastWineGrape.percent);
     }
 
     private get remainingGrapePct(): number {
