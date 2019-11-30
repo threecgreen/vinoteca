@@ -44,3 +44,5 @@ vinoteca.log
 data
 media
 
+# Rust
+target
