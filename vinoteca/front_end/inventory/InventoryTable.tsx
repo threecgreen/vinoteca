@@ -35,7 +35,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            ascending: false,
+            ascending: true,
             sorting: SortingValue.PurchaseDate,
         };
     }
