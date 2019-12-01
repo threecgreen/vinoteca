@@ -65,7 +65,8 @@ export function numToDate(num: number): Date {
     const year = strNum.substr(0, 4);
     const month = strNum.substr(4, 2);
     const day = strNum.substr(6, 2);
-    return new Date(`${year}-${month}-${day}`);
+    // JS months are 0-based
+    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 }
 
 /**

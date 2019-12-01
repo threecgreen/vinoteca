@@ -1,7 +1,6 @@
-import { format } from "date-fns";
+import format from "date-fns/format";
 import * as React from "react";
 import { capitalizeFirstLetter, numToDate } from "../lib/utils";
-import { Wine } from "../lib/RestTypes";
 
 const EN_DASH: string = "–";
 
@@ -67,7 +66,7 @@ interface IDateCellProps {
     date?: number;
 }
 export const DateCell: React.FunctionComponent<IDateCellProps> = (props) => {
-    const dateStr = props.date ? format(numToDate(props.date), "MMM DD, YYYY") : EN_DASH;
+    const dateStr = props.date ? format(numToDate(props.date), "MMM dd, yyyy") : EN_DASH;
     return (
         <td>{ dateStr }</td>
     );
