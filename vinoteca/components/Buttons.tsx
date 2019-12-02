@@ -5,6 +5,7 @@ import { MaterialIcon } from "./MaterialIcon";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+    onMouseDown?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
 
 function combineClasses(classes: string[] | undefined): string {
@@ -13,16 +14,23 @@ function combineClasses(classes: string[] | undefined): string {
 
 export const FloatingBtn: React.FunctionComponent<IFloatingBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
+    const mouseDown = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        if (props.onMouseDown) {
+            props.onMouseDown(e)
+        }
+    }
     return (
         <a href="#"
             className={ `waves-effect waves-light btn-floating ${classes}` }
             onClick={ props.onClick }
+            onMouseDown={ mouseDown }
         >
             { props.children }
         </a>
     );
 };
 FloatingBtn.displayName = "FloatingBtn";
+FloatingBtn.defaultProps = { onMouseDown: (_) => undefined };
 
 interface IBtnProps extends IChildrenProp, IClassesProp {
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;

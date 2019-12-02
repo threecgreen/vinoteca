@@ -40,27 +40,27 @@ export class SimpleSpecialChars extends React.Component<IProps, IState> {
 
     public render() {
         const classes = ["special-chars"];
-        if (this.props.display) {
-            return (
-                <Row classes={ classes.concat(this.props.classes || []) }>
-                    {/* Shift button */}
-                    <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
-                                 onClick={ this.handleShift.bind(this) } >
-                        { this.state.currentCase === Case.Lower ? "↑" : "↓" }
-                    </FloatingBtn>
-                    { this.state.chars.map((char) => {
-                        return (
-                            <SpecialCharBtn char={ char }
-                                key={ char }
-                                onClick={ this.props.onClick }
-                            />
-                        );
-                    }) }
-                </Row>
-            );
-        } else {
-            return null;
-        }
+        return (
+            <Row classes={ classes.concat(this.props.classes || []) }
+                style={{display: this.props.display ? "inherit" : "none" }}
+            >
+                {/* Shift button */}
+                <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
+                    onClick={ (_) => undefined }
+                    onMouseDown={ this.handleShift.bind(this) }
+                >
+                    { this.state.currentCase === Case.Lower ? "↑" : "↓" }
+                </FloatingBtn>
+                { this.state.chars.map((char) => {
+                    return (
+                        <SpecialCharBtn char={ char }
+                            key={ char }
+                            onClick={ (e, c) => this.props.onClick(e, c) }
+                        />
+                    );
+                }) }
+            </Row>
+        );
     }
 
     public handleShift(e: React.MouseEvent) {

@@ -30,12 +30,15 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
         enabled: true,
     }
 
+    private timestamp: Date;
+
     constructor(props: IProps) {
         super(props);
         this.state = {
             isActive: false,
             position: NaN,
         }
+        this.timestamp = new Date();
     }
 
     public render() {
@@ -46,6 +49,7 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
                     onChangeEvent={ (e) => this.onChangeEvent(e) }
                     onBlur={ () => this.onBlur() }
                     onFocus={ () => this.onFocus() }
+                    onKeyDown={ (e) => this.onKeyDown(e) }
                     { ...this.props }
                 />
                 <SimpleSpecialChars
@@ -59,6 +63,7 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
         e.preventDefault();
         this.setState((prevState) => ({
+            isActive: true,
             position: prevState.position + 1,
         }));
         this.props.onSpecialCharClick(char, this.state.position);
@@ -72,6 +77,17 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
         this.props.onChange(e.target.value);
     }
 
+    private onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+        setTimeout(() => {
+            const selection = window.getSelection()
+            if (selection) {
+                this.setState({
+                    position: selection.getRangeAt(0).endOffset,
+                });
+            }
+        }, 0);
+    }
+
     private onFocus() {
         this.setState({
             isActive: true
@@ -82,10 +98,11 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
     }
 
     private onBlur() {
-        this.setState({
-            // TODO: check if special characters in use
-            isActive: false,
-        })
+        const now = new Date()
+        // @ts-ignore
+        if (now - this.timestamp > 100) {
+            this.setState({isActive: false});
+        }
         if (this.props.onBlur) {
             this.props.onBlur();
         }

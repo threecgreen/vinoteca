@@ -10,7 +10,8 @@ export const SpecialCharBtn: React.FunctionComponent<ISpecialCharBtnProps> = (pr
     const classes = ["btn-small", "center", "spec-char-btn"];
     return (
         <FloatingBtn classes={ classes }
-            onClick={ (e) => props.onClick(e, props.char) }
+            onClick={ () => undefined }
+            onMouseDown={ (e) => props.onClick(e, props.char) }
         >
             { props.char }
         </FloatingBtn>
