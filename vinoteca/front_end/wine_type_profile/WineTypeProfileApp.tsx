@@ -9,16 +9,10 @@ import { getWineType, getWines, updateWineType } from "../../lib/RestApi";
 import { Wine, IRestModel } from "../../lib/RestTypes";
 import { WineType } from "./WineType";
 import { WineTypeWinesTable } from "./WineTypeWinesTable";
-import { SpecialChars } from "../../components/SpecialChars";
-
-enum TextInputs {
-    VitiArea
-};
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 interface IState {
     isEditing: boolean;
-    lastActiveTextInput?: TextInputs;
-    position?: number;
     // Editable
     wineTypeText: string;
     // "Pure" state
@@ -37,8 +31,6 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             isEditing: false,
-            lastActiveTextInput: undefined,
-            position: undefined,
             wineTypeText: "",
             wineType: undefined,
             wines: [],
@@ -49,9 +41,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
-        this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        this.onTextInputBlur = this.onTextInputBlur.bind(this);
+        this.onWineTypeSpecialCharClick = this.onWineTypeSpecialCharClick.bind(this);
     }
 
     public componentDidMount() {
@@ -73,13 +63,9 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
                     wineType={ this.state.wineType }
                     wineTypeText={ this.state.wineTypeText }
                     onWineTypeChange={ this.onWineTypeChange }
-                    onTextInputFocus={ this.onTextInputFocus }
-                    onTextInputBlur={ this.onTextInputBlur }
+                    onWineTypeSpecialCharClick={ this.onWineTypeSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
-                />
-                <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
                     <Col s={ 12 } classes={ ["fixed-action-div"] }>
@@ -106,12 +92,16 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.setState({isEditing: true});
     }
 
-    private onWineTypeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    private onWineTypeChange(val: string) {
         this.setState({
-            position: e.target.selectionStart || undefined,
-            lastActiveTextInput: TextInputs.VitiArea,
-            wineTypeText: e.target.value,
+            wineTypeText: val,
         });
+    }
+
+    private onWineTypeSpecialCharClick(char: string, position: number) {
+        this.setState((prevState) => ({
+            wineTypeText: SimpleSpecialChars.insertCharAt(prevState.wineTypeText, char, position),
+        }));
     }
 
     private onConfirmClick(e: React.MouseEvent) {
@@ -130,21 +120,6 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.setState((state) => ({
             isEditing: false,
             wineTypeText: state.wineType ? state.wineType.name : "",
-        }));
-    }
-
-    private onTextInputFocus() {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.VitiArea));
-    }
-
-    private onTextInputBlur() {
-        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.VitiArea));
-    }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
-        this.setState((prevState) => ({
-            wineTypeText: prevState.wineTypeText + char,
         }));
     }
 }

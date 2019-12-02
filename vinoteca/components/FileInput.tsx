@@ -1,6 +1,5 @@
 import * as React from "react";
 import { nameToId } from "../lib/utils";
-import { Col } from "./Grid";
 
 interface IProps {
     name: string;

@@ -8,6 +8,7 @@ import { StatelessTextInput } from "./StatelessTextInput";
 
 interface IWineTypeInputProps extends IOnChange {
     value: string;
+    onSpecialCharClick: (c: string, position: number) => void;
 }
 
 interface IWineTypeInputState {

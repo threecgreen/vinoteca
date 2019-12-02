@@ -8,51 +8,26 @@ enum Case {
     Lower,
 }
 
-interface ISpecialCharsProps {
-    onClick: (e: React.MouseEvent, char: string) => void;
+interface IProps {
+    onClick: (event: React.MouseEvent, char: string) => void;
     classes?: string[];
     display: boolean;
 }
 
-interface ISpecialCharsState {
+interface IState {
     chars: string[];
     currentCase: Case;
 }
 
-interface ILastActiveState<Enum> {
-    lastActiveTextInput?: Enum;
-    position: number;
-};
-
-export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCharsState> {
-    public static onInputChange<Enum, State extends ILastActiveState<Enum>>
-            (prevState: Readonly<State>, event: React.ChangeEvent<HTMLInputElement>): State {
-        return {
-            position: event.target.selectionStart,
-            ...prevState
-        };
-    }
-
-    public static onTextInputFocus<Enum, State extends ILastActiveState<Enum>>
-            (prevState: Readonly<State>, input: Enum): State {
-        return {
-            lastActiveTextInput: input,
-            ...prevState,
-        };
-    }
-
-    public static onTextInputBlur<Enum, State extends ILastActiveState<Enum>>
-            (prevState: Readonly<State>, input: Enum): State {
-        if (prevState.lastActiveTextInput === input) {
-            return {
-                lastActiveTextInput: undefined,
-                ...prevState,
-            };
+export class SimpleSpecialChars extends React.Component<IProps, IState> {
+    public static insertCharAt(val: string, char: string, position: number) {
+        if (isNaN(position)) {
+            return val + char;
         }
-        return prevState;
+        return val.substr(0, position + 1) + char + val.substr(position + 1);
     }
 
-    constructor(props: ISpecialCharsProps) {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             chars: [
@@ -104,3 +79,4 @@ export class SpecialChars extends React.Component<ISpecialCharsProps, ISpecialCh
         });
     }
 }
+

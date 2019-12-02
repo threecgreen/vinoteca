@@ -1,13 +1,13 @@
 import * as React from "react";
 import { ColorInput } from "../../components/ColorInput";
-import { NewWineTextInput } from "./NewWineApp";
-import { WineTypeInput } from "../../components/WineTypeInput";
-import { ProducerInput } from "../../components/ProducerInput";
-import { RegionInput } from "../../components/RegionInput";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
-import { StatelessTextInput } from "../../components/StatelessTextInput";
-import { RatingInput } from "../../components/RatingInput";
 import { FileInput } from "../../components/FileInput";
+import { ProducerInput } from "../../components/ProducerInput";
+import { RatingInput } from "../../components/RatingInput";
+import { RegionInput } from "../../components/RegionInput";
+import { StatelessTextInput } from "../../components/StatelessTextInput";
+import { VitiAreaInput } from "../../components/VitiAreaInput";
+import { WineTypeInput } from "../../components/WineTypeInput";
+import { NewWineTextInput } from "./NewWineApp";
 
 interface IProps {
     wineType: string;
@@ -19,7 +19,7 @@ interface IProps {
     description: string;
     notes: string;
     onInputChange: (input: NewWineTextInput, val: string) => void;
-    onInputFocus: (input: NewWineTextInput) => void;
+    onSpecialCharClick: (input: NewWineTextInput, c: string, position: number) => void;
 }
 
 interface IState {
@@ -46,39 +46,39 @@ export class WineInputs extends React.Component<IProps, IState> {
                 />
                 <WineTypeInput value={ this.props.wineType }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.WineType, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.WineType) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.WineType, c, p) }
                 />
                 <ProducerInput value={ this.props.producer }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Producer, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.Producer) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Producer, c, p) }
                 />
                 <RegionInput value={ this.props.region }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Region, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.Region) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Region, c, p) }
                 />
                 <RatingInput />
                 <VitiAreaInput value={ this.props.vitiArea }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.VitiArea, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.VitiArea) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.VitiArea, c, p) }
                 />
                 <StatelessTextInput name="Description" className=""
                     s={ 12 } l={ 6 }
                     value={ this.props.description }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Description, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.Description) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Description, c, p) }
                 />
                 <StatelessTextInput name="Notes" className=""
                     s={ 12 } l={ 6 }
                     value={ this.props.notes }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Notes, v) }
-                    onFocus={ () => this.props.onInputFocus(NewWineTextInput.Notes) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Notes, c, p) }
                 />
                 <FileInput name="Wine Image" />
             </React.Fragment>
         )
     }
 
-    private onColorChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        this.setState({color: e.target.value})
+    private onColorChange(val: string) {
+        this.setState({color: val})
     }
 }

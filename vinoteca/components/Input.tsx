@@ -3,7 +3,7 @@ import * as M from "materialize-css";
 import { nameToId } from "../lib/utils";
 import { InputField } from "./Grid";
 
-type IInputValue = string | number | string[] | File;
+type IInputValue = string | number | string[];
 
 export interface IInputProps<T extends IInputValue> {
     name: string;
@@ -11,6 +11,7 @@ export interface IInputProps<T extends IInputValue> {
     enabled: boolean;
     className: string;
     onChange: (val: string) => void;
+    onChangeEvent: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onFocus: () => void;
     onBlur: () => void;
     inputType?: string;
@@ -30,6 +31,8 @@ export interface IInputProps<T extends IInputValue> {
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
     public static defaultProps = {
         enabled: true,
+        onChange: () => undefined,
+        onChangeEvent: (_: React.ChangeEvent<HTMLInputElement>) => undefined,
         onFocus: () => undefined,
         onBlur: () => undefined,
     };
@@ -45,7 +48,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     value={ this.props.value }
                     disabled={ !this.props.enabled }
                     step={ this.props.step } min={ this.props.min } max={ this.props.max }
-                    onChange={ (e) => this.props.onChange(e.target.value) }
+                    onChange={ (e) => this.onChange(e) }
                     onFocus={ () => this.props.onFocus() }
                     onBlur={ () => this.props.onBlur() }
                 >
@@ -59,6 +62,11 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
 
     public componentDidUpdate() {
         M.updateTextFields();
+    }
+
+    public onChange(e: React.ChangeEvent<HTMLInputElement>) {
+        this.props.onChangeEvent(e);
+        this.props.onChange(e.target.value);
     }
 }
 

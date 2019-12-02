@@ -34,7 +34,7 @@ export class PurchaseInputs extends React.Component<IProps, IState> {
             : null;
         const [quantityS, quantityL] = this.calcQuantitySize();
         return (
-            <React.Fragment>
+            <>
                 <DateInput />
                 <NumberInput id="quantity" name="Quantity" className="validate"
                              initNumber={ this.state.quantity } enabled={ true }
@@ -53,7 +53,7 @@ export class PurchaseInputs extends React.Component<IProps, IState> {
                 <TextInput name="Memo" autocomplete={ false }
                     initText={ this.props.memo } enabled className="" s={ 6 } l={ 3 }
                 />
-            </React.Fragment>
+            </>
         );
     }
 

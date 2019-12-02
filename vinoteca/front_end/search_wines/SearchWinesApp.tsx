@@ -1,12 +1,12 @@
 import * as React from "react";
+import { Btn } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { ISearchWinesResult } from "../../lib/RestTypes";
 import { SearchWinesForm } from "./SearchWinesForm";
-import { SearchWinesResults, ResultState } from "./SearchWinesResults";
-import { SpecialChars } from "../../components/SpecialChars";
-import { Btn } from "../../components/Buttons";
+import { ResultState, SearchWinesResults } from "./SearchWinesResults";
 
 export class WineResult {
     public id: number;
@@ -72,8 +72,6 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         this.logger = new Logger(this.constructor.name),
         this.querySearchResults = this.querySearchResults.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
-        this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        // this.onTextInputBlur = this.onTextInputBlur.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onResetClick = this.onResetClick.bind(this);
     }
@@ -89,9 +87,6 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                         Reset Filters
                     </Btn>
                 </Row>
-                <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.lastActiveTextInput !== undefined }
-                />
                 <SearchWinesForm
                     colorSelection={ this.state.colorSelection }
                     wineTypeText={ this.state.wineTypeText }
@@ -99,8 +94,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                     regionText={ this.state.regionText }
                     vitiAreaText={ this.state.vitiAreaText }
                     onInputChange={ this.onInputChange }
-                    onTextInputFocus={ this.onTextInputFocus }
-                    // onTextInputBlur={ this.onTextInputBlur }
+                    onSpecialCharClick={ this.onSpecialCharClick }
                 />
                 <SearchWinesResults results={ this.state.results }
                     resultState={ this.state.resultState }
@@ -126,33 +120,24 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         }
     }
 
-    private onTextInputFocus(input: SearchWinesTextInput) {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
-    }
-
-    // private onTextInputBlur(input: SearchWinesTextInput) {
-    //     this.setState(prevState => SpecialChars.onTextInputBlur(prevState, input));
-    // }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
-        switch (this.state.lastActiveTextInput) {
+    private onSpecialCharClick(input: SearchWinesTextInput, char: string, position: number) {
+        switch (input) {
             case SearchWinesTextInput.WineType:
                 return this.setState((prevState) => ({
-                    wineTypeText: prevState.wineTypeText + char,
+                    wineTypeText: SimpleSpecialChars.insertCharAt(prevState.wineTypeText, char, position),
                 // callback to query
                 }), this.querySearchResults);
             case SearchWinesTextInput.Producer:
                 return this.setState((prevState) => ({
-                    producerText: prevState.producerText + char,
+                    producerText: SimpleSpecialChars.insertCharAt(prevState.producerText, char, position),
                 }), this.querySearchResults);
             case SearchWinesTextInput.Region:
                 return this.setState((prevState) => ({
-                    regionText: prevState.regionText + char,
+                    regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
                 }), this.querySearchResults);
             case SearchWinesTextInput.VitiArea:
                 return this.setState((prevState) => ({
-                    vitiAreaText: prevState.vitiAreaText + char,
+                    vitiAreaText: SimpleSpecialChars.insertCharAt(prevState.vitiAreaText, char, position),
                 }), this.querySearchResults);
             default:
                 this.logger.logError("The special char controller should not be displayed"

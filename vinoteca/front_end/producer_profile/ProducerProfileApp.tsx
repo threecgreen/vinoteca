@@ -4,12 +4,12 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
-import { getProducer, getRegion, getWines, createRegion, updateProducer, EmptyResultError } from "../../lib/RestApi";
+import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
 import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
 import { Producer } from "./Producer";
 import { ProducerWinesTable } from "./ProducerWinesTable";
-import { SpecialChars } from "../../components/SpecialChars";
 
 export enum ProducerProfileTextInput {
     Producer,
@@ -49,7 +49,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
-        this.onTextInputFocus = this.onTextInputFocus.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
@@ -76,12 +75,9 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     region={ this.state.region }
                     regionText={ this.state.regionText }
                     onRegionChange={ this.onRegionChange }
-                    onTextInputFocus={ this.onTextInputFocus }
+                    onSpecialCharClick={ this.onSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
-                />
-                <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
@@ -146,20 +142,15 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         });
     }
 
-    private onTextInputFocus(input: ProducerProfileTextInput) {
-        this.setState({lastActiveTextInput: input});
-    }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
-        switch (this.state.lastActiveTextInput) {
+    private onSpecialCharClick(input: ProducerProfileTextInput, char: string, position: number) {
+        switch (input) {
             case ProducerProfileTextInput.Producer:
                 return this.setState((prevState) => ({
-                    producerText: prevState.producerText + char,
+                    producerText: SimpleSpecialChars.insertCharAt(prevState.producerText, char, position),
                 }));
             case ProducerProfileTextInput.Region:
                 return this.setState((prevState) => ({
-                    regionText: prevState.regionText + char,
+                    regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
                 }));
             default:
                 this.logger.logError("The special char controller should not be displayed"

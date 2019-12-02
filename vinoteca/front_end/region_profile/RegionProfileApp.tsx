@@ -10,15 +10,10 @@ import { IRegion, VitiAreaStats, Wine } from "../../lib/RestTypes";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
-import { SpecialChars } from "../../components/SpecialChars";
-
-enum TextInputs {
-    Region
-};
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 interface IState {
     isEditing: boolean;
-    lastActiveTextInput?: TextInputs;
     // Editable
     regionText: string;
     // "Pure" state
@@ -38,7 +33,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             isEditing: false,
-            lastActiveTextInput: undefined,
             regionText: "",
             region: undefined,
             wines: [],
@@ -51,8 +45,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
-        this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        this.onTextInputBlur = this.onTextInputBlur.bind(this);
     }
 
     public componentDidMount() {
@@ -78,13 +70,9 @@ export class RegionProfile extends React.Component<IProps, IState> {
                     region={ this.state.region }
                     regionText={ this.state.regionText }
                     onRegionChange={ this.onRegionChange }
-                    onTextInputFocus={ this.onTextInputFocus }
-                    onTextInputBlur={ this.onTextInputBlur }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
-                />
-                <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.isEditing && this.state.lastActiveTextInput !== undefined }
+                    onRegionSpecialCharClick={ this.onSpecialCharClick }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
@@ -117,7 +105,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
 
     private onRegionChange(val: string) {
         this.setState({
-            lastActiveTextInput: TextInputs.Region,
             regionText: val,
         });
     }
@@ -141,18 +128,9 @@ export class RegionProfile extends React.Component<IProps, IState> {
         }));
     }
 
-    private onTextInputFocus() {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.Region));
-    }
-
-    private onTextInputBlur() {
-        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.Region));
-    }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
+    private onSpecialCharClick(char: string, position: number) {
         this.setState((prevState) => ({
-            regionText: prevState.regionText + char,
+            regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
         }));
     }
 }

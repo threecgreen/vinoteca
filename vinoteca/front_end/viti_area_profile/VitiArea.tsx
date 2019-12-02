@@ -8,11 +8,10 @@ interface IProps {
     isEditing: boolean;
     vitiAreaText: string;
     vitiArea: IVitiArea;
-    onVitiAreaChange: (val: React.ChangeEvent<HTMLInputElement>) => void;
+    onVitiAreaChange: (val: string) => void;
+    onVitiAreaSpecialCharClick: (c: string, position: number) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
-    onTextInputFocus: () => void;
-    onTextInputBlur: () => void;
 }
 
 // TODO: stats component?
@@ -56,8 +55,7 @@ export class VitiArea extends React.Component<IProps, IState> {
                     <form autoComplete="off">
                         <VitiAreaInput value={ this.props.vitiAreaText }
                             onChange={ this.props.onVitiAreaChange }
-                            onFocus={ this.props.onTextInputFocus }
-                            onBlur={ this.props.onTextInputBlur }
+                            onSpecialCharClick={ this.props.onVitiAreaSpecialCharClick }
                         />
                     </form>
                 </Col>

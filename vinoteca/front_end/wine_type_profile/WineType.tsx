@@ -8,11 +8,10 @@ interface IProps {
     isEditing: boolean;
     wineTypeText: string;
     wineType: IRestModel;
-    onWineTypeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onWineTypeChange: (val: string) => void;
+    onWineTypeSpecialCharClick: (c: string, position: number) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
-    onTextInputFocus: () => void;
-    onTextInputBlur: () => void;
 }
 
 export class WineType extends React.Component<IProps> {
@@ -50,8 +49,7 @@ export class WineType extends React.Component<IProps> {
                     <form autoComplete="off">
                         <VitiAreaInput value={ this.props.wineTypeText }
                             onChange={ this.props.onWineTypeChange }
-                            onFocus={ this.props.onTextInputFocus }
-                            onBlur={ this.props.onTextInputBlur }
+                            onSpecialCharClick={ this.props.onWineTypeSpecialCharClick }
                         />
                     </form>
                 </Col>

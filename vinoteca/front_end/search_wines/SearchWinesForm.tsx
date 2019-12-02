@@ -14,8 +14,7 @@ interface IProps {
     regionText: string;
     vitiAreaText: string;
     onInputChange: (input: SearchWinesInput, val: string) => void;
-    onTextInputFocus: (input: SearchWinesTextInput) => void;
-    // onTextInputBlur: (input: SearchWinesTextInput) => void;
+    onSpecialCharClick: (input: SearchWinesTextInput, c: string, position: number) => void;
 }
 
 export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
@@ -28,24 +27,20 @@ export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
                 />
                 <WineTypeInput value={ props.wineTypeText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.WineType, v) }
-                    onFocus={ () => props.onTextInputFocus(SearchWinesTextInput.WineType) }
-                    // onBlur={ () => props.onTextInputBlur(SearchWinesTextInput.WineType) }
+                    onSpecialCharClick={ (c, p) => props.onSpecialCharClick(SearchWinesTextInput.WineType, c, p) }
                 />
                 <ProducerInput value={ props.producerText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Producer, v) }
-                    onFocus={ () => props.onTextInputFocus(SearchWinesTextInput.Producer) }
-                    // onBlur={ () => props.onTextInputBlur(SearchWinesTextInput.Producer) }
+                    onSpecialCharClick={ (c, p) => props.onSpecialCharClick(SearchWinesTextInput.Producer, c, p) }
                 />
                 <RegionInput value={ props.regionText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Region, v) }
+                    onSpecialCharClick={ (c, p) => props.onSpecialCharClick(SearchWinesTextInput.Region, c, p) }
                     producerFilter={ props.producerText }
-                    onFocus={ () => props.onTextInputFocus(SearchWinesTextInput.Region) }
-                    // onBlur={ () => props.onTextInputBlur(SearchWinesTextInput.Region) }
                 />
                 <VitiAreaInput value={ props.vitiAreaText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.VitiArea, v) }
-                    onFocus={ () => props.onTextInputFocus(SearchWinesTextInput.VitiArea) }
-                    // onBlur={ () => props.onTextInputBlur(SearchWinesTextInput.VitiArea) }
+                    onSpecialCharClick={ (c, p) => props.onSpecialCharClick(SearchWinesTextInput.VitiArea, c, p) }
                 />
             </Row>
         </form>

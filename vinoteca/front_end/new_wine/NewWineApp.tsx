@@ -7,6 +7,7 @@ import { PurchaseInputs } from "../../components/PurchaseInputs";
 import { SpecialChars } from "../../components/SpecialChars";
 import Logger from "../../lib/Logger";
 import { WineInputs } from "./WineInputs";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 export enum NewWineTextInput {
     StoreName,
@@ -32,7 +33,6 @@ interface IState {
     vitiArea: string;
     description: string;
     notes: string;
-    lastActiveTextInput?: NewWineTextInput;
 }
 
 export class NewWineApp extends React.Component<{}, IState> {
@@ -75,14 +75,11 @@ export class NewWineApp extends React.Component<{}, IState> {
                             description={ this.state.description }
                             notes={ this.state.notes }
                             onInputChange={ (i, v) => this.onInputChange(i, v) }
-                            onInputFocus={ (i) => this.onInputFocus(i) }
+                            onSpecialCharClick={ (i, c, p) => this.onSpecialCharClick(i, c, p) }
                         />
                     </Row>
                     {/* TODO: make grape form not an app so special characters work */}
                     <GrapeFormApp />
-                    <SpecialChars display={ this.state.lastActiveTextInput !== undefined }
-                        onClick={ (e, c) => this.onSpecialCharClick(e, c) }
-                    />
                     <button className="btn waves-effect waves-light green-bg" type="submit"
                         name="action"
                     >
@@ -126,36 +123,31 @@ export class NewWineApp extends React.Component<{}, IState> {
         }
     }
 
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
-        switch (this.state.lastActiveTextInput) {
+    private onSpecialCharClick(input: NewWineTextInput, char: string, position: number) {
+        switch (input) {
             case NewWineTextInput.StoreName:
-                return this.setState((prevState) => ({storeName: prevState.storeName + char}));
+                return this.setState((prevState) => ({storeName: SimpleSpecialChars.insertCharAt(prevState.storeName, char, position)}));
             case NewWineTextInput.Memo:
-                return this.setState((prevState) => ({memo: prevState.memo + char}));
+                return this.setState((prevState) => ({memo: SimpleSpecialChars.insertCharAt(prevState.memo, char, position)}));
             case NewWineTextInput.WineType:
-                return this.setState((prevState) => ({wineType: prevState.wineType + char}));
+                return this.setState((prevState) => ({memo: SimpleSpecialChars.insertCharAt(prevState.memo, char, position)}));
             case NewWineTextInput.Producer:
-                return this.setState((prevState) => ({producer: prevState.producer + char}));
+                return this.setState((prevState) => ({producer: SimpleSpecialChars.insertCharAt(prevState.producer, char, position)}));
             case NewWineTextInput.Region:
-                return this.setState((prevState) => ({region: prevState.region + char}));
+                return this.setState((prevState) => ({region: SimpleSpecialChars.insertCharAt(prevState.region, char, position)}));
             case NewWineTextInput.Name:
-                return this.setState((prevState) => ({name: prevState.name + char}));
+                return this.setState((prevState) => ({name: SimpleSpecialChars.insertCharAt(prevState.name, char, position)}));
             case NewWineTextInput.Why:
-                return this.setState((prevState) => ({why: prevState.why + char}));
+                return this.setState((prevState) => ({why: SimpleSpecialChars.insertCharAt(prevState.why, char, position)}));
             case NewWineTextInput.VitiArea:
-                return this.setState((prevState) => ({vitiArea: prevState.vitiArea + char}));
+                return this.setState((prevState) => ({vitiArea: SimpleSpecialChars.insertCharAt(prevState.vitiArea, char, position)}));
             case NewWineTextInput.Description:
-                return this.setState((prevState) => ({description: prevState.description + char}));
+                return this.setState((prevState) => ({description: SimpleSpecialChars.insertCharAt(prevState.description, char, position)}));
             case NewWineTextInput.Notes:
-                return this.setState((prevState) => ({notes: prevState.notes + char}));
+                return this.setState((prevState) => ({notes: SimpleSpecialChars.insertCharAt(prevState.notes, char, position)}));
             default:
                 this.logger.logError("The special char controller should not be displayed"
                                      + " before a text input has come into focus.");
         }
-    }
-
-    private onInputFocus(input: NewWineTextInput) {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, input));
     }
 }

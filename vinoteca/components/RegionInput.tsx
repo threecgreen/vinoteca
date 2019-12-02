@@ -10,6 +10,7 @@ import { getRegions, EmptyResultError } from "../lib/RestApi";
 interface IRegionInputProps extends IOnChange {
     value: string;
     producerFilter?: string;
+    onSpecialCharClick: (c: string, position: number) => void;
 }
 
 interface IRegionInputState {

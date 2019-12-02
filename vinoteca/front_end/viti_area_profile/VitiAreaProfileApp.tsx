@@ -9,16 +9,11 @@ import { getVitiArea, getWines, updateVitiArea, getVitiAreaStats } from "../../l
 import { IVitiArea, VitiAreaStats, Wine, IVitiAreaStats } from "../../lib/RestTypes";
 import { VitiArea } from "./VitiArea";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
-import { SpecialChars } from "../../components/SpecialChars";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
-
-enum TextInputs {
-    VitiArea
-};
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 interface IVitiAreaProfileState {
     isEditing: boolean;
-    lastActiveTextInput?: TextInputs;
     // Editable
     vitiAreaText: string;
     // "Pure" state
@@ -38,7 +33,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         super(props);
         this.state = {
             isEditing: false,
-            lastActiveTextInput: TextInputs.VitiArea,
             vitiAreaText: "",
             vitiArea: undefined,
             wines: [],
@@ -51,8 +45,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
-        this.onTextInputFocus = this.onTextInputFocus.bind(this);
-        this.onTextInputBlur = this.onTextInputBlur.bind(this);
     }
 
     public componentDidMount() {
@@ -78,13 +70,9 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
                     vitiArea={ this.state.vitiArea }
                     vitiAreaText={ this.state.vitiAreaText }
                     onVitiAreaChange={ this.onVitiAreaChange }
-                    onTextInputFocus={ this.onTextInputFocus }
-                    onTextInputBlur={ this.onTextInputBlur }
+                    onVitiAreaSpecialCharClick={ this.onSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
-                />
-                <SpecialChars onClick={ this.onSpecialCharClick }
-                    display={ this.state.isEditing }
                 />
                 <Row>
                     <Col s={ 6 }>
@@ -139,18 +127,9 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         }));
     }
 
-    private onTextInputFocus() {
-        this.setState((prevState) => SpecialChars.onTextInputFocus(prevState, TextInputs.VitiArea));
-    }
-
-    private onTextInputBlur() {
-        this.setState((prevState) => SpecialChars.onTextInputBlur(prevState, TextInputs.VitiArea));
-    }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        e.preventDefault();
+    private onSpecialCharClick(char: string, position: number) {
         this.setState((prevState) => ({
-            vitiAreaText: prevState.vitiAreaText + char,
+            vitiAreaText: SimpleSpecialChars.insertCharAt(prevState.vitiAreaText, char, position),
         }));
     }
 }

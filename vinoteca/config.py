@@ -30,7 +30,7 @@ class ConfigurationManager(object):
     def _load_or_default(self, path: Path):
         with open(path, "r") as fin:
             LOGGER.debug(f"Loaded configuration file at path '{path}'")
-            config = yaml.load(fin.read())
+            config = yaml.safe_load(fin.read())
             # Iterate through attributes and set them
             for setting, _ in self.__dict__.items():
                 val = config.get(setting, "")
