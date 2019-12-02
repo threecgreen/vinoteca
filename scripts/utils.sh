@@ -94,7 +94,7 @@ js_install_and_build()
 {
     info_text "Installing JavaScript dependencies..."
     check_for_node
-    cd vinoteca
+    cd "$root_dir/vinoteca"
     "$py_env/npm" ci || error_exit "Failed installing JavaScript dependencies"
     info_text "Building webpack bundles..."
     "$py_env/npm" run-script build || error_exit "Failed building webpack bundles"

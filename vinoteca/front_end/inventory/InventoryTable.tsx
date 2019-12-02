@@ -35,7 +35,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
-            ascending: false,
+            ascending: true,
             sorting: SortingValue.PurchaseDate,
         };
     }
@@ -111,7 +111,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                 </RegionCell>
                                 <YearCell year={ wine.vintage } />
                                 <DateCell date={ wine.lastPurchasedDate } />
-                                <PriceCell price={ wine.avgPrice } />
+                                <PriceCell price={ wine.lastPurchasedPrice } />
                             </tr>
                         );
                     })}

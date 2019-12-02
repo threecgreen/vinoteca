@@ -64,7 +64,7 @@ check_for_install
 
 # Javascript
 js_install_and_build
-cd vinoteca
+cd "$root_dir/vinoteca"
 "$py_env/npm" prune
 cd -
 
