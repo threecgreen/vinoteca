@@ -150,22 +150,22 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         this.setState(SearchWinesApp.defaultState);
     }
 
-    private querySearchResults() {
+    private async querySearchResults() {
         this.setState({resultState: ResultState.Searching});
-        get("/rest/wines/search/", {
+        const results: ISearchWinesResult[] = await get("/rest/wines/search/", {
             color: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
             wine_type: this.state.wineTypeText,
             producer: this.state.producerText,
             region: this.state.regionText,
             viti_area: this.state.vitiAreaText,
-        }).then((results: ISearchWinesResult[]) => {
+        });
+        try {
             this.setState({
                 results: results.map((r) => new WineResult(r)),
                 resultState: ResultState.HasSearched,
             });
-        }).catch((error) => {
+        } catch (error) {
             this.logger.logError(`"Error fetching search results: ${error}`);
-            return false;
-        });
+        }
     }
 }

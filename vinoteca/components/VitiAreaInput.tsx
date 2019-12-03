@@ -27,14 +27,14 @@ export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAre
     public componentDidMount() {
         get("/rest/viti-areas/all/")
             .then((producers: IDict<string>) => {
-                staticAutocomplete(nameToId("VitiArea"), producers, this.props.onChange);
+                staticAutocomplete(nameToId("Viti Area"), producers, this.props.onChange);
             })
             .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
     }
 
     public render() {
         return (
-            <StatelessTextInput name="VitiArea"
+            <StatelessTextInput name="Viti Area"
                 className="autocomplete"
                 s={ 8 } l={ 4 }
                 { ...this.props }
