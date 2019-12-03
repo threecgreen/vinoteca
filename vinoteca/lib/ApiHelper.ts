@@ -15,7 +15,7 @@ function encodeParams(params: IQueryParams): string {
     return "?" + Object.entries(params).map(([k, v]) => `${k}=${v}`).join("&");
 }
 
-async function checkResponse(response: Response): Promise<any>  {
+async function checkResponse(response: Response): Promise<any> {
     try {
         if (response.status > 310) {
             return Promise.reject(response.json());
@@ -36,8 +36,8 @@ async function checkResponse(response: Response): Promise<any>  {
  * @param params An optional dictionary of parameters to their values
  */
 export async function get(url: string, params: IQueryParams = {}): Promise<any> {
-    return fetch(url + encodeParams(params))
-        .then((response) => checkResponse(response));
+    const response = await fetch(url + encodeParams(params))
+    return checkResponse(response);
 }
 
 /**
@@ -48,11 +48,12 @@ export async function get(url: string, params: IQueryParams = {}): Promise<any> 
  * @param params An optional dictionary of parameters to their values
  */
 export async function post(url: string, body: object, params: IQueryParams = {}): Promise<any> {
-    return fetch(url + encodeParams(params), {
+    const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers,
-        method: "POST",
-    }).then((response) => checkResponse(response));
+        method: "POST"
+    });
+    return checkResponse(response);
 }
 
 /**
@@ -63,9 +64,10 @@ export async function post(url: string, body: object, params: IQueryParams = {})
  * @param params An optional dictionary of parameters and their values
  */
 export async function put(url: string, body: object, params: IQueryParams = {}): Promise<any> {
-    return fetch(url + encodeParams(params), {
+    const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers,
         method: "PUT",
-    }).then((response) => checkResponse(response));
+    });
+    return checkResponse(response);
 }

@@ -24,12 +24,13 @@ export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAre
         this.logger = new Logger(this.constructor.name);
     }
 
-    public componentDidMount() {
-        get("/rest/viti-areas/all/")
-            .then((producers: IDict<string>) => {
-                staticAutocomplete(nameToId("Viti Area"), producers, this.props.onChange);
-            })
-            .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
+    public async componentDidMount() {
+        try {
+            const producers: IDict<string> = await get("/rest/viti-areas/all/");
+            staticAutocomplete(nameToId("Viti Area"), producers, this.props.onChange);
+        } catch (e) {
+            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+        }
     }
 
     public render() {

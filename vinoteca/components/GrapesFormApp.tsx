@@ -52,11 +52,9 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
         );
     }
 
-    public componentDidMount() {
-        get("/rest/grapes/all/")
-            .then((completions: IDict<string>) => {
-                this.setState({ completions });
-            });
+    public async componentDidMount() {
+        const completions: IDict<string> = await get("/rest/grapes/all/");
+        this.setState({ completions });
     }
 
     public handleAdd(e: React.MouseEvent) {

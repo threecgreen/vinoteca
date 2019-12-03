@@ -30,16 +30,15 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
 }
 
 /** Improved autocomplete without JQuery. Meant for use with React. */
-export function rAutocomplete(modelName: string, onChange: OnChange,
+export async function rAutocomplete(modelName: string, onChange: OnChange,
                               minLength = 1, limit = 5) {
-    const logger = new Logger("widgets");
-    get(`/rest/${modelName.toLowerCase()}s/all/`)
-        .then((completions: IDict<string>) => {
-            staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
-        })
-        .catch(() => {
-            logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);
-        });
+    try {
+        const completions: IDict<string> = await get(`/rest/${modelName.toLowerCase()}s/all/`);
+        staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
+    } catch {
+        const logger = new Logger("widgets");
+        logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);
+    }
 }
 
 /**

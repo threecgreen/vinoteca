@@ -5,7 +5,6 @@ import {
     IWine,
 } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
-import { func } from "prop-types";
 
 export class EmptyResultError extends Error {
     public static isInstance(err: Error): boolean {
@@ -51,18 +50,16 @@ interface IGetRegionParams {
     producerName?: string;
 }
 
-export async function getRegions({id, name, producerName}: IGetRegionParams): Promise<IRegion[]> {
-    const nonNullParams = nonNulls({id, name, producers__name: producerName});
+export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
+    const nonNullParams = nonNulls({ id, name, producers__name: producerName });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/regions/", nonNullParams)
-        .then((regions: IRegion[]) => {
-            if (regions.length === 0) {
-                return Promise.reject(new EmptyResultError("Empty result returned for region"));
-            }
-            return regions;
-        });
+    const regions: IRegion[] = await get("/rest/regions/", nonNullParams);
+    if (regions.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for region"));
+    }
+    return regions;
 }
 
 export const getRegion = singleEntityGetter(getRegions);
@@ -81,18 +78,16 @@ interface IGetProducersParams {
     regionId?: number;
 }
 
-export async function getProducers({id, regionId}: IGetProducersParams): Promise<IProducer[]> {
-    const nonNullParams = nonNulls({id, region_id: regionId});
+export async function getProducers({ id, regionId }: IGetProducersParams): Promise<IProducer[]> {
+    const nonNullParams = nonNulls({ id, region_id: regionId });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/producers/", nonNullParams)
-        .then((producers: IProducer[]) => {
-            if (producers.length === 0) {
-                return Promise.reject(new EmptyResultError("Empty result returned for producer"));
-            }
-            return producers;
-        });
+    const producers: IProducer[] = await get("/rest/producers/", nonNullParams);
+    if (producers.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for producer"));
+    }
+    return producers;
 }
 
 export const getProducer = singleEntityGetter(getProducers);
@@ -109,19 +104,17 @@ interface IGetVitiAreasParams {
 }
 
 export async function getVitiAreas(
-    {id, name, regionName}: IGetVitiAreasParams,
+    { id, name, regionName }: IGetVitiAreasParams,
 ): Promise<IVitiArea[]> {
-    const nonNullParams = nonNulls({id, name, region__name: regionName});
+    const nonNullParams = nonNulls({ id, name, region__name: regionName });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/viti-areas/", nonNullParams)
-        .then((vitiAreas: IVitiArea[]) => {
-            if (vitiAreas.length === 0) {
-                return Promise.reject(new EmptyResultError("Empty result returned for viti area"));
-            }
-            return vitiAreas;
-        });
+    const vitiAreas: IVitiArea[] = await get("/rest/viti-areas/", nonNullParams);
+    if (vitiAreas.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for viti area"));
+    }
+    return vitiAreas;
 }
 
 export const getVitiArea = singleEntityGetter(getVitiAreas);
@@ -140,9 +133,9 @@ interface IGetVitiAreaStatsParams {
 }
 
 export async function getVitiAreaStats(
-    {id, regionId}: IGetVitiAreaStatsParams,
+    { id, regionId }: IGetVitiAreaStatsParams,
 ): Promise<IVitiAreaStats[]> {
-    const nonNullParams = nonNulls({id, region_id: regionId});
+    const nonNullParams = nonNulls({ id, region_id: regionId });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
@@ -159,17 +152,17 @@ interface IGetWinesParams {
 }
 
 export async function getWines(
-    {id, producerId, regionId, vitiAreaId, wineTypeId}: IGetWinesParams,
+    { id, producerId, regionId, vitiAreaId, wineTypeId }: IGetWinesParams,
 ): Promise<IWine[]> {
-    const nonNullParams = nonNulls({id, producer__region_id: regionId, producer_id: producerId,
-                                    viti_area_id: vitiAreaId, wine_type_id: wineTypeId});
-    return get("/rest/wines/", nonNullParams)
-        .then((wines: IWine[]) => {
-            if (wines.length === 0) {
-                return Promise.reject(new EmptyResultError("Empty result returned for wines"));
-            }
-            return wines;
-        });
+    const nonNullParams = nonNulls({
+        id, producer__region_id: regionId, producer_id: producerId,
+        viti_area_id: vitiAreaId, wine_type_id: wineTypeId
+    });
+    const wines: IWine[] = await get("/rest/wines/", nonNullParams);
+    if (wines.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for wines"));
+    }
+    return wines;
 }
 
 export async function getWinesTable(): Promise<IWine[]> {
@@ -182,18 +175,16 @@ interface IGetWineTypeParams {
     name?: number;
 }
 
-export async function getWineTypes({id, name}: IGetWineTypeParams): Promise<IRestModel[]> {
-    const nonNullParams = nonNulls({id, name});
+export async function getWineTypes({ id, name }: IGetWineTypeParams): Promise<IRestModel[]> {
+    const nonNullParams = nonNulls({ id, name });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/wine-types/", nonNullParams)
-        .then((wineTypes: IRestModel[]) => {
-            if (wineTypes.length === 0) {
-                return Promise.reject(new EmptyResultError("Empty result returned for wine types"));
-            }
-            return wineTypes;
-        });
+    const wineTypes: IRestModel[] = await get("/rest/wine-types/", nonNullParams);
+    if (wineTypes.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for wine types"));
+    }
+    return wineTypes;
 }
 
 export const getWineType = singleEntityGetter(getWineTypes);

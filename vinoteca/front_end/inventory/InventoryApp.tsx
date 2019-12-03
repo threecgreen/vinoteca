@@ -45,16 +45,20 @@ export class InventoryApp extends React.Component<{}, IState> {
         this.updateInventory();
     }
 
-    public onInventoryChange(e: React.MouseEvent, id: number, change: InventoryChange) {
+    public async onInventoryChange(e: React.MouseEvent, id: number, change: InventoryChange) {
         e.preventDefault();
-        get(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`)
-            .then((_) => this.updateInventory())
-            .catch((err) => this.logger.logWarning(err));
+        // TODO: this should be a post request
+        try {
+            await get(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`);
+        } catch (err) {
+            this.logger.logWarning(err);
+        }
+        this.updateInventory();
     }
 
     private async updateInventory() {
-        return get("/rest/wines/inventory/")
-            .then((iWines: IWine[]) => iWines.map((w) => new Wine(w)))
-            .then((wines) => this.setState({wines}));
+        const iWines: IWine[] = await get("/rest/wines/inventory/");
+        const wines = iWines.map((w) => new Wine(w));
+        this.setState({wines});
     }
 }
