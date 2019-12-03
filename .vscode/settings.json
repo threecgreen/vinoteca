@@ -29,4 +29,5 @@
     "typescript.suggest.completeFunctionCalls": true,
     "tslint.configFile": "tslint.json",
     "tslint.alwaysShowRuleFailuresAsWarnings": true,
+    "typescript.tsdk": "./vinoteca/node_modules/typescript/lib"
 }

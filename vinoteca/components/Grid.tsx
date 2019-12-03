@@ -32,7 +32,7 @@ const GridComponentFactory = (className: string): React.FunctionComponent<IAllGr
     const component: React.FunctionComponent<IAllGridProps> = (props: IAllGridProps) => {
         const otherClasses = joinClasses(gridClasses(props), props.classes);
         return (
-            <div className={ `${className} ${otherClasses}` } style={ props.style }>
+            <div className={ `${className} ${otherClasses}` }>
                 { props.children }
             </div>
         );

@@ -12,9 +12,9 @@ export interface IInputProps<T extends IInputValue> {
     className: string;
     onChange: (val: string) => void;
     onChangeEvent: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     onFocus: () => void;
     onBlur: () => void;
+    inputRef?: React.Ref<HTMLInputElement>;
     inputType?: string;
     active?: boolean;
     step?: string;
@@ -34,7 +34,6 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
         enabled: true,
         onChange: () => undefined,
         onChangeEvent: (_: React.ChangeEvent<HTMLInputElement>) => undefined,
-        onKeyDown: () => undefined,
         onFocus: () => undefined,
         onBlur: (_: React.FocusEvent<HTMLInputElement>) => undefined,
     };
@@ -43,11 +42,19 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
         const id = nameToId(this.props.name);
         return (
             <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
-                <input name={ id }
+                <input id={ id }
+                    name={ id }
+                    className={ this.props.className }
+                    ref={ this.props.inputRef }
                     type={ this.props.inputType }
                     disabled={ !this.props.enabled }
-                    { ...this.props }
+                    value={ this.props.value }
                     onChange={ (e) => this.onChange(e) }
+                    onBlur={ this.props.onBlur }
+                    onFocus={ this.props.onFocus }
+                    step={ this.props.step }
+                    min={ this.props.min }
+                    max={ this.props.max }
                 >
                 </input>
                 <label className={ this.props.active ? "active" : "" } htmlFor={ id }>

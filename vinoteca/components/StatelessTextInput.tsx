@@ -18,7 +18,6 @@ interface IProps {
 
 interface IState {
     isActive: boolean;
-    position: number;
 }
 
 /**
@@ -31,14 +30,15 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
     }
 
     private timestamp: Date;
+    private inputRef: React.Ref<HTMLInputElement>;
 
     constructor(props: IProps) {
         super(props);
         this.state = {
             isActive: false,
-            position: NaN,
         }
         this.timestamp = new Date();
+        this.inputRef = React.createRef();
     }
 
     public render() {
@@ -46,13 +46,14 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
             <>
                 <Input inputType="text"
                     value={ this.props.value }
+                    inputRef={ this.inputRef }
                     onChangeEvent={ (e) => this.onChangeEvent(e) }
                     onBlur={ () => this.onBlur() }
                     onFocus={ () => this.onFocus() }
-                    onKeyDown={ (e) => this.onKeyDown(e) }
                     { ...this.props }
                 />
                 <SimpleSpecialChars
+                    classes={ ["inline-block"] }
                     onClick={ (e, c) => this.onSpecialCharClick(e, c) }
                     display={ this.state.isActive }
                 />
@@ -62,36 +63,21 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
 
     private onSpecialCharClick(e: React.MouseEvent, char: string) {
         e.preventDefault();
-        this.setState((prevState) => ({
-            isActive: true,
-            position: prevState.position + 1,
-        }));
-        this.props.onSpecialCharClick(char, this.state.position);
+        this.setState({ isActive: true });
+        // @ts-ignore
+        const position = this.inputRef.current?.selectionStart ?? NaN;
+        this.props.onSpecialCharClick(char, position);
+        // @ts-ignore
+        setTimeout(() => this.inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     }
 
     private onChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            isActive: true,
-            position: e.target.selectionEnd || NaN,
-        })
+        this.setState({ isActive: true });
         this.props.onChange(e.target.value);
     }
 
-    private onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-        setTimeout(() => {
-            const selection = window.getSelection()
-            if (selection) {
-                this.setState({
-                    position: selection.getRangeAt(0).endOffset,
-                });
-            }
-        }, 0);
-    }
-
     private onFocus() {
-        this.setState({
-            isActive: true
-        });
+        this.setState({ isActive: true });
         if (this.props.onFocus) {
             this.props.onFocus();
         }
