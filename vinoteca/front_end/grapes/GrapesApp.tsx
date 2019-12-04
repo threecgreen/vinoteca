@@ -56,14 +56,12 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
         );
     }
 
-    public componentDidMount() {
-        get(this.getGrapesUrl())
-            .then((restGrapes: IGrape[]) => {
-                const grapes: GrapeItem[] = restGrapes.map(
-                    (g) => new GrapeItem(g.id, g.name, g.wines),
-                );
-                this.setState({ grapes });
-            });
+    public async componentDidMount() {
+        const restGrapes: IGrape[] = await get(this.getGrapesUrl())
+        const grapes: GrapeItem[] = restGrapes.map(
+            (g) => new GrapeItem(g.id, g.name, g.wines),
+        );
+        this.setState({ grapes });
     }
 
     public onChange(id: number, name: string) {

@@ -18,7 +18,7 @@ interface IProps {
     wines: Wine[];
     predicates: Map<keyof Wine, (val: any) => boolean>;
     onFilterChange: (column: keyof Wine, pred: (val: number | string) => boolean) => void;
-    onEmptyFilter(columnName: keyof Wine): void;
+    onEmptyFilter: (columnName: keyof Wine) => void;
     currentPage: number;
     winesPerPage: number;
 }

@@ -28,15 +28,16 @@ export class ColorInput extends React.Component<IColorInputProps, IColorInputSta
         this.logger = new Logger(this.constructor.name);
     }
 
-    public componentDidMount() {
-        get("/rest/colors/all/")
-            .then((colors: IDict<string>) => {
-                this.setState({
-                    selectionOptions: this.concatIfNotNull(Object.keys(colors)),
-                });
-                const formSelect = new FormSelect(this.state.selectRef.current!);
-            })
-            .catch((e) => this.logger.logError(`Failed to get colors with error '${e}'`));
+    public async componentDidMount() {
+        try {
+            const colors: IDict<string> = await get("/rest/colors/all/");
+            this.setState({
+                selectionOptions: this.concatIfNotNull(Object.keys(colors)),
+            });
+            const formSelect = new FormSelect(this.state.selectRef.current!);
+        } catch (e) {
+            this.logger.logError(`Failed to get colors with error '${e}'`);
+        }
     }
 
     public render() {

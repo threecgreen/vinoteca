@@ -4,10 +4,9 @@ import { GrapeFormApp } from "../../components/GrapesFormApp";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { PurchaseInputs } from "../../components/PurchaseInputs";
-import { SpecialChars } from "../../components/SpecialChars";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
 import { WineInputs } from "./WineInputs";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 export enum NewWineTextInput {
     StoreName,

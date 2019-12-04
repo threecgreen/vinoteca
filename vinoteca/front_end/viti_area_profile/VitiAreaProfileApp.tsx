@@ -47,17 +47,27 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
     }
 
-    public componentDidMount() {
-        getVitiArea({id: this.props.vitiAreaId})
-            .then((vitiArea) => this.setState({vitiArea, vitiAreaText: vitiArea.name}));
-        getWines({vitiAreaId: this.props.vitiAreaId})
-            .then((wines) => {
-                this.setState({wines: wines.map((w) => new Wine(w))});
-            });
-        getVitiAreaStats({id: this.props.vitiAreaId})
-            .then((stats: IVitiAreaStats[]) => {
-                this.setState({stats: new VitiAreaStats(stats[0])})
-            });
+    public async componentDidMount() {
+        Promise.all([
+            this.getAndSetVitiArea(),
+            this.getAndSetWines(),
+            this.getAndSetStats(),
+        ]);
+    }
+
+    private async getAndSetVitiArea() {
+        const vitiArea = await getVitiArea({id: this.props.vitiAreaId});
+        this.setState({vitiArea, vitiAreaText: vitiArea.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({vitiAreaId: this.props.vitiAreaId});
+        this.setState({wines: wines.map((w) => new Wine(w))});
+    }
+
+    private async getAndSetStats() {
+        const stats: IVitiAreaStats[] = await getVitiAreaStats({id: this.props.vitiAreaId});
+        this.setState({stats: new VitiAreaStats(stats[0])});
     }
 
     public render() {
@@ -108,15 +118,21 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         });
     }
 
-    private onConfirmClick(e: React.MouseEvent) {
+    private async onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        updateVitiArea({id: this.props.vitiAreaId, name: this.state.vitiAreaText, region: this.state.vitiArea!.region})
-            .then((vitiArea) => this.setState({
+        try {
+            const vitiArea = await updateVitiArea({
+                id: this.props.vitiAreaId,
+                name: this.state.vitiAreaText,
+               region: this.state.vitiArea!.region
+            });
+            this.setState({
                 isEditing: false,
                 vitiArea: vitiArea,
-            })).catch((err) => {
-                this.logger.logWarning(`Failed to save changes to database: ${err}`);
             });
+        } catch (err) {
+            this.logger.logWarning(`Failed to save changes to database: ${err}`);
+        }
     }
 
     private onCancelClick(e: React.MouseEvent) {

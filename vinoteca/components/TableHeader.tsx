@@ -125,8 +125,6 @@ export class FilterHeader extends React.Component<IFilter, IState> {
         } catch (exception) {
             this.logger.logInfo(`Error evaluating filter expression: ${exception}`)
         }
-        this.setState({
-            text: val,
-        });
+        this.setState({ text: val});
     }
 }

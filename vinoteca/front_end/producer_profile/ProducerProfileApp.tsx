@@ -54,12 +54,10 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onCancelClick = this.onCancelClick.bind(this);
     }
 
-    public componentDidMount() {
+    public async componentDidMount() {
         this.getCurrentProducerData();
-        getWines({producerId: this.props.producerId})
-            .then((wines) => {
-                this.setState({wines: wines.map(w => new Wine(w))});
-            });
+        const wines = await getWines({producerId: this.props.producerId})
+        this.setState({wines: wines.map(w => new Wine(w))});
     }
 
     public render() {
@@ -101,9 +99,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     }
 
     private onEditClick() {
-        this.setState({
-            isEditing: true,
-        });
+        this.setState({isEditing: true});
     }
 
     /**
@@ -111,35 +107,24 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
      * and updates state.
      */
     private async getCurrentProducerData() {
-        getProducer({id: this.props.producerId})
-            .then((producer) => {
-                this.setState({
-                    producer: producer,
-                    producerText: producer.name,
-                });
-                return producer.region;
-            })
-            .then((regionId) => {
-                return getRegion({id: regionId});
-            })
-            .then((region) => {
-                this.setState({
-                    region: region,
-                    regionText: region.name,
-                });
-            });
+        const producer = await getProducer({id: this.props.producerId});
+        this.setState({
+            producer: producer,
+            producerText: producer.name,
+        });
+        const region = await getRegion({id: producer.region});
+        this.setState({
+            region,
+            regionText: region.name
+        });
     }
 
     private onProducerChange(val: string) {
-        this.setState({
-            producerText: val,
-        });
+        this.setState({producerText: val});
     }
 
     private onRegionChange(text: string) {
-        this.setState({
-            regionText: text,
-        });
+        this.setState({regionText: text});
     }
 
     private onSpecialCharClick(input: ProducerProfileTextInput, char: string, position: number) {
@@ -158,18 +143,18 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         }
     }
 
-    private onConfirmClick(e: React.MouseEvent) {
+    private async onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        this.handleRegionChanges()
-            .then(([regionChanged, regionId]) => {
-                if (this.state.producer
-                    && (this.state.producerText !== this.state.producer.name || regionChanged)) {
+        try {
+            const [regionChanged, regionId] = await this.handleRegionChanges();
+            if (this.state.producer
+                && (this.state.producerText !== this.state.producer.name || regionChanged)) {
 
-                    this.updateProducer(regionId === -1 ? null! : regionId);
-                }
-            }).catch((err) => {
-                this.logger.logWarning(`Failed to save changes to the database: ${err}`);
-            });
+                this.updateProducer(regionId === -1 ? null! : regionId);
+            }
+        } catch (err) {
+            this.logger.logWarning(`Failed to save changes to the database: ${err}`);
+        }
     }
 
     private async handleRegionChanges(): Promise<[boolean, number]> {
@@ -177,29 +162,25 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
             || (this.state.region && this.state.regionText !== this.state.region.name)) {
 
             // Try Get
-            // TODO: REFACTOR this
-            return getRegion({name: this.state.regionText})
-                .then((region) => {
+            try {
+                const region = await getRegion({name: this.state.regionText});
+                this.setState({
+                    region,
+                    regionText: region.name,
+                });
+                return [true, region.id];
+            } catch (err) {
+                if (EmptyResultError.isInstance(err)) {
+                    // Create
+                    const region = await createRegion({ name: this.state.regionText})
                     this.setState({
                         region,
                         regionText: region.name,
                     });
                     return [true, region.id];
-                })
-                .catch(async (err) => {
-                    if (EmptyResultError.isInstance(err)) {
-                        // Create
-                        return createRegion({ name: this.state.regionText})
-                            .then((region) => {
-                                this.setState({
-                                    region,
-                                    regionText: region.name,
-                                });
-                                return [true, region.id];
-                            });
-                    }
-                    return Promise.reject("Unknown error");
-                }) as Promise<[boolean, number]>;
+                }
+                return Promise.reject("Unknown error");
+            }
         }
         if (this.state.region) {
             return[false, this.state.region.id];
@@ -207,18 +188,17 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         return [false, -1];
     }
 
-    private updateProducer(regionId: number) {
-        updateProducer({
+    private async updateProducer(regionId: number) {
+        const producer = await updateProducer({
             id: this.state.producer!.id,
             name: this.state.producerText,
             region: regionId!,
-        }).then((producer) => {
-            this.setState({
-                producer: producer,
-                producerText: producer.name,
-                isEditing: false,
-            })
         });
+        this.setState({
+            producer: producer,
+            producerText: producer.name,
+            isEditing: false,
+        })
     }
 
     private onCancelClick(e: React.MouseEvent) {

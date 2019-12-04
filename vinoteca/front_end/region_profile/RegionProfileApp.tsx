@@ -47,17 +47,27 @@ export class RegionProfile extends React.Component<IProps, IState> {
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
     }
 
-    public componentDidMount() {
-        getRegion({id: this.props.regionId})
-            .then((region) => this.setState({region, regionText: region.name}));
-        getWines({regionId: this.props.regionId})
-            .then((wines) => {
-                this.setState({wines: wines.map((w) => new Wine(w))});
-            });
-        getVitiAreaStats({regionId: this.props.regionId})
-            .then((vitiAreas) => {
-                this.setState({vitiAreas: vitiAreas.map((vA) => new VitiAreaStats(vA))});
-            });
+    public async componentDidMount() {
+        Promise.all([
+            this.getAndSetRegion(),
+            this.getAndSetWines(),
+            this.getAndSetVitiAreaStats(),
+        ]);
+    }
+
+    private async getAndSetRegion() {
+        const region = await getRegion({id: this.props.regionId});
+        this.setState({region, regionText: region.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({regionId: this.props.regionId});
+        this.setState({wines: wines.map((w) => new Wine(w))});
+    }
+
+    private async getAndSetVitiAreaStats() {
+        const vitiAreas = await getVitiAreaStats({regionId: this.props.regionId});
+        this.setState({vitiAreas: vitiAreas.map((vA) => new VitiAreaStats(vA))});
     }
 
     public render() {
@@ -109,15 +119,17 @@ export class RegionProfile extends React.Component<IProps, IState> {
         });
     }
 
-    private onConfirmClick(e: React.MouseEvent) {
+    private async onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        updateRegion({id: this.props.regionId, name: this.state.regionText})
-            .then((region) => this.setState({
+        try {
+            const region = await updateRegion({id: this.props.regionId, name: this.state.regionText});
+            this.setState({
                 isEditing: false,
                 region: region,
-            })).catch((err) => {
-                this.logger.logWarning(`Failed to save changes to database: ${err}`);
-            });
+            })
+        } catch(err) {
+            this.logger.logWarning(`Failed to save changes to database: ${err}`);
+        }
     }
 
     private onCancelClick(e: React.MouseEvent) {

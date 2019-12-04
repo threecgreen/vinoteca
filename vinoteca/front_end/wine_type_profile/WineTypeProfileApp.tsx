@@ -44,13 +44,21 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.onWineTypeSpecialCharClick = this.onWineTypeSpecialCharClick.bind(this);
     }
 
-    public componentDidMount() {
-        getWineType({id: this.props.wineTypeId})
-            .then((wineType) => this.setState({wineType: wineType, wineTypeText: wineType.name}));
-        getWines({wineTypeId: this.props.wineTypeId})
-            .then((wines) => {
-                this.setState({wines: wines.map((w) => new Wine(w))});
-            });
+    public async componentDidMount() {
+        Promise.all([
+            this.getAndSetWineTypes(),
+            this.getAndSetWines(),
+        ]);
+    }
+
+    private async getAndSetWineTypes() {
+        const wineType = await getWineType({id: this.props.wineTypeId});
+        this.setState({wineType: wineType, wineTypeText: wineType.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({wineTypeId: this.props.wineTypeId});
+        this.setState({wines: wines.map((w) => new Wine(w))});
     }
 
     public render() {
@@ -104,15 +112,17 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         }));
     }
 
-    private onConfirmClick(e: React.MouseEvent) {
+    private async onConfirmClick(e: React.MouseEvent) {
         e.preventDefault();
-        updateWineType({id: this.props.wineTypeId, name: this.state.wineTypeText})
-            .then((wineType) => this.setState({
+        try {
+            const wineType = await updateWineType({id: this.props.wineTypeId, name: this.state.wineTypeText});
+            this.setState({
                 isEditing: false,
                 wineType: wineType,
-            })).catch((err) => {
-                this.logger.logWarning(`Failed to save changes to database: ${err}`);
             });
+        } catch (err) {
+            this.logger.logWarning(`Failed to save changes to database: ${err}`);
+        }
     }
 
     private onCancelClick(e: React.MouseEvent) {

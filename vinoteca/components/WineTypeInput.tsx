@@ -24,12 +24,13 @@ export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTyp
         this.logger = new Logger(this.constructor.name);
     }
 
-    public componentDidMount() {
-        get("/rest/wine-types/all/")
-            .then((wineTypes: IDict<string>) => {
-                staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
-            })
-            .catch((e) => this.logger.logError(`Failed to get wine type autocomplete options. ${e}`));
+    public async componentDidMount() {
+        try {
+            const wineTypes: IDict<string> = await get("/rest/wine-types/all/");
+            staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
+        } catch (e) {
+            this.logger.logError(`Failed to get wine type autocomplete options. ${e}`);
+        }
     }
 
     public render() {

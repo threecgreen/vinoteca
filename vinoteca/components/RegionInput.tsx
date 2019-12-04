@@ -34,31 +34,28 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
         this.getDefaultAutocompleteOptions();
     }
 
-    public componentDidUpdate(prevProps: IRegionInputProps, prevState: IRegionInputState) {
+    public async componentDidUpdate(prevProps: IRegionInputProps, prevState: IRegionInputState) {
         if (!areEqual(prevState.autocompleteOptions, this.state.autocompleteOptions)) {
             staticAutocomplete(nameToId("Region"), this.state.autocompleteOptions,
                                this.props.onChange);
         }
         if (prevProps.producerFilter !== this.props.producerFilter) {
             if (this.props.producerFilter) {
-                getRegions({producerName: this.props.producerFilter})
-                    .then((regions) => {
-                        if (regions.length === 1) {
-                            this.props.onChange(regions[0].name);
-                            this.setState({ enabled: false });
-                        } else if (!this.state.enabled) {
-                            this.setState({ enabled: true });
-                        }
-                    })
-                    .catch((e) => {
-                        // Ignore empty result errors
-                        if (!EmptyResultError.isInstance(e)) {
-                            Promise.reject(e);
-                        }
-                    })
-                    .catch((e) => {
+                try {
+                    const regions = await getRegions({producerName: this.props.producerFilter});
+                    if (regions.length === 1) {
+                        this.props.onChange(regions[0].name);
+                        this.setState({ enabled: false });
+                    } else if (!this.state.enabled) {
+                        this.setState({ enabled: true });
+                    }
+                } catch (e) {
+                    // Ignore empty result errors
+                    if (!EmptyResultError.isInstance(e)) {
                         this.logger.logWarning(`Error fetching regions based on producer. ${e}`);
-                    });
+                        Promise.reject(e);
+                    }
+                }
             } else if (!this.state.enabled) {
                 this.setState({ enabled: true });
             }
@@ -76,14 +73,13 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
         );
     }
 
-    private getDefaultAutocompleteOptions() {
-        get("/rest/regions/all/")
-            .then((regions: IDict<string>) => {
-                this.setState({
-                    autocompleteOptions: regions,
-                });
-            })
-            .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
+    private async getDefaultAutocompleteOptions() {
+        try {
+            const regions: IDict<string> = await get("/rest/regions/all/")
+            this.setState({autocompleteOptions: regions});
+        } catch (e) {
+            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+        }
     }
 }
 

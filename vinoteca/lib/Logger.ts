@@ -64,19 +64,18 @@ export default class Logger {
         return this.log(LogLevel.Debug, message);
     }
 
-    private log(level: LogLevel, message: string) {
+    private async log(level: LogLevel, message: string) {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        return post("/rest/logs/client/", {
+        const response: ILogResult = await post("/rest/logs/client/", {
             level,
             message,
             module: this.module,
-        }).then((response: ILogResult) => {
-            if (!response.success) {
-                this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
-            }
         });
+        if (!response.success) {
+            this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+        }
     }
 
     private toast(level: LogLevel, message: string) {

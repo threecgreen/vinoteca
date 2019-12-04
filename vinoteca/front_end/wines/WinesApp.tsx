@@ -6,6 +6,7 @@ import Logger from "../../lib/Logger";
 import { getWinesTable } from "../../lib/RestApi";
 import { Wine } from "../../lib/RestTypes";
 import { WinesTable } from "./WinesTable";
+import { readCookie } from "../../lib/Cookies";
 
 interface IState {
     wines: Wine[];
@@ -18,18 +19,34 @@ interface IState {
 
 export class WinesApp extends React.Component<{}, IState> {
     private readonly logger: Logger;
+    private static cookieName: string = "WinesAppPredicates"
 
     constructor(props: {}) {
         super(props);
         this.state = {
             wines: [],
-            predicates: new Map(),
+            predicates: this.deserializePredicates(readCookie(WinesApp.cookieName)) || new Map(),
             hasLoaded: false,
             currentPage: 1,
             winesPerPage: 50,
         };
 
         this.logger = new Logger(this.constructor.name);
+    }
+
+    private serializePredicates(): string {
+        const predStrings = Array.from(this.state.predicates.entries()).map((k, predFun) => [k, predFun.toString()]);
+        return JSON.stringify(predStrings);
+    }
+
+    private deserializePredicates(json: string): Map<keyof Wine, (v: any) => boolean> {
+        const predicates = new Map();
+        const arr: Array<[string, string]> = JSON.parse(json);
+        arr.forEach((item) => {
+            const [key, funStr] = item;
+            predicates.set(key, eval(funStr))
+        })
+        return predicates;
     }
 
     public render() {
@@ -71,14 +88,16 @@ export class WinesApp extends React.Component<{}, IState> {
         );
     }
 
-    public componentDidMount() {
-        getWinesTable()
-            .then((wines) => {
-                this.setState({
-                    wines: wines.map((w) => new Wine(w)),
-                    hasLoaded: true
-                });
-            }).catch((reason) => this.logger.logError(reason));
+    public async componentDidMount() {
+        try {
+            const wines = await getWinesTable();
+            this.setState({
+                wines: wines.map((w) => new Wine(w)),
+                hasLoaded: true
+            });
+        } catch (err) {
+            this.logger.logError(err);
+        }
     }
 
     private onFilterChange(columnName: keyof Wine, pred: (val: any) => boolean) {
@@ -87,7 +106,7 @@ export class WinesApp extends React.Component<{}, IState> {
             return {
                 predicates: prevState.predicates,
             };
-        });
+        }, this.serializePredicates);
     }
 
     private onEmptyFilter(columnName: keyof Wine) {
@@ -96,7 +115,7 @@ export class WinesApp extends React.Component<{}, IState> {
             return {
                 predicates: prevState.predicates,
             }
-        })
+        }, this.serializePredicates)
     }
 
     private onResetFilters(e: React.MouseEvent) {

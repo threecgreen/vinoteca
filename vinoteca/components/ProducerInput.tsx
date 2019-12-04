@@ -24,12 +24,13 @@ export class ProducerInput extends React.Component<IProducerInputProps, IProduce
         this.logger = new Logger(this.constructor.name);
     }
 
-    public componentDidMount() {
-        get("/rest/producers/all/")
-            .then((producers: IDict<string>) => {
-                staticAutocomplete(nameToId("Producer"), producers, this.props.onChange);
-            })
-            .catch((e) => this.logger.logError(`Failed to get producer autocomplete options. ${e}`));
+    public async componentDidMount() {
+        try {
+            const producers: IDict<string> = await get("/rest/producers/all/");
+            staticAutocomplete(nameToId("Producer"), producers, this.props.onChange);
+        } catch (e) {
+            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+        }
     }
 
     public render() {
