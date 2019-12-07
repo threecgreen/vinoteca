@@ -8,10 +8,10 @@ import { Wine } from "../../lib/RestTypes";
 import { WinesTable } from "./WinesTable";
 import { createCookie, deleteCookie, readCookie } from "../../lib/Cookies";
 import FilterExpr from "../../lib/FilterExpr";
+import { Btn } from "../../components/Buttons";
 
 interface IState {
     wines: Wine[];
-    // TODO: store these in cookie
     predicates: Map<keyof Wine, FilterExpr>;
     hasLoaded: boolean;
     currentPage: number;
@@ -20,7 +20,7 @@ interface IState {
 
 export class WinesApp extends React.Component<{}, IState> {
     private readonly logger: Logger;
-    private static cookieName: string = "WinesAppPredicates"
+    private static cookieName: string = "WinesAppPredicates";
 
     public constructor(props: {}) {
         super(props);
@@ -58,8 +58,8 @@ export class WinesApp extends React.Component<{}, IState> {
             const arr: Array<[string, string]> = JSON.parse(json);
             arr.forEach((item) => {
                 const [key, expr] = item;
-                predicates.set(key, FilterExpr.parse(expr));
-            })
+                predicates.set(key, FilterExpr.fromJson(expr));
+            });
             return predicates;
         } catch (err) {
             deleteCookie(WinesApp.cookieName);
@@ -75,13 +75,20 @@ export class WinesApp extends React.Component<{}, IState> {
         let wines = undefined;
         if (this.state.wines.length === 0) {
             wines = (
-                <h6 className="bold center-align">
-                    You haven&rsquo;t entered any wines yet.
-                </h6>
+                <>
+
+                    <h6 className="bold center-align">
+                        You haven&rsquo;t entered any wines yet.
+                    </h6>
+                    <Btn classes={ ["green-bg"] }
+                        onClick={ (_) => { location.href = "/wines/new/"; } }
+                    >
+                    </Btn>
+                </>
             );
         } else {
             wines = (
-                <React.Fragment>
+                <>
                     <h3 className="page-title">Wines</h3>
                     <WinesTable onFilterChange={ (c, filterExpr) => this.onFilterChange(c, filterExpr) }
                         onEmptyFilter={ (c) => this.onEmptyFilter(c) }
@@ -92,10 +99,9 @@ export class WinesApp extends React.Component<{}, IState> {
                             Math.ceil(this.state.wines.length / this.state.winesPerPage )) }
                         onClick={ this.onPageClick.bind(this) }
                     />
-                </React.Fragment>
+                </>
             );
         }
-        // TODO: reset filters button
         return (
             <div className="container">
                 <Row>

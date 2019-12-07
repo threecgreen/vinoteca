@@ -71,6 +71,8 @@ export class TableHeader extends React.Component<IProps> {
 interface IFilter {
     onFilterChange: (filter: FilterExpr) => void;
     onEmptyFilter: () => void;
+    // Allows for loading from cookie
+    initialText?: string;
 }
 
 interface IState {
@@ -83,7 +85,7 @@ export class FilterHeader extends React.Component<IFilter, IState> {
     public constructor(props: IFilter) {
         super(props);
         this.state = {
-            text: "",
+            text: this.props.initialText ?? "",
         };
         this.logger = new Logger(this.constructor.name);
     }

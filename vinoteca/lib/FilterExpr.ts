@@ -33,7 +33,20 @@ export default class FilterExpr {
         return operatorFun(val, this.rhs);
     }
 
+    /**
+     * Return the JSON equivalent of this `FilterExpr`
+     */
     public toJson(): string {
         return JSON.stringify(this);
+    }
+
+    /**
+     * Return the plaintext string equivalent of this object
+     */
+    public toString(): string {
+        if (this.funName === "INCLUDES") {
+            return this.rhs;
+        }
+        return this.funName + this.rhs;
     }
 }

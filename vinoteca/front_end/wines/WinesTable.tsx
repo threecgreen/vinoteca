@@ -198,11 +198,13 @@ export class WinesTable extends React.Component<IProps, IState> {
     // Constructs props for a filter header
     private filterHeaderProps(columnName: keyof Wine):
         {onFilterChange: (filterExpr: FilterExpr) => void,
-         onEmptyFilter: () => void} {
+         onEmptyFilter: () => void
+         initialText?: string} {
 
         return {
             onFilterChange: (filterExpr) => this.props.onFilterChange(columnName, filterExpr),
-            onEmptyFilter: () => this.props.onEmptyFilter(columnName)
+            onEmptyFilter: () => this.props.onEmptyFilter(columnName),
+            initialText: this.props.predicates.get(columnName)?.toString(),
         };
     }
 }
