@@ -9,7 +9,8 @@ operators.set("<=", (l, r) => l <= r);
 operators.set("<", (l, r) => l < r);
 operators.set(">=", (l, r) => l >= r);
 operators.set(">", (l, r) => l > r);
-operators.set("INCLUDES", (l, r) => l.toLowerCase().includes(r));
+// tslint:disable:no-construct
+operators.set("INCLUDES", (l, r) => new String(l).toLowerCase().includes(r));
 
 export default class FilterExpr {
     public static parse(expr: string): FilterExpr {
