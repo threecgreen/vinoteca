@@ -1,5 +1,5 @@
-[![Run Status](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/badge?branch=master)]()
-[![Coverage Badge](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/coverageBadge?branch=master)]()
+[![Run Status](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/badge?branch=master)](https://app.shippable.com/github/threecgreen/vinoteca/runs?branchName=master)
+[![Coverage Badge](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/coverageBadge?branch=master)](https://app.shippable.com/github/threecgreen/vinoteca/runs?branchName=master)
 # vinoteca
 A wine purchase tracker and review system in a Django web app.
 I created this project to give my dad a better way to track his wine purchases than the Excel spreadsheet he was using.
