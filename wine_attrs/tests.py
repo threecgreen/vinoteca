@@ -37,11 +37,11 @@ def test_basic_handle_grapes(mocker, grape_post_data):
     mock_request = mocker.MagicMock()
     mock_request.POST.get = mocker.MagicMock()
     mock_request.POST.get.side_effect = grape_post_data.get
-    with mocker.patch("wine_attrs.views.WineGrapes"):
-        with mocker.patch("wine_attrs.views.c_or_u_wine_grapes"):
-            handle_grapes(mock_request, mock_wine)
-            # while check x2, grape name, grape percent
-            assert mock_request.POST.get.call_count == 4
+    mocker.patch("wine_attrs.views.WineGrapes")
+    mocker.patch("wine_attrs.views.c_or_u_wine_grapes")
+    handle_grapes(mock_request, mock_wine)
+    # while check x2, grape name, grape percent
+    assert mock_request.POST.get.call_count == 4
 
 
 def test_many_grapes(mocker, grapes_post_data):
@@ -50,11 +50,11 @@ def test_many_grapes(mocker, grapes_post_data):
     mock_request = mocker.MagicMock()
     mock_request.POST.get = mocker.MagicMock()
     mock_request.POST.get.side_effect = grapes_post_data.get
-    with mocker.patch("wine_attrs.views.WineGrapes"):
-        with mocker.patch("wine_attrs.views.c_or_u_wine_grapes"):
-            handle_grapes(mock_request, mock_wine)
-            # while check x8, grape name x7, grape percent x7
-            assert mock_request.POST.get.call_count == 22
+    mocker.patch("wine_attrs.views.WineGrapes")
+    mocker.patch("wine_attrs.views.c_or_u_wine_grapes")
+    handle_grapes(mock_request, mock_wine)
+    # while check x8, grape name x7, grape percent x7
+    assert mock_request.POST.get.call_count == 22
 
 
 @pytest.mark.django_db
