@@ -156,7 +156,7 @@ export async function getWines(
 ): Promise<IWine[]> {
     const nonNullParams = nonNulls({
         id, producer__region_id: regionId, producer_id: producerId,
-        viti_area_id: vitiAreaId, wine_type_id: wineTypeId
+        viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
     const wines: IWine[] = await get("/rest/wines/", nonNullParams);
     if (wines.length === 0) {

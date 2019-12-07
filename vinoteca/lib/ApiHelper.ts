@@ -1,5 +1,5 @@
-import { IDict, isEmpty } from "./utils";
 import { readCookie } from "./Cookies";
+import { IDict, isEmpty } from "./utils";
 
 const headers = {
     "Content-Type": "application/json",
@@ -37,7 +37,7 @@ async function checkResponse(response: Response): Promise<any> {
  * @returns parsed JSON response
  */
 export async function get(url: string, params: IQueryParams = {}): Promise<any> {
-    const response = await fetch(url + encodeParams(params))
+    const response = await fetch(url + encodeParams(params));
     return checkResponse(response);
 }
 
@@ -53,7 +53,7 @@ export async function post(url: string, body: object, params: IQueryParams = {})
     const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers,
-        method: "POST"
+        method: "POST",
     });
     return checkResponse(response);
 }

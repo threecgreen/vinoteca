@@ -58,7 +58,7 @@ export function numToDate(num: number): Date {
     const month = strNum.substr(4, 2);
     const day = strNum.substr(6, 2);
     // JS months are 0-based
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
 }
 
 /**
@@ -158,7 +158,7 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
-interface RangeArgs {
+interface IRangeArgs {
     start?: number;
     stop?: number;
     step?: number;
@@ -170,7 +170,7 @@ interface RangeArgs {
  * @param stop End of the range (non-inclusive)
  * @param step Increment of the range
  */
-export function* range({start, stop, step}: RangeArgs): IterableIterator<number> {
+export function* range({ start, stop, step }: IRangeArgs): IterableIterator<number> {
     step = step || 1;
     start = start || 0;
     stop = stop || Number.MAX_SAFE_INTEGER;
@@ -180,6 +180,7 @@ export function* range({start, stop, step}: RangeArgs): IterableIterator<number>
 }
 
 declare global {
+    // tslint:disable-next-line:interface-name
     interface Array<T> {
         any<T>(predicate: (elem: T) => boolean): boolean;
     }
@@ -190,6 +191,6 @@ declare global {
  * @param arr An array of objcects
  * @param accessor A function for accessing a number property of the objects
  */
-Array.prototype.any = function<T> (this: T[], predicate: (elem: T) => boolean): boolean {
+Array.prototype.any = function <T>(this: T[], predicate: (elem: T) => boolean): boolean {
     return any(this, predicate);
-}
+};

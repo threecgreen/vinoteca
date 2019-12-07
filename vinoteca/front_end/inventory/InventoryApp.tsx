@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Wine, IWine } from "../../lib/RestTypes";
 import { Col, Row } from "../../components/Grid";
-import { InventoryChange, InventoryTable,  } from "./InventoryTable";
-import { get } from "../../lib/ApiHelper";
+import { get, post } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
+import { IWine, Wine } from "../../lib/RestTypes";
+import { InventoryChange, InventoryTable } from "./InventoryTable";
 
 
 interface IState {
@@ -47,9 +47,8 @@ export class InventoryApp extends React.Component<{}, IState> {
 
     public async onInventoryChange(e: React.MouseEvent, id: number, change: InventoryChange) {
         e.preventDefault();
-        // TODO: this should be a post request
         try {
-            await get(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`);
+            await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
         } catch (err) {
             this.logger.logWarning(err);
         }

@@ -21,8 +21,7 @@ typescript()
 {
     info_text "Running Typescript linter."
     "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/front_end/**/*.ts" \
-            "$root_dir/vinoteca/lib/**/*.ts" "$root_dir/vinoteca/@types/**/*.ts" \
-            --format codeFrame
+            "$root_dir/vinoteca/lib/**/*.ts" "$root_dir/vinoteca/@types/**/*.ts"
 }
 
 case $# in

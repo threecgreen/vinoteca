@@ -13,7 +13,7 @@ export function toggleRegion(producerInput: HTMLInputElement, regionInput: HTMLI
         regionInput.value = "";
         // $("label[for='auto-region']").text("Region");
     };
-    producerInput.onChange(async() => {
+    producerInput.onChange(async () => {
         const producers: IDict<string> = await get("/rest/producers/all/");
         if (!(producerInput.value in producers)) {
             noRegion();

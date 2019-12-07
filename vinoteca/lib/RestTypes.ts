@@ -206,7 +206,6 @@ export class WineTableWine {
     }
 }
 
-
 export interface IVitiAreaStats extends IRestModel {
     total_wines: number;
     avg_price?: number;

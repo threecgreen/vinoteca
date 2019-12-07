@@ -8,7 +8,7 @@ declare const wineTypeVarieties: IGenericStat;
 declare const wineTypePrice: IGenericStat;
 
 navbar();
-const elems = document.querySelectorAll('.parallax');
+const elems = document.querySelectorAll(".parallax");
 const instances = new Parallax(elems[0]);
 tabs();
 

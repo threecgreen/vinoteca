@@ -1,7 +1,7 @@
+import { onLoad } from "../../lib/JQueryCompat";
 import { GenericStat, IGenericStat } from "../../lib/RestTypes";
 import { navbar, tabs } from "../../lib/widgets";
 import { applyChart, barChart, lineChart } from "../../lib/wine_charts";
-import { onLoad } from "../../lib/JQueryCompat";
 
 declare const colorPurchases: IGenericStat;
 declare const colorVarieties: IGenericStat;
@@ -52,7 +52,8 @@ onLoad(() => {
     ];
 
     if (doPurchasesByYear) {
-        lineChart((document.getElementById("pb-year-chart") as HTMLCanvasElement), purchasesByYearData.map((j) => GenericStat.fromJSON(j)),
-                    purchasesByYearLabels);
+        lineChart((document.getElementById("pb-year-chart") as HTMLCanvasElement),
+                  purchasesByYearData.map((j) => GenericStat.fromJSON(j)),
+                  purchasesByYearLabels);
     }
 });

@@ -16,7 +16,8 @@ export default class SpecialCharController {
         this.specialCharBtns = document.querySelectorAll(".spec-char-btn");
         this.shiftBtn = selectById("shift") as HTMLLinkElement;
         const inputs = document.getElementsByTagName("input");
-        this.textInputs = []
+        this.textInputs = [];
+        // tslint:disable:prefer-for-of
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].type === "text") {
                 this.textInputs.push(inputs[i]);
@@ -40,8 +41,8 @@ export default class SpecialCharController {
                 e.preventDefault();
                 this.lastInput.value += btn.textContent;
                 this.lastInput.focus();
-            }
-        })
+            };
+        });
         this.updateLastInputListener();
     }
 
@@ -56,16 +57,16 @@ export default class SpecialCharController {
                     if (btn.textContent) {
                         btn.textContent = btn.textContent.toUpperCase();
                     }
-                })
+                });
             } else {
                 this.specialCharBtns.forEach((btn) => {
                     if (btn.textContent) {
                         btn.textContent = btn.textContent.toLowerCase();
                     }
-                })
+                });
                 this.shiftBtn.textContent = "↑";
             }
-        }
+        };
     }
 
     /**
@@ -78,7 +79,7 @@ export default class SpecialCharController {
                     // @ts-ignore
                     this.lastInputId = event.target.getAttribute("id");
                 }
-            })
-        })
+            });
+        });
     }
 }

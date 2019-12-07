@@ -1,10 +1,10 @@
 import "chart.js";
 import "materialize-css";
-import { Grape, IWineGrape } from "../../lib/RestTypes";
-import { hFloatingActnBtn, navbar, tabs, modal } from "../../lib/widgets";
-import { applyChart, pieChart } from "../../lib/wine_charts";
-import { onLoad } from "../../lib/JQueryCompat";
 import { get } from "../../lib/ApiHelper";
+import { onLoad } from "../../lib/JQueryCompat";
+import { Grape, IWineGrape } from "../../lib/RestTypes";
+import { hFloatingActnBtn, modal, navbar, tabs } from "../../lib/widgets";
+import { applyChart, pieChart } from "../../lib/wine_charts";
 
 declare const wineId: number;
 

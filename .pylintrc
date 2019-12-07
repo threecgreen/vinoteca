@@ -131,7 +131,7 @@ disable=print-statement,
         no-member,
         useless-object-inheritance,
         too-few-public-methods,
-        logging-fstring-interpolation,
+        logging-format-interpolation,
         abstract-method,
         missing-docstring
 

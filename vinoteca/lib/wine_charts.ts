@@ -1,8 +1,8 @@
 import { Chart } from "chart.js";
+import { selectById } from "./JQueryCompat";
 import Logger from "./Logger";
 import { pipe } from "./utils";
 import { setTabAccessibility } from "./widgets";
-import { selectById } from "./JQueryCompat";
 
 const logger =  new Logger("wine_charts.ts");
 
@@ -157,7 +157,7 @@ export function applyChart(
     const canvas = selectById(`${chartNamePrefix}-chart`) as HTMLCanvasElement | null;
     const chartLi = selectById(`${chartNamePrefix}-chart-li`) as HTMLUListElement | null;
     if (!canvas || !chartLi) {
-        new Logger('wine_charts').logError(`Could not find canvas element(s) with prefix ${chartNamePrefix}`);
+        new Logger("wine_charts").logError(`Could not find canvas element(s) with prefix ${chartNamePrefix}`);
         return;
     }
 

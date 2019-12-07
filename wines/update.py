@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
 
 from vinoteca.image import UserImage
 from vinoteca.models import Colors, Purchases, Wines
@@ -104,6 +105,8 @@ def rest_change_inventory(_, wine_id: int, sign: str):
     return JsonResponse({"changed": True})
 
 
+# TODO: require post once wine profile is on react
+# @require_POST
 # pylint: disable=unused-argument
 def change_inventory(request, wine_id: int, sign: str,
                      return_to_inventory: bool = False):
@@ -114,7 +117,7 @@ def change_inventory(request, wine_id: int, sign: str,
     wine = Wines.objects.get(id=wine_id)
     return redirect("Wines:Wine Profile", wine_id=wine.id)
 
-def _change_inventory(wine_id, sign):
+def _change_inventory(wine_id: int, sign: str):
     assert sign in ("add", "subtract")
     wine = Wines.objects.get(id=wine_id)
     if sign == "add":

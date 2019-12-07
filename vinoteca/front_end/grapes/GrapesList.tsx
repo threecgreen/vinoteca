@@ -1,27 +1,27 @@
 import * as React from "react";
+import { SortingState, TableHeader } from "../../components/TableHeader";
 import { GrapeItem } from "./GrapesApp";
 import { GrapesListItem } from "./GrapesListItem";
-import { SortingState, TableHeader } from "../../components/TableHeader";
 
 enum SortingValue {
     Name,
     Wine,
 }
 
-interface IGrapesListState {
+interface IState {
     ascending: boolean;
     sorting: SortingValue;
 }
 
-interface IGrapesListProps {
+interface IProps {
     grapes: GrapeItem[];
     onChange: (id: number, name: string) => void;
     handleEdit: (e: React.MouseEvent, id: number) => void;
     handleSave: (e: React.MouseEvent, id: number) => void;
 }
 
-export class GrapesList extends React.Component<IGrapesListProps, IGrapesListState> {
-    constructor(props: IGrapesListProps) {
+export class GrapesList extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             ascending: true,
@@ -33,7 +33,7 @@ export class GrapesList extends React.Component<IGrapesListProps, IGrapesListSta
         return (
             <table className="responsive highlight condensed">
                 <thead>
-                    <tr>
+                    <tr key="headers">
                         <TableHeader sortingState={ this.sortingStateForHeader(SortingValue.Name) }
                             onClick={ (e) => this.onHeaderClick(e, SortingValue.Name) }
                         >

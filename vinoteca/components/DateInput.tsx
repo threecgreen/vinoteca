@@ -23,7 +23,7 @@ export class DateInput extends React.Component<{}, IDateInputState> {
     }
 
     get dateString(): string {
-        return this.state.date ? format(this.state.date, "MMM DD, YYYY") : "";
+        return this.state.date ? format(this.state.date, "MMM dd, yyyy") : "";
     }
 
     public render() {

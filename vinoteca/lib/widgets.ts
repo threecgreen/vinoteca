@@ -1,15 +1,14 @@
-import { Autocomplete, Dropdown, FloatingActionButton, Sidenav, Modal, Datepicker, Tabs } from "materialize-css";
+import { Autocomplete, Datepicker, Dropdown, FloatingActionButton, Modal, Sidenav, Tabs } from "materialize-css";
 import { get } from "./ApiHelper";
+import { selectById } from "./JQueryCompat";
 import Logger from "./Logger";
 import { IDict, nameToId } from "./utils";
-import { selectById } from "./JQueryCompat";
 
 type OnChange = (e: string) => void;
 
 /** Setup autocompletion with provided completion options. */
 export function staticAutocomplete(elementId: string, completions: IDict<string | null>,
-                                   onChange: OnChange,
-                                   minLength = 1, limit = 5) {
+                                   onChange: OnChange, minLength = 1, limit = 5) {
     const logger = new Logger("widgets");
     const elem = selectById(elementId);
     if (elem) {
@@ -31,7 +30,7 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
 
 /** Improved autocomplete without JQuery. Meant for use with React. */
 export async function rAutocomplete(modelName: string, onChange: OnChange,
-                              minLength = 1, limit = 5) {
+                                    minLength = 1, limit = 5) {
     try {
         const completions: IDict<string> = await get(`/rest/${modelName.toLowerCase()}s/all/`);
         staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
@@ -102,7 +101,7 @@ export function setTabAccessibility(tabListElem: HTMLUListElement, ability: bool
 /** Activates all horizontal floating action buttons in class fixed-action-btn.  */
 export function hFloatingActnBtn() {
     document.querySelectorAll(".fixed-action-btn").forEach((elem) => {
-        const instance = new FloatingActionButton(elem, {direction: "left"});
+        const instance = new FloatingActionButton(elem, { direction: "left" });
     });
 }
 
@@ -116,6 +115,6 @@ export function toast(message: string) {
 }
 
 export function modal(id: string) {
-    const modal = selectById(id);
-    const instance = new Modal(modal);
+    const modalElem = selectById(id);
+    const instance = new Modal(modalElem);
 }

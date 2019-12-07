@@ -1,8 +1,8 @@
 import { createElement } from "react";
 import { render } from "react-dom";
+import { onLoad } from "../../lib/JQueryCompat";
 import { navbar } from "../../lib/widgets";
 import { WineTypeProfileApp } from "./WineTypeProfileApp";
-import { onLoad } from "../../lib/JQueryCompat";
 
 declare const wineTypeId: number;
 

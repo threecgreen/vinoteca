@@ -1,3 +1,4 @@
+// tslint:disable:no-eval
 type BinaryPred = (l: any, r: any) => boolean;
 const operators: Map<string, BinaryPred> = new Map();
 operators.set("==", (l, r) => l === r);
@@ -8,13 +9,14 @@ operators.set("<=", (l, r) => l <= r);
 operators.set("<", (l, r) => l < r);
 operators.set(">=", (l, r) => l >= r);
 operators.set(">", (l, r) => l > r);
-operators.set("INCLUDES", (l, r) => new String(l).toLowerCase().includes(r))
+operators.set("INCLUDES", (l, r) => l.toLowerCase().includes(r));
 
 export default class FilterExpr {
     public static parse(expr: string): FilterExpr {
         if (operators.has(expr.substr(0, 2))) {
             return new FilterExpr(expr.substr(0, 2), eval(expr.substr(2)));
-        } if (operators.has(expr[0])) {
+        }
+        if (operators.has(expr[0])) {
             return new FilterExpr(expr[0], eval(expr.substr(1)));
         }
         return new FilterExpr("INCLUDES", expr);
