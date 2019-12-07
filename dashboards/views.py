@@ -134,7 +134,7 @@ def top_grape_varieties(limit: int) -> List[Grapes]:
     # TODO: possibly rewrite in SQL to better calculate average pct with
     # coalesce and wine-weighted avg price
     return Grapes.objects.annotate(
-            quantity=Sum(Coalesce("winegrapes__wine__purchases__quantity", 1))) \
+        quantity=Sum(Coalesce("winegrapes__wine__purchases__quantity", 1))) \
         .annotate(avg_price=Avg("winegrapes__wine__purchases__price")) \
         .annotate(avg_pct=Avg("winegrapes__percent")) \
         .order_by("-quantity")[:limit]
@@ -175,7 +175,7 @@ class InventoryView(viewsets.ModelViewSet):
     model = InventoryWine
 
     # pylint: disable=arguments-differ
-    def list(self, request):
+    def list(self, _request):
         # Inside the method so it runs every time
         queryset = InventoryWine.objects.raw("""
             SELECT

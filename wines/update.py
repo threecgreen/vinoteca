@@ -5,7 +5,6 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.views.decorators.http import require_POST
 
 from vinoteca.image import UserImage
 from vinoteca.models import Colors, Purchases, Wines
