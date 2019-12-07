@@ -1,5 +1,11 @@
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 
+/**
+ * Create or update a cookie
+ * @param name name/key of the cookie
+ * @param value value to store
+ * @param days number of days the cookie is valid, defaults to the current session
+ */
 export function createCookie(name: string, value: string, days?: number) {
 	if (days) {
 		const date = new Date();
@@ -13,17 +19,17 @@ export function createCookie(name: string, value: string, days?: number) {
 
 export function readCookie(name: string): string {
     const nameEQ = name + "=";
-    document.cookie.split(";").forEach((c) => {
+    for (let c of document.cookie.split(";")) {
         while (c.charAt(0) == " ") {
-            c = c.substring(1, c.length);
+            c = c.substr(1);
         }
         if (c.indexOf(nameEQ) == 0) {
-            return c.substr(nameEQ.length, c.length);
+            return c.substr(nameEQ.length);
         }
-    });
+    }
 	return "";
 }
 
-export function eraseCookie(name: string) {
+export function deleteCookie(name: string) {
 	createCookie(name, "", -1);
 }

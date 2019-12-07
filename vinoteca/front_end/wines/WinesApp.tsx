@@ -6,12 +6,13 @@ import Logger from "../../lib/Logger";
 import { getWinesTable } from "../../lib/RestApi";
 import { Wine } from "../../lib/RestTypes";
 import { WinesTable } from "./WinesTable";
-import { readCookie } from "../../lib/Cookies";
+import { createCookie, deleteCookie, readCookie } from "../../lib/Cookies";
+import FilterExpr from "../../lib/FilterExpr";
 
 interface IState {
     wines: Wine[];
     // TODO: store these in cookie
-    predicates: Map<keyof Wine, (v: any) => boolean>;
+    predicates: Map<keyof Wine, FilterExpr>;
     hasLoaded: boolean;
     currentPage: number;
     winesPerPage: number;
@@ -21,11 +22,11 @@ export class WinesApp extends React.Component<{}, IState> {
     private readonly logger: Logger;
     private static cookieName: string = "WinesAppPredicates"
 
-    constructor(props: {}) {
+    public constructor(props: {}) {
         super(props);
         this.state = {
             wines: [],
-            predicates: this.deserializePredicates(readCookie(WinesApp.cookieName)) || new Map(),
+            predicates: this.deserializePredicates(readCookie(WinesApp.cookieName)),
             hasLoaded: false,
             currentPage: 1,
             winesPerPage: 50,
@@ -34,19 +35,37 @@ export class WinesApp extends React.Component<{}, IState> {
         this.logger = new Logger(this.constructor.name);
     }
 
-    private serializePredicates(): string {
-        const predStrings = Array.from(this.state.predicates.entries()).map((k, predFun) => [k, predFun.toString()]);
-        return JSON.stringify(predStrings);
+    private serializePredicates() {
+        if (this.state.predicates) {
+            const predStrings = Array.from(this.state.predicates.entries()).map((ent) => [ent[0], ent[1].toJson()]);
+            console.log(`PredStrings: '${predStrings}'`)
+            const serializedPredicates = JSON.stringify(predStrings);
+            console.log(`Updating cookie to '${serializedPredicates}'`);
+            deleteCookie(WinesApp.cookieName);
+            createCookie(WinesApp.cookieName, serializedPredicates, 90);
+        } else {
+            deleteCookie(WinesApp.cookieName);
+        }
     }
 
-    private deserializePredicates(json: string): Map<keyof Wine, (v: any) => boolean> {
+    private deserializePredicates(json: string): Map<keyof Wine, FilterExpr> {
+        if (!json) {
+            return new Map();
+        }
+        console.log(`Deserializing JSON: ${json}`);
         const predicates = new Map();
-        const arr: Array<[string, string]> = JSON.parse(json);
-        arr.forEach((item) => {
-            const [key, funStr] = item;
-            predicates.set(key, eval(funStr))
-        })
-        return predicates;
+        try {
+            const arr: Array<[string, string]> = JSON.parse(json);
+            arr.forEach((item) => {
+                const [key, expr] = item;
+                predicates.set(key, FilterExpr.parse(expr));
+            })
+            return predicates;
+        } catch (err) {
+            deleteCookie(WinesApp.cookieName);
+            this.logger.logWarning(`Failed reading predicates cookie with error: ${err}`);
+            return new Map();
+        }
     }
 
     public render() {
@@ -57,14 +76,14 @@ export class WinesApp extends React.Component<{}, IState> {
         if (this.state.wines.length === 0) {
             wines = (
                 <h6 className="bold center-align">
-                    Your inventory is current empty.
+                    You haven&rsquo;t entered any wines yet.
                 </h6>
             );
         } else {
             wines = (
                 <React.Fragment>
                     <h3 className="page-title">Wines</h3>
-                    <WinesTable onFilterChange={ (c, pred) => this.onFilterChange(c, pred) }
+                    <WinesTable onFilterChange={ (c, filterExpr) => this.onFilterChange(c, filterExpr) }
                         onEmptyFilter={ (c) => this.onEmptyFilter(c) }
                         { ...this.state }
                     />
@@ -100,9 +119,9 @@ export class WinesApp extends React.Component<{}, IState> {
         }
     }
 
-    private onFilterChange(columnName: keyof Wine, pred: (val: any) => boolean) {
+    private onFilterChange(columnName: keyof Wine, filterExpr: FilterExpr) {
         this.setState((prevState) => {
-            prevState.predicates.set(columnName, pred);
+            prevState.predicates.set(columnName, filterExpr);
             return {
                 predicates: prevState.predicates,
             };

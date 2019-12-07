@@ -1,6 +1,7 @@
 import * as React from "react";
 import { MaterialIcon } from "./MaterialIcon";
 import Logger from "../lib/Logger";
+import FilterExpr from "../lib/FilterExpr";
 
 export enum SortingState {
     NotSorted,
@@ -43,15 +44,15 @@ export class TableHeader extends React.Component<IProps> {
         );
         return this.props.isNumCol
             ? (
-                <React.Fragment>
+                <>
                     { this.renderIcon() }
                     { text }
-                </React.Fragment>
+                </>
             ) : (
-                <React.Fragment>
+                <>
                     { text }
                     { this.renderIcon() }
-                </React.Fragment>
+                </>
             )
     }
 
@@ -68,7 +69,7 @@ export class TableHeader extends React.Component<IProps> {
 }
 
 interface IFilter {
-    onFilterChange: (fun: (val: string | number) => boolean) => void;
+    onFilterChange: (filter: FilterExpr) => void;
     onEmptyFilter: () => void;
 }
 
@@ -99,29 +100,12 @@ export class FilterHeader extends React.Component<IFilter, IState> {
     }
 
     private onChange(e: React.ChangeEvent<HTMLInputElement>) {
-        // Limited "eval", emphasis on quotations
         const val = e.target.value.toLowerCase();
         if (!val.trim()) {
             this.props.onEmptyFilter();
         }
         try {
-            if (val.substr(0, 2) === "<>" || val.substr(0, 2) === "!=") {
-                this.props.onFilterChange((v) => v !== eval(val.substr(3)));
-            } else if (val.substr(0, 2) === "==" ) {
-                this.props.onFilterChange((v) => v === eval(val.substr(2)));
-            } else if (val.substr(0, 1) === "=") {
-                this.props.onFilterChange((v) => v === eval(val.substr(1)));
-            } else if (val.substr(0, 2) === ">=") {
-                this.props.onFilterChange((v) => v >= eval(val.substr(2)));
-            } else if (val.substr(0, 2) === "<=") {
-                this.props.onFilterChange((v) => v <= eval(val.substr(2)));
-            } else if (val.substr(0, 1) == ">") {
-                this.props.onFilterChange((v) => v > eval(val.substr(1)));
-            } else if (val.substr(0, 1) == "<") {
-                this.props.onFilterChange((v) => v < eval(val.substr(1)));
-            } else {
-                this.props.onFilterChange((v) => new String(v).toLowerCase().includes(val));
-            }
+            this.props.onFilterChange(FilterExpr.parse(val));
         } catch (exception) {
             this.logger.logInfo(`Error evaluating filter expression: ${exception}`)
         }

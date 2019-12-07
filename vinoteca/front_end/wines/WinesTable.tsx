@@ -2,6 +2,7 @@ import * as React from "react";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "../../components/TableCells";
 import { FilterHeader, SortingState, TableHeader } from "../../components/TableHeader";
 import { Wine } from "../../lib/RestTypes";
+import FilterExpr from "../../lib/FilterExpr";
 
 enum SortingValue {
     Inventory,
@@ -16,8 +17,8 @@ enum SortingValue {
 
 interface IProps {
     wines: Wine[];
-    predicates: Map<keyof Wine, (val: any) => boolean>;
-    onFilterChange: (column: keyof Wine, pred: (val: number | string) => boolean) => void;
+    predicates: Map<keyof Wine, FilterExpr>;
+    onFilterChange: (column: keyof Wine, filterExpr: FilterExpr) => void;
     onEmptyFilter: (columnName: keyof Wine) => void;
     currentPage: number;
     winesPerPage: number;
@@ -120,8 +121,8 @@ export class WinesTable extends React.Component<IProps, IState> {
     private get filteredWines() {
         // Reduce predicates
         const combinedPred = [...this.props.predicates.entries()]
-            .reduceRight((prevVal, [column, pred]) => {
-                return (wine: Wine) => prevVal(wine) && pred(wine[column]);
+            .reduceRight((prevVal, [column, filterExpr]) => {
+                return (wine: Wine) => prevVal(wine) && filterExpr.call(wine[column]!);
             }, (_: Wine) => true);
         return this.props.wines.filter(combinedPred);
     }
@@ -194,12 +195,13 @@ export class WinesTable extends React.Component<IProps, IState> {
         };
     }
 
+    // Constructs props for a filter header
     private filterHeaderProps(columnName: keyof Wine):
-        {onFilterChange: (pred: (val: any) => boolean) => void,
+        {onFilterChange: (filterExpr: FilterExpr) => void,
          onEmptyFilter: () => void} {
 
         return {
-            onFilterChange: (pred) => this.props.onFilterChange(columnName, pred),
+            onFilterChange: (filterExpr) => this.props.onFilterChange(columnName, filterExpr),
             onEmptyFilter: () => this.props.onEmptyFilter(columnName)
         };
     }
