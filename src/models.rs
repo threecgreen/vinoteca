@@ -1,9 +1,19 @@
-use diesel::Queryable;
+use super::schema::{colors, regions};
 
-#[derive(Queryable, Clone)]
+use diesel::{Insertable, Queryable};
+extern crate serde;
+use serde::{Deserialize, Serialize};
+
+#[derive(Queryable, Clone, Serialize, Debug)]
 pub struct Color {
     pub id: i32,
     pub name: String,
+}
+
+#[derive(Deserialize, Insertable, Debug)]
+#[table_name = "colors"]
+pub struct ColorForm<'a> {
+    name: &'a str,
 }
 
 pub struct Grape {
@@ -30,10 +40,16 @@ pub struct PurchaseRow {
     pub date: Option<i32>,
 }
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable, Clone, Serialize, Debug)]
 pub struct Region {
     pub id: i32,
     pub name: String,
+}
+
+#[derive(Deserialize, Insertable, Debug)]
+#[table_name = "regions"]
+pub struct RegionForm<'a> {
+    name: &'a str,
 }
 
 #[derive(Queryable, Clone)]

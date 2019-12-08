@@ -1,6 +1,15 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
+extern crate vinoteca;
+use vinoteca::{colors, regions};
 
 fn main() {
-    rocket::ignite().mount("/", routes![]).launch();
+    // Environment variables
+    // dotenv().ok();
+
+    rocket::ignite()
+        .attach(vinoteca::DbConn::fairing())
+        .mount("/", routes![colors::get, regions::get])
+        .launch();
 }

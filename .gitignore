@@ -48,3 +48,4 @@ media
 target
 Rocket.toml
 **/*.rs.bk
+Rocket.toml

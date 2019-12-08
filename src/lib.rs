@@ -1,21 +1,31 @@
-#[macro_use]
-extern crate rocket;
+#![feature(decl_macro, proc_macro_hygiene)]
+
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
+#[macro_use]
+extern crate rocket_contrib;
+use rocket_contrib::databases::diesel::SqliteConnection;
+#[macro_use]
+extern crate rocket;
+extern crate serde;
 
-pub mod dashboards;
-pub mod schema;
+use diesel::result::Error;
+use rocket::http::Status;
+
 pub mod models;
+pub mod schema;
+
+pub mod colors;
+pub mod dashboards;
+pub mod regions;
 pub mod wines;
 
-use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
+#[database("vinoteca")]
+pub struct DbConn(SqliteConnection);
 
-pub fn establish_connection() -> SqliteConnection {
-    dotenv().ok();
-
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    SqliteConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+fn error_status(error: Error) -> Status {
+    match error {
+        Error::NotFound => Status::NotFound,
+        _ => Status::InternalServerError,
+    }
 }
