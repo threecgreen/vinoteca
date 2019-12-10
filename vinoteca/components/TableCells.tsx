@@ -74,11 +74,14 @@ export const DateCell: React.FunctionComponent<IDateCellProps> = (props) => {
 DateCell.displayName = "DateCell";
 
 interface IColorCellProps {
-    color: string;
+    color?: string;
 }
 
 export const ColorCell: React.FunctionComponent<IColorCellProps> = (props) => {
-    return <td>{ capitalizeFirstLetter(props.color) }</td>;
+    if (props.color) {
+        return <td>{ capitalizeFirstLetter(props.color) }</td>;
+    }
+    return <td />;
 };
 ColorCell.displayName = "ColorCell";
 
