@@ -6,40 +6,33 @@ import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
 
-interface IVitiAreaInputProps extends IOnChange {
+interface IProps extends IOnChange {
     value: string;
     onSpecialCharClick: (c: string, position: number) => void;
 }
 
-interface IVitiAreaInputState {
-    // Helpful for debugging to include in state
-    autocompleteOptions: IDict<string>;
-}
+export const VitiAreaInput: React.FC<IProps> = (props) => {
+    const logger = new Logger(VitiAreaInput.toString());
 
-export class VitiAreaInput extends React.Component<IVitiAreaInputProps, IVitiAreaInputState> {
-    private logger: Logger;
-
-    constructor(props: IVitiAreaInputProps) {
-        super(props);
-        this.logger = new Logger(this.constructor.name);
-    }
-
-    public async componentDidMount() {
-        try {
-            const producers: IDict<string> = await get("/rest/viti-areas/all/");
-            staticAutocomplete(nameToId("Viti Area"), producers, this.props.onChange);
-        } catch (e) {
-            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+    React.useEffect(() => {
+        async function fetchVitiAreas() {
+            try {
+                const vitiAreas: IDict<string> = await get("/rest/viti-areas/all/");
+                staticAutocomplete(nameToId("Viti Area"), vitiAreas, props.onChange);
+            } catch (e) {
+                logger.logError(`Failed to get producer autocomplete options. ${e}`);
+            }
         }
-    }
 
-    public render() {
-        return (
-            <StatelessTextInput name="Viti Area"
-                className="autocomplete"
-                s={ 8 } l={ 4 }
-                { ...this.props }
-            />
-        );
-    }
+        fetchVitiAreas();
+    }, []);
+
+    return (
+        <StatelessTextInput name="Viti Area"
+            className="autocomplete"
+            s={ 8 } l={ 4 }
+            { ...props }
+        />
+    );
 }
+VitiAreaInput.displayName = "VitiAreaInput";

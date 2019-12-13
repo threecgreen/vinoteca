@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Input } from "./Input";
 
-interface INumberInputProps {
+interface IProps {
     id: string;
     name: string;
     initNumber: number;
@@ -15,33 +15,22 @@ interface INumberInputProps {
     l?: number;
 }
 
-interface INumberInputState {
-    number: number;
-}
+export const NumberInput: React.FC<IProps> = (props) => {
+    const [number, setNumber] = React.useState(props.initNumber);
 
-export class NumberInput extends React.Component<INumberInputProps, INumberInputState> {
-    constructor(props: INumberInputProps) {
-        super(props);
-        this.state = {
-            number: this.props.initNumber,
-        };
-    }
-
-    public render() {
-        return (
-            <Input inputType="number" value={ this.state.number }
-                onChange={ this.onChange.bind(this) }
-                { ...this.props }
-            />
-        );
-    }
-
-    public onChange(val: string) {
+    const onChange = (val: string) => {
         const float = parseFloat(val);
         const int = parseInt(val, 10);
-        this.setState({
-            // The highest level of precision we care about is 1/100ths (cents)
-            number: float - 0.005 > int ? float : int,
-        });
+        // The highest level of precision we care about is 1/100ths (cents)
+        setNumber(float - 0.005 > int ? float : int);
     }
-}
+
+    return (
+        <Input inputType="number"
+            value={ number }
+            onChange={ onChange }
+            { ...props }
+        />
+    )
+};
+NumberInput.displayName = "NumberInput";

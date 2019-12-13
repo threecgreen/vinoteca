@@ -4,7 +4,7 @@ interface IProps {
     region: string;
 }
 
-export const Flag: React.FunctionComponent<IProps> = (props) => {
+export const Flag: React.FC<IProps> = (props) => {
     return (
         <img src={ `/static/img/flags/${props.region}.svg` }
             alt={ `Flag of ${props.region}` }

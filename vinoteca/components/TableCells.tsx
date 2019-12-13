@@ -25,7 +25,7 @@ interface INumCellProps {
     maxDecimals?: number;
 }
 
-export const NumCell: React.FunctionComponent<INumCellProps> = (props) => {
+export const NumCell: React.FC<INumCellProps> = (props) => {
     const num = props.num
         // undefined to use browser's locale
         ? props.num.toLocaleString(undefined,
@@ -42,7 +42,7 @@ interface IPriceCellProps {
     price?: number;
 }
 
-export const PriceCell: React.FunctionComponent<IPriceCellProps> = (props) => {
+export const PriceCell: React.FC<IPriceCellProps> = (props) => {
     return (
         <NumCell num={ props.price }
             minDecimals={ 2 }
@@ -52,7 +52,7 @@ export const PriceCell: React.FunctionComponent<IPriceCellProps> = (props) => {
 }
 PriceCell.displayName = "PriceCell";
 
-export const YearCell: React.FunctionComponent<{year?: number}> = (props) => {
+export const YearCell: React.FC<{year?: number}> = (props) => {
     const year = props.year ? props.year.toString() : EN_DASH;
     return (
         <td className="num-col">
@@ -65,7 +65,7 @@ YearCell.displayName = "YearCell";
 interface IDateCellProps {
     date?: number;
 }
-export const DateCell: React.FunctionComponent<IDateCellProps> = (props) => {
+export const DateCell: React.FC<IDateCellProps> = (props) => {
     const dateStr = props.date ? format(numToDate(props.date), "MMM dd, yyyy") : EN_DASH;
     return (
         <td>{ dateStr }</td>
@@ -77,7 +77,7 @@ interface IColorCellProps {
     color?: string;
 }
 
-export const ColorCell: React.FunctionComponent<IColorCellProps> = (props) => {
+export const ColorCell: React.FC<IColorCellProps> = (props) => {
     if (props.color) {
         return <td>{ capitalizeFirstLetter(props.color) }</td>;
     }
@@ -90,7 +90,7 @@ interface ILinkedCellProps {
     model: string;
 }
 
-const LinkedCell: React.FunctionComponent<ILinkedCellProps> = (props) => {
+const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
     const url = `/${props.model}/${props.id}/`;
     return (
         <td>
@@ -108,7 +108,7 @@ interface INameAndTypeProps {
     url?: string;
 }
 
-export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (props) => {
+export const NameAndTypeCell: React.FC<INameAndTypeProps> = (props) => {
     if (props.url) {
         <td>
             <a href={ props.url }>
@@ -124,7 +124,7 @@ export const NameAndTypeCell: React.FunctionComponent<INameAndTypeProps> = (prop
 };
 NameAndTypeCell.displayName = "NameAndTypeCell";
 
-export const ProducerCell: React.FunctionComponent<{id: number}> = (props) => {
+export const ProducerCell: React.FC<{id: number}> = (props) => {
     return (
         <LinkedCell id={ props.id } model="producers">
             { props.children }
@@ -133,7 +133,7 @@ export const ProducerCell: React.FunctionComponent<{id: number}> = (props) => {
 }
 ProducerCell.displayName = "ProducerCell"
 
-export const RegionCell: React.FunctionComponent<{id: number}> = (props) => {
+export const RegionCell: React.FC<{id: number}> = (props) => {
     return (
         <LinkedCell id={ props.id } model="regions">
             { props.children }
@@ -142,7 +142,7 @@ export const RegionCell: React.FunctionComponent<{id: number}> = (props) => {
 }
 RegionCell.displayName = "RegionCell"
 
-export const VitiAreaCell: React.FunctionComponent<{id?: number}> = (props) => {
+export const VitiAreaCell: React.FC<{id?: number}> = (props) => {
     if (!props.id) {
         return <td />;
     }

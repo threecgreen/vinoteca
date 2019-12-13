@@ -28,8 +28,8 @@ function gridClasses(props: IAllGridProps): string[] {
     return [sClass, mClass, lClass];
 }
 
-const GridComponentFactory = (className: string): React.FunctionComponent<IAllGridProps> => {
-    const component: React.FunctionComponent<IAllGridProps> = (props: IAllGridProps) => {
+const GridComponentFactory = (className: string): React.FC<IAllGridProps> => {
+    const component: React.FC<IAllGridProps> = (props: IAllGridProps) => {
         const otherClasses = joinClasses(gridClasses(props), props.classes);
         return (
             <div className={ `${className} ${otherClasses}` }>
@@ -41,8 +41,8 @@ const GridComponentFactory = (className: string): React.FunctionComponent<IAllGr
     return component;
 }
 
-export const Row: React.FunctionComponent<IAllGridProps> = GridComponentFactory("row");
+export const Row: React.FC<IAllGridProps> = GridComponentFactory("row");
 
-export const Col: React.FunctionComponent<IAllGridProps> = GridComponentFactory("col");
+export const Col: React.FC<IAllGridProps> = GridComponentFactory("col");
 
-export const InputField: React.FunctionComponent<IAllGridProps> = GridComponentFactory("col input-field")
+export const InputField: React.FC<IAllGridProps> = GridComponentFactory("col input-field")

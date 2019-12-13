@@ -4,25 +4,22 @@ import { FloatingBtn } from "./Buttons";
 import { IChildrenProp } from "./IProps";
 import { MaterialIcon } from "./MaterialIcon";
 
-export class FixedActionList extends React.Component<IChildrenProp> {
-    public render()  {
-        return (
+export const FixedActionList: React.FC<IChildrenProp> = (props) => {
+    React.useEffect(hFloatingActnBtn, []);
+
+    return (
             <div className="fixed-action-btn horizontal">
                 <FloatingBtn classes={ ["btn-large", "red-bg"] }
                     onClick={ (_) => undefined }
                 >
                     <MaterialIcon iconName="menu" />
                 </FloatingBtn>
-                <ul> { React.Children.map(this.props.children, (child) => {
+                <ul> { React.Children.map(props.children, (child) => {
                     return (
                         <li>{ child }</li>
                     );
                 }) } </ul>
             </div>
-        );
-    }
-
-    public componentDidMount() {
-        hFloatingActnBtn();
-    }
-}
+    );
+};
+FixedActionList.displayName = "FixedActionList";

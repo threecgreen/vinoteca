@@ -7,7 +7,7 @@ interface IProps {
     wines: Wine[];
 }
 
-export const PlaceWinesTable: React.FunctionComponent<IProps> = (props) => {
+export const PlaceWinesTable: React.FC<IProps> = (props) => {
     // TODO: get producer id for linking
     return (
         <Table

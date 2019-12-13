@@ -6,62 +6,46 @@ import { IDict } from "../lib/utils";
 import { IOnChange } from "./IProps";
 import { StatelessSelectInput } from "./StatelessSelectInput";
 
-interface IColorInputProps extends IOnChange {
+interface IProps extends IOnChange {
     selection: string;
     extraChoice?: string;
 }
 
-interface IColorInputState {
-    selectionOptions: string[];
-    selectRef: React.RefObject<HTMLSelectElement>;
-}
+export const ColorInput: React.FC<IProps> = (props) => {
+    const [selectionOptions, setSelectionOptions] = React.useState<string[]>([]);
+    const selectRef = React.useRef() as React.RefObject<HTMLSelectElement>;
 
-export class ColorInput extends React.Component<IColorInputProps, IColorInputState> {
-    private logger: Logger;
+    const logger = new Logger(ColorInput.name);
 
-    constructor(props: IColorInputProps) {
-        super(props);
-        this.state = {
-            selectRef: React.createRef(),
-            selectionOptions: [],
-        };
-        this.logger = new Logger(this.constructor.name);
-    }
-
-    public async componentDidMount() {
-        try {
-            const colors: IDict<string> = await get("/rest/colors/all/");
-            this.setState({
-                selectionOptions: this.concatIfNotNull(Object.keys(colors)),
-            });
-            const formSelect = new FormSelect(this.state.selectRef.current!);
-        } catch (e) {
-            this.logger.logError(`Failed to get colors with error '${e}'`);
-        }
-    }
-
-    public render() {
-        return (
-            <StatelessSelectInput name="Color"
-                s={ 4 } l={ 2 }
-                selectRef={ this.state.selectRef }
-                options={ this.state.selectionOptions }
-                onChange={ (v) => this.onChange(v) }
-                { ...this.props }
-            />
-        );
-    }
-
-    private onChange(val: string) {
-        if (this.props.onChange) {
-            this.props.onChange(val);
-        }
-    }
-
-    private concatIfNotNull(options: string[]): string[] {
-        if (this.props.extraChoice) {
-            return [this.props.extraChoice].concat(options);
+    const concatIfNotNull= (options: string[]): string[] => {
+        if (props.extraChoice) {
+            return [props.extraChoice].concat(options);
         }
         return options;
     }
+
+    React.useEffect(() => {
+        async function fetchColors() {
+            try {
+                const colors: IDict<string> = await get("/rest/colors/all/");
+                setSelectionOptions(concatIfNotNull(Object.keys(colors)));
+                const formSelect = new FormSelect(selectRef.current!);
+            } catch (e) {
+                logger.logError(`Failed to get colors with error '${e}'`);
+            }
+        }
+
+        fetchColors();
+    }, []);
+
+    return (
+        <StatelessSelectInput name="Color"
+            s={ 4 } l={ 2 }
+            selectRef={ selectRef }
+            options={ selectionOptions }
+            onChange={ (v) => props?.onChange(v) }
+            { ...props }
+        />
+    );
 }
+ColorInput.displayName = "ColorInput";

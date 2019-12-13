@@ -12,11 +12,11 @@ export const WineTableNumCols: IColumnHeader[] = [
     { name: "Rating", isNumCol: true },
 ]
 
-interface ITableProps extends IChildrenProp {
+interface IProps extends IChildrenProp {
     columns: (string | IColumnHeader)[];
 }
 
-export const Table: React.FunctionComponent<ITableProps> = (props) => {
+export const Table: React.FC<IProps> = (props) => {
     return (
         <table className="highlight responsive condensed">
             <thead>

@@ -1,9 +1,10 @@
 import * as React from "react";
 
-export class Preloader extends React.Component {
-    public render() {
-        return <div className="progress">
+export const Preloader: React.FC = (_props) => {
+    return (
+        <div className="progress">
             <div className="indeterminate"></div>
-        </div>;
-    }
+        </div>
+    );
 }
+Preloader.displayName = "Preloader";

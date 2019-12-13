@@ -2,7 +2,7 @@ import * as React from "react";
 import { nameToId } from "../lib/utils";
 import { Col, IGridProps } from "./Grid";
 
-interface IStatelessCheckboxInputProps extends IGridProps {
+interface IProps extends IGridProps {
     name: string;
     text: string;
     enabled: boolean;
@@ -10,7 +10,7 @@ interface IStatelessCheckboxInputProps extends IGridProps {
     onClick: (checked: boolean) => void;
 }
 
-export class StatelessCheckboxInput extends React.Component<IStatelessCheckboxInputProps, {}> {
+export class StatelessCheckboxInput extends React.Component<IProps> {
     public static defaultProps = {
         enabled: true,
     };

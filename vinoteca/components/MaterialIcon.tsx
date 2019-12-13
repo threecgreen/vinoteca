@@ -1,11 +1,11 @@
 import * as React from "react";
 
-interface IMaterializeIconProps {
+interface IProps {
     className?: string;
     iconName: string;
 }
 
-export const MaterialIcon: React.FunctionComponent<IMaterializeIconProps> = (props) => {
+export const MaterialIcon: React.FC<IProps> = (props) => {
     return (
          <i className={ `material-icons ${props.className}` }>
             { props.iconName }

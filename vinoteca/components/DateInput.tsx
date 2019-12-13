@@ -3,39 +3,10 @@ import { Datepicker } from "materialize-css";
 import * as React from "react";
 import { Input } from "./Input";
 
-interface IDateInputState {
-    date?: Date;
-}
+export const DateInput: React.FC<{}> = (_props) => {
+    const [date, setDate] = React.useState<Date | undefined>(undefined);
 
-export class DateInput extends React.Component<{}, IDateInputState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            date: undefined,
-        };
-    }
-
-    get valueSet(): boolean {
-        if (this.state.date) {
-            return true;
-        }
-        return false;
-    }
-
-    get dateString(): string {
-        return this.state.date ? format(this.state.date, "MMM dd, yyyy") : "";
-    }
-
-    public render() {
-        const name = "Purchase Date";
-        return <Input name={ name } value={ this.dateString }
-                      className="datepicker" s={ 6 } l={ 3 } active={ this.valueSet }
-                      onChange={ () => undefined } />;
-    }
-
-    public componentDidMount() {
-        // tslint:disable-next-line: no-this-assignment
-        const context = this;
+    React.useEffect(() => {
         const node = document.getElementsByClassName("datepicker")[0];
         const datepicker = new Datepicker(node, {
             autoClose: false,
@@ -43,15 +14,22 @@ export class DateInput extends React.Component<{}, IDateInputState> {
             maxDate: new Date(),
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
-                context.onClose(this);
+                setDate(datepicker.date);
             },
             yearRange: 15,
         });
-    }
+    }, []);
 
-    public onClose(datepicker: Datepicker) {
-        this.setState(() => ({
-            date: datepicker.date,
-        }));
-    }
-}
+    const dateString = date ? format(date, "MMM dd, yyyy") : "";
+    const isValueSet = date !== undefined;
+    const name = "Purchase Date";
+
+    return (
+        <Input name={ name }
+            value={ dateString }
+            className="datepicker"
+            s={ 6 } l={ 3 }
+            active={ isValueSet }
+        />
+    );
+};

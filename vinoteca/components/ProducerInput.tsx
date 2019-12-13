@@ -6,7 +6,7 @@ import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
 
-interface IProducerInputProps extends IOnChange {
+interface IProps extends IOnChange {
     value: string;
     onSpecialCharClick: (c: string, position: number) => void;
 }
@@ -16,30 +16,28 @@ interface IProducerInputState {
     autocompleteOptions: IDict<string>;
 }
 
-export class ProducerInput extends React.Component<IProducerInputProps, IProducerInputState> {
-    private logger: Logger;
+export const ProducerInput: React.FC<IProps> = (props) => {
+    const logger = new Logger(ProducerInput.name);
 
-    constructor(props: IProducerInputProps) {
-        super(props);
-        this.logger = new Logger(this.constructor.name);
-    }
-
-    public async componentDidMount() {
-        try {
-            const producers: IDict<string> = await get("/rest/producers/all/");
-            staticAutocomplete(nameToId("Producer"), producers, this.props.onChange);
-        } catch (e) {
-            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+    React.useEffect(() => {
+        async function fetchProducers() {
+            try {
+                const producers: IDict<string> = await get("/rest/producers/all/");
+                staticAutocomplete(nameToId("Producer"), producers, props.onChange);
+            } catch (e) {
+                logger.logError(`Failed to get producer autocomplete options. ${e}`);
+            }
         }
-    }
 
-    public render() {
-        return (
-            <StatelessTextInput name="Producer"
-                className="autocomplete"
-                s={ 6 } l={ 3 }
-                { ...this.props }
-            />
-        );
-    }
-}
+        fetchProducers();
+    }, []);
+
+    return (
+        <StatelessTextInput name="Producer"
+            className="autocomplete"
+            s={ 6 } l={ 3 }
+            { ...props }
+        />
+    )
+};
+ProducerInput.displayName = "ProducerInput";

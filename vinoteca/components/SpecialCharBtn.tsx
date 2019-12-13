@@ -1,12 +1,12 @@
 import * as React from "react";
 import { FloatingBtn } from "./Buttons";
 
-interface ISpecialCharBtnProps {
+interface IProps {
     onClick: (event: React.MouseEvent, char: string) => void;
     char: string;
 }
 
-export const SpecialCharBtn: React.FunctionComponent<ISpecialCharBtnProps> = (props) => {
+export const SpecialCharBtn: React.FC<IProps> = (props) => {
     const classes = ["btn-small", "center", "spec-char-btn"];
     return (
         <FloatingBtn classes={ classes }
