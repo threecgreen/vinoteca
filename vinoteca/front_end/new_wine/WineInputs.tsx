@@ -48,6 +48,12 @@ export class WineInputs extends React.Component<IProps, IState> {
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.WineType, v) }
                     onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.WineType, c, p) }
                 />
+                <StatelessTextInput name="Name" className=""
+                    s={ 12 } l={ 6 }
+                    value={ this.props.name }
+                    onChange={ (v) => this.props.onInputChange(NewWineTextInput.Name, v) }
+                    onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Name, c, p) }
+                />
                 <ProducerInput value={ this.props.producer }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Producer, v) }
                     onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Producer, c, p) }
