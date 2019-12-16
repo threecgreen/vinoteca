@@ -1,4 +1,4 @@
-import { get, IQueryParams, post, put } from "./ApiHelper";
+import { get, IQueryParams, post, put, delete_ } from "./ApiHelper";
 import Logger from "./Logger";
 import {
     INewRegion, INewVitiArea, IProducer, IRegion, IRestModel, IVitiArea, IVitiAreaStats,
@@ -94,6 +94,10 @@ export const getProducer = singleEntityGetter(getProducers);
 
 export async function updateProducer(producer: IProducer): Promise<IProducer> {
     return put(`/rest/producers/${producer.id}/`, producer);
+}
+
+export async function deleteProducer(id: number): Promise<void> {
+    return delete_(`/rest/producers/${id}/`);
 }
 
 /* VITI AREAS */

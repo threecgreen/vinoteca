@@ -1,7 +1,7 @@
 import { readCookie } from "./Cookies";
 import { IDict, isEmpty } from "./utils";
 
-const headers = {
+const HEADERS = {
     "Content-Type": "application/json",
     "X-CSRFToken": readCookie("csrftoken") || "",
 };
@@ -52,7 +52,7 @@ export async function get(url: string, params: IQueryParams = {}): Promise<any> 
 export async function post(url: string, body: object, params: IQueryParams = {}): Promise<any> {
     const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
-        headers,
+        headers: HEADERS,
         method: "POST",
     });
     return checkResponse(response);
@@ -69,8 +69,16 @@ export async function post(url: string, body: object, params: IQueryParams = {})
 export async function put(url: string, body: object, params: IQueryParams = {}): Promise<any> {
     const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
-        headers,
+        headers: HEADERS,
         method: "PUT",
+    });
+    return checkResponse(response);
+}
+
+export async function delete_(url: string, params: IQueryParams = {}): Promise<any> {
+    const response = await fetch(url + encodeParams(params), {
+        headers: HEADERS,
+        method: "DELETE",
     });
     return checkResponse(response);
 }

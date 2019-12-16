@@ -40,3 +40,4 @@ export const Table: React.FC<IProps> = (props) => {
         </table>
     );
 };
+Table.displayName = "Table";

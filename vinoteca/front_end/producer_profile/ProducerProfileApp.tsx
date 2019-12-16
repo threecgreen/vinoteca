@@ -3,10 +3,11 @@ import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
-import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
+import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer, deleteProducer } from "../../lib/RestApi";
 import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
 import { Producer } from "./Producer";
 import { ProducerWinesTable } from "./ProducerWinesTable";
@@ -18,6 +19,7 @@ export enum ProducerProfileTextInput {
 
 interface IProducerProfileAppState {
     isEditing: boolean;
+    showDeleteModal: boolean;
     lastActiveTextInput?: ProducerProfileTextInput;
     // Editable fields
     producerText: string;
@@ -39,6 +41,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         super(props);
         this.state = {
             isEditing: false,
+            showDeleteModal: false,
             producerText: "",
             regionText: "",
             producer: undefined,
@@ -52,6 +55,8 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
+        this.onShowDeleteModalClick = this.onShowDeleteModalClick.bind(this);
+        this.onDeleteClick = this.onDeleteClick.bind(this);
     }
 
     public async componentDidMount() {
@@ -88,12 +93,22 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                             >
                                 <MaterialIcon iconName="edit" />
                             </FloatingBtn>
+                            <FloatingBtn onClick={ this.onShowDeleteModalClick }
+                                classes={ ["red-bg"] }
+                            >
+                                <MaterialIcon iconName="delete" />
+                            </FloatingBtn>
                         </FixedActionList>
                     </Col>
                     <Col s={ 12 }>
                         <ProducerWinesTable wines={ this.state.wines } />
                     </Col>
                 </Row>
+                <DeleteModal item="producer"
+                    display={ this.state.showDeleteModal }
+                    onNoClick={ () => this.setState({showDeleteModal: false}) }
+                    onYesClick={ this.onDeleteClick }
+                />
             </div>
         );
     }
@@ -208,5 +223,22 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
             producerText: state.producer ? state.producer.name : "",
             regionText: state.region ? state.region.name : "",
         }));
+    }
+
+    private onShowDeleteModalClick(e: React.MouseEvent) {
+        e.preventDefault();
+        this.setState({showDeleteModal: true});
+    }
+
+    private async onDeleteClick(e: React.MouseEvent) {
+        e.preventDefault();
+        try {
+            await deleteProducer(this.props.producerId);
+            // Redirect home
+            window.location.href = "/";
+        } catch (ex) {
+            this.logger.logWarning(`Failed to delete producer with id ${this.props.producerId}`
+                                   + ` with exception: ${ex.body}`);
+        }
     }
 }

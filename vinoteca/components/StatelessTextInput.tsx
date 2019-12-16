@@ -84,7 +84,7 @@ export class StatelessTextInput extends React.Component<IProps, IState> {
     }
 
     private onBlur() {
-        const now = new Date()
+        const now = new Date();
         // @ts-ignore
         if (now - this.timestamp > 100) {
             this.setState({isActive: false});

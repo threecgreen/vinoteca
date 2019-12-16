@@ -12,7 +12,8 @@ LOGGER = get_logger("producers")
 
 class ProducerView(generics.ListAPIView,
                    mixins.ListModelMixin,
-                   mixins.UpdateModelMixin):
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin):
     queryset = Producers.objects.all()
     serializer_class = ProducerSerializer
     filterset_fields = ("id", "region_id")
@@ -24,6 +25,13 @@ class ProducerView(generics.ListAPIView,
     def put(self, request, *args, **kwargs):
         try:
             return self.update(request, *args, **kwargs)
+        except Exception as err:
+            LOGGER.warning(err)
+            raise err
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            return self.destroy(request, *args, **kwargs)
         except Exception as err:
             LOGGER.warning(err)
             raise err

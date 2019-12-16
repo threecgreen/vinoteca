@@ -2,7 +2,6 @@ import * as React from "react";
 import { rAutocomplete } from "../lib/widgets";
 import { Input } from "./Input";
 import { SimpleSpecialChars } from "./SimpleSpecialChars";
-import { isThisISOWeek } from "date-fns";
 
 interface ITextInputProps {
     name: string;
@@ -22,7 +21,7 @@ interface ITextInputState {
 }
 
 export class TextInput extends React.Component<ITextInputProps, ITextInputState> {
-    private timestamp?: Date;
+    private timestamp: Date;
 
     constructor(props: ITextInputProps) {
         super(props);
@@ -31,7 +30,7 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
             position: NaN,
             text: this.props.initText,
         };
-        this.timestamp = undefined;
+        this.timestamp = new Date();
         this.onChange = this.onChange.bind(this);
         this.onChangeEvent = this.onChangeEvent.bind(this);
         this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
@@ -47,6 +46,8 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
                     className={ this.props.className }
                     s={ this.props.s } m={ this.props.m } l={ this.props.l }
                     onChangeEvent={ this.onChangeEvent }
+                    onBlur={ () => this.onBlur() }
+                    onFocus={ () => this.onFocus() }
                 />
                 <SimpleSpecialChars
                     onClick={ this.onSpecialCharClick }
@@ -88,6 +89,14 @@ export class TextInput extends React.Component<ITextInputProps, ITextInputState>
         this.setState({
             isActive: true
         });
+    }
+
+    private onBlur() {
+        const now = new Date();
+        // @ts-ignore
+        if (now - this.timestamp > 100) {
+            this.setState({isActive: false});
+        }
     }
 }
 
