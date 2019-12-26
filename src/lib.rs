@@ -18,8 +18,10 @@ pub mod schema;
 pub mod colors;
 pub mod dashboards;
 pub mod regions;
-pub mod wines;
 pub mod viti_areas;
+pub mod wines;
+pub mod wine_grapes;
+pub mod wine_types;
 // Misc
 mod query_utils;
 

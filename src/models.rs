@@ -1,4 +1,4 @@
-use super::schema::{colors, regions, viti_areas};
+use super::schema::*;
 
 use diesel::{Insertable, Queryable};
 extern crate serde;
@@ -72,18 +72,24 @@ pub struct VitiAreaForm<'a> {
     pub region_id: i32,
 }
 
-#[derive(Queryable, Clone)]
-pub struct WineGrapeRow {
+#[derive(Queryable, Clone, Serialize, Debug)]
+pub struct WineGrape {
     pub id: i32,
-    pub percent: Option<u8>,
+    pub percent: Option<i32>,
     pub grape_id: i32,
     pub wine_id: i32,
 }
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable, Clone, Serialize, Debug)]
 pub struct WineType {
     pub id: i32,
     pub name: String,
+}
+
+#[derive(Deserialize, Insertable, Debug)]
+#[table_name = "wine_types"]
+pub struct WineTypeForm<'a> {
+    pub name: &'a str,
 }
 
 #[derive(Queryable, Clone)]
