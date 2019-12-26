@@ -47,6 +47,7 @@ pub fn put(
     purchase_form: Json<PurchaseForm>,
     connection: DbConn,
 ) -> Result<Json<Purchase>, Status> {
+    // TODO: validation
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form.into_inner())
         .execute(&*connection)
