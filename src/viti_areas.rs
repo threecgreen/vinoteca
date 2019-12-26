@@ -1,5 +1,5 @@
-use super::DbConn;
 use super::query_utils::error_status;
+use super::DbConn;
 
 use diesel;
 use diesel::prelude::*;
@@ -9,7 +9,12 @@ use rocket_contrib::json::Json;
 use schema::{regions, viti_areas};
 
 #[get("/viti-areas?<id>&<name>&<region_name>")]
-pub fn get(id: Option<i32>, name: Option<String>, region_name: Option<String>, connection: DbConn) -> Result<Json<Vec<VitiArea>>, Status> {
+pub fn get(
+    id: Option<i32>,
+    name: Option<String>,
+    region_name: Option<String>,
+    connection: DbConn,
+) -> Result<Json<Vec<VitiArea>>, Status> {
     // Inner join because viti areas must have a region id
     let mut query = viti_areas::table.inner_join(regions::table).into_boxed();
     if let Some(id) = id {
@@ -29,7 +34,10 @@ pub fn get(id: Option<i32>, name: Option<String>, region_name: Option<String>, c
 }
 
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]
-pub fn post(viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> Result<Json<VitiArea>, Status> {
+pub fn post(
+    viti_area_form: Json<VitiAreaForm>,
+    connection: DbConn,
+) -> Result<Json<VitiArea>, Status> {
     let viti_area_form = viti_area_form.into_inner();
     diesel::insert_into(viti_areas::table)
         .values(&viti_area_form)
@@ -47,7 +55,11 @@ pub fn post(viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> Result<Js
 }
 
 #[put("/viti-areas?<id>", format = "json", data = "<viti_area_form>")]
-pub fn put(id: i32, viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> Result<Json<VitiArea>, Status> {
+pub fn put(
+    id: i32,
+    viti_area_form: Json<VitiAreaForm>,
+    connection: DbConn,
+) -> Result<Json<VitiArea>, Status> {
     let viti_area_form = viti_area_form.into_inner();
     diesel::update(viti_areas::table.filter(viti_areas::id.eq(id)))
         .set(viti_area_form)

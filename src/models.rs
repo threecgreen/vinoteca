@@ -28,12 +28,24 @@ pub struct ProducerRow {
     pub region_id: Option<i32>,
 }
 
-#[derive(Queryable, Clone)]
-pub struct PurchaseRow {
+#[derive(Queryable, Clone, Serialize, Debug)]
+pub struct Purchase {
     pub id: i32,
-    pub price: Option<f64>,
-    pub quantity: Option<u8>,
-    pub vintage: Option<u8>,
+    pub price: Option<f32>,
+    pub quantity: Option<i32>,
+    pub vintage: Option<i32>,
+    pub memo: Option<String>,
+    pub store_id: Option<i32>,
+    pub wine_id: i32,
+    pub date: Option<i32>,
+}
+
+#[derive(AsChangeset, Deserialize, Insertable, Debug)]
+#[table_name = "purchases"]
+pub struct PurchaseForm {
+    pub price: Option<f32>,
+    pub quantity: Option<i32>,
+    pub vintage: Option<i32>,
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,

@@ -6,10 +6,14 @@ use diesel::prelude::*;
 use models::{WineType, WineTypeForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{wine_types};
+use schema::wine_types;
 
 #[get("/wine-types?<id>&<name>")]
-pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<Json<Vec<WineType>>, Status> {
+pub fn get(
+    id: Option<i32>,
+    name: Option<String>,
+    connection: DbConn,
+) -> Result<Json<Vec<WineType>>, Status> {
     let mut query = wine_types::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(wine_types::id.eq(id));
@@ -24,7 +28,10 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
-pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> Result<Json<WineType>, Status> {
+pub fn post(
+    wine_type_form: Json<WineTypeForm>,
+    connection: DbConn,
+) -> Result<Json<WineType>, Status> {
     let wine_type_form = wine_type_form.into_inner();
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)
@@ -39,7 +46,11 @@ pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> Result<Js
 }
 
 #[put("/wine-types?<id>", format = "json", data = "<wine_type_form>")]
-pub fn put(id: i32, wine_type_form: Json<WineTypeForm>, connection: DbConn) -> Result<Json<WineType>, Status> {
+pub fn put(
+    id: i32,
+    wine_type_form: Json<WineTypeForm>,
+    connection: DbConn,
+) -> Result<Json<WineType>, Status> {
     let wine_type_form = wine_type_form.into_inner();
     diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
         .set(wine_types::name.eq(wine_type_form.name))

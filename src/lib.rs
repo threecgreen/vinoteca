@@ -17,11 +17,12 @@ pub mod schema;
 // Rocket handlers
 pub mod colors;
 pub mod dashboards;
+pub mod purchases;
 pub mod regions;
 pub mod viti_areas;
-pub mod wines;
 pub mod wine_grapes;
 pub mod wine_types;
+pub mod wines;
 // Misc
 mod query_utils;
 

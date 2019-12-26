@@ -21,10 +21,16 @@ fn main() {
             "/",
             routes![
                 colors::get,
-                regions::get, regions::put, regions::post,
-                viti_areas::get, viti_areas::put, viti_areas::post,
+                regions::get,
+                regions::put,
+                regions::post,
+                viti_areas::get,
+                viti_areas::put,
+                viti_areas::post,
                 wine_grapes::get,
-                wine_types::get, wine_types::put, wine_types::post,
+                wine_types::get,
+                wine_types::put,
+                wine_types::post,
             ],
         )
         .launch();
