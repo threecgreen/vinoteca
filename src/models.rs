@@ -49,7 +49,7 @@ pub struct Region {
 #[derive(Deserialize, Insertable, Debug)]
 #[table_name = "regions"]
 pub struct RegionForm<'a> {
-    name: &'a str,
+    pub name: &'a str,
 }
 
 #[derive(Queryable, Clone)]
