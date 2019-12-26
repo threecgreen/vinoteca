@@ -3,29 +3,25 @@
 #[macro_use]
 extern crate diesel;
 #[macro_use]
+extern crate log;
+#[macro_use]
 extern crate rocket_contrib;
 use rocket_contrib::databases::diesel::SqliteConnection;
 #[macro_use]
 extern crate rocket;
 extern crate serde;
 
-use diesel::result::Error;
-use rocket::http::Status;
-
+// Diesel modules
 pub mod models;
 pub mod schema;
-
+// Rocket handlers
 pub mod colors;
 pub mod dashboards;
 pub mod regions;
 pub mod wines;
+pub mod viti_areas;
+// Misc
+mod query_utils;
 
 #[database("vinoteca")]
 pub struct DbConn(SqliteConnection);
-
-fn error_status(error: Error) -> Status {
-    match error {
-        Error::NotFound => Status::NotFound,
-        _ => Status::InternalServerError,
-    }
-}

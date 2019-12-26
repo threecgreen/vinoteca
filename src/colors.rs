@@ -1,4 +1,6 @@
-use super::{error_status, DbConn};
+use super::query_utils::error_status;
+use super::DbConn;
+
 use diesel::prelude::*;
 use models::Color;
 use rocket::http::Status;

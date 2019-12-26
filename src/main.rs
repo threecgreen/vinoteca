@@ -1,15 +1,29 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #[macro_use]
 extern crate rocket;
+extern crate simplelog;
 extern crate vinoteca;
-use vinoteca::{colors, regions};
+use simplelog::TermLogger;
+use vinoteca::{colors, regions, viti_areas};
 
 fn main() {
-    // Environment variables
-    // dotenv().ok();
+    // TODO: make configurable
+    TermLogger::init(
+        simplelog::LevelFilter::Info,
+        simplelog::Config::default(),
+        simplelog::TerminalMode::Mixed,
+    )
+    .expect("No interactive terminal found");
 
     rocket::ignite()
         .attach(vinoteca::DbConn::fairing())
-        .mount("/", routes![colors::get, regions::get])
+        .mount(
+            "/",
+            routes![
+                colors::get,
+                regions::get, regions::put, regions::post,
+                viti_areas::get, viti_areas::put, viti_areas::post,
+            ],
+        )
         .launch();
 }
