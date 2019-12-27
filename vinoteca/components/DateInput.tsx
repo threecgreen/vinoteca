@@ -33,3 +33,4 @@ export const DateInput: React.FC<{}> = (_props) => {
         />
     );
 };
+DateInput.displayName = "DateInput";

@@ -3,9 +3,11 @@ import { nameToId } from "../lib/utils";
 
 interface IProps {
     name: string;
+    fileName?: string;
+    onChange: (files: FileList) => void;
 }
+
 export const FileInput: React.FC<IProps> = (props) => {
-    const fileInput = React.useRef() as React.RefObject<HTMLInputElement>;
     const id = nameToId(props.name);
 
     return (
@@ -16,7 +18,7 @@ export const FileInput: React.FC<IProps> = (props) => {
                     <input type="file"
                         name={ id }
                         id={ id }
-                        ref={ fileInput }
+                        onChange={ (e) => e.target.files }
                     />
                 </div>
                 <div className="file-path-wrapper">
