@@ -24,6 +24,9 @@ export class WinesApp extends React.Component<{}, IState> {
 
     public constructor(props: {}) {
         super(props);
+
+        this.logger = new Logger(this.constructor.name);
+
         this.state = {
             wines: [],
             predicates: this.deserializePredicates(readCookie(WinesApp.cookieName)),
@@ -31,16 +34,14 @@ export class WinesApp extends React.Component<{}, IState> {
             currentPage: 1,
             winesPerPage: 50,
         };
-
-        this.logger = new Logger(this.constructor.name);
     }
 
     private serializePredicates() {
         if (this.state.predicates) {
             const predStrings = Array.from(this.state.predicates.entries()).map((ent) => [ent[0], ent[1].toJson()]);
-            console.log(`PredStrings: '${predStrings}'`)
+            this.logger.logInfo(`PredStrings: '${predStrings}'`)
             const serializedPredicates = JSON.stringify(predStrings);
-            console.log(`Updating cookie to '${serializedPredicates}'`);
+            this.logger.logDebug(`Updating cookie to '${serializedPredicates}'`);
             deleteCookie(WinesApp.cookieName);
             createCookie(WinesApp.cookieName, serializedPredicates, 90);
         } else {
@@ -52,7 +53,7 @@ export class WinesApp extends React.Component<{}, IState> {
         if (!json) {
             return new Map();
         }
-        console.log(`Deserializing JSON: ${json}`);
+        this.logger.logDebug(`Deserializing JSON: ${json}`);
         const predicates = new Map();
         try {
             const arr: Array<[string, string]> = JSON.parse(json);
@@ -92,11 +93,14 @@ export class WinesApp extends React.Component<{}, IState> {
                     <h3 className="page-title">Wines</h3>
                     <WinesTable onFilterChange={ (c, filterExpr) => this.onFilterChange(c, filterExpr) }
                         onEmptyFilter={ (c) => this.onEmptyFilter(c) }
-                        { ...this.state }
+                        wines={ this.filteredWines }
+                        predicates={ this.state.predicates }
+                        currentPage={ this.state.currentPage }
+                        winesPerPage={ this.state.winesPerPage }
                     />
                     <Pagination currentPage={ this.state.currentPage }
                         pageCount={ Math.max(1,
-                            Math.ceil(this.state.wines.length / this.state.winesPerPage )) }
+                            Math.ceil(this.filteredWines.length / this.state.winesPerPage )) }
                         onClick={ this.onPageClick.bind(this) }
                     />
                 </>
@@ -124,6 +128,16 @@ export class WinesApp extends React.Component<{}, IState> {
             this.logger.logError(err);
         }
     }
+
+    private get filteredWines() {
+        // Reduce predicates
+        const combinedPred = [...this.state.predicates.entries()]
+            .reduceRight((prevVal, [column, filterExpr]) => {
+                return (wine: Wine) => prevVal(wine) && filterExpr.call(wine[column]!);
+            }, (_: Wine) => true);
+        return this.state.wines.filter(combinedPred);
+    }
+
 
     private onFilterChange(columnName: keyof Wine, filterExpr: FilterExpr) {
         this.setState((prevState) => {

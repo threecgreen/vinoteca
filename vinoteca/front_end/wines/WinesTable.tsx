@@ -118,52 +118,43 @@ export class WinesTable extends React.Component<IProps, IState> {
             start + this.props.winesPerPage));
     }
 
-    private get filteredWines() {
-        // Reduce predicates
-        const combinedPred = [...this.props.predicates.entries()]
-            .reduceRight((prevVal, [column, filterExpr]) => {
-                return (wine: Wine) => prevVal(wine) && filterExpr.call(wine[column]!);
-            }, (_: Wine) => true);
-        return this.props.wines.filter(combinedPred);
-    }
-
     private get sortedWines() {
         const ascendingMultiplier = this.state.ascending ? 1 : -1;
         switch (this.state.sorting) {
             case SortingValue.Inventory:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return (w1.inventory) > (w2.inventory) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.Color:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return w1.color.localeCompare(w2.color) * ascendingMultiplier;
                 })
             case SortingValue.NameAndType:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return w1.nameAndType.localeCompare(w2.nameAndType) * ascendingMultiplier;
                 })
             case SortingValue.Producer:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return w1.producer.localeCompare(w2.producer) * ascendingMultiplier;
                 })
             case SortingValue.Region:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return w1.region.localeCompare(w2.region) * ascendingMultiplier;
                 })
             case SortingValue.VitiArea:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return (w1.vitiArea || "").localeCompare(w2.vitiArea || "") * ascendingMultiplier;
                 })
             case SortingValue.Vintage:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return (w1.vintage || 0) > (w2.vintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.Rating:
-                return this.filteredWines.sort((w1, w2) => {
+                return this.props.wines.sort((w1, w2) => {
                     return (w1.rating || 0) > (w2.rating || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             default:
-                return this.filteredWines;
+                return this.props.wines;
         }
     }
 
