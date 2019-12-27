@@ -79,7 +79,7 @@ export class WineInputs extends React.Component<IProps, IState> {
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Notes, v) }
                     onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(NewWineTextInput.Notes, c, p) }
                 />
-                <FileInput name="Wine Image" />
+                <FileInput name="Wine Image" onChange={ () => null } />
             </React.Fragment>
         )
     }
