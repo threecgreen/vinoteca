@@ -4,10 +4,12 @@ import { get, post } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IWine, Wine } from "../../lib/RestTypes";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
+import { Preloader } from "../../components/Preloader";
 
 
 interface IState {
-    wines: Wine[]
+    wines: Wine[],
+    hasLoaded: boolean,
 }
 
 export class InventoryApp extends React.Component<{}, IState> {
@@ -16,6 +18,7 @@ export class InventoryApp extends React.Component<{}, IState> {
     constructor(props: {}) {
         super(props);
         this.state = {
+            hasLoaded: false,
             wines: [],
         };
 
@@ -23,6 +26,9 @@ export class InventoryApp extends React.Component<{}, IState> {
     }
 
     public render() {
+        if (!this.state.hasLoaded) {
+            return <Preloader />;
+        }
         const table = this.state.wines.length > 0
             ? (
                 <InventoryTable wines={ this.state.wines }
@@ -49,15 +55,16 @@ export class InventoryApp extends React.Component<{}, IState> {
         e.preventDefault();
         try {
             await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
+            await this.updateInventory();
         } catch (err) {
+            this.setState({hasLoaded: true});
             this.logger.logWarning(err);
         }
-        this.updateInventory();
     }
 
     private async updateInventory() {
         const iWines: IWine[] = await get("/rest/wines/inventory/");
         const wines = iWines.map((w) => new Wine(w));
-        this.setState({wines});
+        this.setState({wines, hasLoaded: true});
     }
 }
