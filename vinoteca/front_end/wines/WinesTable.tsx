@@ -132,7 +132,7 @@ export class WinesTable extends React.Component<IProps, IState> {
             case SortingValue.NameAndType:
                 return this.props.wines.sort((w1, w2) => {
                     // Sort by wineType then name
-                    const wineTypeComparison = w1.wineType.localeCompare(w2.wineType) * ascendingMultiplier;
+                    const wineTypeComparison = (w1.wineType ?? "").localeCompare(w2.wineType ?? "") * ascendingMultiplier;
                     if (wineTypeComparison === 0) {
                         // Name comparison
                         if (w1.name && w2.name) {
