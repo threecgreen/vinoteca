@@ -5,22 +5,31 @@ import { FloatingBtn } from "./Buttons";
 import { GrapeInput } from "./GrapeInput";
 import { Col, InputField, Row } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
+import { IWineGrape } from "../lib/RestTypes";
 
 export class WineGrape {
     constructor(public id: number, public name: string, public percent?: number) {
     }
 }
 
-interface IGrapeFormAppState {
+interface IProps {
+    wineId?: number;
+}
+
+interface IState {
     completions: IDict<string>;
     wineGrapes: WineGrape[];
 }
 
-export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
-    public readonly state: Readonly<IGrapeFormAppState> = {
-        completions: {},
-        wineGrapes: [],
-    };
+export class GrapeFormApp extends React.Component<IProps, IState> {
+    public constructor(props: IProps) {
+        super(props);
+
+        this.state = {
+            completions: {},
+            wineGrapes: [],
+        };
+    }
 
     public render() {
         return (
@@ -53,8 +62,22 @@ export class GrapeFormApp extends React.Component<{}, IGrapeFormAppState> {
     }
 
     public async componentDidMount() {
+        Promise.all([
+            this.getCompletions(),
+            this.getGrapes(),
+        ]);
+    }
+
+    private async getCompletions() {
         const completions: IDict<string> = await get("/rest/grapes/all/");
-        this.setState({ completions });
+        this.setState({completions});
+    }
+
+    private async getGrapes() {
+        if (this.props.wineId) {
+            const wineGrapes: IWineGrape[] = await get("/rest/wine-grapes", {wine: this.props.wineId});
+            this.setState({wineGrapes: wineGrapes.map((i) => new WineGrape(i.id, i.grape, i.percent))});
+        }
     }
 
     public handleAdd(e: React.MouseEvent) {

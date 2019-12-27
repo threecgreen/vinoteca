@@ -7,6 +7,7 @@ import { toggleRating, toggleRegion, updateVitiAreaSelections } from "../../lib/
 import SpecialCharController from "../../lib/SpecialCharController";
 import { autocomplete, hFloatingActnBtn, modal, navbar } from "../../lib/widgets";
 
+declare const wineId: number;
 declare const hasRating: boolean;
 
 const REGION = selectById("auto-region") as HTMLInputElement;
@@ -26,7 +27,7 @@ onLoad(() => {
                  selectById("rating") as HTMLInputElement,
                  hasRating);
     updateVitiAreaSelections(REGION, selectById("auto-viti-area") as HTMLInputElement);
-    render(createElement(GrapeFormApp),
+    render(createElement(GrapeFormApp, {wineId}),
            document.getElementById("grapes-form-app-container"));
     modal("delete-modal");
 });
