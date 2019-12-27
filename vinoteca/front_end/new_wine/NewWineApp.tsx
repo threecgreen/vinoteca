@@ -79,13 +79,14 @@ export class NewWineApp extends React.Component<{}, IState> {
                     </Row>
                     {/* TODO: make grape form not an app so special characters work */}
                     <GrapeFormApp />
+                    {/* TODO: use Buttons components */}
                     <button className="btn waves-effect waves-light green-bg" type="submit"
                         name="action"
                     >
                         Confirm
                         <MaterialIcon className="right" iconName="send" />
                     </button>
-                    <a className="btn waves-effect waves-light yellow-bg"
+                    <a className="btn rbtn waves-effect waves-light yellow-bg"
                         href="/home"
                     >
                         Cancel
