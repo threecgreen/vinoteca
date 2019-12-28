@@ -53,7 +53,7 @@ class Producers(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField(unique=True, db_index=True)
     region = models.ForeignKey("Regions", models.DO_NOTHING,
-                               db_column="region_id", null=True, db_index=True)
+                               db_column="region_id", db_index=True)
 
     class Meta:
         db_table = 'producers'
@@ -146,13 +146,11 @@ class Wines(models.Model):
     notes = models.TextField(null=True)
     name = models.TextField(null=True)
     producer = models.ForeignKey("Producers", models.DO_NOTHING,
-                                 db_column="producer_id", null=True,
-                                 db_index=True)
+                                 db_column="producer_id", db_index=True)
     wine_type = models.ForeignKey(WineTypes, models.DO_NOTHING,
-                                  db_column="wine_type_id", null=True,
-                                  db_index=True)
+                                  db_column="wine_type_id", db_index=True)
     color = models.ForeignKey(Colors, models.DO_NOTHING, db_column="color_id",
-                              null=True, db_index=True)
+                              db_index=True)
     rating = models.IntegerField(null=True)
     inventory = models.IntegerField(db_index=True)
     viti_area = models.ForeignKey("VitiAreas", models.DO_NOTHING,
