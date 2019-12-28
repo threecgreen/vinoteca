@@ -21,11 +21,11 @@ pub struct Grape {
     pub name: String,
 }
 
-#[derive(Queryable, Clone)]
-pub struct ProducerRow {
+#[derive(Queryable, Clone, Serialize, Debug)]
+pub struct Producer {
     pub id: i32,
     pub name: String,
-    pub region_id: Option<i32>,
+    pub region_id: i32,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
@@ -64,7 +64,7 @@ pub struct RegionForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable, Clone, Serialize, Debug)]
 pub struct Store {
     pub id: i32,
     pub name: String,
@@ -89,6 +89,7 @@ pub struct WineGrape {
     pub id: i32,
     pub percent: Option<i32>,
     pub grape_id: i32,
+    // TODO: add grape id
     pub wine_id: i32,
 }
 
@@ -104,17 +105,17 @@ pub struct WineTypeForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone)]
-pub struct WineRow {
+#[derive(Queryable, Clone, Serialize, Debug)]
+pub struct Wine {
     pub id: i32,
     pub description: Option<String>,
     pub notes: Option<String>,
     pub rating: Option<f64>,
     pub inventory: u8,
     pub why: Option<String>,
-    pub color_id: Option<i32>,
-    pub producer_id: Option<i32>,
+    pub color_id: i32,
+    pub producer_id: i32,
     pub viti_area_id: Option<i32>,
     pub name: Option<String>,
-    pub wine_type_id: Option<i32>,
+    pub wine_type_id: i32,
 }

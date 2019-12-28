@@ -16,7 +16,7 @@ table! {
     producers (id) {
         id -> Integer,
         name -> Text,
-        region_id -> Nullable<Integer>,
+        region_id -> Integer,
     }
 }
 
@@ -79,11 +79,11 @@ table! {
         rating -> Nullable<Float>,
         inventory -> Integer,
         why -> Nullable<Text>,
-        color_id -> Nullable<Integer>,
-        producer_id -> Nullable<Integer>,
+        color_id -> Integer,
+        producer_id -> Integer,
         viti_area_id -> Nullable<Integer>,
         name -> Nullable<Text>,
-        wine_type_id -> Nullable<Integer>,
+        wine_type_id -> Integer,
     }
 }
 
