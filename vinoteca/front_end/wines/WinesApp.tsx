@@ -95,6 +95,7 @@ export class WinesApp extends React.Component<{}, IState> {
                     <Btn classes={ ["green-bg"] }
                         onClick={ (_) => { location.href = "/wines/new/"; } }
                     >
+                        Add a new wine
                     </Btn>
                 </>
             );

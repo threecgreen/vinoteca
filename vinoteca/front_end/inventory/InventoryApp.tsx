@@ -5,6 +5,10 @@ import Logger from "../../lib/Logger";
 import { IWine, Wine } from "../../lib/RestTypes";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { Preloader } from "../../components/Preloader";
+import { Btn } from "../../components/Buttons";
+import { download, generateCSV } from "../../lib/CSV";
+import { format } from "date-fns";
+import { numToDate } from "../../lib/utils";
 
 
 interface IState {
@@ -31,9 +35,16 @@ export class InventoryApp extends React.Component<{}, IState> {
         }
         const table = this.state.wines.length > 0
             ? (
-                <InventoryTable wines={ this.state.wines }
-                    onInventoryChange={ this.onInventoryChange.bind(this) }
-                />
+                <>
+                    <Btn classes={ ["green-bg"] }
+                        onClick={ (e) => this.downloadInventory(e) }
+                    >
+                        Export to CSV
+                    </Btn>
+                    <InventoryTable wines={ this.state.wines }
+                        onInventoryChange={ this.onInventoryChange.bind(this) }
+                    />
+                </>
             ) : <h6 className="bold center-align">Your inventory is currently empty.</h6>;
         return (
             <div className="container">
@@ -66,5 +77,14 @@ export class InventoryApp extends React.Component<{}, IState> {
         const iWines: IWine[] = await get("/rest/wines/inventory/");
         const wines = iWines.map((w) => new Wine(w));
         this.setState({wines, hasLoaded: true});
+    }
+
+    private downloadInventory(e: React.MouseEvent) {
+        e.preventDefault();
+        download(`vinoteca_inventory_${format(new Date(), 'yyyy-MM-dd')}.csv`,
+                 generateCSV(this.state.wines, [
+                     "inventory", "color", "name", "wineType", "producer", "region", "vintage",
+                     "lastPurchasedDate", "lastPurchasedPrice"
+                ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
     }
 }
