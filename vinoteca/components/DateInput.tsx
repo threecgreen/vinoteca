@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import format from "date-fns/esm/format";
 import { Datepicker } from "materialize-css";
 import * as React from "react";
 import { Input } from "./Input";

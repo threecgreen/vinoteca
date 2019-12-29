@@ -1,4 +1,4 @@
-import { Chart } from "chart.js";
+import Chart from "chart.js";
 import { selectById } from "./JQueryCompat";
 import Logger from "./Logger";
 import { pipe } from "./utils";

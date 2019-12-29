@@ -7,7 +7,7 @@ import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { Preloader } from "../../components/Preloader";
 import { Btn } from "../../components/Buttons";
 import { download, generateCSV } from "../../lib/CSV";
-import { format } from "date-fns";
+import format from "date-fns/esm/format";
 import { numToDate } from "../../lib/utils";
 
 
