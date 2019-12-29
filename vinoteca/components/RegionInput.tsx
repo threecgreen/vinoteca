@@ -5,7 +5,8 @@ import { IDict, nameToId, areEqual } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
-import { getRegions, EmptyResultError } from "../lib/RestApi";
+import { getRegions, EmptyResultError, toDict } from "../lib/RestApi";
+import { IRestModel } from "../lib/RestTypes";
 
 interface IRegionInputProps extends IOnChange {
     value: string;
@@ -14,7 +15,7 @@ interface IRegionInputProps extends IOnChange {
 }
 
 interface IRegionInputState {
-    autocompleteOptions: IDict<string>;
+    autocompleteOptions: IDict<string | null>;
     enabled: boolean;
 }
 
@@ -75,8 +76,8 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
 
     private async getDefaultAutocompleteOptions() {
         try {
-            const regions: IDict<string> = await get("/rest/regions");
-            this.setState({autocompleteOptions: regions});
+            const regions: IRestModel[] = await get("/rest/regions");
+            this.setState({autocompleteOptions: toDict(regions)});
         } catch {
             this.logger.logError("Failed to get producer autocomplete options");
         }

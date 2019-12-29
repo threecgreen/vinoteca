@@ -6,6 +6,14 @@ import {
 } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
+export function toDict(models: IRestModel[]): IDict<string | null> {
+    let result: IDict<string | null> = {};
+    models.forEach((model) => {
+        result[model.name] = null;
+    });
+    return result;
+}
+
 export class EmptyResultError extends Error {
     public static isInstance(err: Error): boolean {
         return err.name === this.NAME;

@@ -8,6 +8,7 @@ use rocket::http::Status;
 use rocket_contrib::json::Json;
 use schema::{producers, regions};
 
+// TODO: get flag data for autocomplete
 #[get("/regions?<id>&<name>&<producer_name>")]
 pub fn get(
     id: Option<i32>,

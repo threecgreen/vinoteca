@@ -5,6 +5,8 @@ import { IDict, nameToId } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
+import { IRestModel } from "../lib/RestTypes";
+import { toDict } from "../lib/RestApi";
 
 interface IWineTypeInputProps extends IOnChange {
     value: string;
@@ -26,8 +28,8 @@ export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTyp
 
     public async componentDidMount() {
         try {
-            const wineTypes: IDict<string> = await get("/rest/wine-types");
-            staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
+            const wineTypes: IRestModel[] = await get("/rest/wine-types");
+            staticAutocomplete(nameToId("Wine Type"), toDict(wineTypes), this.props.onChange);
         } catch (e) {
             this.logger.logError("Failed to get wine type autocomplete options");
         }

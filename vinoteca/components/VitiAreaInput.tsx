@@ -1,10 +1,12 @@
 import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
-import { IDict, nameToId } from "../lib/utils";
+import { nameToId } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
+import { toDict } from "../lib/RestApi";
+import { IRestModel } from "../lib/RestTypes";
 
 interface IProps extends IOnChange {
     value: string;
@@ -17,8 +19,8 @@ export const VitiAreaInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
-                const vitiAreas: IDict<string> = await get("/rest/viti-areas");
-                staticAutocomplete(nameToId("Viti Area"), vitiAreas, props.onChange);
+                const vitiAreas: IRestModel[] = await get("/rest/viti-areas");
+                staticAutocomplete(nameToId("Viti Area"), toDict(vitiAreas), props.onChange);
             } catch (e) {
                 logger.logError("Failed to get viti area autocomplete options");
             }

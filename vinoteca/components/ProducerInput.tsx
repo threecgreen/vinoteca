@@ -1,10 +1,12 @@
 import * as React from "react";
 import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
-import { IDict, nameToId } from "../lib/utils";
+import { nameToId } from "../lib/utils";
 import { staticAutocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
+import { toDict } from "../lib/RestApi";
+import { IRestModel } from "../lib/RestTypes";
 
 interface IProps extends IOnChange {
     value: string;
@@ -17,8 +19,8 @@ export const ProducerInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchProducers() {
             try {
-                const producers: IDict<string> = await get("/rest/producers");
-                staticAutocomplete(nameToId("Producer"), producers, props.onChange);
+                const producers: IRestModel[] = await get("/rest/producers");
+                staticAutocomplete(nameToId("Producer"), toDict(producers), props.onChange);
             } catch {
                 logger.logError("Failed to get producer autocomplete options");
             }

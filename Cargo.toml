@@ -2,6 +2,7 @@
 name = "vinoteca"
 version = "5.0.0"
 authors = ["Carter Green <cartergr@usc.edu>"]
+readme = "../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

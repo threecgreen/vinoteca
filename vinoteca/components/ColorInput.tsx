@@ -5,6 +5,7 @@ import Logger from "../lib/Logger";
 import { IDict } from "../lib/utils";
 import { IOnChange } from "./IProps";
 import { StatelessSelectInput } from "./StatelessSelectInput";
+import { IRestModel } from "../lib/RestTypes";
 
 interface IProps extends IOnChange {
     selection: string;
@@ -27,8 +28,8 @@ export const ColorInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchColors() {
             try {
-                const colors: IDict<string> = await get("/rest/colors");
-                setSelectionOptions(concatIfNotNull(Object.keys(colors)));
+                const colors: IRestModel[] = await get("/rest/colors");
+                setSelectionOptions(concatIfNotNull(colors.map((color) => color.name)));
                 const formSelect = new FormSelect(selectRef.current!);
             } catch {
                 logger.logError("Failed to get colors");
