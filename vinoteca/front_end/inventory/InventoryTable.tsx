@@ -76,7 +76,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
                     { this.sortedWines.map((wine) => {
                         return (
                             <tr key={ wine.id }>
-                                <td>
+                                <td className="inventory-plus-minus">
                                     <FloatingBtn classes={ ["green-bg", "btn-small"] }
                                         onClick={
                                             (e) => this.props.onInventoryChange(
