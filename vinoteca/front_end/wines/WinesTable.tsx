@@ -17,9 +17,8 @@ enum SortingValue {
 
 interface IProps {
     wines: Wine[];
-    predicates: Map<keyof Wine, FilterExpr>;
-    onFilterChange: (column: keyof Wine, filterExpr: FilterExpr) => void;
-    onEmptyFilter: (columnName: keyof Wine) => void;
+    filterTexts: Map<keyof Wine, string>;
+    onFilterChange: (column: keyof Wine, text: string) => void;
     currentPage: number;
     winesPerPage: number;
 }
@@ -202,14 +201,12 @@ export class WinesTable extends React.Component<IProps, IState> {
 
     // Constructs props for a filter header
     private filterHeaderProps(columnName: keyof Wine):
-        {onFilterChange: (filterExpr: FilterExpr) => void,
-         onEmptyFilter: () => void
-         initialText?: string} {
+        {onChange: (text: string) => void,
+         text: string} {
 
         return {
-            onFilterChange: (filterExpr) => this.props.onFilterChange(columnName, filterExpr),
-            onEmptyFilter: () => this.props.onEmptyFilter(columnName),
-            initialText: this.props.predicates.get(columnName)?.toString(),
+            onChange: (filterExpr) => this.props.onFilterChange(columnName, filterExpr),
+            text: this.props.filterTexts.get(columnName) ?? "",
         };
     }
 }
