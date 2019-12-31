@@ -19,4 +19,8 @@ simplelog = "0.7"
 [dependencies.rocket_contrib]
 version = "*"
 default-features = false
-features = ["json", "diesel_sqlite_pool"]
+features = ["json", "diesel_sqlite_pool", "serve"]
+
+[dependencies.askama]
+version = "0.8"
+features = ["with-rocket"]

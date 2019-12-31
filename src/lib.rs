@@ -14,7 +14,12 @@ extern crate serde;
 // Diesel modules
 pub mod models;
 pub mod schema;
-// Rocket handlers
+/////////////////////
+// Rocket handlers //
+/////////////////////
+// Templates (HTML)
+pub mod templates;
+// Rest
 pub mod colors;
 pub mod dashboards;
 pub mod purchases;
