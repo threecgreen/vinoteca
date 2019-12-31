@@ -15,6 +15,7 @@ pub fn get(
     producer_name: Option<String>,
     connection: DbConn,
 ) -> Result<Json<Vec<Region>>, Status> {
+    // Still want to include regions that don't have a producer associated with them
     let mut query = regions::table.left_join(producers::table).into_boxed();
     if let Some(id) = id {
         query = query.filter(regions::id.eq(id));
@@ -22,7 +23,6 @@ pub fn get(
     if let Some(name) = name {
         query = query.filter(regions::name.eq(name));
     }
-    // This isn't working
     if let Some(producer_name) = producer_name {
         query = query.filter(producers::name.eq(producer_name));
     }

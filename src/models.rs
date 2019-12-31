@@ -13,7 +13,7 @@ pub struct Color {
 #[derive(Deserialize, Insertable, Debug)]
 #[table_name = "colors"]
 pub struct ColorForm<'a> {
-    name: &'a str,
+    pub name: &'a str,
 }
 
 pub struct Grape {
@@ -25,6 +25,13 @@ pub struct Grape {
 pub struct Producer {
     pub id: i32,
     pub name: String,
+    pub region_id: i32,
+}
+
+#[derive(AsChangeset, Deserialize, Insertable, Debug)]
+#[table_name = "producers"]
+pub struct ProducerForm<'a> {
+    pub name: &'a str,
     pub region_id: i32,
 }
 
@@ -110,12 +117,24 @@ pub struct Wine {
     pub id: i32,
     pub description: Option<String>,
     pub notes: Option<String>,
-    pub rating: Option<f64>,
-    pub inventory: u8,
+    pub rating: Option<f32>,
+    pub inventory: i32,
     pub why: Option<String>,
     pub color_id: i32,
+    pub color: String,
     pub producer_id: i32,
+    pub producer: String,
+    pub region_id: i32,
+    pub region: String,
     pub viti_area_id: Option<i32>,
+    pub viti_area: Option<String>,
     pub name: Option<String>,
     pub wine_type_id: i32,
+    pub wine_type: String,
+    // Stats
+    // pub lastPurchasedDate: Option<i32>,
+    // pub lastPurchasedPrice: Option<f32>,
+    // pub lastPurchasedVintage: Option<i32>,
+    // pub avgPrice: Option<f32>,
+    // pub totalQuantityPurchased: i32,
 }

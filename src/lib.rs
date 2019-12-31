@@ -22,6 +22,7 @@ pub mod templates;
 // Rest
 pub mod colors;
 pub mod dashboards;
+pub mod producers;
 pub mod purchases;
 pub mod regions;
 pub mod viti_areas;

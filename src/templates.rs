@@ -1,7 +1,5 @@
 extern crate askama;
 
-use rocket;
-
 #[derive(askama::Template)]
 #[template(path = "about.html")]
 pub struct AboutTemplate<'a> {
