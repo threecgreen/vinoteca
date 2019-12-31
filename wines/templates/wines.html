@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block view-nav %}class="active"{% endblock %}
-
 {% block body %}
   <div id="wines-app-container"></div>
 {% endblock %}
@@ -10,6 +8,5 @@
 {% if wines %}
   {% block js %}
     <script src="{% static 'wines.bundle.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'wines.bundle.css' %}">
   {% endblock %}
 {% endif %}

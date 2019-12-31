@@ -21,6 +21,8 @@ interface IGrapesAppState {
 }
 
 export class GrapesApp extends React.Component<{}, IGrapesAppState> {
+    private static grapesUrl = "/rest/grapes";
+
     constructor(props: {}) {
         super(props);
         this.state = {
@@ -57,7 +59,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     public async componentDidMount() {
-        const restGrapes: IGrape[] = await get(this.getGrapesUrl())
+        const restGrapes: IGrape[] = await get(GrapesApp.grapesUrl);
         const grapes: GrapeItem[] = restGrapes.map(
             (g) => new GrapeItem(g.id, g.name, g.wines),
         );
@@ -99,7 +101,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
                 if (g.id === id) {
                     g.isEditable = false;
                     lastActiveId = lastActiveId === id ? undefined : lastActiveId;
-                    put(this.getGrapesUrl(id), {id, name: g.name})
+                    put(GrapesApp.grapesUrl, {id, name: g.name})
                         .catch((e) => {
                             state.logger.logError(
                                 `Failed to save grape change for grape with id ${id}`
@@ -131,9 +133,5 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
 
     private get hasEditableGrapes(): boolean {
         return this.state.grapes.any((g: GrapeItem) => g.isEditable);
-    }
-
-    private getGrapesUrl(id?: number): string {
-        return id ? `/rest/grapes/${id}/` : `/rest/grapes/`;
     }
 }

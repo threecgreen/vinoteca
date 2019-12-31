@@ -74,9 +74,14 @@ export class InventoryApp extends React.Component<{}, IState> {
     }
 
     private async updateInventory() {
-        const iWines: IWine[] = await get("/rest/wines/inventory/");
-        const wines = iWines.map((w) => new Wine(w));
-        this.setState({wines, hasLoaded: true});
+        try {
+            const iWines: IWine[] = await get("/rest/wines/inventory/");
+            const wines = iWines.map((w) => new Wine(w));
+            this.setState({wines, hasLoaded: true});
+        } catch (err) {
+            this.setState({hasLoaded: true});
+            this.logger.logError(`Failed to load inventory`);
+        }
     }
 
     private downloadInventory(e: React.MouseEvent) {
@@ -84,7 +89,7 @@ export class InventoryApp extends React.Component<{}, IState> {
         download(`vinoteca_inventory_${format(new Date(), 'yyyy-MM-dd')}.csv`,
                  generateCSV(this.state.wines, [
                      "inventory", "color", "name", "wineType", "producer", "region", "vintage",
-                     "lastPurchasedDate", "lastPurchasedPrice"
+                     "lastPurchaseDate", "lastPurchasePrice"
                 ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
     }
 }

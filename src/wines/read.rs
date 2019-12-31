@@ -3,10 +3,14 @@ use crate::DbConn;
 
 // use diesel::dsl::{max, sum};
 use diesel::prelude::*;
+use diesel::sql_query;
+use diesel::sql_types::{Integer, Nullable, Text};
+use diesel::QueryableByName;
 use models::Wine;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use serde::Serialize;
 
 fn add_wildcards(query: &str) -> String {
     format!("%{}%", query)
@@ -100,7 +104,7 @@ pub fn get(
             producers::region_id,
             regions::name,
             wines::viti_area_id,
-            viti_areas::name.nullable(),    // Left join
+            viti_areas::name.nullable(), // Left join
             wines::name,
             wines::wine_type_id,
             wine_types::name,
@@ -109,4 +113,80 @@ pub fn get(
         // .and_then()
         .map(Json)
         .map_err(error_status)
+}
+
+#[derive(QueryableByName, Serialize, Debug)]
+pub struct InventoryWine {
+    #[sql_type = "Integer"]
+    id: i32,
+    #[sql_type = "Text"]
+    color: String,
+    #[sql_type = "Nullable<Text>"]
+    name: Option<String>,
+    #[sql_type = "Integer"]
+    wine_type_id: i32,
+    #[sql_type = "Text"]
+    wine_type: String,
+    #[sql_type = "Integer"]
+    producer_id: i32,
+    #[sql_type = "Text"]
+    producer: String,
+    #[sql_type = "Integer"]
+    region_id: i32,
+    #[sql_type = "Text"]
+    region: String,
+    #[sql_type = "Integer"]
+    vintage: i32,
+    #[sql_type = "Integer"]
+    last_purchase_date: i32,
+    #[sql_type = "Integer"]
+    inventory: i32,
+    #[sql_type = "Integer"]
+    last_purchase_price: i32,
+}
+
+#[get("/wines/inventory")]
+pub fn inventory(connection: DbConn) -> Result<Json<Vec<InventoryWine>>, Status> {
+    sql_query(
+        r#"
+        SELECT
+            w.id
+            , c.name AS color
+            , w.name AS name
+            , wt.id AS wine_type_id
+            , wt.name AS wine_type
+            , p.id AS producer_id
+            , p.name AS producer
+            , r.id AS region_id
+            , r.name AS region
+            , p3.vintage
+            , max(pu.date) AS last_purchase_date
+            , w.inventory AS inventory
+            , p3.price AS last_purchase_price
+        FROM wines w
+            LEFT JOIN producers p ON w.producer_id = p.id
+            LEFT JOIN regions r ON p.region_id = r.id
+            LEFT JOIN colors c ON w.color_id = c.id
+            LEFT JOIN wine_types wt ON w.wine_type_id = wt.id
+            LEFT JOIN purchases pu ON w.id = pu.wine_id
+            LEFT JOIN (
+                SELECT
+                    w2.id
+                    , max(p2.date) as last_purchase_date
+                FROM wines w2
+                    INNER JOIN purchases p2 ON w2.id = p2.wine_id
+                WHERE p2.vintage IS NOT NULL
+                GROUP BY w2.id
+            ) AS sub ON sub.id = w.id
+            LEFT JOIN purchases p3 ON w.id = p3.wine_id
+                AND (p3.date = sub.last_purchase_date
+                    OR sub.last_purchase_date IS NULL)
+        WHERE w.inventory > 0
+        GROUP BY w.id
+        ORDER BY sub.last_purchase_date DESC;
+    "#,
+    )
+    .load::<InventoryWine>(&*connection)
+    .map(Json)
+    .map_err(error_status)
 }

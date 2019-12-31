@@ -140,8 +140,8 @@ export class WinesApp extends React.Component<{}, IState> {
                 wines: wines.map((w) => new Wine(w)),
                 hasLoaded: true
             });
-        } catch (err) {
-            this.logger.logError(err);
+        } catch {
+            this.logger.logError("Failed to get wines");
         }
     }
 

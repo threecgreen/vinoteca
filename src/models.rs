@@ -16,9 +16,17 @@ pub struct ColorForm<'a> {
     pub name: &'a str,
 }
 
+#[derive(Queryable, Clone, Serialize, Debug)]
 pub struct Grape {
     pub id: i32,
     pub name: String,
+}
+
+#[derive(Deserialize, Insertable, Debug)]
+#[table_name = "grapes"]
+pub struct GrapeForm<'a> {
+    pub id: i32,
+    pub name: &'a str,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]

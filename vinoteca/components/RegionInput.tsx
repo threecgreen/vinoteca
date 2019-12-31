@@ -75,10 +75,10 @@ export class RegionInput extends React.Component<IRegionInputProps, IRegionInput
 
     private async getDefaultAutocompleteOptions() {
         try {
-            const regions: IDict<string> = await get("/rest/regions/all/")
+            const regions: IDict<string> = await get("/rest/regions");
             this.setState({autocompleteOptions: regions});
-        } catch (e) {
-            this.logger.logError(`Failed to get producer autocomplete options. ${e}`);
+        } catch {
+            this.logger.logError("Failed to get producer autocomplete options");
         }
     }
 }

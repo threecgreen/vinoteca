@@ -5,7 +5,9 @@ extern crate rocket_contrib;
 extern crate vinoteca;
 
 // Rest
-use vinoteca::{colors, producers, purchases, regions, viti_areas, wine_grapes, wine_types, wines};
+use vinoteca::{
+    colors, grapes, logs, producers, purchases, regions, viti_areas, wine_grapes, wine_types, wines,
+};
 // Templates
 use vinoteca::templates;
 
@@ -14,11 +16,23 @@ use rocket_contrib::serve::StaticFiles;
 fn main() {
     rocket::ignite()
         .attach(vinoteca::DbConn::fairing())
-        .mount("/", routes![templates::about])
+        .mount(
+            "/",
+            routes![
+                templates::about,
+                templates::grapes,
+                templates::inventory,
+                templates::search_wines,
+                templates::wines
+            ],
+        )
         .mount(
             "/rest",
             routes![
                 colors::get,
+                grapes::get,
+                grapes::put,
+                logs::post,
                 producers::get,
                 producers::put,
                 producers::post,
@@ -32,6 +46,7 @@ fn main() {
                 viti_areas::put,
                 viti_areas::post,
                 wines::get,
+                wines::inventory,
                 wine_grapes::get,
                 wine_types::get,
                 wine_types::put,

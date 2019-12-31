@@ -170,7 +170,7 @@ export async function getWines(
 }
 
 export async function getWinesTable(): Promise<IWine[]> {
-    return get("/rest/wines/table/");
+    return get("/rest/wines");
 }
 
 /* WINE TYPES */

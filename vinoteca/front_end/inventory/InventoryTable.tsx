@@ -110,8 +110,8 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                     { wine.region }
                                 </RegionCell>
                                 <YearCell year={ wine.vintage } />
-                                <DateCell date={ wine.lastPurchasedDate } />
-                                <PriceCell price={ wine.lastPurchasedPrice } />
+                                <DateCell date={ wine.lastPurchaseDate } />
+                                <PriceCell price={ wine.lastPurchasePrice } />
                             </tr>
                         );
                     })}
@@ -163,15 +163,15 @@ export class InventoryTable extends React.Component<IProps, IState> {
                 });
             case SortingValue.PurchaseDate:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchasedDate) > (w2.lastPurchasedDate) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseDate) > (w2.lastPurchaseDate) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.Price:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchasedPrice || 0) > (w2.lastPurchasedPrice || 0) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchasePrice || 0) > (w2.lastPurchasePrice || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.PurchaseDate:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchasedDate) > (w2.lastPurchasedDate) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseDate) > (w2.lastPurchaseDate) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             default:
                 return this.props.wines;

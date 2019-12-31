@@ -32,7 +32,7 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
 export async function rAutocomplete(modelName: string, onChange: OnChange,
                                     minLength = 1, limit = 5) {
     try {
-        const completions: IDict<string> = await get(`/rest/${modelName.toLowerCase()}s/all/`);
+        const completions: IDict<string> = await get(`/rest/${modelName.toLowerCase()}s`);
         staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
     } catch {
         const logger = new Logger("widgets");

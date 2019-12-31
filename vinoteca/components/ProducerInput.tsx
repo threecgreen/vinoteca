@@ -17,10 +17,10 @@ export const ProducerInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchProducers() {
             try {
-                const producers: IDict<string> = await get("/rest/producers/all/");
+                const producers: IDict<string> = await get("/rest/producers");
                 staticAutocomplete(nameToId("Producer"), producers, props.onChange);
-            } catch (e) {
-                logger.logError(`Failed to get producer autocomplete options. ${e}`);
+            } catch {
+                logger.logError("Failed to get producer autocomplete options");
             }
         }
 

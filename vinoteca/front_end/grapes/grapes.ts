@@ -4,4 +4,4 @@ import { navbar } from "../../lib/widgets";
 import { GrapesApp } from "./GrapesApp";
 
 navbar();
-ReactDOM.render(createElement(GrapesApp), document.getElementById("grapes-app-container"));
+ReactDOM.render(createElement(GrapesApp), document.getElementById("grapes-container"));

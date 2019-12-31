@@ -27,11 +27,11 @@ export const ColorInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchColors() {
             try {
-                const colors: IDict<string> = await get("/rest/colors/all/");
+                const colors: IDict<string> = await get("/rest/colors");
                 setSelectionOptions(concatIfNotNull(Object.keys(colors)));
                 const formSelect = new FormSelect(selectRef.current!);
-            } catch (e) {
-                logger.logError(`Failed to get colors with error '${e}'`);
+            } catch {
+                logger.logError("Failed to get colors");
             }
         }
 

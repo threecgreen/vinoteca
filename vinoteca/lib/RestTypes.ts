@@ -109,10 +109,10 @@ export interface IWine {
     region_id: number;
     viti_area?: string;
     viti_area_id?: number;
-    last_purchased_date: number;
+    last_purchase_date: number;
     total_quantity: number;
     avg_price: number;
-    last_purchased_price: number;
+    last_purchase_price: number;
     vintage?: number;
 }
 
@@ -133,10 +133,10 @@ export class Wine {
     public regionId: number;
     public vitiArea?: string;
     public vitiAreaId?: number;
-    public lastPurchasedDate: number;
+    public lastPurchaseDate: number;
     public totalQuantityPurchased: number;
     public avgPrice: number;
-    public lastPurchasedPrice?: number;
+    public lastPurchasePrice?: number;
     public vintage?: number;
 
     constructor(wine: IWine) {
@@ -152,10 +152,10 @@ export class Wine {
         this.regionId = wine.region_id;
         this.vitiArea = wine.viti_area;
         this.vitiAreaId = wine.viti_area_id;
-        this.lastPurchasedDate = wine.last_purchased_date;
+        this.lastPurchaseDate = wine.last_purchase_date;
         this.totalQuantityPurchased = wine.total_quantity;
         this.avgPrice = wine.avg_price;
-        this.lastPurchasedPrice = wine.last_purchased_price;
+        this.lastPurchasePrice = wine.last_purchase_price;
         this.vintage = wine.vintage;
     }
 
@@ -197,7 +197,7 @@ export class WineTableWine {
         this.regionId = wine.region_id;
         this.vitiArea = wine.viti_area;
         this.vitiAreaId = wine.viti_area_id;
-        this.lastPurchasedPrice = wine.last_purchased_price;
+        this.lastPurchasedPrice = wine.last_purchase_price;
         this.vintage = wine.vintage;
     }
 

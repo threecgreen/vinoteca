@@ -23,7 +23,7 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
             { props.wines.map((wine) => {
                 return (
                     <tr key={ wine.id }>
-                        <DateCell date={ wine.lastPurchasedDate } />
+                        <DateCell date={ wine.lastPurchaseDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
                             nameAndType={ wine.nameAndType }

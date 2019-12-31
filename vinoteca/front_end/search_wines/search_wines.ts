@@ -4,4 +4,4 @@ import { navbar } from "../../lib/widgets";
 import { SearchWinesApp } from "./SearchWinesApp";
 
 navbar("new-wine-nav");
-render(createElement(SearchWinesApp), document.getElementById("search-wines-app-container"));
+render(createElement(SearchWinesApp), document.getElementById("search_wines-container"));

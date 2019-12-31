@@ -17,10 +17,10 @@ export const VitiAreaInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
-                const vitiAreas: IDict<string> = await get("/rest/viti-areas/all/");
+                const vitiAreas: IDict<string> = await get("/rest/viti-areas");
                 staticAutocomplete(nameToId("Viti Area"), vitiAreas, props.onChange);
             } catch (e) {
-                logger.logError(`Failed to get producer autocomplete options. ${e}`);
+                logger.logError("Failed to get viti area autocomplete options");
             }
         }
 

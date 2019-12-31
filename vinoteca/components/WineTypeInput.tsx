@@ -26,10 +26,10 @@ export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTyp
 
     public async componentDidMount() {
         try {
-            const wineTypes: IDict<string> = await get("/rest/wine-types/all/");
+            const wineTypes: IDict<string> = await get("/rest/wine-types");
             staticAutocomplete(nameToId("Wine Type"), wineTypes, this.props.onChange);
         } catch (e) {
-            this.logger.logError(`Failed to get wine type autocomplete options. ${e}`);
+            this.logger.logError("Failed to get wine type autocomplete options");
         }
     }
 

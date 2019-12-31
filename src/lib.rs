@@ -22,6 +22,8 @@ pub mod templates;
 // Rest
 pub mod colors;
 pub mod dashboards;
+pub mod grapes;
+pub mod logs;
 pub mod producers;
 pub mod purchases;
 pub mod regions;

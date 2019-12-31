@@ -6,6 +6,7 @@ authors = ["Carter Green <cartergr@usc.edu>"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4"
 rocket = "0.4.2"
 rocket_codegen = "0.4.2"
 diesel = { version = "1.0", features = ["sqlite"] }

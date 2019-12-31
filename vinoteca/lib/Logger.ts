@@ -68,7 +68,7 @@ export default class Logger {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        const response: ILogResult = await post("/rest/logs/client/", {
+        const response: ILogResult = await post("/rest/logs", {
             level,
             message,
             module: this.module,
