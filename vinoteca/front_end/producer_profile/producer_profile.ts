@@ -4,10 +4,10 @@ import { onLoad } from "../../lib/JQueryCompat";
 import { navbar } from "../../lib/widgets";
 import { ProducerProfileApp } from "./ProducerProfileApp";
 
-declare const producerId: number;
+declare const id: number;
 
 onLoad(() => {
     navbar();
-    render(createElement(ProducerProfileApp, {producerId}),
-           document.getElementById("producer-profile-app-container"));
+    render(createElement(ProducerProfileApp, {producerId: id}),
+           document.getElementById("producer_profile-container"));
 });

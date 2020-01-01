@@ -84,3 +84,25 @@ pub fn wines() -> ReactAppTemplate<'static> {
         version: &VERSION,
     }
 }
+
+#[derive(askama::Template)]
+#[template(path = "react_profile.html")]
+pub struct ReactProfileAppTemplate<'a> {
+    id: i32,
+    app: &'a str,
+    this_year: u16,
+    page_name: &'a str,
+    version: &'a str,
+}
+
+// TODO: check if producer exists
+#[get("/producers/<id>")]
+pub fn producer_profile(id: i32) -> ReactProfileAppTemplate<'static> {
+    ReactProfileAppTemplate {
+        id,
+        app: "producer_profile",
+        this_year: this_year(),
+        page_name: "Producer Profile",
+        version: &VERSION,
+    }
+}

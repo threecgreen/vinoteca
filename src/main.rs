@@ -23,6 +23,7 @@ fn main() {
                 templates::grapes,
                 templates::inventory,
                 templates::new_wine,
+                templates::producer_profile,
                 templates::search_wines,
                 templates::wines
             ],

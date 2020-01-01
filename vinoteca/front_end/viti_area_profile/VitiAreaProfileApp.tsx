@@ -124,7 +124,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
             const vitiArea = await updateVitiArea({
                 id: this.props.vitiAreaId,
                 name: this.state.vitiAreaText,
-               region: this.state.vitiArea!.region
+                region_id: this.state.vitiArea!.region_id,
             });
             this.setState({
                 isEditing: false,

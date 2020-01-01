@@ -122,16 +122,20 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
      * and updates state.
      */
     private async getCurrentProducerData() {
-        const producer = await getProducer({id: this.props.producerId});
-        this.setState({
-            producer: producer,
-            producerText: producer.name,
-        });
-        const region = await getRegion({id: producer.region});
-        this.setState({
-            region,
-            regionText: region.name
-        });
+        try {
+            const producer = await getProducer({id: this.props.producerId});
+            this.setState({
+                producer: producer,
+                producerText: producer.name,
+            });
+            const region = await getRegion({id: producer.region_id});
+            this.setState({
+                region,
+                regionText: region.name
+            });
+        } catch {
+            this.logger.logWarning("Error getting producer data");
+        }
     }
 
     private onProducerChange(val: string) {
@@ -207,7 +211,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         const producer = await updateProducer({
             id: this.state.producer!.id,
             name: this.state.producerText,
-            region: regionId!,
+            region_id: regionId,
         });
         this.setState({
             producer: producer,

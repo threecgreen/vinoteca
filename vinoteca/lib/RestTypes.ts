@@ -39,14 +39,14 @@ export type IRegion = IRestModel;
 export type INewRegion = INewRestModel;
 
 export interface IProducer extends IRestModel {
-    region: number;
+    region_id: number;
 }
 
 export interface IVitiArea extends IRestModel {
-    region: number;
+    region_id: number;
 }
 export interface INewVitiArea extends INewRestModel {
-    region: number;
+    region_id: number;
 }
 
 export interface IWineGrape {

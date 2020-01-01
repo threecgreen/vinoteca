@@ -38,7 +38,7 @@ export class Producer extends React.Component<IProducerProps> {
     }
 
     private renderView(): JSX.Element {
-        let regionInfo: JSX.Element;
+        let regionInfo: JSX.Element | null;
         if (this.props.region) {
             regionInfo = (
                 <h4 className="light">
@@ -50,7 +50,7 @@ export class Producer extends React.Component<IProducerProps> {
                 </h4>
             );
         } else {
-            regionInfo = <h5>This producer currently does not have a region, please add one.</h5>;
+            regionInfo = null;
         }
         return (
             <Col s={ 12 }>
