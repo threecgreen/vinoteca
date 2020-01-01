@@ -34,6 +34,7 @@ interface IState {
     notes: string;
 }
 
+// TODO: Improve the performance of this component
 export class NewWineApp extends React.Component<{}, IState> {
     private readonly logger: Logger;
 

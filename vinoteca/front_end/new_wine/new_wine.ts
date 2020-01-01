@@ -6,5 +6,5 @@ import { NewWineApp } from "./NewWineApp";
 
 onLoad(() => {
     navbar("new-wine-nav");
-    render(createElement(NewWineApp), document.getElementById("new-wine-app-container"));
+    render(createElement(NewWineApp), document.getElementById("new_wine-container"));
 });

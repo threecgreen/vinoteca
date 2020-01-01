@@ -7,7 +7,7 @@ import { MaterialIcon } from "./MaterialIcon";
 
 interface IProps {
     id: number;
-    completions: IDict<string>;
+    completions: IDict<string | null>;
     name: string;
     percent?: number;
     handleDelete: (e: React.MouseEvent, id: number) => void;

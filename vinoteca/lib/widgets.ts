@@ -2,6 +2,8 @@ import { Autocomplete, Datepicker, Dropdown, FloatingActionButton, Modal, Sidena
 import { get } from "./ApiHelper";
 import { selectById } from "./JQueryCompat";
 import Logger from "./Logger";
+import { toDict } from "./RestApi";
+import { IRestModel } from "./RestTypes";
 import { IDict, nameToId } from "./utils";
 
 type OnChange = (e: string) => void;
@@ -32,8 +34,8 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
 export async function rAutocomplete(modelName: string, onChange: OnChange,
                                     minLength = 1, limit = 5) {
     try {
-        const completions: IDict<string> = await get(`/rest/${modelName.toLowerCase()}s`);
-        staticAutocomplete(nameToId(modelName), completions, onChange, minLength, limit);
+        const completions: IRestModel[] = await get(`/rest/${modelName.toLowerCase()}s`);
+        staticAutocomplete(nameToId(modelName), toDict(completions), onChange, minLength, limit);
     } catch {
         const logger = new Logger("widgets");
         logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);
@@ -45,11 +47,11 @@ export async function rAutocomplete(modelName: string, onChange: OnChange,
  * favor of rAutocomplete which doesn't use JQuery.
  */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
-    get(`/rest/${modelName.toLowerCase()}s/all/`)
-        .then((completionData: IDict<string>) => {
+    get(`/rest/${modelName.toLowerCase()}s`)
+        .then((completionData: IRestModel[]) => {
             const elem = selectById(selector ? selector : `auto-${modelName}`);
             const instances = new Autocomplete(elem, {
-                data: completionData,
+                data: toDict(completionData),
                 limit,
                 minLength,
             });
