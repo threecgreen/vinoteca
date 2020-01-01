@@ -6,7 +6,8 @@ extern crate vinoteca;
 
 // Rest
 use vinoteca::{
-    colors, grapes, logs, producers, purchases, regions, stores, viti_areas, wine_grapes, wine_types, wines,
+    colors, grapes, logs, producers, purchases, regions, stores, viti_areas, wine_grapes,
+    wine_types, wines,
 };
 // Templates
 use vinoteca::templates;
@@ -24,6 +25,7 @@ fn main() {
                 templates::inventory,
                 templates::new_wine,
                 templates::producer_profile,
+                templates::region_profile,
                 templates::search_wines,
                 templates::wines
             ],
@@ -48,6 +50,7 @@ fn main() {
                 viti_areas::get,
                 viti_areas::put,
                 viti_areas::post,
+                viti_areas::stats,
                 wines::get,
                 wines::inventory,
                 wine_grapes::get,

@@ -4,10 +4,10 @@ import { onLoad } from "../../lib/JQueryCompat";
 import { navbar } from "../../lib/widgets";
 import { RegionProfile } from "./RegionProfileApp";
 
-declare const regionId: number;
+declare const id: number;
 
 onLoad(() => {
     navbar();
-    render(createElement(RegionProfile, {regionId}),
-           document.getElementById("region-profile-app-container"));
+    render(createElement(RegionProfile, {regionId: id}),
+           document.getElementById("region_profile-container"));
 });

@@ -1,12 +1,15 @@
 use super::query_utils::error_status;
+use super::schema::{purchases, regions, viti_areas, wines};
 use super::DbConn;
 
 use diesel;
+use diesel::dsl::sql;
 use diesel::prelude::*;
+use diesel::sql_types::{Float, Integer, Nullable};
 use models::{VitiArea, VitiAreaForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{regions, viti_areas};
+use serde::Serialize;
 
 #[get("/viti-areas?<id>&<name>&<region_name>")]
 pub fn get(
@@ -29,6 +32,46 @@ pub fn get(
     query
         .select((viti_areas::id, viti_areas::name, regions::name))
         .load::<VitiArea>(&*connection)
+        .map(Json)
+        .map_err(error_status)
+}
+
+#[derive(Queryable, Serialize, Debug)]
+pub struct VitiAreaStats {
+    id: i32,
+    name: String,
+    total_wines: i32,
+    avg_price: Option<f32>,
+    avg_rating: Option<f32>,
+}
+
+#[get("/viti-areas/stats?<id>&<region_id>")]
+pub fn stats(
+    id: Option<i32>,
+    region_id: Option<i32>,
+    connection: DbConn,
+) -> Result<Json<Vec<VitiAreaStats>>, Status> {
+    let mut query = viti_areas::table
+        .select((
+            viti_areas::id,
+            viti_areas::name,
+            // literal until diesel has better aggregation support
+            sql::<Integer>("count(wines.id)"),
+            sql::<Nullable<Float>>("avg(purchases.price)"),
+            sql::<Nullable<Float>>("avg(wines.rating)"),
+        ))
+        .inner_join(regions::table)
+        .inner_join(wines::table.inner_join(purchases::table))
+        .group_by((viti_areas::id, viti_areas::name))
+        .into_boxed();
+    if let Some(id) = id {
+        query = query.filter(viti_areas::id.eq(id));
+    }
+    if let Some(region_id) = region_id {
+        query = query.filter(regions::id.eq(region_id));
+    }
+    query
+        .load::<VitiAreaStats>(&*connection)
         .map(Json)
         .map_err(error_status)
 }

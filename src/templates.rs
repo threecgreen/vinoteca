@@ -106,3 +106,15 @@ pub fn producer_profile(id: i32) -> ReactProfileAppTemplate<'static> {
         version: &VERSION,
     }
 }
+
+#[get("/regions/<id>")]
+pub fn region_profile(id: i32) -> ReactProfileAppTemplate<'static> {
+    ReactProfileAppTemplate {
+        id,
+        app: "region_profile",
+        this_year: this_year(),
+        // TODO: maybe it makes sense for the page name to be the name of the region, ie set dynamically
+        page_name: "Region Profile",
+        version: &VERSION,
+    }
+}
