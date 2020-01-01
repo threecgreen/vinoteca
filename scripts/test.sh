@@ -5,12 +5,12 @@ find_python_env
 
 cd "$root_dir"
 if [ "$CI" == "true" ]; then
-    "$py_env/pytest" --cov=. --cov-branch --cov-config="$root_dir/.coveragerc" \
-        --cov-report=xml:shippable/codecoverage/coverage.xml \
-        --junitxml=shippable/testresults/nosetests.xml
+    cargo test
+    # "$py_env/pytest" --cov=. --cov-branch --cov-config="$root_dir/.coveragerc" \
+        # --cov-report=xml:shippable/codecoverage/coverage.xml \
+        # --junitxml=shippable/testresults/nosetests.xml
 else
-    "$py_env/pytest" --cov=. --cov-branch --cov-config="$root_dir/.coveragerc" \
-        --cov-report term-missing
+    cargo test
 fi
 cd -
 

@@ -37,45 +37,6 @@ update_path()
     export PATH="$PATH:$py_env"
 }
 
-find_python_env()
-# Function that tries to locate the vinoteca Python environment and the conda path
-# Accepts zero arguments
-# Will exit the program if the environment cannot be found
-{
-    # Check cache
-    if [ -f "$scripts_dir/.py_env.cache" ] &&  [ -f "$scripts_dir/.conda.cache" ]; then
-        py_env="$(cat "$scripts_dir/.py_env.cache")"
-        conda="$(cat "$scripts_dir/.conda.cache")"
-        update_path
-        return 0
-    fi
-    command -v conda > /dev/null 2>&1
-    if [ $? = 0 ]; then
-        py_env="$(conda env list | grep vinoteca | awk '{print $2}')/bin"
-        conda="conda"
-    elif [ -f "/opt/anaconda/bin/conda" ]; then
-        conda="/opt/anaconda/bin/conda"
-        py_env="$($conda env list | grep vinoteca | awk '{print $2}')/bin"
-    elif [ -f "$HOME/.conda/bin/conda" ]; then
-        conda="$HOME/.conda/bin/conda"
-        py_env="$($conda env list | grep vinoteca | awk '{print $2}')/bin"
-    else
-        error_exit "Failed to find vinoteca Python environment."
-    fi
-    # Handle when env is active
-    if [ "$py_env" = '*/bin' ]; then
-        py_env="$($conda env list | grep vinoteca | awk '{print $3}')/bin"
-    fi
-    # Test length of environment variable
-    if [ ${#py_env} = 0 ]; then
-        error_exit "Failed to find vinoteca Python environment."
-    fi
-    # Cache to file
-    echo $py_env > "$scripts_dir/.py_env.cache"
-    echo $conda > "$scripts_dir/.conda.cache"
-    update_path
-}
-
 find_vinoteca_version()
 {
     local git_ver="$(git --git-dir="$root_dir/.git" --work-tree="$root_dir" branch | grep \* | cut -d' ' -f2)"
@@ -84,20 +45,27 @@ find_vinoteca_version()
 
 check_for_node()
 {
-    command -v "$py_env/npm" > /dev/null 2>&1
+    command -v npm > /dev/null 2>&1
     if [ $? != 0 ]; then
-        error_exit "NPM is not installed."
+        error_exit "npm is not installed."
     fi
+}
+
+rust_build()
+{
+    info_text "Building web server…"
+    cd $root_dir
+    cargo build --release || error_exit "Failed build rust web server"
+    cd -
 }
 
 js_install_and_build()
 {
-    info_text "Installing JavaScript dependencies..."
+    info_text "Building web application…"
     check_for_node
     cd "$root_dir/vinoteca"
-    "$py_env/npm" ci || error_exit "Failed installing JavaScript dependencies"
-    info_text "Building webpack bundles..."
-    "$py_env/npm" run-script build || error_exit "Failed building webpack bundles"
+    npm ci || error_exit "Failed installing JavaScript dependencies"
+    npm run-script build || error_exit "Failed building webpack bundles"
     cd -
 }
 

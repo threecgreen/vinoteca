@@ -7,6 +7,7 @@ parse_args()
 {
     GIT_PULL="true"
     FORCE_UPDATE="false"
+    FAST_UPDATE="false"
     while [ "$1" != "" ]; do
         case "$1" in
             -g | --no-git-pull)
@@ -14,6 +15,9 @@ parse_args()
                 ;;
             -f | --force)
                 FORCE_UPDATE="true"
+                ;;
+            --fast)
+                FAST_UPDATE="true"
                 ;;
             *)
                 error_exit "Invalid argument $1"
@@ -26,7 +30,6 @@ parse_args()
 parse_args $@
 find_vinoteca_version
 old_ver="$vinoteca_ver"
-find_python_env
 
 if [ "$GIT_PULL" = true ]; then
     info_text "Updating project source..."
@@ -45,32 +48,16 @@ if [ "$GIT_PULL" = true ]; then
     fi
 fi
 
-# Sometimes needed in WSL
-if [ -f $HOME/miniconda/lib/libcrypto.so.1.0.0 ]; then
-    execstack -c $HOME/miniconda/lib/libcrypto.so.1.0.0
-fi
-
-find_python_env
-info_text "Updating conda..."
-"$conda" update -n base -c defaults conda -y
-info_text "Updating dependencies..."
-"$conda" env update -f "$root_dir/environment.yml" || error_exit "Failed to update Python"
-info_text "Migrating database..."
-"$py_env/python" "$root_dir/manage.py" migrate || error_exit "Failed to migrate database"
-"$py_env/python" "$root_dir/manage.py" migrate dashboards || error_exit "Failed to migrate database"
-"$py_env/python" "$root_dir/manage.py" migrate wines || error_exit "Failed to migrate database"
-
 check_for_install
 
-# Javascript
+rust_build
 js_install_and_build
-cd "$root_dir/vinoteca"
-"$py_env/npm" prune
-cd -
 
-echo
-info_text "Running test suite..."
-bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."
+if [ "$FAST_UPDATE" = false ]; then
+    echo
+    info_text "Running test suite..."
+    bash "$scripts_dir/test.sh" || error_exit "Some tests failed. Some functionality might not work properly."
+fi
 
 echo
 find_vinoteca_version

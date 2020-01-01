@@ -2,61 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run Server",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/run.sh",
-            "args": [
-                "--no-tab"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Pylint",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/lint.sh",
-            "args": [
-                "python"
-            ],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
             "label": "Tslint",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/lint.sh",
             "args": [
                 "typescript"
             ],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
-            "label": "Pytest",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/test.sh",
             "group": "test",
             "presentation": {
                 "echo": true,
