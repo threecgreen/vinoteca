@@ -129,3 +129,14 @@ pub fn viti_area_profile(id: i32) -> ReactProfileAppTemplate<'static> {
         version: &VERSION,
     }
 }
+
+#[get("/wine-types/<id>")]
+pub fn wine_type_profile(id: i32) -> ReactProfileAppTemplate<'static> {
+    ReactProfileAppTemplate {
+        id,
+        app: "wine_type_profile",
+        this_year: this_year(),
+        page_name: "Wine Type Profile",
+        version: &VERSION,
+    }
+}
