@@ -3,7 +3,7 @@ extern crate chrono;
 
 use templates::chrono::Datelike;
 
-const VERSION: &'static str = "5.0.0";
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 fn this_year() -> u16 {
     chrono::Local::today().year() as u16
@@ -51,6 +51,16 @@ pub fn inventory() -> ReactAppTemplate<'static> {
         app: "inventory",
         this_year: this_year(),
         page_name: "Inventory",
+        version: &VERSION,
+    }
+}
+
+#[get("/wines/new")]
+pub fn new_wine() -> ReactAppTemplate<'static> {
+    ReactAppTemplate {
+        app: "new_wine",
+        this_year: this_year(),
+        page_name: "New Wine",
         version: &VERSION,
     }
 }

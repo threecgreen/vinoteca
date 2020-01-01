@@ -27,6 +27,7 @@ pub mod logs;
 pub mod producers;
 pub mod purchases;
 pub mod regions;
+pub mod stores;
 pub mod viti_areas;
 pub mod wine_grapes;
 pub mod wine_types;
