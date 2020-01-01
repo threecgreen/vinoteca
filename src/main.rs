@@ -26,6 +26,7 @@ fn main() {
                 templates::new_wine,
                 templates::producer_profile,
                 templates::region_profile,
+                templates::viti_area_profile,
                 templates::search_wines,
                 templates::wines
             ],

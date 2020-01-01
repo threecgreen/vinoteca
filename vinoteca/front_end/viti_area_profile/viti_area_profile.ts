@@ -4,10 +4,10 @@ import { onLoad } from "../../lib/JQueryCompat";
 import { navbar } from "../../lib/widgets";
 import { VitiAreaProfile } from "./VitiAreaProfileApp";
 
-declare const vitiAreaId: number;
+declare const id: number;
 
 onLoad(() => {
     navbar();
-    render(createElement(VitiAreaProfile, {vitiAreaId}),
-           document.getElementById("viti-area-profile-app-container"));
+    render(createElement(VitiAreaProfile, {vitiAreaId: id}),
+           document.getElementById("viti_area_profile-container"));
 });

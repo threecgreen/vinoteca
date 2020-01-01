@@ -118,3 +118,14 @@ pub fn region_profile(id: i32) -> ReactProfileAppTemplate<'static> {
         version: &VERSION,
     }
 }
+
+#[get("/viti-areas/<id>")]
+pub fn viti_area_profile(id: i32) -> ReactProfileAppTemplate<'static> {
+    ReactProfileAppTemplate {
+        id,
+        app: "viti_area_profile",
+        this_year: this_year(),
+        page_name: "Viti Area Profile",
+        version: &VERSION,
+    }
+}
