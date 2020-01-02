@@ -1,4 +1,3 @@
-
 SELECT
     w.id
     , c.name AS color

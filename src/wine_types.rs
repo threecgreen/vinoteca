@@ -1,12 +1,14 @@
-use super::query_utils::error_status;
 use super::DbConn;
+use query_utils::error_status;
+use schema::{purchases, wines, wine_types};
 
-use diesel;
+use diesel::sql_types::{Integer, Float};
+use diesel::dsl::sql;
 use diesel::prelude::*;
 use models::{WineType, WineTypeForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::wine_types;
+use serde::Serialize;
 
 #[get("/wine-types?<id>&<name>")]
 pub fn get(
@@ -23,6 +25,38 @@ pub fn get(
     }
     query
         .load::<WineType>(&*connection)
+        .map(Json)
+        .map_err(error_status)
+}
+
+#[derive(Queryable, Serialize, Debug)]
+pub struct TopWineType {
+    pub id: i32,
+    pub name: String,
+    pub quantity: i32,
+    pub varieties: i32,
+    pub avg_price: f32,
+}
+
+#[get("/wine-types/top?<limit>")]
+pub fn top(
+    limit: Option<usize>,
+    connection: DbConn,
+) -> Result<Json<Vec<TopWineType>>, Status> {
+    let limit = limit.unwrap_or(10);
+    wine_types::table.inner_join(wines::table.inner_join(purchases::table))
+        .group_by((wine_types::id, wine_types::name))
+        .select((
+            wine_types::id,
+            wine_types::name,
+            sql::<Integer>("sum(purchases.quantity)"),
+            // Should probably be distinct
+            sql::<Integer>("count(wines.id)"),
+            sql::<Float>("avg(purchases.price)"),
+        ))
+        .order_by(sql::<Integer>("sum(purchases.quantity) DESC"))
+        .limit(limit as i64)
+        .load::<TopWineType>(&*connection)
         .map(Json)
         .map_err(error_status)
 }

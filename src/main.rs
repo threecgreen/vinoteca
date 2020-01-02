@@ -21,7 +21,10 @@ fn main() {
             "/",
             routes![
                 templates::about,
+                templates::dashboards,
                 templates::grapes,
+                templates::home,
+                templates::home_redirect,
                 templates::inventory,
                 templates::new_wine,
                 templates::producer_profile,
@@ -45,6 +48,7 @@ fn main() {
                 producers::delete,
                 purchases::get,
                 purchases::put,
+                purchases::recent,
                 regions::get,
                 regions::put,
                 regions::post,
@@ -59,6 +63,7 @@ fn main() {
                 wine_types::get,
                 wine_types::put,
                 wine_types::post,
+                wine_types::top,
             ],
         )
         .mount("/static", StaticFiles::from("static"))

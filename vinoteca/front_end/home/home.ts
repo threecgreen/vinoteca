@@ -1,17 +1,28 @@
-import { Parallax } from "materialize-css";
-import { GenericStat, IGenericStat } from "../../lib/RestTypes";
+// import { Parallax } from "materialize-css";
+// import { GenericStat, IGenericStat } from "../../lib/RestTypes";
 import { navbar, tabs } from "../../lib/widgets";
-import { applyChart, barChart } from "../../lib/wine_charts";
+import { onLoad } from "../../lib/JQueryCompat";
+import { render } from "react-dom";
+import { createElement } from "react";
+import { HomeApp } from "./HomeApp";
+// import { applyChart, barChart } from "../../lib/wine_charts";
 
-declare const wineTypePurchases: IGenericStat;
-declare const wineTypeVarieties: IGenericStat;
-declare const wineTypePrice: IGenericStat;
+// declare const wineTypePurchases: IGenericStat;
+// declare const wineTypeVarieties: IGenericStat;
+// declare const wineTypePrice: IGenericStat;
 
-navbar();
-const elems = document.querySelectorAll(".parallax");
-const instances = new Parallax(elems[0]);
-tabs();
+// navbar();
+// const elems = document.querySelectorAll(".parallax");
+// const instances = new Parallax(elems[0]);
 
-applyChart(barChart, GenericStat.fromJSON(wineTypePurchases), "top-wt-purchases");
-applyChart(barChart, GenericStat.fromJSON(wineTypeVarieties), "top-wt-varieties");
-applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");
+onLoad(() => {
+    navbar();
+    tabs();
+    render(createElement(HomeApp),
+           document.getElementById("home-container"));
+});
+
+
+// applyChart(barChart, GenericStat.fromJSON(wineTypePurchases), "top-wt-purchases");
+// applyChart(barChart, GenericStat.fromJSON(wineTypeVarieties), "top-wt-varieties");
+// applyChart(barChart, GenericStat.fromJSON(wineTypePrice), "top-wt-price");

@@ -1,12 +1,13 @@
-use super::query_utils::error_status;
 use super::DbConn;
+use query_utils::error_status;
+use schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
 use diesel::prelude::*;
 use models::{Purchase, PurchaseForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{purchases, wines};
+use serde::Serialize;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub fn get(
@@ -37,6 +38,62 @@ pub fn get(
             purchases::date,
         ))
         .load::<Purchase>(&*connection)
+        .map(Json)
+        .map_err(error_status)
+}
+
+// Includes wine info for convenience
+#[derive(Queryable, Serialize, Debug)]
+pub struct RecentPurchase {
+    pub id: i32,
+    pub price: Option<f32>,
+    pub quantity: Option<i32>,
+    pub vintage: Option<i32>,
+    pub memo: Option<String>,
+    pub store: Option<String>,
+    pub date: Option<i32>,
+    pub wine_id: i32,
+    pub wine_name: Option<String>,
+    pub producer_id: i32,
+    pub producer: String,
+    pub region_id: i32,
+    pub region: String,
+    pub wine_type_id: i32,
+    pub wine_type: String,
+}
+
+#[get("/purchases/recent?<limit>")]
+pub fn recent(
+    limit: Option<usize>,
+    connection: DbConn,
+) -> Result<Json<Vec<RecentPurchase>>, Status> {
+    let limit = limit.unwrap_or(10);
+    purchases::table
+        .inner_join(
+            wines::table.inner_join(producers::table.inner_join(regions::table))
+                .inner_join(wine_types::table),
+        )
+        .left_join(stores::table)
+        .select((
+            purchases::id,
+            purchases::price,
+            purchases::quantity,
+            purchases::vintage,
+            purchases::memo,
+            stores::name.nullable(),
+            purchases::date,
+            wines::id,
+            wines::name,
+            producers::id,
+            producers::name,
+            regions::id,
+            regions::name,
+            wine_types::id,
+            wine_types::name,
+        ))
+        .order_by(purchases::date.desc())
+        .limit(limit as i64)
+        .load::<RecentPurchase>(&*connection)
         .map(Json)
         .map_err(error_status)
 }

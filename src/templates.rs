@@ -35,6 +35,17 @@ pub struct ReactAppTemplate<'a> {
     version: &'a str,
 }
 
+// TODO: rename this page singular 'Dashboard'
+#[get("/dashboards")]
+pub fn dashboards() -> ReactAppTemplate<'static> {
+    ReactAppTemplate {
+        app: "dashboards",
+        this_year: this_year(),
+        page_name: "Dashboards",
+        version: &VERSION,
+    }
+}
+
 #[get("/grapes")]
 pub fn grapes() -> ReactAppTemplate<'static> {
     ReactAppTemplate {
@@ -43,6 +54,22 @@ pub fn grapes() -> ReactAppTemplate<'static> {
         page_name: "Grapes",
         version: &VERSION,
     }
+}
+
+#[get("/")]
+pub fn home() -> ReactAppTemplate<'static> {
+    ReactAppTemplate {
+        // Naming the page 'Home' feels redundant
+        app: "home",
+        this_year: this_year(),
+        page_name: "Home",
+        version: &VERSION,
+    }
+}
+
+#[get("/home")]
+pub fn home_redirect() -> ReactAppTemplate<'static> {
+    home()
 }
 
 #[get("/inventory")]

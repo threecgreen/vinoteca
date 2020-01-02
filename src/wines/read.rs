@@ -110,7 +110,6 @@ pub fn get(
             wine_types::name,
         ))
         .load::<Wine>(&*connection)
-        // .and_then()
         .map(Json)
         .map_err(error_status)
 }

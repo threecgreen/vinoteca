@@ -6,6 +6,7 @@ export interface IGridProps {
     s?: number;
     m?: number;
     l?: number;
+    xl?: number;
 }
 
 type IAllGridProps = IGridProps & IClassesProp & IChildrenProp;
@@ -25,7 +26,8 @@ function gridClasses(props: IAllGridProps): string[] {
     const sClass = props.s ? `s${props.s}` : "";
     const mClass = props.m ? `m${props.m}` : "";
     const lClass = props.l ? `l${props.l}` : "";
-    return [sClass, mClass, lClass];
+    const xlClass = props.xl ? `xl${props.xl}` : "";
+    return [sClass, mClass, lClass, xlClass];
 }
 
 const GridComponentFactory = (className: string): React.FC<IAllGridProps> => {

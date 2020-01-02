@@ -14,11 +14,13 @@ export const WineTableNumCols: IColumnHeader[] = [
 
 interface IProps extends IChildrenProp {
     columns: (string | IColumnHeader)[];
+    condensed?: boolean;
 }
 
 export const Table: React.FC<IProps> = (props) => {
+    const condensed = props.condensed ?? true;
     return (
-        <table className="highlight responsive condensed">
+        <table className={ `highlight responsive ${condensed ? "condensed" : ""}` }>
             <thead>
                 <tr>
                     { props.columns.map((col) => {
