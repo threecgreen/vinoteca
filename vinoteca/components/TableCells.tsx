@@ -153,3 +153,12 @@ export const VitiAreaCell: React.FC<{id?: number}> = (props) => {
     )
 }
 VitiAreaCell.displayName = "VitiAreaCell"
+
+export const WineTypeCell: React.FC<{id: number}> = (props) => {
+    return (
+        <LinkedCell id={ props.id } model="wine-types">
+            { props.children }
+        </LinkedCell>
+    );
+}
+WineTypeCell.displayName = "WineTypeCell";

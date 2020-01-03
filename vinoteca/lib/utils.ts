@@ -95,35 +95,6 @@ export function nameToId(name: string): string {
 }
 
 /**
- * Tests if any member of the given container passes the predicate
- * @param arr An array to test
- * @param predicate A test to be applied to each element of arr
- */
-export function any<T>(arr: T[], predicate: (elem: T) => boolean): boolean {
-    if (arr.length === 0) {
-        return false;
-    }
-    for (const e of arr) {
-        if (predicate(e)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-export function all<T>(arr: T[], predicate: (elem: T) => boolean): boolean {
-    if (arr.length === 0) {
-        return false;
-    }
-    for (const e of arr) {
-        if (!predicate(e)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
  * Finds the maximum element by one the properties of the type of element
  * @param arr An array of objcects
  * @param accessor A function for accessing a number property of the objects
@@ -193,24 +164,3 @@ export function* range({ start, stop, step }: IRangeArgs): IterableIterator<numb
         yield i;
     }
 }
-
-declare global {
-    // tslint:disable-next-line:interface-name
-    interface Array<T> {
-        any<T>(predicate: (elem: T) => boolean): boolean;
-        all<T>(predicate: (elem: T) => boolean): boolean;
-    }
-}
-
-/**
- * Checks whether any element in an array passes a predicate
- * @param this: array
- * @param predicate: the test to be applied to each element of the array
- */
-Array.prototype.any = function <T>(this: T[], predicate: (elem: T) => boolean): boolean {
-    return any(this, predicate);
-};
-
-Array.prototype.all = function<T>(this: T[], predicate: (elem: T) => boolean): boolean {
-    return all(this, predicate);
-};

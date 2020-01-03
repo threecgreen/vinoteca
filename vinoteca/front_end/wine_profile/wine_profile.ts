@@ -17,7 +17,7 @@ onLoad(() => {
     // Grape chart
     get("/rest/wine-grapes/", {wine: wineId})
         .then((wineGrapeJSON: IWineGrape[]) => {
-            if (wineGrapeJSON.all((e: IWineGrape) => e.percent !== undefined)) {
+            if (wineGrapeJSON.every((e: IWineGrape) => e.percent !== undefined)) {
                 applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
             }
         });

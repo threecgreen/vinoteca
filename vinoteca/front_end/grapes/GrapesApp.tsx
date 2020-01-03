@@ -132,6 +132,6 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     }
 
     private get hasEditableGrapes(): boolean {
-        return this.state.grapes.any((g: GrapeItem) => g.isEditable);
+        return this.state.grapes.some((g: GrapeItem) => g.isEditable);
     }
 }

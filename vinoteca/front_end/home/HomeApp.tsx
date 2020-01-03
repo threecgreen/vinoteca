@@ -2,6 +2,9 @@ import * as React from "react";
 import { ParallaxImg } from "../../components/ParallaxImg";
 import { Row, Col } from "../../components/Grid";
 import { RecentPurchases } from "./RecentPurchases";
+import { MaterialIcon } from "../../components/MaterialIcon";
+import { Btn } from "../../components/Buttons";
+import { TopWineTypes } from "./TopWineTypes";
 
 export const HomeApp: React.FC<{}> = (_) => {
     return (
@@ -16,13 +19,21 @@ export const HomeApp: React.FC<{}> = (_) => {
                             </h1>
                             <h5 className="center">A wine purchase tracker and review system</h5>
                         </Col>
+                        <div className="center-align">
+                            <Btn classes={ ["yellow-bg"] }
+                                onClick={ (_) => { window.location.href = "/wines/new"; } }
+                            >
+                                <MaterialIcon iconName="add_circle" />
+                                add wine
+                            </Btn>
+                        </div>
                     </Row>
                     <Row>
                         <Col s={ 12 } xl={ 7 }>
                             <RecentPurchases />
                         </Col>
                         <Col s={ 12 } xl={ 5 }>
-
+                            <TopWineTypes />
                         </Col>
                     </Row>
                 </div>
