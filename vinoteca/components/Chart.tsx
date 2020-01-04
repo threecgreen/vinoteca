@@ -1,5 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
+import Logger from "../lib/Logger";
 
 export interface IChartInput {
     label: string;
@@ -193,3 +194,101 @@ export const BarChart: React.FC<IChartProps> = ({data, height}) => {
     );
 }
 BarChart.displayName = "BarChart";
+
+interface ILineChartProps {
+    data: IChartInput[][];
+    seriesLabels: string[];
+}
+
+export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
+    const logger = new Logger(LineChart.name);
+
+    const chartLabels = splitData(data[0])[0];
+    if (data.length !== seriesLabels.length) {
+        logger.logWarning(`Data and seriesLabels have different lenghts. ` +
+                   `${data.length} and ${seriesLabels.length} respectively.`);
+        return null;
+    }
+
+    const config: Chart.ChartConfiguration = {
+        data: {
+            datasets: [],
+            labels: chartLabels,
+        },
+        options: {
+            layout: {
+                padding: {
+                    bottom: 15,
+                    top: 15,
+                },
+            },
+            responsive: true,
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        color: TRANSLUCENT_GRAY,
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        fontColor: TRANSLUCENT_WHITE,
+                        fontFamily: FONT_FAMILY,
+                        fontSize: 14,
+                    },
+                }],
+                yAxes: [{
+                    gridLines: {
+                        color: TRANSLUCENT_GRAY,
+                    },
+                    ticks: {
+                        fontColor: TRANSLUCENT_WHITE,
+                        fontFamily: FONT_FAMILY,
+                        fontSize: 14,
+                    },
+                }],
+            },
+            tooltips: {
+                bodyFontFamily: FONT_FAMILY,
+                bodyFontSize: 12,
+                titleFontFamily: FONT_FAMILY,
+                titleFontSize: 14,
+            },
+        },
+        type: "line",
+    };
+
+    const colorValues = Array.from(COLORS.values());
+    // Validate then add each data series to config
+    const dataValidation = data.map((series, i) => {
+        const [_, chartData] = splitData(series);
+        // Add the series data to the corresponding key in datasetLabels
+        // @ts-ignore
+        config.data.datasets.push({
+            backgroundColor: changeTransparency(colorValues[i], 0.5),
+            borderColor: colorValues[i],
+            data: chartData,
+            label: seriesLabels[i],
+        });
+        // Error checking
+        if (chartData.every((num) => num === 0)) {
+            logger.logWarning("All zeroes for chart");
+            return false;
+        }
+        return true;
+    });
+
+    if (!dataValidation.every((val) => val)) {
+        logger.logWarning("Data validation of chartData failed");
+        return null;
+    }
+
+    const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
+
+    React.useEffect(() => {
+        const line = new Chart(canvasRef.current, config);
+    }, [canvasRef]);
+
+    return (
+        <canvas ref={canvasRef} />
+    );
+}
+LineChart.displayName = "LineChart";

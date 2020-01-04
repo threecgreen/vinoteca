@@ -3,7 +3,10 @@ use query_utils::error_status;
 use schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
+use diesel::QueryableByName;
 use diesel::prelude::*;
+use diesel::sql_query;
+use diesel::sql_types::{Integer, Float, Nullable};
 use models::{Purchase, PurchaseForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
@@ -94,6 +97,28 @@ pub fn recent(
         .order_by(purchases::date.desc())
         .limit(limit as i64)
         .load::<RecentPurchase>(&*connection)
+        .map(Json)
+        .map_err(error_status)
+}
+
+#[derive(QueryableByName, Serialize, Debug)]
+pub struct YearsPurchases {
+    #[sql_type = "Integer"]
+    year: i32,
+    #[sql_type = "Integer"]
+    quantity: i32,
+    #[sql_type = "Nullable<Float>"]
+    total_price: Option<f32>,
+    #[sql_type = "Nullable<Float>"]
+    avg_price: Option<f32>,
+}
+
+#[get("/purchases/by-year")]
+pub fn by_year(
+    connection: DbConn,
+) -> Result<Json<Vec<YearsPurchases>>, Status> {
+    sql_query(include_str!("purchases_by_year.sql"))
+        .load::<YearsPurchases>(&*connection)
         .map(Json)
         .map_err(error_status)
 }

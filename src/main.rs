@@ -48,6 +48,7 @@ fn main() {
                 producers::delete,
                 purchases::get,
                 purchases::put,
+                purchases::by_year,
                 purchases::recent,
                 regions::get,
                 regions::put,
