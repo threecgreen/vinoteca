@@ -4,6 +4,7 @@ use schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
 use diesel::QueryableByName;
+use diesel::dsl::{sql, sum};
 use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Integer, Float, Nullable};
@@ -122,6 +123,18 @@ pub fn by_year(
         .map(Json)
         .map_err(error_status)
 }
+
+// #[derive(Queryable, Serialize, Debug)]
+// pub struct TotalLiters {
+//     total_liters: f32
+// }
+
+// pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
+//     purchases::table.select(sum(sql::<Float>("quantity * 0.75")))
+//         .load::<TotalLiters>(&*connection)
+//         .unwrap_or(TotalLiters {total_liters: 0.0} )
+//         .map(Json)
+// }
 
 #[put("/purchases?<id>", format = "json", data = "<purchase_form>")]
 pub fn put(
