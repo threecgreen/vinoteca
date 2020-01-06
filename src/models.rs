@@ -1,8 +1,8 @@
 use super::schema::*;
 
 use diesel::{Insertable, Queryable};
-extern crate serde;
 use serde::{Deserialize, Serialize};
+use validator::{Validate};
 
 #[derive(Queryable, Clone, Serialize, Debug)]
 pub struct Color {
@@ -10,9 +10,10 @@ pub struct Color {
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Debug)]
+#[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "colors"]
 pub struct ColorForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
 }
 
@@ -36,9 +37,10 @@ pub struct Producer {
     pub region_id: i32,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "producers"]
 pub struct ProducerForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
     pub region_id: i32,
 }
@@ -55,15 +57,20 @@ pub struct Purchase {
     pub date: Option<i32>,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "purchases"]
 pub struct PurchaseForm {
+    #[validate(range(min = 0.0))]
     pub price: Option<f32>,
+    #[validate(range(min = 1))]
     pub quantity: Option<i32>,
+    #[validate(range(min = 1900))]
     pub vintage: Option<i32>,
+    #[validate(length(min = 1))]
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
+    #[validate(range(min = 19900101))]
     pub date: Option<i32>,
 }
 
@@ -73,9 +80,10 @@ pub struct Region {
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Debug)]
+#[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "regions"]
 pub struct RegionForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
 }
 
@@ -92,9 +100,10 @@ pub struct VitiArea {
     pub region: String,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "viti_areas"]
 pub struct VitiAreaForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
     pub region_id: i32,
 }
@@ -114,9 +123,10 @@ pub struct WineType {
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Debug)]
+#[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "wine_types"]
 pub struct WineTypeForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
 }
 

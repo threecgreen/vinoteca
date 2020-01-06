@@ -49,6 +49,8 @@ fn main() {
                 purchases::get,
                 purchases::put,
                 purchases::by_year,
+                purchases::total_liters,
+                purchases::most_common_purchase_date,
                 purchases::recent,
                 regions::get,
                 regions::put,

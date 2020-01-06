@@ -9,7 +9,7 @@ use diesel::QueryableByName;
 use models::Wine;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use schema::{colors, producers, regions, viti_areas, wine_types, wines};
 use serde::Serialize;
 
 fn add_wildcards(query: &str) -> String {

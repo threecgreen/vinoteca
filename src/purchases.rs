@@ -124,17 +124,35 @@ pub fn by_year(
         .map_err(error_status)
 }
 
-// #[derive(Queryable, Serialize, Debug)]
-// pub struct TotalLiters {
-//     total_liters: f32
-// }
+#[derive(Serialize, Debug)]
+pub struct TotalLiters {
+    total_liters: f32,
+}
 
-// pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
-//     purchases::table.select(sum(sql::<Float>("quantity * 0.75")))
-//         .load::<TotalLiters>(&*connection)
-//         .unwrap_or(TotalLiters {total_liters: 0.0} )
-//         .map(Json)
-// }
+#[get("/purchases/total-liters")]
+pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
+    let res = purchases::table.select(sum(sql::<Float>("quantity * 0.75")))
+        .first(&*connection).unwrap_or(Some(0.0));
+    let total_liters = TotalLiters {
+        total_liters: res.unwrap_or(0.0),
+    };
+    Json(total_liters)
+}
+
+#[derive(Serialize, QueryableByName, Debug)]
+pub struct MostCommonPurchaseDate {
+    #[sql_type = "Nullable<Integer>"]
+    most_common_purchase_date: Option<i32>,
+}
+
+#[get("/purchases/most-common-purchase-date")]
+pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseDate> {
+    let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
+        .load::<MostCommonPurchaseDate>(&*connection)
+        .unwrap_or(vec![MostCommonPurchaseDate { most_common_purchase_date: None }]);
+
+    Json(res.remove(0))
+}
 
 #[put("/purchases?<id>", format = "json", data = "<purchase_form>")]
 pub fn put(

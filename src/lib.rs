@@ -10,6 +10,9 @@ use rocket_contrib::databases::diesel::SqliteConnection;
 #[macro_use]
 extern crate rocket;
 extern crate serde;
+extern crate validator;
+#[macro_use]
+extern crate validator_derive;
 
 // Diesel modules
 pub mod models;
