@@ -34,6 +34,11 @@
         "webpack-cli": "^3.3.10",
         "webpack-merge": "^4.2.2"
     },
+    "sideEffects": [
+        "*.css",
+        "*.sass",
+        "front_end/*.ts"
+    ],
     "scripts": {
         "analyze-bundle": "webpack-bundle-analyzer webpack.stats.json ./static -p 8889",
         "build": "./node_modules/.bin/webpack --mode production --progress",
@@ -41,6 +46,7 @@
         "watch": "./node_modules/.bin/webpack --watch --mode development"
     },
     "devDependencies": {
+        "null-loader": "^3.0.0",
         "tslint": "^5.20.1",
         "webpack-bundle-analyzer": "^3.5.1"
     }

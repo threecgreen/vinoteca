@@ -13,6 +13,7 @@ import { Btn } from "../../components/Buttons";
 interface IState {
     wines: Wine[];
     predicates: Map<keyof Wine, FilterExpr>;
+    filterTexts: Map<keyof Wine, string>;
     hasLoaded: boolean;
     currentPage: number;
     winesPerPage: number;
@@ -27,19 +28,21 @@ export class WinesApp extends React.Component<{}, IState> {
 
         this.logger = new Logger(this.constructor.name);
 
+        const filterTexts = this.deserializeFilters(readCookie(WinesApp.cookieName))
         this.state = {
             wines: [],
-            predicates: this.deserializePredicates(readCookie(WinesApp.cookieName)),
+            filterTexts: filterTexts,
+            predicates: this.parseAllFilters(filterTexts),
             hasLoaded: false,
             currentPage: 1,
             winesPerPage: 50,
         };
     }
 
-    private serializePredicates() {
-        if (this.state.predicates) {
-            const predStrings = Array.from(this.state.predicates.entries()).map((ent) => [ent[0], ent[1].toJson()]);
-            this.logger.logInfo(`PredStrings: '${predStrings}'`)
+    private serializeFilters() {
+        if (this.state.filterTexts) {
+            const predStrings = Array.from(this.state.filterTexts.entries());
+            this.logger.logInfo(`Filter texts: '${predStrings}'`)
             const serializedPredicates = JSON.stringify(predStrings);
             this.logger.logDebug(`Updating cookie to '${serializedPredicates}'`);
             deleteCookie(WinesApp.cookieName);
@@ -49,7 +52,7 @@ export class WinesApp extends React.Component<{}, IState> {
         }
     }
 
-    private deserializePredicates(json: string): Map<keyof Wine, FilterExpr> {
+    private deserializeFilters(json: string): Map<keyof Wine, string> {
         if (!json) {
             return new Map();
         }
@@ -58,15 +61,23 @@ export class WinesApp extends React.Component<{}, IState> {
         try {
             const arr: Array<[string, string]> = JSON.parse(json);
             arr.forEach((item) => {
-                const [key, expr] = item;
-                predicates.set(key, FilterExpr.fromJson(expr));
+                const [key, text] = item;
+                predicates.set(key, text);
             });
             return predicates;
         } catch (err) {
             deleteCookie(WinesApp.cookieName);
-            this.logger.logWarning(`Failed reading predicates cookie with error: ${err}`);
+            this.logger.logWarning(`Failed reading filters cookie with error: ${err}`);
             return new Map();
         }
+    }
+
+    private parseAllFilters(filterTexts: Map<keyof Wine, string>): Map<keyof Wine, FilterExpr> {
+        const predicates = new Map<keyof Wine, FilterExpr>()
+        for (const entry of filterTexts.entries()) {
+            predicates.set(entry[0], FilterExpr.parse(entry[1]));
+        }
+        return predicates;
     }
 
     public render() {
@@ -84,6 +95,7 @@ export class WinesApp extends React.Component<{}, IState> {
                     <Btn classes={ ["green-bg"] }
                         onClick={ (_) => { location.href = "/wines/new/"; } }
                     >
+                        Add a new wine
                     </Btn>
                 </>
             );
@@ -91,10 +103,14 @@ export class WinesApp extends React.Component<{}, IState> {
             wines = (
                 <>
                     <h3 className="page-title">Wines</h3>
-                    <WinesTable onFilterChange={ (c, filterExpr) => this.onFilterChange(c, filterExpr) }
-                        onEmptyFilter={ (c) => this.onEmptyFilter(c) }
+                    <Btn classes={ ["yellow-bg"] }
+                        onClick={ (e) => this.onResetFilters(e) }
+                    >
+                        Reset Filters
+                    </Btn>
+                    <WinesTable onFilterChange={ (c, text) => this.onFilterChange(c, text) }
                         wines={ this.filteredWines }
-                        predicates={ this.state.predicates }
+                        filterTexts={ this.state.filterTexts }
                         currentPage={ this.state.currentPage }
                         winesPerPage={ this.state.winesPerPage }
                     />
@@ -139,29 +155,23 @@ export class WinesApp extends React.Component<{}, IState> {
     }
 
 
-    private onFilterChange(columnName: keyof Wine, filterExpr: FilterExpr) {
+    private onFilterChange(columnName: keyof Wine, text: string) {
         this.setState((prevState) => {
-            prevState.predicates.set(columnName, filterExpr);
+            prevState.predicates.set(columnName, FilterExpr.parse(text));
+            prevState.filterTexts.set(columnName, text);
             return {
                 predicates: prevState.predicates,
+                filterTexts: prevState.filterTexts,
             };
-        }, this.serializePredicates);
-    }
-
-    private onEmptyFilter(columnName: keyof Wine) {
-        this.setState((prevState) => {
-            prevState.predicates.delete(columnName);
-            return {
-                predicates: prevState.predicates,
-            }
-        }, this.serializePredicates)
+        }, this.serializeFilters);
     }
 
     private onResetFilters(e: React.MouseEvent) {
         e.preventDefault();
         this.setState({
             predicates: new Map(),
-        });
+            filterTexts: new Map(),
+        }, this.serializeFilters);
     }
 
     private onPageClick(e: React.MouseEvent, pageNumber: number) {

@@ -11,11 +11,6 @@ interface IProps extends IOnChange {
     onSpecialCharClick: (c: string, position: number) => void;
 }
 
-interface IProducerInputState {
-    // Helpful for debugging to include in state
-    autocompleteOptions: IDict<string>;
-}
-
 export const ProducerInput: React.FC<IProps> = (props) => {
     const logger = new Logger(ProducerInput.name);
 

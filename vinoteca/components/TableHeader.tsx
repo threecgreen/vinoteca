@@ -1,7 +1,5 @@
 import * as React from "react";
 import { MaterialIcon } from "./MaterialIcon";
-import Logger from "../lib/Logger";
-import FilterExpr from "../lib/FilterExpr";
 
 export enum SortingState {
     NotSorted,
@@ -68,49 +66,19 @@ export class TableHeader extends React.Component<IProps> {
     }
 }
 
-interface IFilter {
-    onFilterChange: (filter: FilterExpr) => void;
-    onEmptyFilter: () => void;
-    // Allows for loading from cookie
-    initialText?: string;
-}
-
-interface IState {
+interface IFilterProps {
+    onChange: (val: string) => void;
     text: string;
 }
 
-export class FilterHeader extends React.Component<IFilter, IState> {
-    private readonly logger: Logger;
-
-    public constructor(props: IFilter) {
-        super(props);
-        this.state = {
-            text: this.props.initialText ?? "",
-        };
-        this.logger = new Logger(this.constructor.name);
-    }
-
-    public render() {
-        return (
-            <td>
-                <input type="search"
-                    onChange={ (e) => this.onChange(e) }
-                    value={ this.state.text }
-                />
-            </td>
-        );
-    }
-
-    private onChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const val = e.target.value.toLowerCase();
-        if (!val.trim()) {
-            this.props.onEmptyFilter();
-        }
-        try {
-            this.props.onFilterChange(FilterExpr.parse(val));
-        } catch (exception) {
-            this.logger.logInfo(`Error evaluating filter expression: ${exception}`)
-        }
-        this.setState({ text: val});
-    }
+export const FilterHeader: React.FC<IFilterProps> = (props) => {
+    return (
+        <td>
+            <input type="search"
+                onChange={ (e) => props.onChange(e.target.value) }
+                value={ props.text }
+            />
+        </td>
+    );
 }
+FilterHeader.displayName = "FilterHeader";
