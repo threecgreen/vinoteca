@@ -39,14 +39,14 @@ export type IRegion = IRestModel;
 export type INewRegion = INewRestModel;
 
 export interface IProducer extends IRestModel {
-    region_id: number;
+    regionId: number;
 }
 
 export interface IVitiArea extends IRestModel {
-    region_id: number;
+    regionId: number;
 }
 export interface INewVitiArea extends INewRestModel {
-    region_id: number;
+    regionId: number;
 }
 
 export interface IWineGrape {
@@ -92,8 +92,8 @@ export interface ISearchWinesResult {
     color: string;
     producer: string;
     region: string;
-    wine_type: string;
-    viti_area?: string;
+    wineType: string;
+    vitiArea?: string;
 }
 
 export interface IWine {
@@ -102,17 +102,17 @@ export interface IWine {
     inventory: number;
     rating: number;
     color: string;
-    wine_type: string;
+    wineType: string;
     producer: string;
-    producer_id: number;
+    producerId: number;
     region: string;
-    region_id: number;
-    viti_area?: string;
-    viti_area_id?: number;
-    last_purchase_date: number;
-    total_quantity: number;
-    avg_price: number;
-    last_purchase_price: number;
+    regionId: number;
+    vitiArea?: string;
+    vitiAreaId?: number;
+    lastPurchaseDate: number;
+    totalQuantity: number;
+    avgPrice: number;
+    lastPurchasePrice: number;
     vintage?: number;
 }
 
@@ -145,17 +145,17 @@ export class Wine {
         this.inventory = wine.inventory;
         this.rating = wine.rating;
         this.color = wine.color;
-        this.wineType = wine.wine_type;
+        this.wineType = wine.wineType;
         this.producer = wine.producer;
-        this.producerId = wine.producer_id;
+        this.producerId = wine.producerId;
         this.region = wine.region;
-        this.regionId = wine.region_id;
-        this.vitiArea = wine.viti_area;
-        this.vitiAreaId = wine.viti_area_id;
-        this.lastPurchaseDate = wine.last_purchase_date;
-        this.totalQuantityPurchased = wine.total_quantity;
-        this.avgPrice = wine.avg_price;
-        this.lastPurchasePrice = wine.last_purchase_price;
+        this.regionId = wine.regionId;
+        this.vitiArea = wine.vitiArea;
+        this.vitiAreaId = wine.vitiAreaId;
+        this.lastPurchaseDate = wine.lastPurchaseDate;
+        this.totalQuantityPurchased = wine.totalQuantity;
+        this.avgPrice = wine.avgPrice;
+        this.lastPurchasePrice = wine.lastPurchasePrice;
         this.vintage = wine.vintage;
     }
 
@@ -190,14 +190,14 @@ export class WineTableWine {
         this.inventory = wine.inventory;
         this.rating = wine.rating;
         this.color = wine.color;
-        this.wineType = wine.wine_type;
+        this.wineType = wine.wineType;
         this.producer = wine.producer;
-        this.producerId = wine.producer_id;
+        this.producerId = wine.producerId;
         this.region = wine.region;
-        this.regionId = wine.region_id;
-        this.vitiArea = wine.viti_area;
-        this.vitiAreaId = wine.viti_area_id;
-        this.lastPurchasedPrice = wine.last_purchase_price;
+        this.regionId = wine.regionId;
+        this.vitiArea = wine.vitiArea;
+        this.vitiAreaId = wine.vitiAreaId;
+        this.lastPurchasedPrice = wine.lastPurchasePrice;
         this.vintage = wine.vintage;
     }
 
@@ -207,9 +207,9 @@ export class WineTableWine {
 }
 
 export interface IVitiAreaStats extends IRestModel {
-    total_wines: number;
-    avg_price?: number;
-    avg_rating?: number;
+    totalWines: number;
+    avgPrice?: number;
+    avgRating?: number;
 }
 
 export class VitiAreaStats {
@@ -222,16 +222,16 @@ export class VitiAreaStats {
     constructor(vitiAreaStats: IVitiAreaStats) {
         this.id = vitiAreaStats.id;
         this.name = vitiAreaStats.name;
-        this.totalWines = vitiAreaStats.total_wines;
-        this.avgPrice = vitiAreaStats.avg_price;
-        this.avgRating = vitiAreaStats.avg_rating;
+        this.totalWines = vitiAreaStats.totalWines;
+        this.avgPrice = vitiAreaStats.avgPrice;
+        this.avgRating = vitiAreaStats.avgRating;
     }
 }
 
 export interface IProfileStats {
-    total_quantity: number;
-    avg_price: number;
-    avg_rating: number;
+    totalQuantity: number;
+    avgPrice: number;
+    avgRating: number;
 }
 
 export class ProfileStats {
@@ -240,8 +240,8 @@ export class ProfileStats {
     public avgRating: number;
 
     constructor(stats: IProfileStats) {
-        this.totalQuantity = stats.total_quantity;
-        this.avgPrice = stats.avg_price;
-        this.avgRating = stats.avg_rating;
+        this.totalQuantity = stats.totalQuantity;
+        this.avgPrice = stats.avgPrice;
+        this.avgRating = stats.avgRating;
     }
 }

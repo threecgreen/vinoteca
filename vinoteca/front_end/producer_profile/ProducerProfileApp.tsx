@@ -128,7 +128,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                 producer: producer,
                 producerText: producer.name,
             });
-            const region = await getRegion({id: producer.region_id});
+            const region = await getRegion({id: producer.regionId});
             this.setState({
                 region,
                 regionText: region.name
@@ -211,7 +211,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         const producer = await updateProducer({
             id: this.state.producer!.id,
             name: this.state.producerText,
-            region_id: regionId,
+            regionId: regionId,
         });
         this.setState({
             producer: producer,

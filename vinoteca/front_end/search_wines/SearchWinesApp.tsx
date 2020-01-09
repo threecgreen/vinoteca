@@ -20,11 +20,11 @@ export class WineResult {
     constructor(rawResult: ISearchWinesResult) {
         this.id = rawResult.id;
         this.color = rawResult.color;
-        this.wineType = rawResult.wine_type;
+        this.wineType = rawResult.wineType;
         this.name = rawResult.name;
         this.producer = rawResult.producer;
         this.region = rawResult.region;
-        this.vitiArea = rawResult.viti_area;
+        this.vitiArea = rawResult.vitiArea;
     }
 }
 

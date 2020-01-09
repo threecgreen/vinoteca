@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use validator::{Validate};
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Color {
     pub id: i32,
     pub name: String,
@@ -12,12 +13,14 @@ pub struct Color {
 
 #[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "colors"]
+#[serde(rename_all = "camelCase")]
 pub struct ColorForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Grape {
     pub id: i32,
     pub name: String,
@@ -25,12 +28,14 @@ pub struct Grape {
 
 #[derive(Deserialize, Insertable, Debug)]
 #[table_name = "grapes"]
+#[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
     pub id: i32,
     pub name: &'a str,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Producer {
     pub id: i32,
     pub name: String,
@@ -39,6 +44,7 @@ pub struct Producer {
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "producers"]
+#[serde(rename_all = "camelCase")]
 pub struct ProducerForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
@@ -46,6 +52,7 @@ pub struct ProducerForm<'a> {
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Purchase {
     pub id: i32,
     pub price: Option<f32>,
@@ -59,6 +66,7 @@ pub struct Purchase {
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "purchases"]
+#[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
     #[validate(range(min = 0.0))]
     pub price: Option<f32>,
@@ -75,6 +83,7 @@ pub struct PurchaseForm {
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Region {
     pub id: i32,
     pub name: String,
@@ -82,18 +91,21 @@ pub struct Region {
 
 #[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "regions"]
+#[serde(rename_all = "camelCase")]
 pub struct RegionForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Store {
     pub id: i32,
     pub name: String,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct VitiArea {
     pub id: i32,
     pub name: String,
@@ -102,6 +114,7 @@ pub struct VitiArea {
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
 #[table_name = "viti_areas"]
+#[serde(rename_all = "camelCase")]
 pub struct VitiAreaForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
@@ -109,6 +122,7 @@ pub struct VitiAreaForm<'a> {
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct WineGrape {
     pub id: i32,
     pub percent: Option<i32>,
@@ -118,6 +132,7 @@ pub struct WineGrape {
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct WineType {
     pub id: i32,
     pub name: String,
@@ -125,12 +140,14 @@ pub struct WineType {
 
 #[derive(Deserialize, Insertable, Validate, Debug)]
 #[table_name = "wine_types"]
+#[serde(rename_all = "camelCase")]
 pub struct WineTypeForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
 }
 
 #[derive(Queryable, Clone, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Wine {
     pub id: i32,
     pub description: Option<String>,
