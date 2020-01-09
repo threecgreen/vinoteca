@@ -32,6 +32,7 @@ fn main() {
                 templates::search_wines,
                 templates::viti_area_profile,
                 templates::wines,
+                templates::wine_profile,
                 templates::wine_type_profile,
             ],
         )
@@ -70,5 +71,7 @@ fn main() {
             ],
         )
         .mount("/static", StaticFiles::from("static"))
+        // TODO: make configurable
+        .mount("/media", StaticFiles::from("media"))
         .launch();
 }

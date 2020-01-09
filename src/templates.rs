@@ -157,6 +157,17 @@ pub fn viti_area_profile(id: i32) -> ReactProfileAppTemplate<'static> {
     }
 }
 
+#[get("/wines/<id>")]
+pub fn wine_profile(id: i32) -> ReactProfileAppTemplate<'static> {
+    ReactProfileAppTemplate {
+        id,
+        app: "wine_profile",
+        this_year: this_year(),
+        page_name: "Wine Profile",
+        version: &VERSION,
+    }
+}
+
 #[get("/wine-types/<id>")]
 pub fn wine_type_profile(id: i32) -> ReactProfileAppTemplate<'static> {
     ReactProfileAppTemplate {

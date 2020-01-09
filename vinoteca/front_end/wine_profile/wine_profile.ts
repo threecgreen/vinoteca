@@ -1,24 +1,14 @@
-import "chart.js";
-import "materialize-css";
-import { get } from "../../lib/ApiHelper";
+import { createElement } from "react";
+import { render } from "react-dom";
 import { onLoad } from "../../lib/JQueryCompat";
-import { Grape, IWineGrape } from "../../lib/RestTypes";
-import { hFloatingActnBtn, modal, navbar, tabs } from "../../lib/widgets";
-import { applyChart, pieChart } from "../../lib/wine_charts";
+import { navbar, tabs } from "../../lib/widgets";
+import { WineProfileApp } from "./WineProfileApp";
 
-declare const wineId: number;
+declare const id: number;
 
 onLoad(() => {
-    modal("delete-modal");
     navbar();
     tabs();
-    hFloatingActnBtn();
-
-    // Grape chart
-    get<IWineGrape[]>("/rest/wine-grapes/", {wine: wineId})
-        .then((wineGrapeJSON) => {
-            if (wineGrapeJSON.every((e: IWineGrape) => e.percent !== undefined)) {
-                applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
-            }
-        });
+    render(createElement(WineProfileApp, {id}),
+           document.getElementById("wine_profile-container"));
 });

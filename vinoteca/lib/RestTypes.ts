@@ -100,9 +100,10 @@ export interface IWine {
     id: number;
     name?: string;
     inventory: number;
-    rating: number;
+    rating?: number;
     color: string;
     wineType: string;
+    wineTypeId: number;
     producer: string;
     producerId: number;
     region: string;
@@ -114,6 +115,9 @@ export interface IWine {
     avgPrice: number;
     lastPurchasePrice: number;
     vintage?: number;
+    why?: string;
+    description?: string;
+    notes?: string;
 }
 
 export class Wine {
@@ -124,9 +128,10 @@ export class Wine {
     public id: number;
     public name?: string;
     public inventory: number;
-    public rating: number;
+    public rating?: number;
     public color: string;
     public wineType: string;
+    public wineTypeId: number;
     public producer: string;
     public producerId: number;
     public region: string;
@@ -138,6 +143,9 @@ export class Wine {
     public avgPrice: number;
     public lastPurchasePrice?: number;
     public vintage?: number;
+    why?: string;
+    description?: string;
+    notes?: string;
 
     constructor(wine: IWine) {
         this.id = wine.id;
@@ -146,6 +154,7 @@ export class Wine {
         this.rating = wine.rating;
         this.color = wine.color;
         this.wineType = wine.wineType;
+        this.wineTypeId = wine.wineTypeId;
         this.producer = wine.producer;
         this.producerId = wine.producerId;
         this.region = wine.region;
@@ -157,6 +166,9 @@ export class Wine {
         this.avgPrice = wine.avgPrice;
         this.lastPurchasePrice = wine.lastPurchasePrice;
         this.vintage = wine.vintage;
+        this.why = wine.why;
+        this.description = wine.description;
+        this.notes = wine.notes;
     }
 
     public get nameAndType(): string {
@@ -172,7 +184,7 @@ export class WineTableWine {
     public id: number;
     public name?: string;
     public inventory: number;
-    public rating: number;
+    public rating?: number;
     public color: string;
     public wineType: string;
     public producer: string;
@@ -244,4 +256,15 @@ export class ProfileStats {
         this.avgPrice = stats.avgPrice;
         this.avgRating = stats.avgRating;
     }
+}
+
+export interface IPurchase {
+    id: number;
+    price?: number;
+    quantity?: number;
+    vintage?: number;
+    memo?: string;
+    storeId?: number;
+    wineId: number;
+    date?: number;
 }

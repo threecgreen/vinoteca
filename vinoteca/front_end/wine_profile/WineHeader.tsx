@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Row, Col } from "../../components/Grid";
-import { WineGrape } from "../../components/GrapesFormApp";
 
 interface IProps {
     name?: string;
@@ -13,14 +12,7 @@ interface IProps {
     children: any;
 }
 
-export const Wine: React.FC<IProps> = (props) => {
-    let nameType: string;
-    if (props.name) {
-        nameType = `${props.name} ${props.wineType}`;
-    } else {
-        nameType = `${props.wineType}`;
-    }
-
+export const WineHeader: React.FC<IProps> = (props) => {
     return (
         <Row>
             <Col s={ 12 }>
@@ -30,9 +22,7 @@ export const Wine: React.FC<IProps> = (props) => {
                         className="text-link"
                     >
                         { props.producer }
-                    </a>
-                    of
-                    <a href={ `/regions/${props.regionId}` }
+                    </a> of <a href={ `/regions/${props.regionId}` }
                         className="text-link"
                     >
                         { props.region }
@@ -41,24 +31,24 @@ export const Wine: React.FC<IProps> = (props) => {
             </Col>
             { ...props.children }
         </Row>
-    )
+    );
 };
-Wine.displayName = "Wine";
+WineHeader.displayName = "WineHeader";
 
 const NameType: React.FC<{name?: string, wineType: string, wineTypeId: number}> = ({name, wineType, wineTypeId}) => {
+    const wineTypeElem = (
+        <a href={ `/wine-types/${wineTypeId}/` }>
+            { wineType }
+        </a>
+    );
     if (name) {
         return (
             <h3 className="bold">
                 { name }
-                <a href={ `/wine-types/${wineTypeId}/` }>
-                    { wineType }
-                </a>
+                { wineTypeElem }
             </h3>
         );
     }
-    if (name) {
-        return <h3 className="bold">{ name }</h3>;
-    }
-    return <h3 className="bold"></h3>
+    return <h3 className="bold">{ wineTypeElem }</h3>;
 }
 NameType.displayName = "NameType";

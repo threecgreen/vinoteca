@@ -3,6 +3,7 @@ import Logger from "./Logger";
 import {
     INewRegion, INewVitiArea, IProducer, IRegion, IRestModel, IVitiArea, IVitiAreaStats,
     IWine,
+    IPurchase,
 } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
@@ -63,7 +64,7 @@ export async function getRegions({ id, name, producerName }: IGetRegionParams): 
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    const regions: IRegion[] = await get("/rest/regions/", nonNullParams);
+    const regions: IRegion[] = await get("/rest/regions", nonNullParams);
     if (regions.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for region"));
     }
@@ -73,11 +74,11 @@ export async function getRegions({ id, name, producerName }: IGetRegionParams): 
 export const getRegion = singleEntityGetter(getRegions);
 
 export async function createRegion(region: INewRegion): Promise<IRegion> {
-    return post("/rest/regions/", region);
+    return post("/rest/regions", region);
 }
 
 export async function updateRegion(region: IRegion): Promise<IRegion> {
-    return put(`/rest/regions/${region.id}/`, region);
+    return put(`/rest/regions/${region.id}`, region);
 }
 
 /* PRODUCERS */
@@ -91,7 +92,7 @@ export async function getProducers({ id, regionId }: IGetProducersParams): Promi
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    const producers: IProducer[] = await get("/rest/producers/", nonNullParams);
+    const producers: IProducer[] = await get("/rest/producers", nonNullParams);
     if (producers.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for producer"));
     }
@@ -106,6 +107,23 @@ export async function updateProducer(producer: IProducer): Promise<IProducer> {
 
 export async function deleteProducer(id: number): Promise<void> {
     return delete_(`/rest/producers/${id}/`);
+}
+
+/* PURCHASES */
+interface IGetPurchasesParams {
+    wineId?: number;
+}
+
+export async function getPurchases({wineId}: IGetPurchasesParams): Promise<IPurchase[]> {
+    const nonNullParams = nonNulls({ wine_id: wineId });
+    if (isEmpty(nonNullParams)) {
+        return Promise.reject("No query params provided");
+    }
+    const purchases = await get<IPurchase[]>("/rest/purchases", nonNullParams);
+    if (purchases.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for purchase"));
+    }
+    return purchases;
 }
 
 /* VITI AREAS */
@@ -151,7 +169,7 @@ export async function getVitiAreaStats(
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    return get("/rest/viti-areas/stats/", nonNullParams);
+    return get("/rest/viti-areas/stats", nonNullParams);
 }
 
 /* WINES */
@@ -170,12 +188,14 @@ export async function getWines(
         id, producer__region_id: regionId, producer_id: producerId,
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
-    const wines: IWine[] = await get("/rest/wines/", nonNullParams);
+    const wines: IWine[] = await get("/rest/wines", nonNullParams);
     if (wines.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for wines"));
     }
     return wines;
 }
+
+export const getWine = singleEntityGetter(getWines);
 
 export async function getWinesTable(): Promise<IWine[]> {
     return get("/rest/wines");
@@ -192,7 +212,7 @@ export async function getWineTypes({ id, name }: IGetWineTypeParams): Promise<IR
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    const wineTypes: IRestModel[] = await get("/rest/wine-types/", nonNullParams);
+    const wineTypes: IRestModel[] = await get("/rest/wine-types", nonNullParams);
     if (wineTypes.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for wine types"));
     }
@@ -202,5 +222,5 @@ export async function getWineTypes({ id, name }: IGetWineTypeParams): Promise<IR
 export const getWineType = singleEntityGetter(getWineTypes);
 
 export async function updateWineType(wineType: IRestModel): Promise<IRestModel> {
-    return put(`/rest/wine-types/${wineType.id}/`, wineType);
+    return put(`/rest/wine-types/${wineType.id}`, wineType);
 }

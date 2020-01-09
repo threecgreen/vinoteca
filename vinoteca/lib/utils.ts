@@ -164,3 +164,12 @@ export function* range({ start, stop, step }: IRangeArgs): IterableIterator<numb
         yield i;
     }
 }
+
+export async function imageExists(imageUrl: string): Promise<boolean> {
+    try {
+        const response = await fetch(imageUrl, {method: "HEAD"});
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
