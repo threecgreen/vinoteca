@@ -36,7 +36,7 @@ async function checkResponse(response: Response): Promise<any> {
  * @param params An optional dictionary of parameters to their values
  * @returns parsed JSON response
  */
-export async function get(url: string, params: IQueryParams = {}): Promise<any> {
+export async function get<Response>(url: string, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params));
     return checkResponse(response);
 }
@@ -49,7 +49,7 @@ export async function get(url: string, params: IQueryParams = {}): Promise<any> 
  * @param params An optional dictionary of parameters to their values
  * @returns parsed JSON response
  */
-export async function post(url: string, body: object, params: IQueryParams = {}): Promise<any> {
+export async function post<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers: HEADERS,
@@ -66,7 +66,7 @@ export async function post(url: string, body: object, params: IQueryParams = {})
  * @param params An optional dictionary of parameters and their values
  * @returns parsed JSON response
  */
-export async function put(url: string, body: object, params: IQueryParams = {}): Promise<any> {
+export async function put<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: JSON.stringify(body),
         headers: HEADERS,
@@ -75,7 +75,7 @@ export async function put(url: string, body: object, params: IQueryParams = {}):
     return checkResponse(response);
 }
 
-export async function delete_(url: string, params: IQueryParams = {}): Promise<any> {
+export async function delete_<Response>(url: string, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         headers: HEADERS,
         method: "DELETE",

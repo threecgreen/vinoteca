@@ -32,7 +32,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
     useEffect(() => {
         async function fetchPurchases() {
             try {
-                const purchases = await get("/rest/purchases/recent");
+                const purchases = await get<IRecentPurchase[]>("/rest/purchases/recent");
                 setPurchases(purchases);
             } catch {
                 logger.logError("Error fetching recent purchases");

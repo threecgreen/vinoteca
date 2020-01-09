@@ -47,8 +47,8 @@ export async function rAutocomplete(modelName: string, onChange: OnChange,
  * favor of rAutocomplete which doesn't use JQuery.
  */
 export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
-    get(`/rest/${modelName.toLowerCase()}s`)
-        .then((completionData: IRestModel[]) => {
+    get<IRestModel[]>(`/rest/${modelName.toLowerCase()}s`)
+        .then((completionData) => {
             const elem = selectById(selector ? selector : `auto-${modelName}`);
             const instances = new Autocomplete(elem, {
                 data: toDict(completionData),

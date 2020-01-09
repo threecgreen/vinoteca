@@ -11,8 +11,8 @@ onLoad(() => {
     navbar();
     tabs();
     // Grape chart
-    get("/rest/wine-grapes/", {wine: wineId})
-        .then((wineGrapes: IWineGrape[]) => {
+    get<IWineGrape[]>("/rest/wine-grapes/", {wine: wineId})
+        .then((wineGrapes) => {
             applyChart(pieChart, Grape.fromArray(wineGrapes), "grape-comp");
         });
     // Edit purchase stuff

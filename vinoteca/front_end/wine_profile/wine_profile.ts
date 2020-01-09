@@ -15,8 +15,8 @@ onLoad(() => {
     hFloatingActnBtn();
 
     // Grape chart
-    get("/rest/wine-grapes/", {wine: wineId})
-        .then((wineGrapeJSON: IWineGrape[]) => {
+    get<IWineGrape[]>("/rest/wine-grapes/", {wine: wineId})
+        .then((wineGrapeJSON) => {
             if (wineGrapeJSON.every((e: IWineGrape) => e.percent !== undefined)) {
                 applyChart(pieChart, Grape.fromArray(wineGrapeJSON), "grape-comp");
             }

@@ -23,7 +23,7 @@ export const TopWineTypes: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchTopWineTypes() {
             try {
-                const wineTypes = await get("/rest/wine-types/top");
+                const wineTypes = await get<ITopWineType[]>("/rest/wine-types/top");
                 setTopWineTypes(wineTypes);
             } catch {
                 logger.logError("Error fetching top wine types");

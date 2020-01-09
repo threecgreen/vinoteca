@@ -19,7 +19,7 @@ export const PurchasesByYear: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchYearsPurchases() {
             try {
-                const yearsPurchases = await get("/rest/purchases/by-year");
+                const yearsPurchases = await get<IYearsPurchases[]>("/rest/purchases/by-year");
                 setYearsPurchases(yearsPurchases);
             } catch {
                 logger.logError("Error fetching purchases by year");
