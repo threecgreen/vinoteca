@@ -2,16 +2,17 @@ use super::schema::*;
 
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
+use typescript_definitions::TypeScriptify;
 use validator::{Validate};
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Validate, Debug)]
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "colors"]
 #[serde(rename_all = "camelCase")]
 pub struct ColorForm<'a> {
@@ -19,14 +20,14 @@ pub struct ColorForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Grape {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Debug)]
+#[derive(Deserialize, Insertable, TypeScriptify, Debug)]
 #[table_name = "grapes"]
 #[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
@@ -34,7 +35,7 @@ pub struct GrapeForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Producer {
     pub id: i32,
@@ -42,7 +43,7 @@ pub struct Producer {
     pub region_id: i32,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "producers"]
 #[serde(rename_all = "camelCase")]
 pub struct ProducerForm<'a> {
@@ -51,7 +52,7 @@ pub struct ProducerForm<'a> {
     pub region_id: i32,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Purchase {
     pub id: i32,
@@ -64,7 +65,7 @@ pub struct Purchase {
     pub date: Option<i32>,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "purchases"]
 #[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
@@ -82,14 +83,14 @@ pub struct PurchaseForm {
     pub date: Option<i32>,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Region {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Validate, Debug)]
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "regions"]
 #[serde(rename_all = "camelCase")]
 pub struct RegionForm<'a> {
@@ -97,14 +98,14 @@ pub struct RegionForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Store {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VitiArea {
     pub id: i32,
@@ -112,7 +113,7 @@ pub struct VitiArea {
     pub region: String,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "viti_areas"]
 #[serde(rename_all = "camelCase")]
 pub struct VitiAreaForm<'a> {
@@ -121,7 +122,7 @@ pub struct VitiAreaForm<'a> {
     pub region_id: i32,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineGrape {
     pub id: i32,
@@ -131,14 +132,14 @@ pub struct WineGrape {
     pub wine_id: i32,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineType {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Validate, Debug)]
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "wine_types"]
 #[serde(rename_all = "camelCase")]
 pub struct WineTypeForm<'a> {
@@ -146,7 +147,7 @@ pub struct WineTypeForm<'a> {
     pub name: &'a str,
 }
 
-#[derive(Queryable, Clone, Serialize, Debug)]
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Wine {
     pub id: i32,

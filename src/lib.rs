@@ -10,6 +10,7 @@ use rocket_contrib::databases::diesel::SqliteConnection;
 #[macro_use]
 extern crate rocket;
 extern crate serde;
+extern crate typescript_definitions;
 extern crate validator;
 #[macro_use]
 extern crate validator_derive;

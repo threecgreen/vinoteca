@@ -54,6 +54,28 @@
             "script": "analyze-bundle",
             "path": "vinoteca/",
             "problemMatcher": []
+        },
+        {
+            "label": "cargo: generate contracts",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--bin",
+                "gen_contracts"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$rustc",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            }
         }
     ],
 }

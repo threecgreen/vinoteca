@@ -49,3 +49,6 @@ target
 Rocket.toml
 **/*.rs.bk
 Rocket.toml
+
+# Generated
+vinoteca/lib/RestTypes.d.ts
