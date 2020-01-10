@@ -1,6 +1,7 @@
 import { get } from "../../lib/ApiHelper";
 import { onLoad } from "../../lib/JQueryCompat";
-import { Grape, IWineGrape } from "../../lib/RestTypes";
+import { Grape } from "../../lib/RestTypes";
+import { IWineGrape } from "../../lib/Rest";
 import { autocomplete, datepicker, modal, navbar, tabs } from "../../lib/widgets";
 import { applyChart, pieChart } from "../../lib/wine_charts";
 

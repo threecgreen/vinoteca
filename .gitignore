@@ -51,4 +51,4 @@ Rocket.toml
 Rocket.toml
 
 # Generated
-vinoteca/lib/RestTypes.d.ts
+vinoteca/lib/Rest.d.ts

@@ -5,7 +5,7 @@ import { FloatingBtn } from "./Buttons";
 import { GrapeInput } from "./GrapeInput";
 import { Col, InputField, Row } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
-import { IWineGrape, IRestModel } from "../lib/RestTypes";
+import { IGrape, IWineGrape } from "../lib/Rest";
 import { toDict } from "../lib/RestApi";
 
 export class WineGrape {
@@ -70,7 +70,7 @@ export class GrapeFormApp extends React.Component<IProps, IState> {
     }
 
     private async getCompletions() {
-        const completions: IRestModel[] = await get("/rest/grapes");
+        const completions: IGrape[] = await get("/rest/grapes");
         this.setState({completions: toDict(completions)});
     }
 

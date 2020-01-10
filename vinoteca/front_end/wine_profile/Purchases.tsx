@@ -1,5 +1,5 @@
 import React from "react";
-import { IPurchase } from "../../lib/RestTypes";
+import { IPurchase } from "../../lib/Rest";
 import { SortingState, TableHeader } from "../../components/TableHeader";
 import { DateCell, NumCell, PriceCell, YearCell, TextCell } from "../../components/TableCells";
 import { Row, Col } from "../../components/Grid";

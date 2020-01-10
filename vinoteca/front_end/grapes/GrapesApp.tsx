@@ -4,7 +4,7 @@ import { Preloader } from "../../components/Preloader";
 import { SpecialChars } from "../../components/SpecialChars";
 import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IGrape } from "../../lib/RestTypes";
+import { IGrape } from "../../lib/Rest";
 import { GrapesList } from "./GrapesList";
 
 export class GrapeItem {

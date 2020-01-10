@@ -1,5 +1,6 @@
 /** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
+import { IRegionForm, IWineGrape, IWine } from "./Rest";
 
 export interface IRestModel {
     id: number;
@@ -35,30 +36,7 @@ export class GenericStat implements IChartInput {
     }
 }
 
-export type IRegion = IRestModel;
-export type INewRegion = INewRestModel;
-
-export interface IProducer extends IRestModel {
-    regionId: number;
-}
-
-export interface IVitiArea extends IRestModel {
-    regionId: number;
-}
-export interface INewVitiArea extends INewRestModel {
-    regionId: number;
-}
-
-export interface IWineGrape {
-    id: number;
-    wine: number;
-    grape: string;
-    percent: number | undefined;
-}
-
-export interface IGrape extends IRestModel {
-    wines: number;
-}
+export type INewRegion = IRegionForm;
 
 export class Grape implements IChartInput {
     public static fromArray(jsonArray: IWineGrape[]) {
@@ -94,30 +72,6 @@ export interface ISearchWinesResult {
     region: string;
     wineType: string;
     vitiArea?: string;
-}
-
-export interface IWine {
-    id: number;
-    name?: string;
-    inventory: number;
-    rating?: number;
-    color: string;
-    wineType: string;
-    wineTypeId: number;
-    producer: string;
-    producerId: number;
-    region: string;
-    regionId: number;
-    vitiArea?: string;
-    vitiAreaId?: number;
-    lastPurchaseDate: number;
-    totalQuantity: number;
-    avgPrice: number;
-    lastPurchasePrice: number;
-    vintage?: number;
-    why?: string;
-    description?: string;
-    notes?: string;
 }
 
 export class Wine {
@@ -176,48 +130,6 @@ export class Wine {
     }
 }
 
-export class WineTableWine {
-    public static getNameAndType(name: string | undefined, wineType: string): string {
-        return `${(name ? name + " " : "")}${wineType}`;
-    }
-
-    public id: number;
-    public name?: string;
-    public inventory: number;
-    public rating?: number;
-    public color: string;
-    public wineType: string;
-    public producer: string;
-    public producerId: number;
-    public region: string;
-    public regionId: number;
-    public vitiArea?: string;
-    public vitiAreaId?: number;
-    public lastPurchasedPrice?: number;
-    public vintage?: number;
-
-    constructor(wine: IWine) {
-        this.id = wine.id;
-        this.name = wine.name;
-        this.inventory = wine.inventory;
-        this.rating = wine.rating;
-        this.color = wine.color;
-        this.wineType = wine.wineType;
-        this.producer = wine.producer;
-        this.producerId = wine.producerId;
-        this.region = wine.region;
-        this.regionId = wine.regionId;
-        this.vitiArea = wine.vitiArea;
-        this.vitiAreaId = wine.vitiAreaId;
-        this.lastPurchasedPrice = wine.lastPurchasePrice;
-        this.vintage = wine.vintage;
-    }
-
-    public get nameAndType(): string {
-        return Wine.getNameAndType(this.name, this.wineType);
-    }
-}
-
 export interface IVitiAreaStats extends IRestModel {
     totalWines: number;
     avgPrice?: number;
@@ -256,15 +168,4 @@ export class ProfileStats {
         this.avgPrice = stats.avgPrice;
         this.avgRating = stats.avgRating;
     }
-}
-
-export interface IPurchase {
-    id: number;
-    price?: number;
-    quantity?: number;
-    vintage?: number;
-    memo?: string;
-    storeId?: number;
-    wineId: number;
-    date?: number;
 }

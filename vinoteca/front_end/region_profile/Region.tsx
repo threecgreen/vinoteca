@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Col, Row } from "../../components/Grid";
-import { IRegion, ProfileStats } from "../../lib/RestTypes";
+import { ProfileStats } from "../../lib/RestTypes";
+import { IRegion } from "../../lib/Rest";
 import { RegionInput } from "../../components/RegionInput";
 import { Flag } from "../../components/Flag";
 import { CancelOrConfirmBtns } from "../../components/Buttons";

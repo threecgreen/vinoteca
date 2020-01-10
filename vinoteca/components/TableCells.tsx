@@ -6,7 +6,7 @@ const EN_DASH: string = "–";
 
 interface ITextCellProps {
     default?: string;
-    text: string | undefined;
+    text: string | undefined | null;
 }
 
 export class TextCell extends React.Component<ITextCellProps> {
@@ -20,7 +20,7 @@ export class TextCell extends React.Component<ITextCellProps> {
 };
 
 interface INumCellProps {
-    num?: number;
+    num: number | null;
     minDecimals?: number;
     maxDecimals?: number;
 }
@@ -39,7 +39,7 @@ export const NumCell: React.FC<INumCellProps> = (props) => {
 NumCell.displayName = "NumCell";
 
 interface IPriceCellProps {
-    price?: number;
+    price: number | null;
 }
 
 export const PriceCell: React.FC<IPriceCellProps> = (props) => {
@@ -52,7 +52,7 @@ export const PriceCell: React.FC<IPriceCellProps> = (props) => {
 }
 PriceCell.displayName = "PriceCell";
 
-export const YearCell: React.FC<{year?: number}> = (props) => {
+export const YearCell: React.FC<{year: number | null}> = (props) => {
     const year = props.year ? props.year.toString() : EN_DASH;
     return (
         <td className="num-col">
@@ -63,7 +63,7 @@ export const YearCell: React.FC<{year?: number}> = (props) => {
 YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
-    date?: number;
+    date?: number | null;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
     const dateStr = props.date ? format(numToDate(props.date), "MMM dd, yyyy") : EN_DASH;

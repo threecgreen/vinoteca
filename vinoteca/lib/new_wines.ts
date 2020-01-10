@@ -1,7 +1,7 @@
 import { updateTextFields } from "materialize-css";
 import { get } from "./ApiHelper";
 import { getRegion, getVitiAreas } from "./RestApi";
-import { IVitiArea } from "./RestTypes";
+import { IVitiArea } from "./Rest";
 import { IDict, restModelsToNameDict } from "./utils";
 import { staticAutocomplete } from "./widgets";
 

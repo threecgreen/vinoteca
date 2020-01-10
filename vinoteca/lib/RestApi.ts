@@ -1,10 +1,7 @@
 import { get, IQueryParams, post, put, delete_ } from "./ApiHelper";
 import Logger from "./Logger";
-import {
-    INewRegion, INewVitiArea, IProducer, IRegion, IRestModel, IVitiArea, IVitiAreaStats,
-    IWine,
-    IPurchase,
-} from "./RestTypes";
+import { IProducer, IRegion, IVitiArea, IWine, IPurchase, IRegionForm, IVitiAreaForm } from "./Rest";
+import { IVitiAreaStats, IRestModel } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
 export function toDict(models: IRestModel[]): IDict<string | null> {
@@ -73,7 +70,7 @@ export async function getRegions({ id, name, producerName }: IGetRegionParams): 
 
 export const getRegion = singleEntityGetter(getRegions);
 
-export async function createRegion(region: INewRegion): Promise<IRegion> {
+export async function createRegion(region: IRegionForm): Promise<IRegion> {
     return post("/rest/regions", region);
 }
 
@@ -149,7 +146,7 @@ export async function getVitiAreas(
 
 export const getVitiArea = singleEntityGetter(getVitiAreas);
 
-export async function createVitiArea(vitiArea: INewVitiArea): Promise<IVitiArea> {
+export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {
     return post("/rest/viti-areas/", vitiArea);
 }
 

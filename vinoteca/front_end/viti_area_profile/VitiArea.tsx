@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Col, Row } from "../../components/Grid";
-import { IVitiArea, ProfileStats } from "../../lib/RestTypes";
+import { ProfileStats } from "../../lib/RestTypes";
+import { IVitiArea } from "../../lib/Rest";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 

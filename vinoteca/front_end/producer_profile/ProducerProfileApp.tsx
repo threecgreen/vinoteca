@@ -8,7 +8,8 @@ import { Preloader } from "../../components/Preloader";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
 import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer, deleteProducer } from "../../lib/RestApi";
-import { IProducer, IRegion, Wine } from "../../lib/RestTypes";
+import { Wine } from "../../lib/RestTypes";
+import { IProducer, IRegion } from "../../lib/Rest";
 import { Producer } from "./Producer";
 import { ProducerWinesTable } from "./ProducerWinesTable";
 
