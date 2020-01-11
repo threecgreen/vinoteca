@@ -4,13 +4,13 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
-import { getWineType, getWines, updateWineType } from "../../lib/RestApi";
+import { IWine } from "../../lib/Rest";
+import { getWines, getWineType, updateWineType } from "../../lib/RestApi";
 import { IRestModel } from "../../lib/RestTypes";
 import { WineType } from "./WineType";
-import { WineTypeWinesTable } from "./WineTypeWinesTable";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
-import { IWine } from "../../lib/Rest";
 
 interface IState {
     isEditing: boolean;
@@ -90,7 +90,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
                 <Row>
                     <Col s={ 12 }>
                         <h5>Wines</h5>
-                        <WineTypeWinesTable wines={ this.state.wines } />
+                        <WinesTable wines={ this.state.wines } />
                     </Col>
                 </Row>
             </div>

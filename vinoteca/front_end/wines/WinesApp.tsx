@@ -3,9 +3,9 @@ import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
-import { getWinesTable } from "../../lib/RestApi";
+import { getWines } from "../../lib/RestApi";
 import { IWine } from "../../lib/Rest";
-import { WinesTable } from "./WinesTable";
+import { WinesTable } from "../../components/WinesTable";
 import { createCookie, deleteCookie, readCookie } from "../../lib/Cookies";
 import FilterExpr from "../../lib/FilterExpr";
 import { Btn } from "../../components/Buttons";
@@ -135,7 +135,7 @@ export class WinesApp extends React.Component<{}, IState> {
 
     public async componentDidMount() {
         try {
-            const wines = await getWinesTable();
+            const wines = await getWines({});
             this.setState({
                 wines,
                 hasLoaded: true

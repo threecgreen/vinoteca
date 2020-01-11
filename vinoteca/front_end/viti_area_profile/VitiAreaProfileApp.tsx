@@ -4,14 +4,13 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
-import Logger from "../../lib/Logger";
-import { getVitiArea, getWines, updateVitiArea, getVitiAreaStats } from "../../lib/RestApi";
-import { IWine } from "../../lib/Rest";
-import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
-import { VitiArea } from "./VitiArea";
-import { PlaceWinesTable } from "../../components/PlaceWinesTable";
-import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
+import Logger from "../../lib/Logger";
+import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/Rest";
+import { getVitiArea, getVitiAreaStats, getWines, updateVitiArea } from "../../lib/RestApi";
+import { VitiArea } from "./VitiArea";
+import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 
 interface IVitiAreaProfileState {
     isEditing: boolean;
@@ -102,7 +101,9 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
                 <Row>
                     <Col s={ 12 }>
                         <h5>Wines</h5>
-                        <PlaceWinesTable wines={ this.state.wines } />
+                        <WinesTable wines={ this.state.wines }
+                            excludeColumn={ ColumnToExclude.VitiArea }
+                        />
                     </Col>
                 </Row>
             </div>

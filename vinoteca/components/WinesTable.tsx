@@ -1,7 +1,7 @@
 import * as React from "react";
-import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "../../components/TableCells";
-import { FilterHeader, SortingState, TableHeader } from "../../components/TableHeader";
-import { IWine } from "../../lib/Rest";
+import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";
+import { FilterHeader, SortingState, TableHeader } from "./TableHeader";
+import { IWine } from "../lib/Rest";
 
 enum SortingValue {
     Inventory,
@@ -14,13 +14,18 @@ enum SortingValue {
     Rating
 };
 
-interface IProps {
-    wines: IWine[];
-    filterTexts: Map<keyof IWine, string>;
-    onFilterChange: (column: keyof IWine, text: string) => void;
-    currentPage: number;
-    winesPerPage: number;
+export enum ColumnToExclude {
+    Producer,
+    Region,
+    VitiArea,
 }
+
+type IProps = {
+    wines: IWine[];
+    filterTexts?: Map<keyof IWine, string>;
+    onFilterChange?: (column: keyof IWine, text: string) => void;
+    excludeColumn?: ColumnToExclude;
+} & Partial<DefaultProps>
 
 interface IState {
     ascending: boolean;
@@ -28,8 +33,17 @@ interface IState {
     colorSelection: string;
 }
 
-export class WinesTable extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
+type DefaultProps = Readonly<typeof defaultProps>
+
+const defaultProps = {
+    currentPage: 1,
+    winesPerPage: 250,
+};
+
+export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
+    public static defaultProps = defaultProps;
+
+    constructor(props: IProps & DefaultProps) {
         super(props);
         this.state = {
             ascending: true,
@@ -39,6 +53,20 @@ export class WinesTable extends React.Component<IProps, IState> {
     }
 
     public render() {
+        const filterHeader = this.props.filterTexts
+            ? (
+                <tr key="filters">
+                    <FilterHeader { ...this.filterHeaderProps("inventory") } />
+                    <FilterHeader { ...this.filterHeaderProps("color") } />
+                    <FilterHeader { ...this.filterHeaderProps("wineType") } />
+                    <FilterHeader { ...this.filterHeaderProps("producer") } />
+                    <FilterHeader { ...this.filterHeaderProps("region") } />
+                    <FilterHeader { ...this.filterHeaderProps("vitiArea") } />
+                    <FilterHeader { ...this.filterHeaderProps("lastPurchaseVintage") } />
+                    <FilterHeader { ...this.filterHeaderProps("rating") } />
+                </tr>
+            ) : null;
+        const exCol = this.props.excludeColumn;
         return (
             <table className="responsive highlight condensed">
                 <thead>
@@ -52,15 +80,18 @@ export class WinesTable extends React.Component<IProps, IState> {
                         <TableHeader {...this.tableHeaderProps(SortingValue.NameAndType)}>
                             Name and Type
                         </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Producer)}>
-                            Producer
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Region)}>
-                            Region
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.VitiArea)}>
-                            Viticultural Area
-                        </TableHeader>
+                        { exCol === ColumnToExclude.Producer
+                            || <TableHeader {...this.tableHeaderProps(SortingValue.Producer)}>
+                                Producer
+                            </TableHeader> }
+                        { exCol === ColumnToExclude.Region
+                            || <TableHeader {...this.tableHeaderProps(SortingValue.Region)}>
+                                Region
+                            </TableHeader> }
+                        { exCol === ColumnToExclude.VitiArea
+                            || <TableHeader {...this.tableHeaderProps(SortingValue.VitiArea)}>
+                                Viticultural Area
+                            </TableHeader> }
                         <TableHeader {...this.tableHeaderProps(SortingValue.Vintage)} isNumCol>
                             Vintage
                         </TableHeader>
@@ -68,43 +99,32 @@ export class WinesTable extends React.Component<IProps, IState> {
                             Rating
                         </TableHeader>
                     </tr>
-                    <tr key="filters">
-                        <FilterHeader { ...this.filterHeaderProps("inventory") } />
-                        <FilterHeader { ...this.filterHeaderProps("color") } />
-                        <FilterHeader { ...this.filterHeaderProps("wineType") } />
-                        <FilterHeader { ...this.filterHeaderProps("producer") } />
-                        <FilterHeader { ...this.filterHeaderProps("region") } />
-                        <FilterHeader { ...this.filterHeaderProps("vitiArea") } />
-                        <FilterHeader { ...this.filterHeaderProps("lastPurchaseVintage") } />
-                        <FilterHeader { ...this.filterHeaderProps("rating") } />
-                    </tr>
+                    { filterHeader }
                 </thead>
                 <tbody>
-                    { this.winesForPage.map((wine) => {
-                        return (
-                            <tr key={ wine.id }>
-                                <NumCell num={ wine.inventory }
-                                    maxDecimals={ 0 }
-                                />
-                                <ColorCell color={ wine.color } />
-                                <NameAndTypeCell id={ wine.id }
-                                    name={ wine.name }
-                                    wineType={ wine.wineType }
-                                />
-                                <ProducerCell id={ wine.producerId }>
-                                    { wine.producer }
-                                </ProducerCell>
-                                <RegionCell id={ wine.regionId }>
-                                    { wine.region }
-                                </RegionCell>
-                                <VitiAreaCell id={ wine.vitiAreaId }>
-                                    { wine.vitiArea }
-                                </VitiAreaCell>
-                                <YearCell year={ wine.lastPurchaseVintage } />
-                                <NumCell maxDecimals={ 0 } num={ wine.rating } />
-                            </tr>
-                        );
-                    })}
+                    { this.winesForPage.map((wine) => (
+                        <tr key={ wine.id }>
+                            <NumCell num={ wine.inventory }
+                                maxDecimals={ 0 }
+                            />
+                            <ColorCell color={ wine.color } />
+                            <NameAndTypeCell id={ wine.id }
+                                name={ wine.name }
+                                wineType={ wine.wineType }
+                            />
+                            <ProducerCell id={ wine.producerId }>
+                                { wine.producer }
+                            </ProducerCell>
+                            <RegionCell id={ wine.regionId }>
+                                { wine.region }
+                            </RegionCell>
+                            <VitiAreaCell id={ wine.vitiAreaId }>
+                                { wine.vitiArea }
+                            </VitiAreaCell>
+                            <YearCell year={ wine.lastPurchaseVintage } />
+                            <NumCell maxDecimals={ 0 } num={ wine.rating } />
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         );
@@ -204,9 +224,10 @@ export class WinesTable extends React.Component<IProps, IState> {
         {onChange: (text: string) => void,
          text: string} {
 
+        // This should only be called if both props exist
         return {
-            onChange: (filterExpr) => this.props.onFilterChange(columnName, filterExpr),
-            text: this.props.filterTexts.get(columnName) ?? "",
+            onChange: (filterExpr) => this.props.onFilterChange!(columnName, filterExpr),
+            text: this.props.filterTexts!.get(columnName) ?? "",
         };
     }
 }

@@ -57,7 +57,7 @@ interface IGetRegionParams {
 }
 
 export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
-    const nonNullParams = nonNulls({ id, name, producers__name: producerName });
+    const nonNullParams = nonNulls({ id, name, producer_name: producerName });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
@@ -133,7 +133,7 @@ interface IGetVitiAreasParams {
 export async function getVitiAreas(
     { id, name, regionName }: IGetVitiAreasParams,
 ): Promise<IVitiArea[]> {
-    const nonNullParams = nonNulls({ id, name, region__name: regionName });
+    const nonNullParams = nonNulls({ id, name, region_name: regionName });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
@@ -182,7 +182,7 @@ export async function getWines(
     { id, producerId, regionId, vitiAreaId, wineTypeId }: IGetWinesParams,
 ): Promise<IWine[]> {
     const nonNullParams = nonNulls({
-        id, producer__region_id: regionId, producer_id: producerId,
+        id, region_id: regionId, producer_id: producerId,
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
     const wines: IWine[] = await get("/rest/wines", nonNullParams);
@@ -194,8 +194,22 @@ export async function getWines(
 
 export const getWine = singleEntityGetter(getWines);
 
-export async function getWinesTable(): Promise<IWine[]> {
-    return get("/rest/wines");
+interface ISearchWinesParams {
+    colorLike?: string;
+    wineTypeLike?: string;
+    producerLike?: string;
+    regionLike?: string;
+    vitiAreaLike?: string;
+}
+
+export async function searchWines(
+    { colorLike, wineTypeLike, producerLike, regionLike, vitiAreaLike }: ISearchWinesParams
+): Promise<IWine[]> {
+    const nonNullParams = nonNulls({
+        color_like: colorLike, wine_type_like: wineTypeLike, producer_like: producerLike,
+        region_like: regionLike, viti_area_like: vitiAreaLike
+    });
+    return await get("/rest/wines/search", nonNullParams);
 }
 
 /* WINE TYPES */

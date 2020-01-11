@@ -7,6 +7,7 @@ import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
+import { searchWines } from "../../lib/RestApi";
 
 export enum SearchWinesInput {
     Color,
@@ -132,12 +133,12 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
 
     private async querySearchResults() {
         this.setState({resultState: ResultState.Searching});
-        const results: IWine[] = await get("/rest/wines/search", {
-            color_like: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
-            wine_type_like: this.state.wineTypeText,
-            producer_like: this.state.producerText,
-            region_like: this.state.regionText,
-            viti_area_like: this.state.vitiAreaText,
+        const results: IWine[] = await searchWines({
+            colorLike: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
+            wineTypeLike: this.state.wineTypeText,
+            producerLike: this.state.producerText,
+            regionLike: this.state.regionText,
+            vitiAreaLike: this.state.vitiAreaText,
         });
         try {
             this.setState({

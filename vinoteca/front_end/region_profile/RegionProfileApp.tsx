@@ -4,14 +4,13 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
+import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
-import { getRegion, getWines, getVitiAreaStats, updateRegion } from "../../lib/RestApi";
-import { IWine } from "../../lib/Rest";
-import { IRegion, IVitiAreaStats } from "../../lib/Rest";
+import { IRegion, IVitiAreaStats, IWine } from "../../lib/Rest";
+import { getRegion, getVitiAreaStats, getWines, updateRegion } from "../../lib/RestApi";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
-import { PlaceWinesTable } from "../../components/PlaceWinesTable";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 
 interface IState {
     isEditing: boolean;
@@ -103,7 +102,9 @@ export class RegionProfile extends React.Component<IProps, IState> {
                 <Row>
                     <Col s={ 12 }>
                         <h5>Wines</h5>
-                        <PlaceWinesTable wines={ this.state.wines } />
+                        <WinesTable wines={ this.state.wines }
+                            excludeColumn={ ColumnToExclude.Region }
+                        />
                     </Col>
                 </Row>
             </div>

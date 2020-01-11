@@ -6,12 +6,11 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
-import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer, deleteProducer } from "../../lib/RestApi";
-import { IWine } from "../../lib/Rest";
-import { IProducer, IRegion } from "../../lib/Rest";
+import { IProducer, IRegion, IWine } from "../../lib/Rest";
+import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
 import { Producer } from "./Producer";
-import { ProducerWinesTable } from "./ProducerWinesTable";
 
 export enum ProducerProfileTextInput {
     Producer,
@@ -102,7 +101,9 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                         </FixedActionList>
                     </Col>
                     <Col s={ 12 }>
-                        <ProducerWinesTable wines={ this.state.wines } />
+                        <WinesTable wines={ this.state.wines }
+                            excludeColumn={ ColumnToExclude.Producer }
+                        />
                     </Col>
                 </Row>
                 <DeleteModal item="producer"
