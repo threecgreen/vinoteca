@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
         // Dead-code elimination fails for multiple entries per https://github.com/webpack/webpack/issues/4453
         // Creating an array of entries resulted in a core dump
         entry: {
-            global: [inputPath + "global.ts", inputPath + "vinoteca-style.sass"],
+            global: [inputPath + "vinoteca-style.sass"],
             home: [inputPath + "home/home.ts"],
             // Dashboards
             dashboards: [inputPath + "dashboards/dashboards.ts"],
