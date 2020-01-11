@@ -1,7 +1,7 @@
-use super::DbConn;
 use super::models::{WineType, WineTypeForm};
 use super::query_utils::error_status;
 use super::schema::{purchases, wine_types, wines};
+use super::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;

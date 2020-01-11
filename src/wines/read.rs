@@ -92,7 +92,6 @@ pub fn get(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-
         ))
         .select((
             wines::id,
@@ -212,7 +211,6 @@ pub fn search(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-
         ))
         .select((
             wines::id,

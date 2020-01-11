@@ -1,6 +1,6 @@
 import { get, IQueryParams, post, put, delete_ } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IRegion, IWine, IPurchase, IRegionForm, IVitiAreaForm, IVitiAreaStats, IVitiArea } from "./Rest";
+import { IProducer, IRegion, IWine, IPurchase, IRegionForm, IVitiAreaForm, IVitiAreaStats, IVitiArea, IWineType, IWineGrape } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
@@ -212,18 +212,30 @@ export async function searchWines(
     return await get("/rest/wines/search", nonNullParams);
 }
 
+/* WINE GRAPES */
+interface IGetWineGrapesParams {
+    wineId?: number;
+    grapeId?: number;
+}
+
+export async function getWineGrapes({ wineId, grapeId }: IGetWineGrapesParams): Promise<IWineGrape[]> {
+    const nonNullParams = nonNulls({ wine_id: wineId, grape_id: grapeId });
+    const wineGrapes: IWineGrape[] = await get("/rest/wine-grapes", nonNullParams);
+    return wineGrapes;
+}
+
 /* WINE TYPES */
-interface IGetWineTypeParams {
+interface IGetWineTypesParams {
     id?: number;
     name?: number;
 }
 
-export async function getWineTypes({ id, name }: IGetWineTypeParams): Promise<IRestModel[]> {
+export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<IWineType[]> {
     const nonNullParams = nonNulls({ id, name });
     if (isEmpty(nonNullParams)) {
         return Promise.reject("No query params provided");
     }
-    const wineTypes: IRestModel[] = await get("/rest/wine-types", nonNullParams);
+    const wineTypes: IWineType[] = await get("/rest/wine-types", nonNullParams);
     if (wineTypes.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for wine types"));
     }
@@ -232,6 +244,6 @@ export async function getWineTypes({ id, name }: IGetWineTypeParams): Promise<IR
 
 export const getWineType = singleEntityGetter(getWineTypes);
 
-export async function updateWineType(wineType: IRestModel): Promise<IRestModel> {
+export async function updateWineType(wineType: IWineType): Promise<IWineType> {
     return put(`/rest/wine-types/${wineType.id}`, wineType);
 }

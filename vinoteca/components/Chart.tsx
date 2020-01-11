@@ -61,12 +61,11 @@ function validateChartInput(chartData: number[]) {
     return true;
 }
 
-interface IChartProps {
+interface IPieChartProps {
     data: IChartInput[];
-    height: string;
 }
 
-export const PieChart: React.FC<IChartProps> = ({data, height}) => {
+export const PieChart: React.FC<IPieChartProps> = ({data}) => {
     const [chartLabels, chartData] = splitData(data);
 
     const config: Chart.ChartConfiguration = {
@@ -115,15 +114,20 @@ export const PieChart: React.FC<IChartProps> = ({data, height}) => {
 
     React.useEffect(() => {
         const pie = new Chart(canvasRef.current, config);
-    }, [canvasRef]);
+    }, [canvasRef, config]);
 
     return (
-        <canvas height={height} ref={canvasRef} />
+        <canvas height="100px" ref={canvasRef} />
     );
 }
 PieChart.displayName = "PieChart";
 
-export const BarChart: React.FC<IChartProps> = ({data, height}) => {
+interface IBarChartProps {
+    data: IChartInput[];
+    height: string;
+}
+
+export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
     const [chartLabels, chartData] = splitData(data);
     // Error checking
     if (!validateChartInput(chartData)) {
@@ -187,7 +191,7 @@ export const BarChart: React.FC<IChartProps> = ({data, height}) => {
 
     React.useEffect(() => {
         const bar = new Chart(canvasRef.current, config);
-    }, [canvasRef]);
+    }, [canvasRef, config]);
 
     return (
         <canvas height={height} ref={canvasRef} />
@@ -285,7 +289,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
 
     React.useEffect(() => {
         const line = new Chart(canvasRef.current, config);
-    }, [canvasRef]);
+    }, [canvasRef, config]);
 
     return (
         <canvas ref={canvasRef} />

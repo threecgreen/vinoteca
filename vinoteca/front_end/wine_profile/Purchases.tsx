@@ -88,8 +88,7 @@ export const Purchases: React.FC<IProps> = ({purchases}) => {
                                     />
                                     <PriceCell price={ purchase.price } />
                                     <YearCell year={ purchase.vintage } />
-                                    {/* TODO: Link to store page */}
-                                    <TextCell text={ `${purchase.storeId}` } />
+                                    <TextCell text={ purchase.store } />
                                     <TextCell text={ purchase.memo } />
                                 </tr>
                             ))}

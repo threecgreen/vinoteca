@@ -1,6 +1,6 @@
 use super::DbConn;
-use query_utils::error_status;
 use models::{Purchase, PurchaseForm};
+use query_utils::error_status;
 use schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
@@ -21,7 +21,10 @@ pub fn get(
     wine_name: Option<String>,
     connection: DbConn,
 ) -> Result<Json<Vec<Purchase>>, Status> {
-    let mut query = purchases::table.inner_join(wines::table).into_boxed();
+    let mut query = purchases::table
+        .inner_join(stores::table)
+        .inner_join(wines::table)
+        .into_boxed();
     if let Some(id) = id {
         query = query.filter(purchases::id.eq(id));
     }
@@ -38,6 +41,7 @@ pub fn get(
             purchases::quantity,
             purchases::vintage,
             purchases::memo,
+            stores::name.nullable(),
             purchases::store_id,
             purchases::wine_id,
             purchases::date,
@@ -176,7 +180,19 @@ pub fn put(
         .execute(&*connection)
         .and_then(|_| {
             purchases::table
+                .inner_join(stores::table)
                 .filter(purchases::id.eq(id))
+                .select((
+                    purchases::id,
+                    purchases::price,
+                    purchases::quantity,
+                    purchases::vintage,
+                    purchases::memo,
+                    stores::name.nullable(),
+                    purchases::store_id,
+                    purchases::wine_id,
+                    purchases::date,
+                ))
                 .first(&*connection)
                 .map(Json)
         })

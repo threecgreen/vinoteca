@@ -91,7 +91,7 @@ interface ILinkedCellProps {
 }
 
 const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
-    const url = `/${props.model}/${props.id}/`;
+    const url = `/${props.model}/${props.id}`;
     return (
         <td>
             <a href={ url }>

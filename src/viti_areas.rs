@@ -1,7 +1,7 @@
-use super::DbConn;
 use super::models::{VitiArea, VitiAreaForm};
 use super::query_utils::error_status;
 use super::schema::{purchases, regions, viti_areas, wines};
+use super::DbConn;
 
 use diesel;
 use diesel::dsl::sql;

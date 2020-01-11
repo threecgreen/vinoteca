@@ -1,7 +1,7 @@
 use super::models::Color;
 use super::query_utils::error_status;
-use super::DbConn;
 use super::schema::colors;
+use super::DbConn;
 
 use diesel::prelude::*;
 use rocket::http::Status;

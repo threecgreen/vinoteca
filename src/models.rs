@@ -61,6 +61,7 @@ pub struct Purchase {
     pub quantity: Option<i32>,
     pub vintage: Option<i32>,
     pub memo: Option<String>,
+    pub store: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
     pub date: Option<i32>,
@@ -130,7 +131,7 @@ pub struct WineGrape {
     pub id: i32,
     pub percent: Option<i32>,
     pub grape_id: i32,
-    // TODO: add grape id
+    pub grape: String,
     pub wine_id: i32,
 }
 

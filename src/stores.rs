@@ -1,7 +1,7 @@
 use super::models::Store;
 use super::query_utils::error_status;
-use super::DbConn;
 use super::schema::stores;
+use super::DbConn;
 
 use diesel::prelude::*;
 use rocket::http::Status;

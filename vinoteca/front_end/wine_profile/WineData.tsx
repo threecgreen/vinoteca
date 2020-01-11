@@ -30,13 +30,14 @@ export const WineData: React.FC<IProps> = (props) => {
             <h5 className="inline-h">
                 <b>Inventory: </b> { props.inventory }
             </h5>
-            &thinsp;
-            <FloatingBtn classes={ ["green-bg", "btn-small"] }
+            &nbsp;
+            <FloatingBtn classes={ ["green-bg", "btn-floating-small"] }
                 onClick={ (e) => onInventoryChange(e, InventoryChange.Increase) }
             >
                 <MaterialIcon iconName="add_circle" />
             </FloatingBtn>
-            <FloatingBtn classes={ ["red-bg", "btn-small"] }
+            &thinsp;
+            <FloatingBtn classes={ ["red-bg", "btn-floating-small"] }
                 onClick={ (e) => onInventoryChange(e, InventoryChange.Decrease) }
             >
                 <MaterialIcon iconName="do_not_disturb_on" />

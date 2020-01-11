@@ -1,7 +1,7 @@
-use super::DbConn;
 use super::models::WineGrape;
 use super::query_utils::error_status;
-use super::schema::wine_grapes;
+use super::schema::{grapes, wine_grapes};
+use super::DbConn;
 
 use diesel::prelude::*;
 use rocket::http::Status;
@@ -13,10 +13,7 @@ pub fn get(
     grape_id: Option<i32>,
     connection: DbConn,
 ) -> Result<Json<Vec<WineGrape>>, Status> {
-    let mut query = wine_grapes::table
-        // .inner_join(wines::table)
-        // .inner_join(grapes::table)
-        .into_boxed();
+    let mut query = wine_grapes::table.inner_join(grapes::table).into_boxed();
     if let Some(wine_id) = wine_id {
         query = query.filter(wine_grapes::wine_id.eq(wine_id));
     }
@@ -24,6 +21,13 @@ pub fn get(
         query = query.filter(wine_grapes::grape_id.eq(grape_id));
     }
     query
+        .select((
+            wine_grapes::id,
+            wine_grapes::percent,
+            wine_grapes::grape_id,
+            grapes::name,
+            wine_grapes::wine_id,
+        ))
         .load::<WineGrape>(&*connection)
         .map(Json)
         .map_err(error_status)

@@ -8,9 +8,10 @@ import { WineImg } from "./WineImg";
 import { WineHeader } from "./WineHeader";
 import { put } from "../../lib/ApiHelper";
 import { InventoryChange } from "../inventory/InventoryTable";
-import { getWine, getPurchases } from "../../lib/RestApi";
+import { getWine, getPurchases, getWineGrapes } from "../../lib/RestApi";
 import { imageExists } from "../../lib/utils";
 import { Purchases } from "./Purchases";
+import { GrapesTable } from "./GrapesTable";
 
 interface IProps {
     id: number;
@@ -32,7 +33,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             isEditing: false,
-            hasImage: false, // TODO:
+            hasImage: false,
             grapes: [],
             wine: undefined,
             purchases: [],
@@ -46,6 +47,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
             this.getWine(),
             this.getPurchases(),
             this.getHasImage(),
+            this.getGrapes(),
         ]);
     }
 
@@ -62,6 +64,11 @@ export class WineProfileApp extends React.Component<IProps, IState> {
     private async getHasImage() {
         const hasImage = await imageExists(`/media/${this.props.id}.png`);
         this.setState({ hasImage });
+    }
+
+    private async getGrapes() {
+        const grapes = await getWineGrapes({wineId: this.props.id});
+        this.setState({ grapes });
     }
 
     public render() {
@@ -121,7 +128,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
                 </>
             );
         }
-        if (this.state.grapes) {
+        if (this.state.grapes.length) {
             return (
                 <>
                     <Col s={ 12 } l={ 6 }>
@@ -175,9 +182,8 @@ export class WineProfileApp extends React.Component<IProps, IState> {
     }
 
     private renderGrapes() {
-        /* TODO: Wine grapes */
         return (
-            <> </>
+            <GrapesTable grapes={ this.state.grapes } />
         );
     }
 

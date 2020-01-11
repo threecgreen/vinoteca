@@ -1,7 +1,7 @@
-use super::DbConn;
 use super::models::{Region, RegionForm};
 use super::query_utils::error_status;
 use super::schema::{producers, regions};
+use super::DbConn;
 
 use diesel;
 use diesel::prelude::*;
