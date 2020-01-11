@@ -98,15 +98,9 @@ export class Wine implements IWine {
     // @ts-ignore
     public vitiAreaId: number | null;
     // @ts-ignore
-    public lastPurchaseDate: number;
-    // @ts-ignore
-    public totalQuantityPurchased: number;
-    // @ts-ignore
     public avgPrice: number;
     // @ts-ignore
-    public lastPurchasePrice: number | null;
-    // @ts-ignore
-    public vintage: number | null;
+    public lastPurchasedVintage: number | null;
     // @ts-ignore
     public why: string | null;
     // @ts-ignore

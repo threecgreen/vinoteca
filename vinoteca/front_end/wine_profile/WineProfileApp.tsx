@@ -148,7 +148,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
                 description={ this.state.wine!.description }
                 inventory={ this.state.wine!.inventory }
                 onInventoryChange={ (ic) => this.onInventoryChange(ic) }
-                // mostRecentVintage={ this.state.purchases }
+                mostRecentVintage={ this.state.wine!.las }
                 notes={ this.state.wine!.notes }
                 rating={ this.state.wine!.rating }
                 vitiArea={ this.state.wine!.vitiArea }

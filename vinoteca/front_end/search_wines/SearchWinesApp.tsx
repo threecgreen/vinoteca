@@ -4,29 +4,9 @@ import { Row } from "../../components/Grid";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { ISearchWinesResult } from "../../lib/RestTypes";
+import { IWine } from "../../lib/Rest";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
-
-export class WineResult {
-    public id: number;
-    public color: string;
-    public wineType: string;
-    public name?: string;
-    public producer: string;
-    public region: string;
-    public vitiArea?: string
-
-    constructor(rawResult: ISearchWinesResult) {
-        this.id = rawResult.id;
-        this.color = rawResult.color;
-        this.wineType = rawResult.wineType;
-        this.name = rawResult.name;
-        this.producer = rawResult.producer;
-        this.region = rawResult.region;
-        this.vitiArea = rawResult.vitiArea;
-    }
-}
 
 export enum SearchWinesInput {
     Color,
@@ -50,7 +30,7 @@ interface ISearchWinesAppState {
     regionText: string;
     vitiAreaText: string;
     resultState: ResultState;
-    results: WineResult[];
+    results: IWine[];
     lastActiveTextInput?: SearchWinesTextInput;
 }
 
@@ -152,7 +132,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
 
     private async querySearchResults() {
         this.setState({resultState: ResultState.Searching});
-        const results: ISearchWinesResult[] = await get("/rest/wines", {
+        const results: IWine[] = await get("/rest/wines/search", {
             color: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
             wine_type: this.state.wineTypeText,
             producer: this.state.producerText,
@@ -161,7 +141,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         });
         try {
             this.setState({
-                results: results.map((r) => new WineResult(r)),
+                results: results,
                 resultState: ResultState.HasSearched,
             });
         } catch (error) {

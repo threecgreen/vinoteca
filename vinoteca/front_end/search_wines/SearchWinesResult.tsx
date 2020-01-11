@@ -1,10 +1,10 @@
 import * as React from "react";
 import { ColorCell, NameAndTypeCell, TextCell } from "../../components/TableCells";
 import { Wine } from "../../lib/RestTypes";
-import { WineResult } from "./SearchWinesApp";
+import { IWine } from "../../lib/Rest";
 
 interface ISearchWinesResultProps {
-    result: WineResult
+    result: IWine
 }
 
 export class SearchWinesResult extends React.Component<ISearchWinesResultProps, {}> {
