@@ -4,13 +4,7 @@ import Logger from "../../lib/Logger";
 import { get } from "../../lib/ApiHelper";
 import { PreloaderCirc } from "../../components/Preloader";
 import { LineChart } from "../../components/Chart";
-
-interface IYearsPurchases {
-    year: number,
-    quantity: number,
-    total_price?: number,
-    avg_price?: number,
-}
+import { IYearsPurchases } from "../../lib/Rest";
 
 export const PurchasesByYear: React.FC<{}> = (_) => {
     const logger = new Logger(PurchasesByYear.name);
@@ -38,8 +32,8 @@ export const PurchasesByYear: React.FC<{}> = (_) => {
         content = (
             <LineChart data={[
                     yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.quantity })),
-                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.total_price ?? 0.0 })),
-                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.avg_price ?? 0.0 }))
+                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.totalPrice ?? 0.0 })),
+                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.avgPrice ?? 0.0 }))
                 ]}
                 seriesLabels={["Bottle", "Total Spent", "Avg Price"]}
             />

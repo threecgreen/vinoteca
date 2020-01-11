@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Col, Row } from "../../components/Grid";
-import { ProfileStats } from "../../lib/RestTypes";
-import { IVitiArea } from "../../lib/Rest";
+import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 
@@ -17,7 +16,7 @@ interface IProps {
 
 // TODO: stats component?
 interface IState {
-    stats?: ProfileStats;
+    stats?: IVitiAreaStats;
 }
 
 export class VitiArea extends React.Component<IProps, IState> {

@@ -5,7 +5,7 @@ import { Table } from "../../components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell, WineTypeCell } from "../../components/TableCells";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IRecentPurchase, IWine } from "../../lib/Rest";
+import { IRecentPurchase } from "../../lib/Rest";
 
 export const RecentPurchases: React.FC<{}> = (_) => {
     const logger = new Logger(RecentPurchases.name);

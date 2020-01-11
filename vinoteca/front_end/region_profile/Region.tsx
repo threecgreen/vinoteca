@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Col, Row } from "../../components/Grid";
-import { ProfileStats } from "../../lib/RestTypes";
 import { IRegion } from "../../lib/Rest";
 import { RegionInput } from "../../components/RegionInput";
 import { Flag } from "../../components/Flag";
@@ -18,7 +17,7 @@ interface IRegionProps {
 
 // TODO: stats component?
 interface IRegionState {
-    stats?: ProfileStats;
+    stats?: undefined;
 }
 
 export class Region extends React.Component<IRegionProps, IRegionState> {
