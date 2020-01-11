@@ -169,5 +169,5 @@ pub struct Wine {
     pub name: Option<String>,
     pub wine_type_id: i32,
     pub wine_type: String,
-    pub last_purchased_vintage: Option<i32>,
+    pub last_purchase_vintage: Option<i32>,
 }

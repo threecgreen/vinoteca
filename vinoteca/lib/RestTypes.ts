@@ -1,6 +1,6 @@
 /** Implement interfaces to interact with the vinoteca REST API. */
 import { IChartInput } from "./wine_charts";
-import { IRegionForm, IWineGrape, IWine } from "./Rest";
+import { IRegionForm, IWineGrape } from "./Rest";
 
 export interface IRestModel {
     id: number;
@@ -64,73 +64,8 @@ export class Grape implements IChartInput {
     }
 }
 
-export class Wine implements IWine {
-    public static getNameAndType(name: string | null, wineType: string): string {
-        return `${(name ? name + " " : "")}${wineType}`;
-    }
-
-    // @ts-ignore
-    public id: number;
-    // @ts-ignore
-    public name: string | null;
-    // @ts-ignore
-    public inventory: number;
-    // @ts-ignore
-    public rating: number | null;
-    // @ts-ignore
-    public color: string;
-    // @ts-ignore
-    public colorId: number;
-    // @ts-ignore
-    public wineType: string;
-    // @ts-ignore
-    public wineTypeId: number;
-    // @ts-ignore
-    public producer: string;
-    // @ts-ignore
-    public producerId: number;
-    // @ts-ignore
-    public region: string;
-    // @ts-ignore
-    public regionId: number;
-    // @ts-ignore
-    public vitiArea: string | null;
-    // @ts-ignore
-    public vitiAreaId: number | null;
-    // @ts-ignore
-    public avgPrice: number;
-    // @ts-ignore
-    public lastPurchasedVintage: number | null;
-    // @ts-ignore
-    public why: string | null;
-    // @ts-ignore
-    public description: string | null;
-    // @ts-ignore
-    public notes: string | null;
-
-    constructor(wine: IWine) {
-        Object.assign(this, wine);
-    }
-
-    public get nameAndType(): string {
-        return Wine.getNameAndType(this.name, this.wineType);
-    }
-}
-
 export interface IProfileStats {
     totalQuantity: number;
     avgPrice: number;
     avgRating: number;
-}
-
-export class ProfileStats {
-    public totalQuantity: number;
-    public avgPrice: number;
-    public avgRating: number;
-
-    constructor(stats: IProfileStats) {
-        this.totalQuantity = stats.totalQuantity;
-        this.avgPrice = stats.avgPrice;
-        this.avgRating = stats.avgRating;
-    }
 }

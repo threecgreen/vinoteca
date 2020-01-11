@@ -120,6 +120,7 @@ pub fn get(
 }
 
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct InventoryWine {
     #[sql_type = "Integer"]
     id: i32,
@@ -140,7 +141,7 @@ pub struct InventoryWine {
     #[sql_type = "Text"]
     region: String,
     #[sql_type = "Integer"]
-    vintage: i32,
+    last_purchase_vintage: i32,
     #[sql_type = "Integer"]
     last_purchase_date: i32,
     #[sql_type = "Integer"]

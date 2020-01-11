@@ -8,7 +8,7 @@ import { Preloader } from "../../components/Preloader";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
 import { createRegion, EmptyResultError, getProducer, getRegion, getWines, updateProducer, deleteProducer } from "../../lib/RestApi";
-import { Wine } from "../../lib/RestTypes";
+import { IWine } from "../../lib/Rest";
 import { IProducer, IRegion } from "../../lib/Rest";
 import { Producer } from "./Producer";
 import { ProducerWinesTable } from "./ProducerWinesTable";
@@ -28,7 +28,7 @@ interface IProducerProfileAppState {
     // "Pure" state, only mutated on successful changes sent to server
     producer?: IProducer;
     region?: IRegion;
-    wines: Wine[];
+    wines: IWine[];
 }
 
 interface IProducerProfileAppProps {
@@ -63,7 +63,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
     public async componentDidMount() {
         this.getCurrentProducerData();
         const wines = await getWines({producerId: this.props.producerId})
-        this.setState({wines: wines.map(w => new Wine(w))});
+        this.setState({wines: wines});
     }
 
     public render() {

@@ -1,10 +1,10 @@
 import * as React from "react";
-import { Wine } from "../lib/RestTypes";
+import { IWine } from "../lib/Rest";
 import { Table, WineTableNumCols } from "./Table";
 import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell } from "./TableCells";
 
 interface IProps {
-    wines: Wine[];
+    wines: IWine[];
 }
 
 export const PlaceWinesTable: React.FC<IProps> = (props) => {
@@ -25,7 +25,8 @@ export const PlaceWinesTable: React.FC<IProps> = (props) => {
                         <DateCell date={ wine.lastPurchaseDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
-                            nameAndType={ wine.nameAndType }
+                            name={ wine.name }
+                            wineType={ wine.wineType }
                         />
                         <ProducerCell id={ wine.producerId }>
                             { wine.producer }

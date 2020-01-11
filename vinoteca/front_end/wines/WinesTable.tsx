@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "../../components/TableCells";
 import { FilterHeader, SortingState, TableHeader } from "../../components/TableHeader";
-import { Wine } from "../../lib/RestTypes";
+import { IWine } from "../../lib/Rest";
 
 enum SortingValue {
     Inventory,
@@ -15,9 +15,9 @@ enum SortingValue {
 };
 
 interface IProps {
-    wines: Wine[];
-    filterTexts: Map<keyof Wine, string>;
-    onFilterChange: (column: keyof Wine, text: string) => void;
+    wines: IWine[];
+    filterTexts: Map<keyof IWine, string>;
+    onFilterChange: (column: keyof IWine, text: string) => void;
     currentPage: number;
     winesPerPage: number;
 }
@@ -71,11 +71,11 @@ export class WinesTable extends React.Component<IProps, IState> {
                     <tr key="filters">
                         <FilterHeader { ...this.filterHeaderProps("inventory") } />
                         <FilterHeader { ...this.filterHeaderProps("color") } />
-                        <FilterHeader { ...this.filterHeaderProps("nameAndType") } />
+                        <FilterHeader { ...this.filterHeaderProps("wineType") } />
                         <FilterHeader { ...this.filterHeaderProps("producer") } />
                         <FilterHeader { ...this.filterHeaderProps("region") } />
                         <FilterHeader { ...this.filterHeaderProps("vitiArea") } />
-                        <FilterHeader { ...this.filterHeaderProps("vintage") } />
+                        <FilterHeader { ...this.filterHeaderProps("lastPurchaseVintage") } />
                         <FilterHeader { ...this.filterHeaderProps("rating") } />
                     </tr>
                 </thead>
@@ -88,7 +88,8 @@ export class WinesTable extends React.Component<IProps, IState> {
                                 />
                                 <ColorCell color={ wine.color } />
                                 <NameAndTypeCell id={ wine.id }
-                                    nameAndType={ wine.nameAndType }
+                                    name={ wine.name }
+                                    wineType={ wine.wineType }
                                 />
                                 <ProducerCell id={ wine.producerId }>
                                     { wine.producer }
@@ -99,7 +100,7 @@ export class WinesTable extends React.Component<IProps, IState> {
                                 <VitiAreaCell id={ wine.vitiAreaId }>
                                     { wine.vitiArea }
                                 </VitiAreaCell>
-                                <YearCell year={ wine.vintage } />
+                                <YearCell year={ wine.lastPurchaseVintage } />
                                 <NumCell maxDecimals={ 0 } num={ wine.rating } />
                             </tr>
                         );
@@ -109,7 +110,7 @@ export class WinesTable extends React.Component<IProps, IState> {
         );
     }
 
-    private get winesForPage(): Wine[] {
+    private get winesForPage(): IWine[] {
         const start = (this.props.currentPage - 1) * this.props.winesPerPage;
         const sortedWines = this.sortedWines;
         return sortedWines.slice(start,  Math.min(sortedWines.length,
@@ -159,7 +160,7 @@ export class WinesTable extends React.Component<IProps, IState> {
                 });
             case SortingValue.Vintage:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.vintage || 0) > (w2.vintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseVintage || 0) > (w2.lastPurchaseVintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.Rating:
                 return this.props.wines.sort((w1, w2) => {
@@ -199,7 +200,7 @@ export class WinesTable extends React.Component<IProps, IState> {
     }
 
     // Constructs props for a filter header
-    private filterHeaderProps(columnName: keyof Wine):
+    private filterHeaderProps(columnName: keyof IWine):
         {onChange: (text: string) => void,
          text: string} {
 

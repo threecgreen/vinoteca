@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Table, WineTableNumCols } from "../../components/Table";
 import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, TextCell, VitiAreaCell,
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, VitiAreaCell,
 } from "../../components/TableCells";
-import { Wine } from "../../lib/RestTypes";
+import { IWine } from "../../lib/Rest";
 
 interface IProducerWinesTableProps {
-    wines: Wine[];
+    wines: IWine[];
 }
 
 export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProps> = (props) => {
@@ -26,7 +26,8 @@ export const ProducerWinesTable: React.FunctionComponent<IProducerWinesTableProp
                         <DateCell date={ wine.lastPurchaseDate } />
                         <ColorCell color={ wine.color } />
                         <NameAndTypeCell id={ wine.id }
-                            nameAndType={ wine.nameAndType }
+                            name={ wine.name }
+                            wineType={ wine.wineType }
                         />
                         <VitiAreaCell id={ wine.vitiAreaId }>
                             { wine.vitiArea }

@@ -8,7 +8,7 @@ SELECT
     , p.name AS producer
     , r.id AS region_id
     , r.name AS region
-    , p3.vintage
+    , p3.vintage AS last_purchase_vintage
     , max(pu.date) AS last_purchase_date
     , w.inventory AS inventory
     , p3.price AS last_purchase_price

@@ -133,11 +133,11 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     private async querySearchResults() {
         this.setState({resultState: ResultState.Searching});
         const results: IWine[] = await get("/rest/wines/search", {
-            color: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
-            wine_type: this.state.wineTypeText,
-            producer: this.state.producerText,
-            region: this.state.regionText,
-            viti_area: this.state.vitiAreaText,
+            color_like: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
+            wine_type_like: this.state.wineTypeText,
+            producer_like: this.state.producerText,
+            region_like: this.state.regionText,
+            viti_area_like: this.state.vitiAreaText,
         });
         try {
             this.setState({

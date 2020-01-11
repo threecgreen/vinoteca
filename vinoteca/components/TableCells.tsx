@@ -1,6 +1,6 @@
 import format from "date-fns/esm/format";
 import * as React from "react";
-import { capitalizeFirstLetter, numToDate } from "../lib/utils";
+import { capitalizeFirstLetter, numToDate, getNameAndType } from "../lib/utils";
 
 const EN_DASH: string = "–";
 
@@ -104,7 +104,8 @@ LinkedCell.displayName = "LinkedCell"
 
 interface INameAndTypeProps {
     id: number;
-    nameAndType: string;
+    name: string | null;
+    wineType: string;
     url?: string;
 }
 
@@ -112,13 +113,13 @@ export const NameAndTypeCell: React.FC<INameAndTypeProps> = (props) => {
     if (props.url) {
         <td>
             <a href={ props.url }>
-                { props.nameAndType }
+                { getNameAndType(props.name, props.wineType) }
             </a>
         </td>
     }
     return (
         <LinkedCell id={ props.id } model="wines">
-            { props.nameAndType }
+            { getNameAndType(props.name, props.wineType) }
         </LinkedCell>
     );
 };

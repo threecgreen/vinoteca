@@ -173,3 +173,7 @@ export async function imageExists(imageUrl: string): Promise<boolean> {
         return false;
     }
 }
+
+export function getNameAndType(name: string | null, wineType: string): string {
+    return `${(name ? name + " " : "")}${wineType}`;
+}

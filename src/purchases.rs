@@ -49,6 +49,7 @@ pub fn get(
 
 // Includes wine info for convenience
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct RecentPurchase {
     pub id: i32,
     pub price: Option<f32>,
@@ -105,6 +106,7 @@ pub fn recent(
 }
 
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct YearsPurchases {
     #[sql_type = "Integer"]
     year: i32,
@@ -125,6 +127,7 @@ pub fn by_year(connection: DbConn) -> Result<Json<Vec<YearsPurchases>>, Status> 
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct TotalLiters {
     total_liters: f32,
 }
@@ -142,6 +145,7 @@ pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
 }
 
 #[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct MostCommonPurchaseDate {
     #[sql_type = "Nullable<Integer>"]
     most_common_purchase_date: Option<i32>,

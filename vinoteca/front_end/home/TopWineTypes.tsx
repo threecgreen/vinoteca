@@ -61,7 +61,7 @@ export const TopWineTypes: React.FC<{}> = (_) => {
                                 <WineTypeCell id={wineType.id}>{wineType.name}</WineTypeCell>
                                 <NumCell maxDecimals={0} num={wineType.quantity} />
                                 <NumCell maxDecimals={0} num={wineType.varieties} />
-                                <PriceCell price={wineType.avg_price} />
+                                <PriceCell price={wineType.avgPrice} />
                             </tr>
                         )}
                     </Table>
@@ -78,7 +78,7 @@ export const TopWineTypes: React.FC<{}> = (_) => {
                 </TabPanel>
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
-                        data={topWineTypes.map((wt) => ({ label: wt.name, value: wt.avg_price }))}
+                        data={topWineTypes.map((wt) => ({ label: wt.name, value: wt.avgPrice }))}
                     />
                 </TabPanel>
             </>

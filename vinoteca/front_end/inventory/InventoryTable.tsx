@@ -3,7 +3,7 @@ import { FloatingBtn } from "../../components/Buttons";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
-import { Wine } from "../../lib/RestTypes";
+import { IInventoryWine } from "../../lib/Rest";
 
 export enum InventoryChange {
     Increase,
@@ -22,7 +22,7 @@ enum SortingValue {
 };
 
 interface IProps {
-    wines: Wine[],
+    wines: IInventoryWine[],
     onInventoryChange: (e: React.MouseEvent, id: number, change: InventoryChange) => void,
 }
 
@@ -101,7 +101,8 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                 />
                                 <ColorCell color={ wine.color } />
                                 <NameAndTypeCell id={ wine.id }
-                                    nameAndType={ wine.nameAndType }
+                                    name={ wine.name }
+                                    wineType={wine.wineType}
                                 />
                                 <ProducerCell id={ wine.producerId }>
                                     { wine.producer }
@@ -109,7 +110,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                 <RegionCell id={ wine.regionId }>
                                     { wine.region }
                                 </RegionCell>
-                                <YearCell year={ wine.vintage } />
+                                <YearCell year={ wine.lastPurchaseVintage } />
                                 <DateCell date={ wine.lastPurchaseDate } />
                                 <PriceCell price={ wine.lastPurchasePrice } />
                             </tr>
@@ -159,7 +160,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
                 })
             case SortingValue.Vintage:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.vintage || 0) > (w2.vintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseVintage || 0) > (w2.lastPurchaseVintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.PurchaseDate:
                 return this.props.wines.sort((w1, w2) => {

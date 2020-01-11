@@ -1,11 +1,11 @@
 import * as React from "react";
-import { WineResult } from "./SearchWinesApp";
 import { SearchWinesResult } from "./SearchWinesResult";
 import { Preloader } from "../../components/Preloader";
+import { IWine } from "../../lib/Rest";
 
 interface ISearchWinesResultsProps {
     resultState: ResultState;
-    results: WineResult[];
+    results: IWine[];
 }
 
 export enum ResultState {

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ColorCell, NameAndTypeCell, TextCell } from "../../components/TableCells";
-import { Wine } from "../../lib/RestTypes";
 import { IWine } from "../../lib/Rest";
 
 interface ISearchWinesResultProps {
@@ -13,7 +12,8 @@ export class SearchWinesResult extends React.Component<ISearchWinesResultProps, 
         return <tr>
             <ColorCell color={ result.color } />
             <NameAndTypeCell id={ result.id }
-                nameAndType={ Wine.getNameAndType(result.name, result.wineType) }
+                name={ result.name }
+                wineType={ result.wineType }
                 url={ `/wines/${result.id}/new-purchase/`}
             />
             <TextCell text={ result.producer } />

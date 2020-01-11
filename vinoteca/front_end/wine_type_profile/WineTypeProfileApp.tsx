@@ -6,10 +6,11 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { getWineType, getWines, updateWineType } from "../../lib/RestApi";
-import { Wine, IRestModel } from "../../lib/RestTypes";
+import { IRestModel } from "../../lib/RestTypes";
 import { WineType } from "./WineType";
 import { WineTypeWinesTable } from "./WineTypeWinesTable";
 import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { IWine } from "../../lib/Rest";
 
 interface IState {
     isEditing: boolean;
@@ -17,7 +18,7 @@ interface IState {
     wineTypeText: string;
     // "Pure" state
     wineType?: IRestModel;
-    wines: Wine[];
+    wines: IWine[];
 }
 
 interface IProps {
@@ -58,7 +59,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
 
     private async getAndSetWines() {
         const wines = await getWines({wineTypeId: this.props.wineTypeId});
-        this.setState({wines: wines.map((w) => new Wine(w))});
+        this.setState({wines});
     }
 
     public render() {

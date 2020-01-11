@@ -31,6 +31,7 @@ pub fn get(
 }
 
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct TopWineType {
     pub id: i32,
     pub name: String,

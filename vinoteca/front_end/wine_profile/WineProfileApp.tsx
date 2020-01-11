@@ -1,6 +1,5 @@
 import React from "react";
 import Logger from "../../lib/Logger";
-import { Wine } from "../../lib/RestTypes";
 import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
 import { Preloader } from "../../components/Preloader";
 import { WineData } from "./WineData";
@@ -22,7 +21,7 @@ interface IState {
     // "Pure" state
     hasImage: boolean;
     grapes: IWineGrape[];
-    wine?: Wine;
+    wine?: IWine;
     purchases: IPurchase[];
 }
 
@@ -52,7 +51,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
 
     private async getWine() {
         const wine = await getWine({id: this.props.id});
-        this.setState({ wine: new Wine(wine) });
+        this.setState({ wine });
     }
 
     private async getPurchases() {
@@ -148,7 +147,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
                 description={ this.state.wine!.description }
                 inventory={ this.state.wine!.inventory }
                 onInventoryChange={ (ic) => this.onInventoryChange(ic) }
-                mostRecentVintage={ this.state.wine!.las }
+                mostRecentVintage={ this.state.wine!.lastPurchaseVintage }
                 notes={ this.state.wine!.notes }
                 rating={ this.state.wine!.rating }
                 vitiArea={ this.state.wine!.vitiArea }
@@ -167,8 +166,8 @@ export class WineProfileApp extends React.Component<IProps, IState> {
                 copy.inventory -= 1;
             }
             try {
-                const newWineData = await put <IWine>("/rest/wines", copy, {id: this.props.id});
-                this.setState({wine: new Wine(newWineData)});
+                const wine = await put <IWine>("/rest/wines", copy, {id: this.props.id});
+                this.setState({wine});
             } catch {
                 this.logger.logWarning("Failed to change inventory");
             }

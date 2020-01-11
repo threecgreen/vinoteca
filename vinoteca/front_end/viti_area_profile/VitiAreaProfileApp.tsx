@@ -6,7 +6,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { getVitiArea, getWines, updateVitiArea, getVitiAreaStats } from "../../lib/RestApi";
-import { Wine } from "../../lib/RestTypes";
+import { IWine } from "../../lib/Rest";
 import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
 import { VitiArea } from "./VitiArea";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
@@ -19,7 +19,7 @@ interface IVitiAreaProfileState {
     vitiAreaText: string;
     // "Pure" state
     vitiArea?: IVitiArea;
-    wines: Wine[];
+    wines: IWine[];
     stats?: IVitiAreaStats;
 }
 
@@ -63,7 +63,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
 
     private async getAndSetWines() {
         const wines = await getWines({vitiAreaId: this.props.vitiAreaId});
-        this.setState({wines: wines.map((w) => new Wine(w))});
+        this.setState({wines});
     }
 
     private async getAndSetStats() {

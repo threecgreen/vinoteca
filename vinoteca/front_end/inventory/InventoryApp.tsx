@@ -2,7 +2,6 @@ import * as React from "react";
 import { Col, Row } from "../../components/Grid";
 import { get, post } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { Wine } from "../../lib/RestTypes";
 import { IInventoryWine } from "../../lib/Rest";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { Preloader } from "../../components/Preloader";
@@ -13,7 +12,7 @@ import { numToDate } from "../../lib/utils";
 
 
 interface IState {
-    wines: Wine[],
+    wines: IInventoryWine[],
     hasLoaded: boolean,
 }
 
@@ -76,8 +75,7 @@ export class InventoryApp extends React.Component<{}, IState> {
 
     private async updateInventory() {
         try {
-            const iWines: IInventoryWine[] = await get("/rest/wines/inventory");
-            const wines = iWines.map((w) => new Wine(w));
+            const wines: IInventoryWine[] = await get("/rest/wines/inventory");
             this.setState({wines, hasLoaded: true});
         } catch (err) {
             this.setState({hasLoaded: true});
@@ -89,7 +87,7 @@ export class InventoryApp extends React.Component<{}, IState> {
         e.preventDefault();
         download(`vinoteca_inventory_${format(new Date(), 'yyyy-MM-dd')}.csv`,
                  generateCSV(this.state.wines, [
-                     "inventory", "color", "name", "wineType", "producer", "region", "vintage",
+                     "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
                      "lastPurchaseDate", "lastPurchasePrice"
                 ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
     }
