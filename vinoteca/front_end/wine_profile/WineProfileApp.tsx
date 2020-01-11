@@ -101,7 +101,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
     }
 
     private renderWineDetails() {
-        if (this.state.hasImage && this.state.grapes) {
+        if (this.state.hasImage && this.state.grapes.length) {
             return (
                 <>
                     <Col s={ 12 } l={ 4 }>
@@ -154,7 +154,7 @@ export class WineProfileApp extends React.Component<IProps, IState> {
                 description={ this.state.wine!.description }
                 inventory={ this.state.wine!.inventory }
                 onInventoryChange={ (ic) => this.onInventoryChange(ic) }
-                mostRecentVintage={ this.state.wine!.lastPurchaseVintage }
+                lastPurchaseVintage={ this.state.wine!.lastPurchaseVintage }
                 notes={ this.state.wine!.notes }
                 rating={ this.state.wine!.rating }
                 vitiArea={ this.state.wine!.vitiArea }

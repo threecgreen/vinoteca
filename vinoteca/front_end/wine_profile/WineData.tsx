@@ -8,7 +8,7 @@ interface IProps {
     color: string;
     description: string | null;
     inventory: number;
-    mostRecentVintage: number | null;
+    lastPurchaseVintage: number | null;
     notes: string | null;
     rating: number | null;
     vitiArea: string | null;
@@ -42,6 +42,19 @@ export const WineData: React.FC<IProps> = (props) => {
             >
                 <MaterialIcon iconName="do_not_disturb_on" />
             </FloatingBtn>
+            { props.lastPurchaseVintage &&
+                <h5><b>Vintage:</b> { props.lastPurchaseVintage }</h5>
+            }
+            { props.vitiArea && props.vitiAreaId &&
+                <h5>
+                    <b>Viticultural area:</b>&nbsp;
+                    <a href={ `/viti-areas/${props.vitiAreaId}` }
+                        className="text-link"
+                    >
+                        { props.vitiArea }
+                    </a>
+                </h5>
+            }
             { props.description &&
                 <h6><b>Description:</b> { props.description }</h6>
             }
