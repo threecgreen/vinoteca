@@ -63,7 +63,7 @@ export const YearCell: React.FC<{year: number | null}> = (props) => {
 YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
-    date?: number | null;
+    date: number | null;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
     const dateStr = props.date ? format(numToDate(props.date), "MMM dd, yyyy") : EN_DASH;
@@ -74,7 +74,7 @@ export const DateCell: React.FC<IDateCellProps> = (props) => {
 DateCell.displayName = "DateCell";
 
 interface IColorCellProps {
-    color?: string;
+    color: string;
 }
 
 export const ColorCell: React.FC<IColorCellProps> = (props) => {
@@ -142,7 +142,7 @@ export const RegionCell: React.FC<{id: number}> = (props) => {
 }
 RegionCell.displayName = "RegionCell"
 
-export const VitiAreaCell: React.FC<{id?: number}> = (props) => {
+export const VitiAreaCell: React.FC<{id: number | null}> = (props) => {
     if (!props.id) {
         return <td />;
     }

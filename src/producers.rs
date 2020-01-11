@@ -1,12 +1,12 @@
-use super::query_utils::error_status;
 use super::DbConn;
+use super::models::{Producer, ProducerForm};
+use super::query_utils::error_status;
+use super::schema::{producers, regions};
 
 use diesel;
 use diesel::prelude::*;
-use models::{Producer, ProducerForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{producers, regions};
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]
 pub fn get(

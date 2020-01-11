@@ -3,7 +3,7 @@ use super::schema::*;
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
-use validator::{Validate};
+use validator::Validate;
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -25,6 +25,7 @@ pub struct ColorForm<'a> {
 pub struct Grape {
     pub id: i32,
     pub name: String,
+    pub wine_count: i32,
 }
 
 #[derive(Deserialize, Insertable, TypeScriptify, Debug)]
@@ -110,6 +111,7 @@ pub struct Store {
 pub struct VitiArea {
     pub id: i32,
     pub name: String,
+    pub region_id: i32,
     pub region: String,
 }
 
@@ -167,10 +169,5 @@ pub struct Wine {
     pub name: Option<String>,
     pub wine_type_id: i32,
     pub wine_type: String,
-    // Stats
-    // pub lastPurchasedDate: Option<i32>,
-    // pub lastPurchasedPrice: Option<f32>,
-    // pub lastPurchasedVintage: Option<i32>,
-    // pub avgPrice: Option<f32>,
-    // pub totalQuantityPurchased: i32,
+    pub last_purchased_vintage: Option<i32>,
 }

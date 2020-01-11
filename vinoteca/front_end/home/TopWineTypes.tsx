@@ -7,14 +7,7 @@ import { PreloaderCirc } from "../../components/Preloader";
 import { RedCard } from "../../components/Cards";
 import { Table } from "../../components/Table";
 import { WineTypeCell, NumCell, PriceCell } from "../../components/TableCells";
-
-interface ITopWineType {
-    id: number;
-    name: string;
-    quantity: number;
-    varieties: number;
-    avg_price: number;
-}
+import { ITopWineType } from "../../lib/Rest";
 
 export const TopWineTypes: React.FC<{}> = (_) => {
     const logger = new Logger(TopWineTypes.name);

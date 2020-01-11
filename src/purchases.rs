@@ -1,17 +1,18 @@
 use super::DbConn;
 use query_utils::error_status;
+use models::{Purchase, PurchaseForm};
 use schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
-use diesel::QueryableByName;
 use diesel::dsl::{sql, sum};
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{Integer, Float, Nullable};
-use models::{Purchase, PurchaseForm};
+use diesel::sql_types::{Float, Integer, Nullable};
+use diesel::QueryableByName;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::Serialize;
+use typescript_definitions::TypeScriptify;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub fn get(
@@ -47,7 +48,7 @@ pub fn get(
 }
 
 // Includes wine info for convenience
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Queryable, Serialize, TypeScriptify, Debug)]
 pub struct RecentPurchase {
     pub id: i32,
     pub price: Option<f32>,
@@ -74,7 +75,8 @@ pub fn recent(
     let limit = limit.unwrap_or(10);
     purchases::table
         .inner_join(
-            wines::table.inner_join(producers::table.inner_join(regions::table))
+            wines::table
+                .inner_join(producers::table.inner_join(regions::table))
                 .inner_join(wine_types::table),
         )
         .left_join(stores::table)
@@ -102,7 +104,7 @@ pub fn recent(
         .map_err(error_status)
 }
 
-#[derive(QueryableByName, Serialize, Debug)]
+#[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
 pub struct YearsPurchases {
     #[sql_type = "Integer"]
     year: i32,
@@ -115,31 +117,31 @@ pub struct YearsPurchases {
 }
 
 #[get("/purchases/by-year")]
-pub fn by_year(
-    connection: DbConn,
-) -> Result<Json<Vec<YearsPurchases>>, Status> {
+pub fn by_year(connection: DbConn) -> Result<Json<Vec<YearsPurchases>>, Status> {
     sql_query(include_str!("purchases_by_year.sql"))
         .load::<YearsPurchases>(&*connection)
         .map(Json)
         .map_err(error_status)
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, TypeScriptify, Debug)]
 pub struct TotalLiters {
     total_liters: f32,
 }
 
 #[get("/purchases/total-liters")]
 pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
-    let res = purchases::table.select(sum(sql::<Float>("quantity * 0.75")))
-        .first(&*connection).unwrap_or(Some(0.0));
+    let res = purchases::table
+        .select(sum(sql::<Float>("quantity * 0.75")))
+        .first(&*connection)
+        .unwrap_or(Some(0.0));
     let total_liters = TotalLiters {
         total_liters: res.unwrap_or(0.0),
     };
     Json(total_liters)
 }
 
-#[derive(Serialize, QueryableByName, Debug)]
+#[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
 pub struct MostCommonPurchaseDate {
     #[sql_type = "Nullable<Integer>"]
     most_common_purchase_date: Option<i32>,
@@ -149,7 +151,11 @@ pub struct MostCommonPurchaseDate {
 pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseDate> {
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
         .load::<MostCommonPurchaseDate>(&*connection)
-        .unwrap_or(vec![MostCommonPurchaseDate { most_common_purchase_date: None }]);
+        .unwrap_or_else(|_| {
+            vec![MostCommonPurchaseDate {
+                most_common_purchase_date: None,
+            }]
+        });
 
     Json(res.remove(0))
 }

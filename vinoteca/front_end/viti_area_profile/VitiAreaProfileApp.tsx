@@ -6,8 +6,8 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { getVitiArea, getWines, updateVitiArea, getVitiAreaStats } from "../../lib/RestApi";
-import { VitiAreaStats, Wine, IVitiAreaStats } from "../../lib/RestTypes";
-import { IVitiArea } from "../../lib/Rest";
+import { Wine } from "../../lib/RestTypes";
+import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
 import { VitiArea } from "./VitiArea";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
@@ -20,7 +20,7 @@ interface IVitiAreaProfileState {
     // "Pure" state
     vitiArea?: IVitiArea;
     wines: Wine[];
-    stats?: VitiAreaStats;
+    stats?: IVitiAreaStats;
 }
 
 interface IVitiAreaProfileProps {
@@ -68,7 +68,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
 
     private async getAndSetStats() {
         const stats: IVitiAreaStats[] = await getVitiAreaStats({id: this.props.vitiAreaId});
-        this.setState({stats: new VitiAreaStats(stats[0])});
+        this.setState({stats: stats[0]});
     }
 
     public render() {
@@ -125,6 +125,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
             const vitiArea = await updateVitiArea({
                 id: this.props.vitiAreaId,
                 name: this.state.vitiAreaText,
+                region: this.state.vitiArea!.region,
                 regionId: this.state.vitiArea!.regionId,
             });
             this.setState({

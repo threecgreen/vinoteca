@@ -8,18 +8,13 @@ import { MaterialIcon } from "./MaterialIcon";
 import { IGrape, IWineGrape } from "../lib/Rest";
 import { toDict } from "../lib/RestApi";
 
-export class WineGrape {
-    constructor(public id: number, public name: string, public percent?: number) {
-    }
-}
-
 interface IProps {
     wineId?: number;
 }
 
 interface IState {
     completions: IDict<string | null>;
-    wineGrapes: WineGrape[];
+    wineGrapes: IWineGrape[];
 }
 
 export class GrapeFormApp extends React.Component<IProps, IState> {
@@ -77,7 +72,7 @@ export class GrapeFormApp extends React.Component<IProps, IState> {
     private async getGrapes() {
         if (this.props.wineId) {
             const wineGrapes: IWineGrape[] = await get("/rest/wine-grapes", {wine: this.props.wineId});
-            this.setState({wineGrapes: wineGrapes.map((i) => new WineGrape(i.id, i.grape, i.percent))});
+            this.setState({wineGrapes});
         }
     }
 
@@ -100,7 +95,7 @@ export class GrapeFormApp extends React.Component<IProps, IState> {
         this.setState((state) => ({
             wineGrapes: state.wineGrapes.map((wg) => {
                 return (wg.id === id)
-                    ? new WineGrape(id, name, pct)
+                    ? {id, name, percent: pct}
                     : wg;
             }),
         }));
@@ -115,7 +110,7 @@ export class GrapeFormApp extends React.Component<IProps, IState> {
     private get hasGrapePct(): boolean {
         const len = this.state.wineGrapes.length;
         const lastWineGrape = this.state.wineGrapes[len - 1];
-        return len > 0 && lastWineGrape.percent !== undefined && !isNaN(lastWineGrape.percent);
+        return len > 0 && lastWineGrape.percent !== null && !isNaN(lastWineGrape.percent);
     }
 
     private get remainingGrapePct(): number {
@@ -127,9 +122,14 @@ export class GrapeFormApp extends React.Component<IProps, IState> {
         return 100;
     }
 
-    private defaultWineGrape(): WineGrape {
+    private defaultWineGrape(): IWineGrape {
         if (this.hasGrapePct) {
-            return new WineGrape(this.maxId + 1, "", this.remainingGrapePct);
+            return {
+                id: this.maxId + 1,
+                wineId: this.props.wineId,
+                percent: this.remainingGrapePct,
+            };
+                // WineGrape(this.maxId + 1, "", this.remainingGrapePct);
         }
         return new WineGrape(this.maxId + 1, "", undefined);
     }

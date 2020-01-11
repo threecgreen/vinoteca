@@ -8,7 +8,7 @@ import { IGrape } from "../../lib/Rest";
 import { GrapesList } from "./GrapesList";
 
 export class GrapeItem {
-    constructor(public id: number, public name: string, public wines?: number,
+    constructor(public id: number, public name: string, public wineCount: number,
             public isEditable = false) {
     }
 }
@@ -61,7 +61,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
     public async componentDidMount() {
         const restGrapes: IGrape[] = await get(GrapesApp.grapesUrl);
         const grapes: GrapeItem[] = restGrapes.map(
-            (g) => new GrapeItem(g.id, g.name, g.wines),
+            (g) => new GrapeItem(g.id, g.name, g.wineCount),
         );
         this.setState({ grapes });
     }
@@ -124,7 +124,7 @@ export class GrapesApp extends React.Component<{}, IGrapesAppState> {
             this.setState((state) => ({
                 grapes: state.grapes.map((g) => {
                     return g.id === state.lastActiveId
-                        ? new GrapeItem(g.id, g.name + char, g.wines, g.isEditable)
+                        ? new GrapeItem(g.id, g.name + char, g.wineCount, g.isEditable)
                         : g;
                 }),
             }));

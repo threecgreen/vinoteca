@@ -1,11 +1,11 @@
+use super::models::Color;
 use super::query_utils::error_status;
 use super::DbConn;
+use super::schema::colors;
 
 use diesel::prelude::*;
-use models::Color;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::colors;
 
 #[get("/colors?<id>")]
 pub fn get(id: Option<i32>, connection: DbConn) -> Result<Json<Vec<Color>>, Status> {

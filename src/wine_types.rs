@@ -1,14 +1,15 @@
 use super::DbConn;
-use query_utils::error_status;
-use schema::{purchases, wines, wine_types};
+use super::models::{WineType, WineTypeForm};
+use super::query_utils::error_status;
+use super::schema::{purchases, wine_types, wines};
 
-use diesel::sql_types::{Integer, Float};
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use models::{WineType, WineTypeForm};
+use diesel::sql_types::{Float, Integer};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::Serialize;
+use typescript_definitions::TypeScriptify;
 
 #[get("/wine-types?<id>&<name>")]
 pub fn get(
@@ -29,7 +30,7 @@ pub fn get(
         .map_err(error_status)
 }
 
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Queryable, Serialize, TypeScriptify, Debug)]
 pub struct TopWineType {
     pub id: i32,
     pub name: String,
@@ -39,12 +40,10 @@ pub struct TopWineType {
 }
 
 #[get("/wine-types/top?<limit>")]
-pub fn top(
-    limit: Option<usize>,
-    connection: DbConn,
-) -> Result<Json<Vec<TopWineType>>, Status> {
+pub fn top(limit: Option<usize>, connection: DbConn) -> Result<Json<Vec<TopWineType>>, Status> {
     let limit = limit.unwrap_or(10);
-    wine_types::table.inner_join(wines::table.inner_join(purchases::table))
+    wine_types::table
+        .inner_join(wines::table.inner_join(purchases::table))
         .group_by((wine_types::id, wine_types::name))
         .select((
             wine_types::id,

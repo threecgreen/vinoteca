@@ -74,7 +74,7 @@ export class GrapesList extends React.Component<IProps, IState> {
                 });
             case SortingValue.Wine:
                 return this.props.grapes.sort((g1, g2) => {
-                    return (g1.wines || 0) > (g2.wines || 0) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (g1.wineCount || 0) > (g2.wineCount || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 })
             default:
                 return this.props.grapes;

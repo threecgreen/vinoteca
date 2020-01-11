@@ -1,10 +1,10 @@
 import * as React from "react"
-import { VitiAreaStats } from "../../lib/RestTypes";
+import { IVitiAreaStats } from "../../lib/Rest";
 import { Table } from "../../components/Table";
 import { NumCell } from "../../components/TableCells";
 
 interface IProps {
-    stats?: VitiAreaStats
+    stats?: IVitiAreaStats
 }
 
 export const VitiAreaStatsTable: React.FunctionComponent<IProps> = (props) => {

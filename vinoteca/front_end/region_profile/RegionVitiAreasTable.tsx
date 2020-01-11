@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Table } from "../../components/Table";
 import { NumCell, PriceCell, VitiAreaCell } from "../../components/TableCells";
-import { VitiAreaStats } from "../../lib/RestTypes";
+import { IVitiAreaStats } from "../../lib/Rest";
 
 interface IRegionWineTableProps {
-    vitiAreas: VitiAreaStats[];
+    vitiAreas: IVitiAreaStats[];
 }
 
 export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps> = (props) => {

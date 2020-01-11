@@ -1,6 +1,7 @@
 import React from "react";
 import Logger from "../../lib/Logger";
-import { IWineGrape, Wine, IPurchase, IWine } from "../../lib/RestTypes";
+import { Wine } from "../../lib/RestTypes";
+import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
 import { Preloader } from "../../components/Preloader";
 import { WineData } from "./WineData";
 import { Col, Row } from "../../components/Grid";

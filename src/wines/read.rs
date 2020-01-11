@@ -1,7 +1,7 @@
 use crate::query_utils::error_status;
 use crate::DbConn;
 
-// use diesel::dsl::{max, sum};
+use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Integer, Nullable, Text};
@@ -9,8 +9,9 @@ use diesel::QueryableByName;
 use models::Wine;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{colors, producers, regions, viti_areas, wine_types, wines};
+use schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use serde::Serialize;
+use typescript_definitions::TypeScriptify;
 
 fn add_wildcards(query: &str) -> String {
     format!("%{}%", query)
@@ -34,27 +35,11 @@ pub fn get(
 
     connection: DbConn,
 ) -> Result<Json<Vec<Wine>>, Status> {
-    // let max_date_subquery = wines::table
-    //     .inner_join(purchases::table)
-    //     .group_by(wines::id)
-    //     // Assumes purchase id is increasing
-    //     .select((wines::id, max(purchases::date).aliased("max_date")));
-    // let last_purchase_subquery = purchases::table
-    //     .inner_join(max_date_subquery.on(purchases::date.eq(max_date_subquery::max_date)))
-    //     .group_by(wines::id)
-    //     .select((wines::id, max(purchase::id).aliased("purchase_id")))
-    //     .select((wines::id, purchases::date, purchases::quantity, purchases::price, purchases::vintage));
-    // let total_quantity_subquery = wines::table
-    //     .inner_join(purchases::table)
-    //     .group_by(wines::id)
-    //     .select((wines::id, sum(purchases::quantity)));
-
     let mut query = wines::table
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
         .inner_join(wine_types::table)
-        // TODO: get most recent purchase
-        // .left_join(purchases::table.group_by(purchases))
+        .left_join(purchases::table)
         .left_join(viti_areas::table)
         .into_boxed();
     if let Some(id) = id {
@@ -72,7 +57,6 @@ pub fn get(
     if let Some(wine_type_id) = wine_type_id {
         query = query.filter(wines::wine_type_id.eq(wine_type_id));
     }
-
     if let Some(color) = color {
         query = query.filter(colors::name.like(add_wildcards(&color)));
     }
@@ -90,6 +74,26 @@ pub fn get(
     }
 
     query
+        .group_by((
+            wines::id,
+            wines::description,
+            wines::notes,
+            wines::rating,
+            wines::inventory,
+            wines::why,
+            wines::color_id,
+            colors::name,
+            wines::producer_id,
+            producers::name,
+            producers::region_id,
+            regions::name,
+            wines::viti_area_id,
+            viti_areas::name,
+            wines::name,
+            wines::wine_type_id,
+            wine_types::name,
+
+        ))
         .select((
             wines::id,
             wines::description,
@@ -108,13 +112,14 @@ pub fn get(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
+            sql::<Nullable<Integer>>("max(purchases.vintage)"),
         ))
         .load::<Wine>(&*connection)
         .map(Json)
         .map_err(error_status)
 }
 
-#[derive(QueryableByName, Serialize, Debug)]
+#[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
 pub struct InventoryWine {
     #[sql_type = "Integer"]
     id: i32,
@@ -148,6 +153,87 @@ pub struct InventoryWine {
 pub fn inventory(connection: DbConn) -> Result<Json<Vec<InventoryWine>>, Status> {
     sql_query(include_str!("inventory.sql"))
         .load::<InventoryWine>(&*connection)
+        .map(Json)
+        .map_err(error_status)
+}
+
+fn wrap_in_wildcards(filter_str: &str) -> String {
+    format!("%{}%", filter_str)
+}
+
+#[get("/wines/search?<color_like>&<wine_type_like>&<producer_like>&<region_like>&<viti_area_like>")]
+pub fn search(
+    color_like: Option<String>,
+    wine_type_like: Option<String>,
+    producer_like: Option<String>,
+    region_like: Option<String>,
+    viti_area_like: Option<String>,
+    connection: DbConn,
+) -> Result<Json<Vec<Wine>>, Status> {
+    let mut query = wines::table
+        .inner_join(producers::table.inner_join(regions::table))
+        .inner_join(colors::table)
+        .inner_join(wine_types::table)
+        .left_join(purchases::table)
+        .left_join(viti_areas::table)
+        .into_boxed();
+    if let Some(color_like) = color_like {
+        query = query.filter(colors::name.like(wrap_in_wildcards(&color_like)));
+    }
+    if let Some(wine_type_like) = wine_type_like {
+        query = query.filter(wine_types::name.like(wrap_in_wildcards(&wine_type_like)));
+    }
+    if let Some(producer_like) = producer_like {
+        query = query.filter(producers::name.like(wrap_in_wildcards(&producer_like)));
+    }
+    if let Some(region_like) = region_like {
+        query = query.filter(regions::name.like(wrap_in_wildcards(&region_like)));
+    }
+    if let Some(viti_area_like) = viti_area_like {
+        query = query.filter(viti_areas::name.like(wrap_in_wildcards(&viti_area_like)));
+    }
+    query
+        .group_by((
+            wines::id,
+            wines::description,
+            wines::notes,
+            wines::rating,
+            wines::inventory,
+            wines::why,
+            wines::color_id,
+            colors::name,
+            wines::producer_id,
+            producers::name,
+            producers::region_id,
+            regions::name,
+            wines::viti_area_id,
+            viti_areas::name,
+            wines::name,
+            wines::wine_type_id,
+            wine_types::name,
+
+        ))
+        .select((
+            wines::id,
+            wines::description,
+            wines::notes,
+            wines::rating,
+            wines::inventory,
+            wines::why,
+            wines::color_id,
+            colors::name,
+            wines::producer_id,
+            producers::name,
+            producers::region_id,
+            regions::name,
+            wines::viti_area_id,
+            viti_areas::name.nullable(), // Left join
+            wines::name,
+            wines::wine_type_id,
+            wine_types::name,
+            sql::<Nullable<Integer>>("max(purchases.vintage)"),
+        ))
+        .load::<Wine>(&*connection)
         .map(Json)
         .map_err(error_status)
 }

@@ -3,7 +3,7 @@ import { Col, Row } from "../../components/Grid";
 import { get, post } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { Wine } from "../../lib/RestTypes";
-import { IWine } from "../../lib/Rest";
+import { IInventoryWine } from "../../lib/Rest";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { Preloader } from "../../components/Preloader";
 import { Btn } from "../../components/Buttons";
@@ -76,7 +76,7 @@ export class InventoryApp extends React.Component<{}, IState> {
 
     private async updateInventory() {
         try {
-            const iWines: IWine[] = await get("/rest/wines/inventory/");
+            const iWines: IInventoryWine[] = await get("/rest/wines/inventory");
             const wines = iWines.map((w) => new Wine(w));
             this.setState({wines, hasLoaded: true});
         } catch (err) {

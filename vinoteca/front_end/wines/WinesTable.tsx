@@ -2,7 +2,6 @@ import * as React from "react";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "../../components/TableCells";
 import { FilterHeader, SortingState, TableHeader } from "../../components/TableHeader";
 import { Wine } from "../../lib/RestTypes";
-import FilterExpr from "../../lib/FilterExpr";
 
 enum SortingValue {
     Inventory,
@@ -127,7 +126,7 @@ export class WinesTable extends React.Component<IProps, IState> {
             case SortingValue.Color:
                 return this.props.wines.sort((w1, w2) => {
                     return w1.color.localeCompare(w2.color) * ascendingMultiplier;
-                })
+                });
             case SortingValue.NameAndType:
                 return this.props.wines.sort((w1, w2) => {
                     // Sort by wineType then name
@@ -149,15 +148,15 @@ export class WinesTable extends React.Component<IProps, IState> {
             case SortingValue.Producer:
                 return this.props.wines.sort((w1, w2) => {
                     return w1.producer.localeCompare(w2.producer) * ascendingMultiplier;
-                })
+                });
             case SortingValue.Region:
                 return this.props.wines.sort((w1, w2) => {
                     return w1.region.localeCompare(w2.region) * ascendingMultiplier;
-                })
+                });
             case SortingValue.VitiArea:
                 return this.props.wines.sort((w1, w2) => {
                     return (w1.vitiArea || "").localeCompare(w2.vitiArea || "") * ascendingMultiplier;
-                })
+                });
             case SortingValue.Vintage:
                 return this.props.wines.sort((w1, w2) => {
                     return (w1.vintage || 0) > (w2.vintage || 0) ? -ascendingMultiplier : ascendingMultiplier;

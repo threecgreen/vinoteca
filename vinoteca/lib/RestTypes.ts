@@ -47,10 +47,10 @@ export class Grape implements IChartInput {
 
     private wine: number;
     private grape: string;
-    private percent: number | undefined;
+    private percent: number | null;
 
     constructor(json: IWineGrape) {
-        this.wine = json.wine;
+        this.wine = json.wineId;
         this.grape = json.grape;
         this.percent = json.percent;
     }
@@ -64,91 +64,62 @@ export class Grape implements IChartInput {
     }
 }
 
-export interface ISearchWinesResult {
-    id: number;
-    name?: string;
-    color: string;
-    producer: string;
-    region: string;
-    wineType: string;
-    vitiArea?: string;
-}
-
-export class Wine {
-    public static getNameAndType(name: string | undefined, wineType: string): string {
+export class Wine implements IWine {
+    public static getNameAndType(name: string | null, wineType: string): string {
         return `${(name ? name + " " : "")}${wineType}`;
     }
 
+    // @ts-ignore
     public id: number;
-    public name?: string;
+    // @ts-ignore
+    public name: string | null;
+    // @ts-ignore
     public inventory: number;
-    public rating?: number;
+    // @ts-ignore
+    public rating: number | null;
+    // @ts-ignore
     public color: string;
+    // @ts-ignore
+    public colorId: number;
+    // @ts-ignore
     public wineType: string;
+    // @ts-ignore
     public wineTypeId: number;
+    // @ts-ignore
     public producer: string;
+    // @ts-ignore
     public producerId: number;
+    // @ts-ignore
     public region: string;
+    // @ts-ignore
     public regionId: number;
-    public vitiArea?: string;
-    public vitiAreaId?: number;
+    // @ts-ignore
+    public vitiArea: string | null;
+    // @ts-ignore
+    public vitiAreaId: number | null;
+    // @ts-ignore
     public lastPurchaseDate: number;
+    // @ts-ignore
     public totalQuantityPurchased: number;
+    // @ts-ignore
     public avgPrice: number;
-    public lastPurchasePrice?: number;
-    public vintage?: number;
-    why?: string;
-    description?: string;
-    notes?: string;
+    // @ts-ignore
+    public lastPurchasePrice: number | null;
+    // @ts-ignore
+    public vintage: number | null;
+    // @ts-ignore
+    public why: string | null;
+    // @ts-ignore
+    public description: string | null;
+    // @ts-ignore
+    public notes: string | null;
 
     constructor(wine: IWine) {
-        this.id = wine.id;
-        this.name = wine.name;
-        this.inventory = wine.inventory;
-        this.rating = wine.rating;
-        this.color = wine.color;
-        this.wineType = wine.wineType;
-        this.wineTypeId = wine.wineTypeId;
-        this.producer = wine.producer;
-        this.producerId = wine.producerId;
-        this.region = wine.region;
-        this.regionId = wine.regionId;
-        this.vitiArea = wine.vitiArea;
-        this.vitiAreaId = wine.vitiAreaId;
-        this.lastPurchaseDate = wine.lastPurchaseDate;
-        this.totalQuantityPurchased = wine.totalQuantity;
-        this.avgPrice = wine.avgPrice;
-        this.lastPurchasePrice = wine.lastPurchasePrice;
-        this.vintage = wine.vintage;
-        this.why = wine.why;
-        this.description = wine.description;
-        this.notes = wine.notes;
+        Object.assign(this, wine);
     }
 
     public get nameAndType(): string {
         return Wine.getNameAndType(this.name, this.wineType);
-    }
-}
-
-export interface IVitiAreaStats extends IRestModel {
-    totalWines: number;
-    avgPrice?: number;
-    avgRating?: number;
-}
-
-export class VitiAreaStats {
-    public id: number;
-    public name: string;
-    public totalWines: number;
-    public avgPrice?: number;
-    public avgRating?: number;
-
-    constructor(vitiAreaStats: IVitiAreaStats) {
-        this.id = vitiAreaStats.id;
-        this.name = vitiAreaStats.name;
-        this.totalWines = vitiAreaStats.totalWines;
-        this.avgPrice = vitiAreaStats.avgPrice;
-        this.avgRating = vitiAreaStats.avgRating;
     }
 }
 

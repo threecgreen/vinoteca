@@ -9,7 +9,7 @@ interface IProps {
     id: number;
     completions: IDict<string | null>;
     name: string;
-    percent?: number;
+    percent: number | null;
     handleDelete: (e: React.MouseEvent, id: number) => void;
     onChange: (id: number, name: string, percent?: string) => void;
 }

@@ -53,7 +53,7 @@ export class GrapesListItem extends React.Component<IGrapeItemProps, {}> {
                 <td>
                     { this.props.item.isEditable ? this.renderEdit() : this.renderItem() }
                 </td>
-                <NumCell num={ this.props.item.wines } />
+                <NumCell num={ this.props.item.wineCount } />
                 <td>{ this.renderButton() }</td>
             </tr>
         );

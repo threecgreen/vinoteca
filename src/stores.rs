@@ -1,11 +1,11 @@
+use super::models::Store;
 use super::query_utils::error_status;
 use super::DbConn;
+use super::schema::stores;
 
 use diesel::prelude::*;
-use models::Store;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::stores;
 
 #[get("/stores?<id>")]
 pub fn get(id: Option<i32>, connection: DbConn) -> Result<Json<Vec<Store>>, Status> {

@@ -1,15 +1,16 @@
+use super::DbConn;
+use super::models::{VitiArea, VitiAreaForm};
 use super::query_utils::error_status;
 use super::schema::{purchases, regions, viti_areas, wines};
-use super::DbConn;
 
 use diesel;
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Float, Integer, Nullable};
-use models::{VitiArea, VitiAreaForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::Serialize;
+use typescript_definitions::TypeScriptify;
 
 #[get("/viti-areas?<id>&<name>&<region_name>")]
 pub fn get(
@@ -30,13 +31,14 @@ pub fn get(
         query = query.filter(regions::name.eq(region_name));
     }
     query
-        .select((viti_areas::id, viti_areas::name, regions::name))
+        .select((viti_areas::id, viti_areas::name, regions::id, regions::name))
         .load::<VitiArea>(&*connection)
         .map(Json)
         .map_err(error_status)
 }
 
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Queryable, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct VitiAreaStats {
     id: i32,
     name: String,
@@ -90,7 +92,7 @@ pub fn post(
                 .inner_join(regions::table)
                 .filter(viti_areas::name.eq((*viti_area_form.name).to_owned()))
                 .filter(regions::id.eq(viti_area_form.region_id))
-                .select((viti_areas::id, viti_areas::name, regions::name))
+                .select((viti_areas::id, viti_areas::name, regions::id, regions::name))
                 .first(&*connection)
                 .map(Json)
         })
@@ -111,7 +113,7 @@ pub fn put(
             viti_areas::table
                 .inner_join(regions::table)
                 .filter(viti_areas::id.eq(id))
-                .select((viti_areas::id, viti_areas::name, regions::name))
+                .select((viti_areas::id, viti_areas::name, regions::id, regions::name))
                 .first(&*connection)
                 .map(Json)
         })

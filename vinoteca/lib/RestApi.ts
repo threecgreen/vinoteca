@@ -1,7 +1,7 @@
 import { get, IQueryParams, post, put, delete_ } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IRegion, IVitiArea, IWine, IPurchase, IRegionForm, IVitiAreaForm } from "./Rest";
-import { IVitiAreaStats, IRestModel } from "./RestTypes";
+import { IProducer, IRegion, IWine, IPurchase, IRegionForm, IVitiAreaForm, IVitiAreaStats, IVitiArea } from "./Rest";
+import { IRestModel } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
 export function toDict(models: IRestModel[]): IDict<string | null> {

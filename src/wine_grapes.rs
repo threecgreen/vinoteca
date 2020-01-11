@@ -1,11 +1,11 @@
-use super::query_utils::error_status;
 use super::DbConn;
+use super::models::WineGrape;
+use super::query_utils::error_status;
+use super::schema::wine_grapes;
 
 use diesel::prelude::*;
-use models::WineGrape;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::wine_grapes;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub fn get(

@@ -3,7 +3,7 @@ extern crate chrono;
 
 use templates::chrono::Datelike;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn this_year() -> u16 {
     chrono::Local::today().year() as u16

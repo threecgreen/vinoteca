@@ -6,8 +6,8 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { getRegion, getWines, getVitiAreaStats, updateRegion } from "../../lib/RestApi";
-import { VitiAreaStats, Wine } from "../../lib/RestTypes";
-import { IRegion } from "../../lib/Rest";
+import { Wine } from "../../lib/RestTypes";
+import { IRegion, IVitiAreaStats } from "../../lib/Rest";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
 import { PlaceWinesTable } from "../../components/PlaceWinesTable";
@@ -20,7 +20,7 @@ interface IState {
     // "Pure" state
     region?: IRegion;
     wines: Wine[];
-    vitiAreas: VitiAreaStats[];
+    vitiAreas: IVitiAreaStats[];
 }
 
 interface IProps {
@@ -68,7 +68,7 @@ export class RegionProfile extends React.Component<IProps, IState> {
 
     private async getAndSetVitiAreaStats() {
         const vitiAreas = await getVitiAreaStats({regionId: this.props.regionId});
-        this.setState({vitiAreas: vitiAreas.map((vA) => new VitiAreaStats(vA))});
+        this.setState({vitiAreas: vitiAreas});
     }
 
     public render() {

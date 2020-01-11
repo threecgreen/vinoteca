@@ -3,7 +3,7 @@ import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
-import { IProducer, IRegion } from "../../lib/RestTypes";
+import { IProducer, IRegion } from "../../lib/Rest";
 import { ProducerProfileTextInput } from "./ProducerProfileApp";
 
 interface IProducerProps {

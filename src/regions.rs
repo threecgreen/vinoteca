@@ -1,12 +1,12 @@
-use super::query_utils::error_status;
 use super::DbConn;
+use super::models::{Region, RegionForm};
+use super::query_utils::error_status;
+use super::schema::{producers, regions};
 
 use diesel;
 use diesel::prelude::*;
-use models::{Region, RegionForm};
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{producers, regions};
 
 // TODO: get flag data for autocomplete
 #[get("/regions?<id>&<name>&<producer_name>")]

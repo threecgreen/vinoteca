@@ -1,29 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { GreenCard } from "../../components/Cards"
-import { get } from "../../lib/ApiHelper";
-import Logger from "../../lib/Logger";
+import React, { useEffect, useState } from "react";
+import { GreenCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
 import { Table } from "../../components/Table";
-import { DateCell, TextCell, NameAndTypeCell, ProducerCell, RegionCell, NumCell, PriceCell } from "../../components/TableCells";
+import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
+import { get } from "../../lib/ApiHelper";
+import Logger from "../../lib/Logger";
+import { IRecentPurchase } from "../../lib/Rest";
 import { Wine } from "../../lib/RestTypes";
-
-interface IRecentPurchase {
-    id: number,
-    price?: number,
-    quantity?: number,
-    vintage?: number,
-    memo?: string,
-    store?: string,
-    date?: number,
-    wine_id: number,
-    wine_name?: string,
-    producer_id: number,
-    producer: string,
-    region_id: number,
-    region: string,
-    wine_type_id: number,
-    wine_type: string,
-}
 
 export const RecentPurchases: React.FC<{}> = (_) => {
     const logger = new Logger(RecentPurchases.name);

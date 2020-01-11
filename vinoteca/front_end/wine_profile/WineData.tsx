@@ -6,14 +6,14 @@ import { capitalizeFirstLetter } from "../../lib/utils";
 
 interface IProps {
     color: string;
-    description?: string;
+    description: string | null;
     inventory: number;
-    mostRecentVintage?: number;
-    notes?: string;
-    rating?: number;
-    vitiArea?: string;
-    vitiAreaId?: number;
-    why?: string;
+    mostRecentVintage: number | null;
+    notes: string | null;
+    rating: number | null;
+    vitiArea: string | null;
+    vitiAreaId: number | null;
+    why: string | null;
     // Handlers
     onInventoryChange: (changeType: InventoryChange) => void;
 }
