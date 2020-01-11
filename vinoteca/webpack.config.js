@@ -26,8 +26,6 @@ module.exports = (env, argv) => {
             region_profile: [inputPath + "region_profile/region_profile.ts"],
             viti_area_profile: [inputPath + "viti_area_profile/viti_area_profile.ts"],
             // Wines
-            edit_purchase: [inputPath + "edit_purchase/edit_purchase.ts"],
-            edit_wine: [inputPath + "edit_wine/edit_wine.ts"],
             inventory: [inputPath + "inventory/inventory.ts"],
             new_purchase: [inputPath + "new_purchase/new_purchase.ts"],
             new_wine: [inputPath + "new_wine/new_wine.ts"],
