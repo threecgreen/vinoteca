@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
@@ -68,11 +68,9 @@ export class Producer extends React.Component<IProducerProps> {
                     <form autoComplete="off">
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
-                            onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(ProducerProfileTextInput.Producer, c, p) }
                         />
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
-                            onSpecialCharClick={ (c, p) => this.props.onSpecialCharClick(ProducerProfileTextInput.Region, c, p) }
                         />
                     </form>
                 </Col>

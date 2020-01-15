@@ -1,10 +1,9 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import { WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
@@ -42,7 +41,6 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
-        this.onWineTypeSpecialCharClick = this.onWineTypeSpecialCharClick.bind(this);
     }
 
     public async componentDidMount() {
@@ -72,7 +70,6 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
                     wineType={ this.state.wineType }
                     wineTypeText={ this.state.wineTypeText }
                     onWineTypeChange={ this.onWineTypeChange }
-                    onWineTypeSpecialCharClick={ this.onWineTypeSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
                 />
@@ -105,12 +102,6 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         this.setState({
             wineTypeText: val,
         });
-    }
-
-    private onWineTypeSpecialCharClick(char: string, position: number) {
-        this.setState((prevState) => ({
-            wineTypeText: SimpleSpecialChars.insertCharAt(prevState.wineTypeText, char, position),
-        }));
     }
 
     private async onConfirmClick(e: React.MouseEvent) {

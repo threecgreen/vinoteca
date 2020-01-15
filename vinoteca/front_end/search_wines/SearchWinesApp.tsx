@@ -1,13 +1,11 @@
-import * as React from "react";
+import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
-import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
+import { searchWines } from "../../lib/RestApi";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
-import { searchWines } from "../../lib/RestApi";
 
 export enum SearchWinesInput {
     Color,
@@ -53,7 +51,6 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         this.logger = new Logger(this.constructor.name),
         this.querySearchResults = this.querySearchResults.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onResetClick = this.onResetClick.bind(this);
     }
 
@@ -75,7 +72,6 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                     regionText={ this.state.regionText }
                     vitiAreaText={ this.state.vitiAreaText }
                     onInputChange={ this.onInputChange }
-                    onSpecialCharClick={ this.onSpecialCharClick }
                 />
                 <SearchWinesResults results={ this.state.results }
                     resultState={ this.state.resultState }
@@ -98,31 +94,6 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
                 return this.setState({ vitiAreaText: val }, this.querySearchResults);
             default:
                 this.logger.logWarning(`Tried to change an unknown property ${input}`);
-        }
-    }
-
-    private onSpecialCharClick(input: SearchWinesTextInput, char: string, position: number) {
-        switch (input) {
-            case SearchWinesTextInput.WineType:
-                return this.setState((prevState) => ({
-                    wineTypeText: SimpleSpecialChars.insertCharAt(prevState.wineTypeText, char, position),
-                // callback to query
-                }), this.querySearchResults);
-            case SearchWinesTextInput.Producer:
-                return this.setState((prevState) => ({
-                    producerText: SimpleSpecialChars.insertCharAt(prevState.producerText, char, position),
-                }), this.querySearchResults);
-            case SearchWinesTextInput.Region:
-                return this.setState((prevState) => ({
-                    regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
-                }), this.querySearchResults);
-            case SearchWinesTextInput.VitiArea:
-                return this.setState((prevState) => ({
-                    vitiAreaText: SimpleSpecialChars.insertCharAt(prevState.vitiAreaText, char, position),
-                }), this.querySearchResults);
-            default:
-                this.logger.logError("The special char controller should not be displayed"
-                                     + " before a text input has come into focus.");
         }
     }
 

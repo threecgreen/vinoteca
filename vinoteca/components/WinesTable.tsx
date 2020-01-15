@@ -1,7 +1,7 @@
 import * as React from "react";
+import { IWine } from "../lib/Rest";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";
 import { FilterHeader, SortingState, TableHeader } from "./TableHeader";
-import { IWine } from "../lib/Rest";
 
 enum SortingValue {
     Inventory,
@@ -112,15 +112,18 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
                                 name={ wine.name }
                                 wineType={ wine.wineType }
                             />
-                            <ProducerCell id={ wine.producerId }>
-                                { wine.producer }
-                            </ProducerCell>
-                            <RegionCell id={ wine.regionId }>
-                                { wine.region }
-                            </RegionCell>
-                            <VitiAreaCell id={ wine.vitiAreaId }>
-                                { wine.vitiArea }
-                            </VitiAreaCell>
+                            { exCol === ColumnToExclude.Producer
+                                || <ProducerCell id={ wine.producerId }>
+                                    { wine.producer }
+                                </ProducerCell> }
+                            { exCol === ColumnToExclude.Region
+                                || <RegionCell id={ wine.regionId }>
+                                    { wine.region }
+                                </RegionCell> }
+                            { exCol === ColumnToExclude.VitiArea
+                                || <VitiAreaCell id={ wine.vitiAreaId }>
+                                    { wine.vitiArea }
+                                </VitiAreaCell> }
                             <YearCell year={ wine.lastPurchaseVintage } />
                             <NumCell maxDecimals={ 0 } num={ wine.rating } />
                         </tr>

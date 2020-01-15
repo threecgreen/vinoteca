@@ -1,12 +1,12 @@
-import * as React from "react";
+import React from "react";
 import { CSRFToken } from "../../components/CSRFToken";
-import { GrapeFormApp } from "../../components/GrapesFormApp";
+import { GrapesInputs } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { PurchaseInputs } from "../../components/PurchaseInputs";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import Logger from "../../lib/Logger";
 import { WineInputs } from "./WineInputs";
+import { IWineGrape } from "../../lib/Rest";
 
 export enum NewWineTextInput {
     StoreName,
@@ -32,6 +32,7 @@ interface IState {
     vitiArea: string;
     description: string;
     notes: string;
+    wineGrapes: IWineGrape[];
 }
 
 // TODO: Improve the performance of this component
@@ -51,6 +52,7 @@ export class NewWineApp extends React.Component<{}, IState> {
             vitiArea: "",
             description: "",
             notes: "",
+            wineGrapes: [],
         };
         this.logger = new Logger(this.constructor.name);
     }
@@ -75,11 +77,12 @@ export class NewWineApp extends React.Component<{}, IState> {
                             description={ this.state.description }
                             notes={ this.state.notes }
                             onInputChange={ (i, v) => this.onInputChange(i, v) }
-                            onSpecialCharClick={ (i, c, p) => this.onSpecialCharClick(i, c, p) }
                         />
                     </Row>
                     {/* TODO: make grape form not an app so special characters work */}
-                    <GrapeFormApp />
+                    <GrapesInputs wineGrapes={ this.state.wineGrapes }
+                        updateWineGrapes={ (wineGrapes) => this.setState({wineGrapes}) }
+                    />
                     {/* TODO: use Buttons components */}
                     <button className="btn waves-effect waves-light green-bg" type="submit"
                         name="action"
@@ -121,34 +124,6 @@ export class NewWineApp extends React.Component<{}, IState> {
                 return this.setState({notes: val});
             default:
                 this.logger.logWarning(`Tried to change an unknown property ${input}`);
-        }
-    }
-
-    private onSpecialCharClick(input: NewWineTextInput, char: string, position: number) {
-        switch (input) {
-            case NewWineTextInput.StoreName:
-                return this.setState((prevState) => ({storeName: SimpleSpecialChars.insertCharAt(prevState.storeName, char, position)}));
-            case NewWineTextInput.Memo:
-                return this.setState((prevState) => ({memo: SimpleSpecialChars.insertCharAt(prevState.memo, char, position)}));
-            case NewWineTextInput.WineType:
-                return this.setState((prevState) => ({memo: SimpleSpecialChars.insertCharAt(prevState.memo, char, position)}));
-            case NewWineTextInput.Producer:
-                return this.setState((prevState) => ({producer: SimpleSpecialChars.insertCharAt(prevState.producer, char, position)}));
-            case NewWineTextInput.Region:
-                return this.setState((prevState) => ({region: SimpleSpecialChars.insertCharAt(prevState.region, char, position)}));
-            case NewWineTextInput.Name:
-                return this.setState((prevState) => ({name: SimpleSpecialChars.insertCharAt(prevState.name, char, position)}));
-            case NewWineTextInput.Why:
-                return this.setState((prevState) => ({why: SimpleSpecialChars.insertCharAt(prevState.why, char, position)}));
-            case NewWineTextInput.VitiArea:
-                return this.setState((prevState) => ({vitiArea: SimpleSpecialChars.insertCharAt(prevState.vitiArea, char, position)}));
-            case NewWineTextInput.Description:
-                return this.setState((prevState) => ({description: SimpleSpecialChars.insertCharAt(prevState.description, char, position)}));
-            case NewWineTextInput.Notes:
-                return this.setState((prevState) => ({notes: SimpleSpecialChars.insertCharAt(prevState.notes, char, position)}));
-            default:
-                this.logger.logError("The special char controller should not be displayed"
-                                     + " before a text input has come into focus.");
         }
     }
 }

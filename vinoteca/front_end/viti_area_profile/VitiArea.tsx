@@ -1,15 +1,14 @@
-import * as React from "react";
-import { Col, Row } from "../../components/Grid";
-import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
+import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Col, Row } from "../../components/Grid";
+import { VitiAreaInput } from "../../components/VitiAreaInput";
+import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
 
 interface IProps {
     isEditing: boolean;
     vitiAreaText: string;
     vitiArea: IVitiArea;
     onVitiAreaChange: (val: string) => void;
-    onVitiAreaSpecialCharClick: (c: string, position: number) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -55,7 +54,6 @@ export class VitiArea extends React.Component<IProps, IState> {
                     <form autoComplete="off">
                         <VitiAreaInput value={ this.props.vitiAreaText }
                             onChange={ this.props.onVitiAreaChange }
-                            onSpecialCharClick={ this.props.onVitiAreaSpecialCharClick }
                         />
                     </form>
                 </Col>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
@@ -44,7 +44,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
     }
 
     public async componentDidMount() {
@@ -80,7 +79,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
                     vitiArea={ this.state.vitiArea }
                     vitiAreaText={ this.state.vitiAreaText }
                     onVitiAreaChange={ this.onVitiAreaChange }
-                    onVitiAreaSpecialCharClick={ this.onSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
                 />
@@ -143,12 +141,6 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         this.setState((state) => ({
             isEditing: false,
             vitiAreaText: state.vitiArea ? state.vitiArea.name : "",
-        }));
-    }
-
-    private onSpecialCharClick(char: string, position: number) {
-        this.setState((prevState) => ({
-            vitiAreaText: SimpleSpecialChars.insertCharAt(prevState.vitiAreaText, char, position),
         }));
     }
 }

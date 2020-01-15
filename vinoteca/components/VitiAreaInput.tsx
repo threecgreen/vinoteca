@@ -1,39 +1,39 @@
 import * as React from "react";
-import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
-import { nameToId } from "../lib/utils";
-import { staticAutocomplete } from "../lib/widgets";
+import { getVitiAreas, toDict } from "../lib/RestApi";
+import { IRestModel } from "../lib/RestTypes";
+import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
-import { toDict } from "../lib/RestApi";
-import { IRestModel } from "../lib/RestTypes";
 
 interface IProps extends IOnChange {
     value: string;
-    onSpecialCharClick: (c: string, position: number) => void;
 }
 
-export const VitiAreaInput: React.FC<IProps> = (props) => {
+export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
     const logger = new Logger(VitiAreaInput.toString());
+    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
-                const vitiAreas: IRestModel[] = await get("/rest/viti-areas");
-                staticAutocomplete(nameToId("Viti Area"), toDict(vitiAreas), props.onChange);
+                const vitiAreas: IRestModel[] = await getVitiAreas({});
+                autocomplete(inputRef, toDict(vitiAreas), onChange);
             } catch (e) {
                 logger.logError("Failed to get viti area autocomplete options");
             }
         }
 
         fetchVitiAreas();
-    }, []);
+    }, [inputRef, onChange]);
 
     return (
         <StatelessTextInput name="Viti Area"
             className="autocomplete"
+            inputRef={ inputRef }
             s={ 8 } l={ 4 }
-            { ...props }
+            value={ value }
+            onChange={ onChange }
         />
     );
 }

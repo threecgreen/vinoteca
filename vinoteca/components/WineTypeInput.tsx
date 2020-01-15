@@ -1,47 +1,36 @@
-import * as React from "react";
+import React from "react";
 import { get } from "../lib/ApiHelper";
-import Logger from "../lib/Logger";
-import { IDict, nameToId } from "../lib/utils";
-import { staticAutocomplete } from "../lib/widgets";
+import { toDict } from "../lib/RestApi";
+import { IRestModel } from "../lib/RestTypes";
+import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
-import { IRestModel } from "../lib/RestTypes";
-import { toDict } from "../lib/RestApi";
 
 interface IWineTypeInputProps extends IOnChange {
     value: string;
-    onSpecialCharClick: (c: string, position: number) => void;
 }
 
-interface IWineTypeInputState {
-    autocompleteOptions: IDict<string>;
-}
+export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
+    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-export class WineTypeInput extends React.Component<IWineTypeInputProps, IWineTypeInputState> {
-    private logger: Logger;
-
-    constructor(props: IWineTypeInputProps) {
-        super(props);
-        this.state = {autocompleteOptions: {}};
-        this.logger = new Logger(this.constructor.name);
-    }
-
-    public async componentDidMount() {
-        try {
+    React.useEffect(() => {
+        async function fetchWineTypes() {
             const wineTypes: IRestModel[] = await get("/rest/wine-types");
-            staticAutocomplete(nameToId("Wine Type"), toDict(wineTypes), this.props.onChange);
-        } catch (e) {
-            this.logger.logError("Failed to get wine type autocomplete options");
+            autocomplete(inputRef, toDict(wineTypes), props.onChange);
         }
-    }
+        fetchWineTypes();
+    }, [inputRef]);
 
-    public render() {
-        return (
-            <StatelessTextInput name="Wine Type"
-                className="autocomplete"
-                s={ 8 } l={ 4 }
-                { ...this.props }
-            />
-        );
-    }
+    return (
+        <StatelessTextInput name="Wine Type"
+            className="autocomplete"
+            s={ 8 } l={ 4 }
+            value={ props.value }
+            inputRef={ inputRef }
+            onFocus={ props.onFocus }
+            onChange={ props.onChange }
+            onBlur={ props.onBlur }
+        />
+    );
 }
+WineTypeInput.displayName = "WineTypeInput";

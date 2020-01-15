@@ -8,13 +8,13 @@ import { IDict, nameToId } from "./utils";
 
 type OnChange = (e: string) => void;
 
+// TODO: use refs
 /** Setup autocompletion with provided completion options. */
-export function staticAutocomplete(elementId: string, completions: IDict<string | null>,
-                                   onChange: OnChange, minLength = 1, limit = 5) {
-    const logger = new Logger("widgets");
-    const elem = selectById(elementId);
-    if (elem) {
-        const instance = new Autocomplete(elem, {
+export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
+                             completions: IDict<string | null>,
+                             onChange: OnChange, minLength = 1, limit = 5) {
+    if (elem.current) {
+        const instance = new Autocomplete(elem.current, {
             data: completions,
             limit,
             minLength,
@@ -25,37 +25,7 @@ export function staticAutocomplete(elementId: string, completions: IDict<string 
         });
         // Fix overlappting text bug
         M.updateTextFields();
-    } else {
-        logger.logError(`Could not find DOM element with id ${elementId}`);
     }
-}
-
-/** Improved autocomplete without JQuery. Meant for use with React. */
-export async function rAutocomplete(modelName: string, onChange: OnChange,
-                                    minLength = 1, limit = 5) {
-    try {
-        const completions: IRestModel[] = await get(`/rest/${modelName.toLowerCase()}s`);
-        staticAutocomplete(nameToId(modelName), toDict(completions), onChange, minLength, limit);
-    } catch {
-        const logger = new Logger("widgets");
-        logger.logWarning(`Failed to fetch autocompletion data for ${modelName}`);
-    }
-}
-
-/**
- * Streamlines the configuration of Materialize CSS autocomplete. Deprecated in
- * favor of rAutocomplete which doesn't use JQuery.
- */
-export function autocomplete(modelName: string, limit = 5, minLength = 1, selector?: string) {
-    get<IRestModel[]>(`/rest/${modelName.toLowerCase()}s`)
-        .then((completionData) => {
-            const elem = selectById(selector ? selector : `auto-${modelName}`);
-            const instances = new Autocomplete(elem, {
-                data: toDict(completionData),
-                limit,
-                minLength,
-            });
-        });
 }
 
 /**

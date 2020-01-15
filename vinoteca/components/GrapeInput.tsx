@@ -1,78 +1,53 @@
-import * as React from "react";
-import { IDict, isEmpty } from "../lib/utils";
-import { staticAutocomplete } from "../lib/widgets";
+import React from "react";
+import { IDict } from "../lib/utils";
 import { FloatingBtn } from "./Buttons";
-import { Col, InputField } from "./Grid";
+import { InputField } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
+import { StatelessNumberInput } from "./StatelessNumberInput";
+import { StatelessTextInput } from "./StatelessTextInput";
+import { autocomplete } from "../lib/widgets";
 
 interface IProps {
     id: number;
     completions: IDict<string | null>;
-    name: string;
+    grape: string;
     percent: number | null;
     handleDelete: (e: React.MouseEvent, id: number) => void;
-    onChange: (id: number, name: string, percent?: string) => void;
+    onChange: (id: number, name: string, percent: number | null) => void;
 }
 
-export class GrapeInput extends React.Component<IProps> {
-    public constructor(props: IProps) {
-        super(props);
-        this.onChange = this.onChange.bind(this);
-    }
+export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, handleDelete, onChange}) => {
+    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-    public get PercentId(): string {
-        return `grape-${this.props.id}-pct`;
-    }
+    React.useEffect(() => {
+        autocomplete(inputRef, completions, (s) => onChange(id, s, percent))
+    }, [inputRef, completions, onChange, id, percent]);
 
-    public get NameId(): string {
-        return `grape-${this.props.id}`;
-    }
-
-    public render() {
-        return (
-            <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
-                <InputField s={ 1 }>
-                    <FloatingBtn onClick={ (e) => this.props.handleDelete(e, this.props.id) }
-                                classes={ ["red-bg"] }>
-                        <MaterialIcon iconName="remove"></MaterialIcon>
-                    </FloatingBtn>
-                </InputField>
-                <InputField s={ 3 }>
-                    <input id={ this.PercentId }
-                        name={ this.PercentId }
-                        type="number"
-                        className="validate"
-                        onChange={ (e) => this.onChange(this.props.name, e.target.value || undefined)}
-                        value={ this.props.percent || "" }
-                    />
-                    <label htmlFor={ this.PercentId }>Percentage</label>
-                </InputField>
-                <InputField s={ 8 }>
-                    <input id={ this.NameId }
-                        name={ this.NameId }
-                        type="text"
-                        className="autocomplete"
-                        onChange={ (e) => this.props.onChange(this.props.id,
-                                                                e.target.value,
-                                                                `${this.props.percent}`)}
-                        value={ this.props.name || "" } />
-                    <label htmlFor={ this.NameId }>Grape</label>
-                </InputField>
-            </Col>
-        );
-    }
-
-    public onChange(name: string, percent?: string) {
-        this.props.onChange(this.props.id, name, percent);
-    }
-
-    /** Starts autocomplete on mount */
-    public componentDidMount() {
-        if (!isEmpty(this.props.completions)) {
-            staticAutocomplete(
-                this.NameId, this.props.completions,
-                (text) => this.onChange(text, `${this.props.percent}`),
-            );
-        }
-    }
+    return (
+        <>
+            <InputField s={ 1 }>
+                <FloatingBtn onClick={ (e) => handleDelete(e, id) }
+                    classes={ ["red-bg"] }
+                >
+                    <MaterialIcon iconName="remove" />
+                </FloatingBtn>
+            </InputField>
+            <StatelessNumberInput name="Percent"
+                s={ 3 }
+                number={ percent }
+                min={ 0 }
+                max={ 100 }
+                step="1"
+                onChange={ (n) => onChange(id, name, n) }
+            />
+            <StatelessTextInput name="Grape"
+                s={ 8 }
+                className="autocomplete"
+                value={ grape }
+                onChange={ (v) => onChange(id, v, percent) }
+                inputRef={ inputRef }
+            />
+        </>
+    );
 }
+GrapeInput.displayName = "GrapeInput";

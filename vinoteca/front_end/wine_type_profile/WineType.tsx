@@ -1,15 +1,14 @@
-import * as React from "react";
-import { Col, Row } from "../../components/Grid";
-import { IRestModel } from "../../lib/RestTypes";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
+import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Col, Row } from "../../components/Grid";
+import { VitiAreaInput } from "../../components/VitiAreaInput";
+import { IRestModel } from "../../lib/RestTypes";
 
 interface IProps {
     isEditing: boolean;
     wineTypeText: string;
     wineType: IRestModel;
     onWineTypeChange: (val: string) => void;
-    onWineTypeSpecialCharClick: (c: string, position: number) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -49,7 +48,6 @@ export class WineType extends React.Component<IProps> {
                     <form autoComplete="off">
                         <VitiAreaInput value={ this.props.wineTypeText }
                             onChange={ this.props.onWineTypeChange }
-                            onSpecialCharClick={ this.props.onWineTypeSpecialCharClick }
                         />
                     </form>
                 </Col>

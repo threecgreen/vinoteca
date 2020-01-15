@@ -1,10 +1,9 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IRegion, IVitiAreaStats, IWine } from "../../lib/Rest";
@@ -44,7 +43,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
     }
 
     public async componentDidMount() {
@@ -82,7 +80,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
                     onRegionChange={ this.onRegionChange }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
-                    onRegionSpecialCharClick={ this.onSpecialCharClick }
                 />
                 <Row>
                     <Col s={ 12 } l={ 9 }>
@@ -139,12 +136,6 @@ export class RegionProfile extends React.Component<IProps, IState> {
         this.setState((state) => ({
             isEditing: false,
             regionText: state.region ? state.region.name : "",
-        }));
-    }
-
-    private onSpecialCharClick(char: string, position: number) {
-        this.setState((prevState) => ({
-            regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
         }));
     }
 }

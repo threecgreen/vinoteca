@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { IRegion } from "../../lib/Rest";
 import { RegionInput } from "../../components/RegionInput";
@@ -10,7 +10,6 @@ interface IRegionProps {
     regionText: string;
     region: IRegion;
     onRegionChange: (val: string) => void;
-    onRegionSpecialCharClick: (c: string, position: number) => void;
     onConfirmClick: (e: React.MouseEvent) => void;
     onCancelClick: (e: React.MouseEvent) => void;
 }
@@ -58,7 +57,6 @@ export class Region extends React.Component<IRegionProps, IRegionState> {
                     <form autoComplete="off">
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.props.onRegionChange }
-                            onSpecialCharClick={ this.props.onRegionSpecialCharClick }
                         />
                     </form>
                 </Col>
