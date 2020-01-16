@@ -61,6 +61,10 @@ export function numToDate(num: number): Date {
     return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
 }
 
+export function dateToNum(date: Date): number {
+    return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDay();
+}
+
 /**
  * Returns the default vintage year, which is two years prior to the current
  * year. This function duplicates the Python function

@@ -1,8 +1,10 @@
 import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor } from "./Rest";
+import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor, IStore } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
+
+// TODO: does it make sense to throw an error if the response is an empty list?
 
 export function toDict(models: IRestModel[]): IDict<string | null> {
     let result: IDict<string | null> = {};
@@ -65,32 +67,6 @@ export async function getColors({ id }: IGetColorParams): Promise<IColor[]> {
 
 export const getColor = singleEntityGetter(getColors);
 
-/* REGIONS */
-interface IGetRegionParams {
-    id?: number;
-    name?: string;
-    producerName?: string;
-}
-
-export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
-    const nonNullParams = nonNulls({ id, name, producer_name: producerName });
-    const regions: IRegion[] = await get("/rest/regions", nonNullParams);
-    if (regions.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for region"));
-    }
-    return regions;
-}
-
-export const getRegion = singleEntityGetter(getRegions);
-
-export async function createRegion(region: IRegionForm): Promise<IRegion> {
-    return post("/rest/regions", region);
-}
-
-export async function updateRegion(region: IRegion): Promise<IRegion> {
-    return put(`/rest/regions/${region.id}`, region);
-}
-
 /* PRODUCERS */
 interface IGetProducersParams {
     id?: number;
@@ -130,6 +106,46 @@ export async function getPurchases({wineId}: IGetPurchasesParams): Promise<IPurc
     return purchases;
 }
 
+/* REGIONS */
+interface IGetRegionParams {
+    id?: number;
+    name?: string;
+    producerName?: string;
+}
+
+export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
+    const nonNullParams = nonNulls({ id, name, producer_name: producerName });
+    const regions: IRegion[] = await get("/rest/regions", nonNullParams);
+    if (regions.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for region"));
+    }
+    return regions;
+}
+
+export const getRegion = singleEntityGetter(getRegions);
+
+export async function createRegion(region: IRegionForm): Promise<IRegion> {
+    return post("/rest/regions", region);
+}
+
+export async function updateRegion(region: IRegion): Promise<IRegion> {
+    return put(`/rest/regions/${region.id}`, region);
+}
+
+/* STORES */
+interface IGetStoreParams {
+    id?: number;
+    name?: string;
+}
+
+export async function getStores({id, name}: IGetStoreParams): Promise<IStore[]> {
+    const nonNullParams = nonNulls({id, name});
+    const stores: IStore[] = await get("/rest/stores", nonNullParams);
+    return stores;
+}
+
+export const getStore = singleEntityGetter(getStores);
+
 /* VITI AREAS */
 interface IGetVitiAreasParams {
     id?: number;
@@ -141,7 +157,7 @@ export async function getVitiAreas(
     { id, name, regionName }: IGetVitiAreasParams,
 ): Promise<IVitiArea[]> {
     const nonNullParams = nonNulls({ id, name, region_name: regionName });
-    const vitiAreas: IVitiArea[] = await get("/rest/viti-areas/", nonNullParams);
+    const vitiAreas: IVitiArea[] = await get("/rest/viti-areas", nonNullParams);
     if (vitiAreas.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for viti area"));
     }
@@ -151,11 +167,11 @@ export async function getVitiAreas(
 export const getVitiArea = singleEntityGetter(getVitiAreas);
 
 export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {
-    return post("/rest/viti-areas/", vitiArea);
+    return post("/rest/viti-areas", vitiArea);
 }
 
 export async function updateVitiArea(vitiArea: IVitiArea): Promise<IVitiArea> {
-    return put(`/rest/viti-areas/${vitiArea.id}/`, vitiArea);
+    return put(`/rest/viti-areas/${vitiArea.id}`, vitiArea);
 }
 
 interface IGetVitiAreaStatsParams {

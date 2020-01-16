@@ -1,11 +1,15 @@
 import React from "react";
-import { defaultVintageYear, numToDate } from "../lib/utils";
+import Logger from "../lib/Logger";
+import { IStore } from "../lib/Rest";
+import { getStores, toDict } from "../lib/RestApi";
+import { dateToNum, defaultVintageYear, numToDate } from "../lib/utils";
+import { autocomplete } from "../lib/widgets";
 import { CheckboxInput } from "./CheckboxInput";
 import { DateInput } from "./DateInput";
 import { NumberInput } from "./NumberInput";
 import { TextInput } from "./TextInput";
 
-export interface PurchaseInputData {
+interface IData {
     date: number;
     quantity: number;
     shouldAddToInventory: boolean | null;
@@ -15,48 +19,123 @@ export interface PurchaseInputData {
     memo: string;
 }
 
-interface IProps {
-    displayInventoryBtn: boolean;
+export const initPurchaseInputData: () => IData = () => ({
+    date: dateToNum(new Date()),
+    quantity: 1,
+    shouldAddToInventory: true,
+    price: 0.00,
+    vintage: defaultVintageYear(),
+    store: "",
+    memo: "",
+});
+
+type Action =
+    | { type: "setDate", date: number }
+    | { type: "setQuantity", quantity: number }
+    | { type: "setShouldAddToInventory", shouldAddToInventory: boolean }
+    | { type: "setPrice", price: number }
+    | { type: "setVintage", vintage: number }
+    | { type: "setStore", store: string }
+    | { type: "setMemo", memo: string };
+
+export const purchaseInputReducer: React.Reducer<IData, Action> = (state, action) => {
+    switch (action.type) {
+        case "setDate":
+            return { ...state, date: action.date };
+        case "setQuantity":
+            return { ...state, quantity: action.quantity };
+        case "setShouldAddToInventory":
+            return { ...state, shouldAddToInventory: action.shouldAddToInventory };
+        case "setPrice":
+            return { ...state, price: action.price };
+        case "setVintage":
+            return { ...state, vintage: action.vintage };
+        case "setStore":
+            return { ...state, store: action.store };
+        case "setMemo":
+            return { ...state, memo: action.memo };
+        default:
+            return state;
+    }
 }
 
-export const PurchaseInputs: React.FC<IProps> = (props) => {
-            // date: new Date(),
-            // price: 0.00,
-            // quantity: 1,
+interface IProps {
+    displayInventoryBtn: boolean;
+    data: IData;
+    dispatch: React.Dispatch<Action>;
+}
 
-    const [quantityS, quantityL] = props.displayInventoryBtn ? [3, 2] : [6, 3];
+export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dispatch}) => {
+    const logger = new Logger(PurchaseInputs.name);
+    const storeInputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-    const inventory = props.displayInventoryBtn
+    const onStoreChange: (store: string) => void = (store) => {
+        dispatch({type: "setStore", store});
+    }
+
+    React.useEffect(() => {
+        async function fetchStores() {
+            try {
+                const stores: IStore[] = await getStores({});
+                autocomplete(storeInputRef, toDict(stores), onStoreChange);
+            } catch (e) {
+                logger.logError("Failed to get store autocomplete options");
+            }
+        }
+
+        fetchStores();
+    }, [storeInputRef]);
+
+    const [quantityS, quantityL] = displayInventoryBtn ? [3, 2] : [6, 3];
+    const inventory = displayInventoryBtn
         ? <CheckboxInput text="Add to Inventory" enabled
             name="add-to-inventory"
-            isChecked={ props.shouldAddToInventory }
-            onClick={ props.onInput }
+            isChecked={ data.shouldAddToInventory! }
+            onClick={ (checked) => dispatch({type: "setShouldAddToInventory", shouldAddToInventory: checked}) }
             s={ 3 } l={ 1 }
         />
         : null;
     return (
         <>
             <DateInput name="Purchase Date"
-                date={ props.formData.date !== null ? numToDate(props.formData.date) : props.formData.date }
-
-
+                date={ data.date !== null ? numToDate(data.date) : data.date }
+                onChange={ (date) => dispatch({type: "setDate", date: dateToNum(date)}) }
             />
-            <NumberInput id="quantity" name="Quantity" className="validate"
-                            initNumber={ this.state.quantity } enabled={ true }
-                            min={ 0 } step="1" s={ quantityS } l={ quantityL } />
+            <NumberInput name="Quantity"
+                number={ data.quantity }
+                onChange={ (quantity) => dispatch({type: "setQuantity", quantity}) }
+                min={ 0 }
+                step="1"
+                s={ quantityS } l={ quantityL }
+            />
             { inventory }
-            <NumberInput id="price" name="Price" className="validate"
-                            initNumber={ this.state.price } enabled={ true }
-                            min={ 0 } step="0.01" s={ 6 } l={ 3 } />
-            <NumberInput id="vintage" name="Vintage" className="validate"
-                            initNumber={ defaultVintageYear() } enabled={ true }
-                            min={ 1900 } step="1" max={ new Date().getFullYear() }
-                            s={ 6 } l={ 3 } />
-            <TextInput name="Store" autocomplete enabled
-                initText={ this.props.storeName } className="autocomplete" s={ 6 } l={ 3 }
+            <NumberInput name="Price"
+                number={ data.price }
+                onChange={ (price) => dispatch({type: "setPrice", price}) }
+                min={ 0 }
+                step="0.01"
+                s={ 6 } l={ 3 }
             />
-            <TextInput name="Memo" autocomplete={ false }
-                initText={ this.props.memo } enabled className="" s={ 6 } l={ 3 }
+            <NumberInput name="Vintage"
+                number={ data.vintage }
+                onChange={ (vintage) => dispatch({type: "setVintage", vintage}) }
+                min={ 1900 }
+                step="1"
+                max={ new Date().getFullYear() }
+                s={ 6 } l={ 3 }
+            />
+            <TextInput name="Store"
+                className="autocomplete"
+                value={ data.store }
+                onChange={ onStoreChange }
+                s={ 6 } l={ 3 }
+                inputRef={ storeInputRef }
+            />
+            <TextInput name="Memo"
+                className=""
+                value={ data.memo }
+                onChange={ (memo) => dispatch({type: "setMemo", memo}) }
+                s={ 6 } l={ 3 }
             />
         </>
     );

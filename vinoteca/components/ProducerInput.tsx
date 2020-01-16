@@ -4,7 +4,7 @@ import { IProducer } from "../lib/Rest";
 import { getProducers, toDict } from "../lib/RestApi";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
-import { StatelessTextInput } from "./StatelessTextInput";
+import { TextInput } from "./TextInput";
 
 interface IProps extends IOnChange {
     value: string;
@@ -28,7 +28,7 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
     }, [inputRef]);
 
     return (
-        <StatelessTextInput name="Producer"
+        <TextInput name="Producer"
             className="autocomplete"
             s={ 6 } l={ 3 }
             inputRef={ inputRef }

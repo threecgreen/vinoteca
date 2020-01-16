@@ -5,7 +5,7 @@ import { EmptyResultError, getRegions, toDict } from "../lib/RestApi";
 import { IDict } from "../lib/utils";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
-import { StatelessTextInput } from "./StatelessTextInput";
+import { TextInput } from "./TextInput";
 
 interface IProps extends IOnChange {
     value: string;
@@ -62,7 +62,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter: producerTe
     }, [producerText, setEnabled]);
 
     return (
-        <StatelessTextInput name="Region"
+        <TextInput name="Region"
             className="autocomplete"
             s={ 6 } l={ 3 }
             enabled={ enabled }

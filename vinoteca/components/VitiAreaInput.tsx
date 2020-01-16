@@ -1,23 +1,23 @@
-import * as React from "react";
+import React from "react";
 import Logger from "../lib/Logger";
+import { IVitiArea } from "../lib/Rest";
 import { getVitiAreas, toDict } from "../lib/RestApi";
-import { IRestModel } from "../lib/RestTypes";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
-import { StatelessTextInput } from "./StatelessTextInput";
+import { TextInput } from "./TextInput";
 
 interface IProps extends IOnChange {
     value: string;
 }
 
 export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
-    const logger = new Logger(VitiAreaInput.toString());
+    const logger = new Logger(VitiAreaInput.name);
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
-                const vitiAreas: IRestModel[] = await getVitiAreas({});
+                const vitiAreas: IVitiArea[] = await getVitiAreas({});
                 autocomplete(inputRef, toDict(vitiAreas), onChange);
             } catch (e) {
                 logger.logError("Failed to get viti area autocomplete options");
@@ -28,7 +28,7 @@ export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
     }, [inputRef]);
 
     return (
-        <StatelessTextInput name="Viti Area"
+        <TextInput name="Viti Area"
             className="autocomplete"
             inputRef={ inputRef }
             s={ 8 } l={ 4 }
