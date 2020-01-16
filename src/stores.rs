@@ -7,11 +7,17 @@ use diesel::prelude::*;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 
-#[get("/stores?<id>")]
-pub fn get(id: Option<i32>, connection: DbConn) -> Result<Json<Vec<Store>>, Status> {
-    let result = match id {
-        Some(store_id) => stores::table.find(store_id).load::<Store>(&*connection),
-        None => stores::table.load::<Store>(&*connection),
-    };
-    result.map(Json).map_err(error_status)
+#[get("/stores?<id>&<name>")]
+pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<Json<Vec<Store>>, Status> {
+    let mut query = stores::table.into_boxed();
+    if let Some(id) = id {
+        query = query.filter(stores::id.eq(id));
+    }
+    if let Some(name) = name {
+        query = query.filter(stores::name.eq(name));
+    }
+    query
+        .load::<Store>(&*connection)
+        .map(Json)
+        .map_err(error_status)
 }
