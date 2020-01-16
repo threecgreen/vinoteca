@@ -1,7 +1,6 @@
 import React from "react";
-import { get } from "../lib/ApiHelper";
-import { toDict } from "../lib/RestApi";
-import { IRestModel } from "../lib/RestTypes";
+import { IWineType } from "../lib/Rest";
+import { getWineTypes, toDict } from "../lib/RestApi";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
@@ -15,7 +14,7 @@ export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
 
     React.useEffect(() => {
         async function fetchWineTypes() {
-            const wineTypes: IRestModel[] = await get("/rest/wine-types");
+            const wineTypes: IWineType[] = await getWineTypes({});
             autocomplete(inputRef, toDict(wineTypes), props.onChange);
         }
         fetchWineTypes();

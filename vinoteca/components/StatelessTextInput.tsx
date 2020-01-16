@@ -53,12 +53,15 @@ export const StatelessTextInput: React.FC<IProps> = (props) => {
     return (
         <>
             <Input inputType="text"
+                name={ props.name }
                 value={ props.value }
-                inputRef={ inputRef }
+                enabled={ props.enabled }
                 onChangeEvent={ (e) => onChangeEvent(e) }
                 onBlur={ () => onBlur() }
                 onFocus={ () => onFocus() }
-                { ...props }
+                className={ props.className }
+                s={ props.s } m={ props.m } l={ props.l }
+                inputRef={ inputRef }
             />
             <SimpleSpecialChars
                 classes={ ["inline-block"] }

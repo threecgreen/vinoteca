@@ -15,6 +15,19 @@ function encodeParams(params: IQueryParams): string {
     return "?" + Object.entries(params).map(([k, v]) => `${k}=${v}`).join("&");
 }
 
+function encodeJson(obj: object): string {
+    return JSON.stringify(obj)
+        // Fix escape characters
+        // .replace(/[\\]/g, "\\\\")
+        // .replace(/[\"]/g, "\\\"")
+        // .replace(/[\/]/g, "\\/")
+        // .replace(/[\b]/g, "\\b")
+        // .replace(/[\f]/g, "\\f")
+        // .replace(/[\n]/g, "\\n")
+        // .replace(/[\r]/g, "\\r")
+        // .replace(/[\t]/g, "\\t");
+}
+
 async function checkResponse(response: Response): Promise<any> {
     try {
         if (response.status > 310) {
@@ -51,7 +64,7 @@ export async function get<Response>(url: string, params: IQueryParams = {}): Pro
  */
 export async function post<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
-        body: JSON.stringify(body),
+        body: encodeJson(body),
         headers: HEADERS,
         method: "POST",
     });
@@ -68,7 +81,7 @@ export async function post<Response>(url: string, body: object, params: IQueryPa
  */
 export async function put<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
-        body: JSON.stringify(body),
+        body: encodeJson(body),
         headers: HEADERS,
         method: "PUT",
     });

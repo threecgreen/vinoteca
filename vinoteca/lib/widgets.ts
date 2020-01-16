@@ -1,14 +1,9 @@
 import { Autocomplete, Datepicker, Dropdown, FloatingActionButton, Modal, Sidenav, Tabs } from "materialize-css";
-import { get } from "./ApiHelper";
 import { selectById } from "./JQueryCompat";
-import Logger from "./Logger";
-import { toDict } from "./RestApi";
-import { IRestModel } from "./RestTypes";
-import { IDict, nameToId } from "./utils";
+import { IDict } from "./utils";
 
 type OnChange = (e: string) => void;
 
-// TODO: use refs
 /** Setup autocompletion with provided completion options. */
 export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
                              completions: IDict<string | null>,
@@ -28,6 +23,8 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
     }
 }
 
+// TODO: convert these to work with refs
+
 /**
  * Streamlines the Materialize CSS datepicker widget, whose configuration
  * isn't changed.
@@ -36,7 +33,7 @@ export function datepicker(selector = ".datepicker"): void {
     const elem = document.querySelector(selector) as HTMLElement;
     const instance = new Datepicker(elem, {
         autoClose: false,            // Close upon selecting a date,
-        yearRange: 15,               // Creates a dropdown of 5 years to control year,
+        yearRange: 15,               // Creates a dropdown of 15 years to control year,
     });
 }
 

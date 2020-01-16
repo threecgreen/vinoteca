@@ -1,6 +1,6 @@
-import { get, IQueryParams, post, put, delete_ } from "./ApiHelper";
+import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IRegion, IWine, IPurchase, IRegionForm, IVitiAreaForm, IVitiAreaStats, IVitiArea, IWineType, IWineGrape } from "./Rest";
+import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict, isEmpty } from "./utils";
 
@@ -58,9 +58,6 @@ interface IGetRegionParams {
 
 export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
     const nonNullParams = nonNulls({ id, name, producer_name: producerName });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     const regions: IRegion[] = await get("/rest/regions", nonNullParams);
     if (regions.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for region"));
@@ -86,9 +83,6 @@ interface IGetProducersParams {
 
 export async function getProducers({ id, regionId }: IGetProducersParams): Promise<IProducer[]> {
     const nonNullParams = nonNulls({ id, region_id: regionId });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     const producers: IProducer[] = await get("/rest/producers", nonNullParams);
     if (producers.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for producer"));
@@ -113,9 +107,6 @@ interface IGetPurchasesParams {
 
 export async function getPurchases({wineId}: IGetPurchasesParams): Promise<IPurchase[]> {
     const nonNullParams = nonNulls({ wine_id: wineId });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     const purchases = await get<IPurchase[]>("/rest/purchases", nonNullParams);
     if (purchases.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for purchase"));
@@ -134,9 +125,6 @@ export async function getVitiAreas(
     { id, name, regionName }: IGetVitiAreasParams,
 ): Promise<IVitiArea[]> {
     const nonNullParams = nonNulls({ id, name, region_name: regionName });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     const vitiAreas: IVitiArea[] = await get("/rest/viti-areas/", nonNullParams);
     if (vitiAreas.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for viti area"));
@@ -163,9 +151,6 @@ export async function getVitiAreaStats(
     { id, regionId }: IGetVitiAreaStatsParams,
 ): Promise<IVitiAreaStats[]> {
     const nonNullParams = nonNulls({ id, region_id: regionId });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     return get("/rest/viti-areas/stats", nonNullParams);
 }
 
@@ -232,9 +217,6 @@ interface IGetWineTypesParams {
 
 export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<IWineType[]> {
     const nonNullParams = nonNulls({ id, name });
-    if (isEmpty(nonNullParams)) {
-        return Promise.reject("No query params provided");
-    }
     const wineTypes: IWineType[] = await get("/rest/wine-types", nonNullParams);
     if (wineTypes.length === 0) {
         return Promise.reject(new EmptyResultError("Empty result returned for wine types"));

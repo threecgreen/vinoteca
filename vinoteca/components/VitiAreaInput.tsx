@@ -25,7 +25,7 @@ export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
         }
 
         fetchVitiAreas();
-    }, [inputRef, onChange]);
+    }, [inputRef]);
 
     return (
         <StatelessTextInput name="Viti Area"

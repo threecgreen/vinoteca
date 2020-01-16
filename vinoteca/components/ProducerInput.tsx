@@ -1,7 +1,7 @@
 import React from "react";
 import Logger from "../lib/Logger";
+import { IProducer } from "../lib/Rest";
 import { getProducers, toDict } from "../lib/RestApi";
-import { IRestModel } from "../lib/RestTypes";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { StatelessTextInput } from "./StatelessTextInput";
@@ -17,7 +17,7 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
     React.useEffect(() => {
         async function fetchProducers() {
             try {
-                const producers: IRestModel[] = await getProducers({});
+                const producers: IProducer[] = await getProducers({});
                 autocomplete(inputRef, toDict(producers), onChange);
             } catch {
                 logger.logError("Failed to get producer autocomplete options");
@@ -25,7 +25,7 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
         }
 
         fetchProducers();
-    }, [inputRef, onChange]);
+    }, [inputRef]);
 
     return (
         <StatelessTextInput name="Producer"

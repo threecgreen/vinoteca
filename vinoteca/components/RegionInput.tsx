@@ -1,7 +1,7 @@
 import React from "react";
 import Logger from "../lib/Logger";
+import { IRegion } from "../lib/Rest";
 import { EmptyResultError, getRegions, toDict } from "../lib/RestApi";
-import { IRestModel } from "../lib/RestTypes";
 import { IDict } from "../lib/utils";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
@@ -12,7 +12,7 @@ interface IProps extends IOnChange {
     producerFilter?: string;
 }
 
-export const RegionInput: React.FC<IProps> = ({value, producerFilter, onChange}) => {
+export const RegionInput: React.FC<IProps> = ({value, producerFilter: producerText, onChange}) => {
     const logger = new Logger(RegionInput.name);
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -22,7 +22,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter, onChange})
     React.useEffect(() => {
         async function fetchAutocompleteOptions() {
             try {
-                const regions: IRestModel[] = await getRegions({});
+                const regions: IRegion[] = await getRegions({});
                 setAutocompleteOptions(toDict(regions));
                 autocomplete(inputRef, autocompleteOptions, onChange);
             } catch {
@@ -30,7 +30,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter, onChange})
             }
         }
         fetchAutocompleteOptions();
-    }, [inputRef, onChange, setAutocompleteOptions]);
+    }, [inputRef, setAutocompleteOptions]);
 
     const [enabled, setEnabled] = React.useState(true);
 
@@ -38,7 +38,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter, onChange})
     React.useEffect(() => {
         async function fetchProducerRegion() {
             try {
-                const regions = await getRegions({producerName: producerFilter});
+                const regions = await getRegions({producerName: producerText});
                 if (regions.length === 1) {
                     onChange(regions[0].name);
                     setEnabled(false);
@@ -54,12 +54,12 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter, onChange})
             }
         }
 
-        if (producerFilter) {
+        if (producerText) {
             fetchProducerRegion();
         } else {
             setEnabled(true);
         }
-    }, [onChange, producerFilter, setEnabled]);
+    }, [producerText, setEnabled]);
 
     return (
         <StatelessTextInput name="Region"
