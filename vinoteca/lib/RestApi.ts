@@ -1,8 +1,8 @@
 import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType } from "./Rest";
+import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor } from "./Rest";
 import { IRestModel } from "./RestTypes";
-import { IDict, isEmpty } from "./utils";
+import { IDict } from "./utils";
 
 export function toDict(models: IRestModel[]): IDict<string | null> {
     let result: IDict<string | null> = {};
@@ -48,6 +48,22 @@ function singleEntityGetter<T, U>(
         return results[0];
     };
 }
+
+/* COLORS */
+interface IGetColorParams {
+    id?: number;
+}
+
+export async function getColors({ id }: IGetColorParams): Promise<IColor[]> {
+    const nonNullParams = nonNulls({ id });
+    const colors: IColor[] = await get("/rest/colors", nonNullParams);
+    if (colors.length === 0) {
+        return Promise.reject(new EmptyResultError("Empty result returned for color"));
+    }
+    return colors;
+}
+
+export const getColor = singleEntityGetter(getColors);
 
 /* REGIONS */
 interface IGetRegionParams {

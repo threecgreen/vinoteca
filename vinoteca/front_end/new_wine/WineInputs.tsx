@@ -4,7 +4,7 @@ import { FileInput } from "../../components/FileInput";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RatingInput } from "../../components/RatingInput";
 import { RegionInput } from "../../components/RegionInput";
-import { StatelessTextInput } from "../../components/StatelessTextInput";
+import { TextInput } from "../../components/TextInput";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { WineTypeInput } from "../../components/WineTypeInput";
 import { NewWineTextInput } from "./NewWineApp";
@@ -46,7 +46,7 @@ export class WineInputs extends React.Component<IProps, IState> {
                 <WineTypeInput value={ this.props.wineType }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.WineType, v) }
                 />
-                <StatelessTextInput name="Name" className=""
+                <TextInput name="Name" className=""
                     s={ 12 } l={ 6 }
                     value={ this.props.name }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Name, v) }
@@ -61,12 +61,12 @@ export class WineInputs extends React.Component<IProps, IState> {
                 <VitiAreaInput value={ this.props.vitiArea }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.VitiArea, v) }
                 />
-                <StatelessTextInput name="Description" className=""
+                <TextInput name="Description" className=""
                     s={ 12 } l={ 6 }
                     value={ this.props.description }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Description, v) }
                 />
-                <StatelessTextInput name="Notes" className=""
+                <TextInput name="Notes" className=""
                     s={ 12 } l={ 6 }
                     value={ this.props.notes }
                     onChange={ (v) => this.props.onInputChange(NewWineTextInput.Notes, v) }

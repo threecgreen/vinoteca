@@ -3,8 +3,8 @@ import { IDict } from "../lib/utils";
 import { FloatingBtn } from "./Buttons";
 import { InputField } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
-import { StatelessNumberInput } from "./StatelessNumberInput";
-import { StatelessTextInput } from "./StatelessTextInput";
+import { NumberInput } from "./NumberInput";
+import { TextInput } from "./TextInput";
 import { autocomplete } from "../lib/widgets";
 
 interface IProps {
@@ -32,7 +32,7 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
                     <MaterialIcon iconName="remove" />
                 </FloatingBtn>
             </InputField>
-            <StatelessNumberInput name="Percent"
+            <NumberInput name="Percent"
                 s={ 3 }
                 number={ percent }
                 min={ 0 }
@@ -40,7 +40,7 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
                 step="1"
                 onChange={ (n) => onChange(id, name, n) }
             />
-            <StatelessTextInput name="Grape"
+            <TextInput name="Grape"
                 s={ 8 }
                 className="autocomplete"
                 value={ grape }

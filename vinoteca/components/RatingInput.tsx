@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Col } from "./Grid";
-import { StatelessCheckboxInput } from "./StatelessCheckboxInput";
+import { CheckboxInput } from "./CheckboxInput";
 
 interface IProps {
     initialState?: IState;
@@ -26,7 +26,7 @@ export class RatingInput extends React.Component<{}, IState> {
     public render() {
         return (
             <Col s={ 4 } l={ 2 } classes={ ["range-field" ] }>
-                <StatelessCheckboxInput name="has-rating"
+                <CheckboxInput name="has-rating"
                     text="Rating"
                     isChecked={ this.state.isChecked }
                     onClick={ (s) => this.onClick(s) }

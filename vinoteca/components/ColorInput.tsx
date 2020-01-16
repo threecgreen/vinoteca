@@ -1,11 +1,10 @@
 import { FormSelect } from "materialize-css";
 import * as React from "react";
-import { get } from "../lib/ApiHelper";
 import Logger from "../lib/Logger";
-import { IDict } from "../lib/utils";
+import { IColor } from "../lib/Rest";
+import { getColors } from "../lib/RestApi";
 import { IOnChange } from "./IProps";
-import { StatelessSelectInput } from "./StatelessSelectInput";
-import { IRestModel } from "../lib/RestTypes";
+import { SelectInput } from "./SelectInput";
 
 interface IProps extends IOnChange {
     selection: string;
@@ -28,7 +27,7 @@ export const ColorInput: React.FC<IProps> = (props) => {
     React.useEffect(() => {
         async function fetchColors() {
             try {
-                const colors: IRestModel[] = await get("/rest/colors");
+                const colors: IColor[] = await getColors({});
                 setSelectionOptions(concatIfNotNull(colors.map((color) => color.name)));
                 const formSelect = new FormSelect(selectRef.current!);
             } catch {
@@ -40,7 +39,7 @@ export const ColorInput: React.FC<IProps> = (props) => {
     }, []);
 
     return (
-        <StatelessSelectInput name="Color"
+        <SelectInput name="Color"
             s={ 4 } l={ 2 }
             selectRef={ selectRef }
             options={ selectionOptions }

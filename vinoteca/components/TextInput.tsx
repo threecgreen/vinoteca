@@ -1,102 +1,74 @@
-import * as React from "react";
-import { rAutocomplete } from "../lib/widgets";
+import React from "react";
 import { Input } from "./Input";
 import { SimpleSpecialChars } from "./SimpleSpecialChars";
 
-interface ITextInputProps {
+interface IProps {
     name: string;
-    initText: string;
-    enabled: boolean;
+    value: string;
+    enabled?: boolean;
+    onChange: (val: string) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
     className: string;
-    autocomplete: boolean;
     s?: number;
     m?: number;
     l?: number;
+    inputRef?: React.MutableRefObject<HTMLInputElement>;
 }
 
-interface ITextInputState {
-    isActive: boolean;
-    position: number;
-    text: string;
-}
+export const TextInput: React.FC<IProps> = (props) => {
+    const [timestamp, _] = React.useState(new Date());
+    const [isActive, setIsActive] = React.useState(false);
+    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-export class TextInput extends React.Component<ITextInputProps, ITextInputState> {
-    private timestamp: Date;
-
-    constructor(props: ITextInputProps) {
-        super(props);
-        this.state = {
-            isActive: false,
-            position: NaN,
-            text: this.props.initText,
-        };
-        this.timestamp = new Date();
-        this.onChange = this.onChange.bind(this);
-        this.onChangeEvent = this.onChangeEvent.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
-    }
-
-    public render() {
-        return (
-            <>
-                <Input inputType="text"
-                    name={ this.props.name }
-                    enabled={ this.props.enabled }
-                    value={ this.state.text }
-                    className={ this.props.className }
-                    s={ this.props.s } m={ this.props.m } l={ this.props.l }
-                    onChangeEvent={ this.onChangeEvent }
-                    onBlur={ () => this.onBlur() }
-                    onFocus={ () => this.onFocus() }
-                />
-                <SimpleSpecialChars
-                    onClick={ this.onSpecialCharClick }
-                    display={ this.state.isActive }
-                />
-            </>
-        );
-    }
-
-    public componentDidMount() {
-        if (this.props.autocomplete) {
-            rAutocomplete(this.props.name, this.onChange );
-        }
-    }
-
-    private onChange(val: string) {
-        this.setState({
-            text: val,
-        })
-    }
-
-    private onChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
-        this.setState({
-            position: e.target.selectionEnd || NaN,
-            text: e.target.value,
-        });
-    }
-
-    private onSpecialCharClick(e: React.MouseEvent, char: string) {
-        this.timestamp = new Date();
+    const onSpecialCharClick = (e: React.MouseEvent, char: string) => {
         e.preventDefault();
-        this.setState((prevState) => ({
-            position: prevState.position + 1,
-            text: SimpleSpecialChars.insertCharAt(prevState.text, char, prevState.position)
-        }));
-    }
+        setIsActive(true);
+        // @ts-ignore
+        const position = this.inputRef.current?.selectionStart ?? NaN;
+        props.onChange(SimpleSpecialChars.insertCharAt(props.value, char, position))
+        // @ts-ignore
+        setTimeout(() => this.inputRef.current.setSelectionRange(position + 1, position + 1), 10);
+    };
 
-    private onFocus() {
-        this.setState({
-            isActive: true
-        });
-    }
-
-    private onBlur() {
+    const onBlur = () => {
         const now = new Date();
         // @ts-ignore
-        if (now - this.timestamp > 100) {
-            this.setState({isActive: false});
+        if (now - timestamp > 100) {
+            setIsActive(false);
         }
-    }
-}
+        props.onBlur?.();
+    };
 
+    const onChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsActive(true);
+        props.onChange(e.target.value);
+    }
+
+    const onFocus = () => {
+        setIsActive(false);
+        props.onFocus?.();
+    }
+
+    return (
+        <>
+            <Input inputType="text"
+                name={ props.name }
+                value={ props.value }
+                enabled={ props.enabled }
+                onChangeEvent={ (e) => onChangeEvent(e) }
+                onBlur={ () => onBlur() }
+                onFocus={ () => onFocus() }
+                className={ props.className }
+                s={ props.s } m={ props.m } l={ props.l }
+                inputRef={ inputRef }
+            />
+            <SimpleSpecialChars
+                classes={ ["inline-block"] }
+                onClick={ (e, c) => onSpecialCharClick(e, c) }
+                display={ isActive }
+            />
+        </>
+    );
+}
+TextInput.displayName = "TextInput";

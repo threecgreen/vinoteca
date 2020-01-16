@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { capitalizeFirstLetter, nameToId } from "../lib/utils";
 import { InputField } from "./Grid";
 
@@ -14,7 +14,7 @@ interface IProps {
     l?: number;
 }
 
-export const StatelessSelectInput: React.FC<IProps> = (props) => {
+export const SelectInput: React.FC<IProps> = (props) => {
     const id = nameToId(props.name);
     let selectText: JSX.Element | undefined;
     if (props.selectText) {
