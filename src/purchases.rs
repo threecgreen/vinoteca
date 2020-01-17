@@ -1,7 +1,7 @@
-use super::DbConn;
-use models::{Purchase, PurchaseForm};
-use query_utils::error_status;
-use schema::{producers, purchases, regions, stores, wine_types, wines};
+use crate::DbConn;
+use crate::error::VinotecaError;
+use crate::models::{Purchase, PurchaseForm};
+use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
 
 use diesel;
 use diesel::dsl::{sql, sum};
@@ -9,7 +9,6 @@ use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Float, Integer, Nullable};
 use diesel::QueryableByName;
-use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
@@ -20,7 +19,7 @@ pub fn get(
     wine_id: Option<i32>,
     wine_name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Purchase>>, Status> {
+) -> Result<Json<Vec<Purchase>>, Json<VinotecaError>> {
     let mut query = purchases::table
         .inner_join(stores::table)
         .inner_join(wines::table)
@@ -48,7 +47,8 @@ pub fn get(
         ))
         .load::<Purchase>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 // Includes wine info for convenience
@@ -76,7 +76,7 @@ pub struct RecentPurchase {
 pub fn recent(
     limit: Option<usize>,
     connection: DbConn,
-) -> Result<Json<Vec<RecentPurchase>>, Status> {
+) -> Result<Json<Vec<RecentPurchase>>, Json<VinotecaError>> {
     let limit = limit.unwrap_or(10);
     purchases::table
         .inner_join(
@@ -106,7 +106,8 @@ pub fn recent(
         .limit(limit as i64)
         .load::<RecentPurchase>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
@@ -123,11 +124,12 @@ pub struct YearsPurchases {
 }
 
 #[get("/purchases/by-year")]
-pub fn by_year(connection: DbConn) -> Result<Json<Vec<YearsPurchases>>, Status> {
+pub fn by_year(connection: DbConn) -> Result<Json<Vec<YearsPurchases>>, Json<VinotecaError>> {
     sql_query(include_str!("purchases_by_year.sql"))
         .load::<YearsPurchases>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]
@@ -169,7 +171,7 @@ pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseD
 }
 
 #[post("/purchases", format = "json", data = "<purchase_form>")]
-pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> Result<Json<Purchase>, Status> {
+pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> Result<Json<Purchase>, Json<VinotecaError>> {
     let purchase_form = purchase_form.into_inner();
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
@@ -194,7 +196,8 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> Result<Jso
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[put("/purchases/<id>", format = "json", data = "<purchase_form>")]
@@ -202,7 +205,7 @@ pub fn put(
     id: i32,
     purchase_form: Json<PurchaseForm>,
     connection: DbConn,
-) -> Result<Json<Purchase>, Status> {
+) -> Result<Json<Purchase>, Json<VinotecaError>> {
     // TODO: validation
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form.into_inner())
@@ -225,7 +228,8 @@ pub fn put(
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 // TODO: delete

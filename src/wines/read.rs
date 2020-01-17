@@ -1,4 +1,4 @@
-use crate::query_utils::error_status;
+use crate::error::VinotecaError;
 use crate::models::Wine;
 use crate::DbConn;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
@@ -8,7 +8,6 @@ use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Integer, Nullable, Text};
 use diesel::QueryableByName;
-use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
@@ -34,7 +33,7 @@ pub fn get(
     viti_area: Option<String>,
 
     connection: DbConn,
-) -> Result<Json<Vec<Wine>>, Status> {
+) -> Result<Json<Vec<Wine>>, Json<VinotecaError>> {
     let mut query = wines::table
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
@@ -115,7 +114,8 @@ pub fn get(
         ))
         .load::<Wine>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
@@ -150,11 +150,12 @@ pub struct InventoryWine {
 }
 
 #[get("/wines/inventory")]
-pub fn inventory(connection: DbConn) -> Result<Json<Vec<InventoryWine>>, Status> {
+pub fn inventory(connection: DbConn) -> Result<Json<Vec<InventoryWine>>, Json<VinotecaError>> {
     sql_query(include_str!("inventory.sql"))
         .load::<InventoryWine>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 fn wrap_in_wildcards(filter_str: &str) -> String {
@@ -169,7 +170,7 @@ pub fn search(
     region_like: Option<String>,
     viti_area_like: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Wine>>, Status> {
+) -> Result<Json<Vec<Wine>>, Json<VinotecaError>> {
     let mut query = wines::table
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
@@ -234,5 +235,6 @@ pub fn search(
         ))
         .load::<Wine>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }

@@ -1,4 +1,4 @@
-use crate::query_utils::error_status;
+use crate::error::VinotecaError;
 use crate::models::{Wine, WineForm};
 use crate::DbConn;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
@@ -6,11 +6,10 @@ use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_type
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
-use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 #[post("/wines", format = "json", data = "<wine_form>")]
-pub fn post(wine_form: Json<WineForm>, connection: DbConn) -> Result<Json<Wine>, Status> {
+pub fn post(wine_form: Json<WineForm>, connection: DbConn) -> Result<Json<Wine>, Json<VinotecaError>> {
     let wine_form = wine_form.into_inner();
     diesel::insert_into(wines::table)
         .values(&wine_form)
@@ -61,8 +60,10 @@ pub fn post(wine_form: Json<WineForm>, connection: DbConn) -> Result<Json<Wine>,
                     wine_types::name,
                     sql::<Nullable<Integer>>("max(purchases.vintage)"),
                 ))
+                .order(wines::id.desc())
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }

@@ -1,14 +1,13 @@
-use super::models::{Store, StoreForm};
-use super::query_utils::error_status;
-use super::schema::stores;
-use super::DbConn;
+use crate::error::VinotecaError;
+use crate::models::{Store, StoreForm};
+use crate::schema::stores;
+use crate::DbConn;
 
 use diesel::prelude::*;
-use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 #[get("/stores?<id>&<name>")]
-pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<Json<Vec<Store>>, Status> {
+pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<Json<Vec<Store>>, Json<VinotecaError>> {
     let mut query = stores::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(stores::id.eq(id));
@@ -19,11 +18,12 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<
     query
         .load::<Store>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[post("/stores", format = "json", data = "<store_form>")]
-pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> Result<Json<Store>, Status> {
+pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> Result<Json<Store>, Json<VinotecaError>> {
     let store_form = store_form.into_inner();
     diesel::insert_into(stores::table)
         .values(&store_form)
@@ -34,5 +34,6 @@ pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> Result<Json<Stor
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }

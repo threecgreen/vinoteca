@@ -1,11 +1,10 @@
-use super::models::{Producer, ProducerForm};
-use super::query_utils::error_status;
-use super::schema::{producers, regions};
-use super::DbConn;
+use crate::error::VinotecaError;
+use crate::models::{Producer, ProducerForm};
+use crate::schema::{producers, regions};
+use crate::DbConn;
 
 use diesel;
 use diesel::prelude::*;
-use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]
@@ -15,7 +14,7 @@ pub fn get(
     region_id: Option<i32>,
     region_name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Producer>>, Status> {
+) -> Result<Json<Vec<Producer>>, Json<VinotecaError>> {
     let mut query = producers::table.inner_join(regions::table).into_boxed();
     if let Some(id) = id {
         query = query.filter(producers::id.eq(id));
@@ -35,14 +34,15 @@ pub fn get(
     final_query
         .load::<Producer>(&*connection)
         .map(Json)
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[post("/producers", format = "json", data = "<producer_form>")]
 pub fn post(
     producer_form: Json<ProducerForm>,
     connection: DbConn,
-) -> Result<Json<Producer>, Status> {
+) -> Result<Json<Producer>, Json<VinotecaError>> {
     let producer_form = producer_form.into_inner();
     diesel::insert_into(producers::table)
         .values(&producer_form)
@@ -53,7 +53,8 @@ pub fn post(
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
@@ -61,7 +62,7 @@ pub fn put(
     id: i32,
     producer_form: Json<ProducerForm>,
     connection: DbConn,
-) -> Result<Json<Producer>, Status> {
+) -> Result<Json<Producer>, Json<VinotecaError>> {
     diesel::update(producers::table.filter(producers::id.eq(id)))
         .set(producer_form.into_inner())
         .execute(&*connection)
@@ -71,13 +72,15 @@ pub fn put(
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }
 
 #[delete("/producers/<id>")]
-pub fn delete(id: i32, connection: DbConn) -> Result<(), Status> {
+pub fn delete(id: i32, connection: DbConn) -> Result<(), Json<VinotecaError>> {
     diesel::delete(producers::table.filter(producers::id.eq(id)))
         .execute(&*connection)
         .map(|_| ())
-        .map_err(error_status)
+        .map_err(VinotecaError::from)
+        .map_err(Json)
 }

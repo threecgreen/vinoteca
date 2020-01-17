@@ -35,18 +35,13 @@ export const NewWineApp: React.FC<{}> = (_props) => {
         e.preventDefault();
         // TODO: buildWineForm
         // TODO: check certain forms aren't empty
-        const logger = new Logger(NewWineApp.name, true);
+        const logger = new Logger(NewWineApp.name);
         try {
             const [color, wineType, [producer, vitiArea]] = await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
                 getColor({name: wineState.color}),
                 getOrCreateWineType({name: wineState.wineType}, {name: wineState.wineType}),
                 getProducerAndVitiArea(),
             ]);
-
-            logger.logDebug(`color: ${color}`);
-            logger.logDebug(`wineType: ${wineType}`);
-            logger.logDebug(`producer: ${producer}`);
-            logger.logDebug(`vitiArea: ${vitiArea}`);
             const wine = await createWine({
                 colorId: color.id,
                 wineTypeId: wineType.id,
@@ -55,11 +50,10 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                 name: wineState.name || null,
                 why: wineState.why || null,
                 description: wineState.description || null,
-                rating: wineState.rating,
+                rating: wineState.isRatingEnabled ? wineState.rating : null,
                 inventory: purchaseState.shouldAddToInventory ? purchaseState.quantity : 0,
                 notes: wineState.notes || null,
             });
-            logger.logDebug(`wine: ${wine}`);
             // TODO: upload image
             let store = null;
             if (purchaseState.store) {
