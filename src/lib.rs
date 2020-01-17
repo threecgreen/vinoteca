@@ -17,7 +17,7 @@ extern crate validator_derive;
 
 // Diesel modules
 pub mod models;
-pub mod schema;
+mod schema;
 /////////////////////
 // Rocket handlers //
 /////////////////////
@@ -36,6 +36,7 @@ pub mod wine_grapes;
 pub mod wine_types;
 pub mod wines;
 // Misc
+pub mod error;
 mod query_utils;
 
 #[database("vinoteca")]
