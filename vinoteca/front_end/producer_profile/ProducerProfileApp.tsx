@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
@@ -11,6 +11,7 @@ import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
 import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
 import { Producer } from "./Producer";
+import { redirect } from "../../lib/utils";
 
 export enum ProducerProfileTextInput {
     Producer,
@@ -241,7 +242,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         try {
             await deleteProducer(this.props.producerId);
             // Redirect home
-            window.location.href = "/";
+            redirect("/");
         } catch (ex) {
             this.logger.logWarning(`Failed to delete producer with id ${this.props.producerId}`
                                    + ` with exception: ${ex.body}`);

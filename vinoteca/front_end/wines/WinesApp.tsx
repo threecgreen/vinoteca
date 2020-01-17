@@ -1,14 +1,15 @@
 import * as React from "react";
+import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
-import Logger from "../../lib/Logger";
-import { getWines } from "../../lib/RestApi";
-import { IWine } from "../../lib/Rest";
 import { WinesTable } from "../../components/WinesTable";
 import { createCookie, deleteCookie, readCookie } from "../../lib/Cookies";
 import FilterExpr from "../../lib/FilterExpr";
-import { Btn } from "../../components/Buttons";
+import Logger from "../../lib/Logger";
+import { IWine } from "../../lib/Rest";
+import { getWines } from "../../lib/RestApi";
+import { redirect } from "../../lib/utils";
 
 interface IState {
     wines: IWine[];
@@ -93,7 +94,7 @@ export class WinesApp extends React.Component<{}, IState> {
                         You haven&rsquo;t entered any wines yet.
                     </h6>
                     <Btn classes={ ["green-bg"] }
-                        onClick={ (_) => { location.href = "/wines/new/"; } }
+                        onClick={ (_) => redirect("/wines/new/") }
                     >
                         Add a new wine
                     </Btn>

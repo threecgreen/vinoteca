@@ -1,6 +1,6 @@
 import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor, IStore } from "./Rest";
+import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor, IStore, IGrape } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -66,6 +66,11 @@ export async function getColors({ id }: IGetColorParams): Promise<IColor[]> {
 }
 
 export const getColor = singleEntityGetter(getColors);
+
+/* GRAPES */
+export async function getGrapes(): Promise<IGrape[]> {
+    return await get("/rest/grapes");
+}
 
 /* PRODUCERS */
 interface IGetProducersParams {

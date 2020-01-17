@@ -12,7 +12,7 @@ interface IProps {
     completions: IDict<string | null>;
     grape: string;
     percent: number | null;
-    handleDelete: (e: React.MouseEvent, id: number) => void;
+    handleDelete: (id: number) => void;
     onChange: (id: number, name: string, percent: number | null) => void;
 }
 
@@ -23,10 +23,15 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
         autocomplete(inputRef, completions, (s) => onChange(id, s, percent))
     }, [inputRef, completions, onChange, id, percent]);
 
+    const onDelete = (e: React.MouseEvent) => {
+        e.preventDefault();
+        handleDelete(id);
+    }
+
     return (
         <>
             <InputField s={ 1 }>
-                <FloatingBtn onClick={ (e) => handleDelete(e, id) }
+                <FloatingBtn onClick={ (e) => onDelete(e) }
                     classes={ ["red-bg"] }
                 >
                     <MaterialIcon iconName="remove" />

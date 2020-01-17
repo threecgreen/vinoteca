@@ -181,3 +181,8 @@ export async function imageExists(imageUrl: string): Promise<boolean> {
 export function getNameAndType(name: string | null, wineType: string): string {
     return `${(name ? name + " " : "")}${wineType}`;
 }
+
+// TODO: move to use React router or something similar
+export function redirect(url: string) {
+    location.href = url;
+}

@@ -5,6 +5,7 @@ import { RecentPurchases } from "./RecentPurchases";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Btn } from "../../components/Buttons";
 import { TopWineTypes } from "./TopWineTypes";
+import { redirect } from "../../lib/utils";
 
 export const HomeApp: React.FC<{}> = (_) => {
     return (
@@ -21,7 +22,7 @@ export const HomeApp: React.FC<{}> = (_) => {
                         </Col>
                         <div className="center-align">
                             <Btn classes={ ["yellow-bg"] }
-                                onClick={ (_) => { window.location.href = "/wines/new"; } }
+                                onClick={ (_) => redirect("/wines/new") }
                             >
                                 <MaterialIcon iconName="add_circle" />
                                 add wine

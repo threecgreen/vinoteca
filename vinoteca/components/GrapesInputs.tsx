@@ -1,114 +1,113 @@
 import React from "react";
-import { get } from "../lib/ApiHelper";
-import { IGrape, IWineGrape } from "../lib/Rest";
-import { toDict } from "../lib/RestApi";
+import Logger from "../lib/Logger";
+import { IWineGrape } from "../lib/Rest";
+import { getGrapes, toDict } from "../lib/RestApi";
 import { IDict, maxBy, sumBy } from "../lib/utils";
 import { FloatingBtn } from "./Buttons";
 import { GrapeInput } from "./GrapeInput";
 import { Col, InputField, Row } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
 
+type Action =
+    | { type: "addGrape" }
+    | { type: "deleteGrape", id: number }
+    | { type: "modifyGrape", id: number, grape: string, percent: number | null }
+    | { type: "setWineId", wineId: number }
+
+const remainingGrapePct = (grapes: IWineGrape[]): number => {
+    if (grapes.length > 0) {
+        const sum = sumBy(grapes, (wg) => wg.percent || 0);
+        if (sum <= 100) {
+            return 100 - sum;
+        } else {
+            new Logger(remainingGrapePct.name).logWarning("Total grape percentage is greater than 100%");
+            return 0;
+        }
+    }
+    return 100;
+}
+
+export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action) => {
+    switch (action.type) {
+        case "addGrape":
+            const maxId = maxBy(grapes, (grape) => grape.id)?.id ?? 0;
+            const hasGrapePct = grapes.some((grape) => grape.percent !== null && grape.grape);
+            const remPct = remainingGrapePct(grapes);
+            const winedId = grapes.length > 0 ? grapes[grapes.length - 1].wineId : 0;
+            grapes.push({
+                id: maxId + 1,
+                percent: hasGrapePct ? remPct : null,
+                grape: "",
+                grapeId: 0,
+                wineId: winedId
+            });
+            return grapes;
+        case "deleteGrape":
+            return grapes.filter((grape) => grape.id !== action.id);
+        case "modifyGrape":
+            return grapes.map((grape) => (
+                (grape.id === action.id)
+                    ? {id: action.id, percent: action.percent, grape: action.grape, grapeId: grape.grapeId, wineId: grape.wineId}
+                    : grape
+            ));
+        case "setWineId":
+            return grapes.map((grape) => ({
+                ...grape,
+                wineId: action.wineId,
+            }));
+        default:
+            return grapes;
+    }
+}
+
 interface IProps {
     wineGrapes: IWineGrape[];
-    updateWineGrapes: (wineGrapes: IWineGrape[]) => void;
-    wineId?: number;
+    dispatch: React.Dispatch<Action>;
 }
 
-interface IState {
-    completions: IDict<string | null>;
-}
+export const GrapesInputs: React.FC<IProps> = ({wineGrapes, dispatch}) => {
+    const [completions, setCompletions] = React.useState<IDict<string | null>>({});
 
-export class GrapesInputs extends React.Component<IProps, IState> {
-    public constructor(props: IProps) {
-        super(props);
-
-        this.state = {
-            completions: {},
-        };
-    }
-
-    public render() {
-        return (
-            <Row>
-                <Col s={ 12 }>
-                    <h6>Grape composition</h6>
-                </Col> {
-                    this.props.wineGrapes.map((wineGrape) => {
-                        return (
-                            <GrapeInput key={ wineGrape.id }
-                                id={ wineGrape.id }
-                                completions={ this.state.completions }
-                                grape={ wineGrape.grape }
-                                percent={ wineGrape.percent }
-                                handleDelete={ this.handleDelete.bind(this) }
-                                onChange={ this.onChange.bind(this) }
-                            />
-                        );
-                    })
-                }
-                <InputField>
-                    <FloatingBtn onClick={ (e) => this.handleAdd(e) }
-                        classes={ ["green-bg"] }
-                    >
-                        <MaterialIcon iconName="add" />
-                    </FloatingBtn>
-                </InputField>
-            </Row>
-        );
-    }
-
-    public async componentDidMount() {
-        const completions: IGrape[] = await get("/rest/grapes");
-        this.setState({completions: toDict(completions)});
-    }
-
-    public handleAdd(e: React.MouseEvent) {
-        e.preventDefault();
-        this.props.updateWineGrapes(this.props.wineGrapes.concat(this.defaultWineGrape()));
-    }
-
-    public handleDelete(e: React.MouseEvent, id: number) {
-        e.preventDefault();
-        this.props.updateWineGrapes(this.props.wineGrapes.filter((wg) => wg.id !== id))
-    }
-
-    public onChange(id: number, name: string, percent: number | null) {
-        this.props.updateWineGrapes(
-            this.props.wineGrapes.map((wg) => (
-                (wg.id === id)
-                    ? {id, grape: name, percent, grapeId: wg.grapeId, wineId: wg.wineId}
-                    : wg
-        )));
-    }
-
-    private get maxId(): number {
-        const max = maxBy(this.props.wineGrapes, (wg) => wg.id);
-        return max ? max.id : 0;
-    }
-
-    /** Determine whether any grape has a percentage set. */
-    private get hasGrapePct(): boolean {
-        return this.props.wineGrapes.some((wg) => (
-            wg.percent !== null && wg.grape
-        ));
-    }
-
-    private get remainingGrapePct(): number {
-        if (this.props.wineGrapes.length > 0) {
-            const sum = sumBy(this.props.wineGrapes, (wg) => wg.percent || 0);
-            // TODO: warning if greater than 100
-            return sum < 100 ? 100 - sum : 0;
+    React.useEffect(() => {
+        async function fetchGrapes() {
+            const completions = await getGrapes();
+            setCompletions(toDict(completions));
         }
-        return 100;
+
+        fetchGrapes();
+    }, [setCompletions])
+
+    const handleAdd = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        dispatch({type: "addGrape"});
     }
 
-    private defaultWineGrape(): IWineGrape {
-        return {
-            id: this.maxId + 1,
-            percent: this.hasGrapePct ? this.remainingGrapePct : null,
-            grape: "",
-            grapeId: 0,
-            wineId: this.props.wineId || 0,
-        };
-    }
+    return (
+        <Row>
+            <Col s={ 12 }>
+                <h6>Grape composition</h6>
+            </Col> {
+                wineGrapes.map((grape) => {
+                    return (
+                        <GrapeInput key={ grape.id }
+                            id={ grape.id }
+                            completions={ completions }
+                            grape={ grape.grape }
+                            percent={ grape.percent }
+                            handleDelete={ (id) => dispatch({type: "deleteGrape", id}) }
+                            onChange={ (id, grape, percent) => dispatch({type: "modifyGrape", id, grape, percent}) }
+                        />
+                    );
+                })
+            }
+            <InputField>
+                <FloatingBtn onClick={ handleAdd }
+                    classes={ ["green-bg"] }
+                >
+                    <MaterialIcon iconName="add" />
+                </FloatingBtn>
+            </InputField>
+        </Row>
+    );
 }
+GrapesInputs.displayName = "GrapesInputs";
