@@ -9,10 +9,10 @@ import { TextInput } from "./TextInput";
 
 interface IProps extends IOnChange {
     value: string;
-    producerFilter?: string;
+    producerText?: string;
 }
 
-export const RegionInput: React.FC<IProps> = ({value, producerFilter: producerText, onChange}) => {
+export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) => {
     const logger = new Logger(RegionInput.name);
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -38,6 +38,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerFilter: producerTe
     React.useEffect(() => {
         async function fetchProducerRegion() {
             try {
+                logger.logInfo("Updating region autocomplete options");
                 const regions = await getRegions({producerName: producerText});
                 if (regions.length === 1) {
                     onChange(regions[0].name);

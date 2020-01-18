@@ -32,7 +32,6 @@ pub struct Grape {
 #[table_name = "grapes"]
 #[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
-    pub id: i32,
     pub name: &'a str,
 }
 
@@ -107,6 +106,14 @@ pub struct Store {
     pub name: String,
 }
 
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
+#[table_name = "stores"]
+#[serde(rename_all = "camelCase")]
+pub struct StoreForm<'a> {
+    #[validate(length(min = 1))]
+    pub name: &'a str,
+}
+
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VitiArea {
@@ -123,6 +130,51 @@ pub struct VitiAreaForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
     pub region_id: i32,
+}
+
+#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Wine {
+    pub id: i32,
+    pub description: Option<String>,
+    pub notes: Option<String>,
+    pub rating: Option<f32>,
+    pub inventory: i32,
+    pub why: Option<String>,
+    pub color_id: i32,
+    pub color: String,
+    pub producer_id: i32,
+    pub producer: String,
+    pub region_id: i32,
+    pub region: String,
+    pub viti_area_id: Option<i32>,
+    pub viti_area: Option<String>,
+    pub name: Option<String>,
+    pub wine_type_id: i32,
+    pub wine_type: String,
+    pub last_purchase_vintage: Option<i32>,
+}
+
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
+#[table_name = "wines"]
+#[serde(rename_all = "camelCase")]
+pub struct WineForm<'a> {
+    #[validate(length(min = 1))]
+    pub description: Option<&'a str>,
+    #[validate(length(min = 1))]
+    pub notes: Option<&'a str>,
+    #[validate(range(min = 0, max = 10))]
+    pub rating: Option<f32>,
+    #[validate(range(min = 0))]
+    pub inventory: i32,
+    #[validate(length(min = 1))]
+    pub why: Option<&'a str>,
+    pub color_id: i32,
+    pub producer_id: i32,
+    pub viti_area_id: Option<i32>,
+    #[validate(length(min = 1))]
+    pub name: Option<&'a str>,
+    pub wine_type_id: i32,
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -148,27 +200,4 @@ pub struct WineType {
 pub struct WineTypeForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
-}
-
-#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Wine {
-    pub id: i32,
-    pub description: Option<String>,
-    pub notes: Option<String>,
-    pub rating: Option<f32>,
-    pub inventory: i32,
-    pub why: Option<String>,
-    pub color_id: i32,
-    pub color: String,
-    pub producer_id: i32,
-    pub producer: String,
-    pub region_id: i32,
-    pub region: String,
-    pub viti_area_id: Option<i32>,
-    pub viti_area: Option<String>,
-    pub name: Option<String>,
-    pub wine_type_id: i32,
-    pub wine_type: String,
-    pub last_purchase_vintage: Option<i32>,
 }

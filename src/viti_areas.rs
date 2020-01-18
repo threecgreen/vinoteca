@@ -99,7 +99,7 @@ pub fn post(
         .map_err(error_status)
 }
 
-#[put("/viti-areas?<id>", format = "json", data = "<viti_area_form>")]
+#[put("/viti-areas/<id>", format = "json", data = "<viti_area_form>")]
 pub fn put(
     id: i32,
     viti_area_form: Json<VitiAreaForm>,

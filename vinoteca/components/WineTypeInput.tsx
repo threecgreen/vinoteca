@@ -18,7 +18,7 @@ export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
             autocomplete(inputRef, toDict(wineTypes), props.onChange);
         }
         fetchWineTypes();
-    }, [inputRef]);
+    }, []);
 
     return (
         <TextInput name="Wine Type"

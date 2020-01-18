@@ -16,29 +16,20 @@ function encodeParams(params: IQueryParams): string {
 }
 
 function encodeJson(obj: object): string {
-    return JSON.stringify(obj)
-        // Fix escape characters
-        // .replace(/[\\]/g, "\\\\")
-        // .replace(/[\"]/g, "\\\"")
-        // .replace(/[\/]/g, "\\/")
-        // .replace(/[\b]/g, "\\b")
-        // .replace(/[\f]/g, "\\f")
-        // .replace(/[\n]/g, "\\n")
-        // .replace(/[\r]/g, "\\r")
-        // .replace(/[\t]/g, "\\t");
+    return JSON.stringify(obj);
 }
 
 async function checkResponse(response: Response): Promise<any> {
     try {
         if (response.status > 310) {
-            return Promise.reject(response.json());
+            throw Error(await response.json());
         }
         if (response.status === 204) {
             return [];
         }
         return response.json();
     } catch (err) {
-        return Promise.reject(response);
+        throw Error(await response.text())
     }
 }
 

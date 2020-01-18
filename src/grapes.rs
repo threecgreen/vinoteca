@@ -32,16 +32,16 @@ pub fn get(
         .map_err(error_status)
 }
 
-#[put("/grapes", format = "json", data = "<grape_form>")]
-pub fn put(grape_form: Json<GrapeForm>, connection: DbConn) -> Result<Json<Grape>, Status> {
+#[put("/grapes/<id>", format = "json", data = "<grape_form>")]
+pub fn put(id: i32, grape_form: Json<GrapeForm>, connection: DbConn) -> Result<Json<Grape>, Status> {
     let grape_form = grape_form.into_inner();
-    diesel::update(grapes::table.filter(grapes::id.eq(grape_form.id)))
+    diesel::update(grapes::table.filter(grapes::id.eq(id)))
         .set(grapes::name.eq(grape_form.name))
         .execute(&*connection)
         .and_then(|_| {
             grapes::table
                 .inner_join(wine_grapes::table.inner_join(wines::table))
-                .filter(grapes::id.eq(grape_form.id))
+                .filter(grapes::id.eq(id))
                 .group_by((grapes::id, grapes::name))
                 .select((grapes::id, grapes::name, sql::<Integer>("count(wines.id)")))
                 .first(&*connection)

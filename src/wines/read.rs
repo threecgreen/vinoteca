@@ -1,15 +1,15 @@
 use crate::query_utils::error_status;
+use crate::models::Wine;
 use crate::DbConn;
+use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Integer, Nullable, Text};
 use diesel::QueryableByName;
-use models::Wine;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
-use schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
 

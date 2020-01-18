@@ -5,6 +5,9 @@ import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { initPurchaseInputData, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
+import Logger from "../../lib/Logger";
+import { IColor, IProducer, IVitiArea, IWineType } from "../../lib/Rest";
+import { getColor, getOrCreateProducer, getOrCreateRegion, getOrCreateStore, getOrCreateVitiArea, getOrCreateWineType, createWine, createPurchase } from "../../lib/RestApi";
 import { redirect } from "../../lib/utils";
 import { initWineInputData, wineInputReducer, WineInputs } from "./WineInputs";
 
@@ -13,9 +16,68 @@ export const NewWineApp: React.FC<{}> = (_props) => {
     const [wineState, wineDispatch] = React.useReducer(wineInputReducer, initWineInputData());
     const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const getOrCreateVitiAreaForRegion = async (regionId: number) => {
+        if (wineState.vitiArea) {
+            return getOrCreateVitiArea({name: wineState.vitiArea}, {name: wineState.vitiArea, regionId});
+        }
+        return null;
+    }
 
+    const getProducerAndVitiArea = async () => {
+        const region = await getOrCreateRegion({name: wineState.region}, {name: wineState.region});
+        return Promise.all<IProducer, IVitiArea | null>([
+            getOrCreateProducer({name: wineState.producer}, {name: wineState.producer, regionId: region.id}),
+            getOrCreateVitiAreaForRegion(region.id),
+        ]);
+    }
+
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        // TODO: buildWineForm
+        // TODO: check certain forms aren't empty
+        const logger = new Logger(NewWineApp.name, true);
+        try {
+            const [color, wineType, [producer, vitiArea]] = await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
+                getColor({name: wineState.color}),
+                getOrCreateWineType({name: wineState.wineType}, {name: wineState.wineType}),
+                getProducerAndVitiArea(),
+            ]);
+
+            logger.logDebug(`color: ${color}`);
+            logger.logDebug(`wineType: ${wineType}`);
+            logger.logDebug(`producer: ${producer}`);
+            logger.logDebug(`vitiArea: ${vitiArea}`);
+            const wine = await createWine({
+                colorId: color.id,
+                wineTypeId: wineType.id,
+                producerId: producer.id,
+                vitiAreaId: vitiArea?.id ?? null,
+                name: wineState.name || null,
+                why: wineState.why || null,
+                description: wineState.description || null,
+                rating: wineState.rating,
+                inventory: purchaseState.shouldAddToInventory ? purchaseState.quantity : 0,
+                notes: wineState.notes || null,
+            });
+            logger.logDebug(`wine: ${wine}`);
+            // TODO: upload image
+            let store = null;
+            if (purchaseState.store) {
+                store = await getOrCreateStore({name: purchaseState.store}, {name: purchaseState.store});
+            }
+            await createPurchase({
+                date: purchaseState.date,
+                wineId: wine.id,
+                quantity: purchaseState.quantity,
+                storeId: store?.id ?? null,
+                price: purchaseState.price,
+                vintage: purchaseState.vintage,
+                memo: purchaseState.memo
+            });
+            redirect(`/wines/${wine.id}`);
+        } catch (err) {
+            logger.logError(`Error creating new wine: ${err.message}`);
+        }
     }
 
     const onCancel = (e: React.MouseEvent<HTMLButtonElement>) => {

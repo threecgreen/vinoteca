@@ -56,7 +56,7 @@ pub fn post(
         .map_err(error_status)
 }
 
-#[put("/producers?<id>", format = "json", data = "<producer_form>")]
+#[put("/producers/<id>", format = "json", data = "<producer_form>")]
 pub fn put(
     id: i32,
     producer_form: Json<ProducerForm>,
@@ -74,7 +74,7 @@ pub fn put(
         .map_err(error_status)
 }
 
-#[delete("/producers?<id>")]
+#[delete("/producers/<id>")]
 pub fn delete(id: i32, connection: DbConn) -> Result<(), Status> {
     diesel::delete(producers::table.filter(producers::id.eq(id)))
         .execute(&*connection)

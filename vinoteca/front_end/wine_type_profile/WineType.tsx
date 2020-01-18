@@ -3,6 +3,7 @@ import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { IRestModel } from "../../lib/RestTypes";
+import { WineTypeInput } from "../../components/WineTypeInput";
 
 interface IProps {
     isEditing: boolean;
@@ -46,7 +47,7 @@ export class WineType extends React.Component<IProps> {
                 <Col s={ 10 }>
                     <h3 className="bold">Edit Wine Type</h3>
                     <form autoComplete="off">
-                        <VitiAreaInput value={ this.props.wineTypeText }
+                        <WineTypeInput value={ this.props.wineTypeText }
                             onChange={ this.props.onWineTypeChange }
                         />
                     </form>

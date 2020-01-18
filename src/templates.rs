@@ -72,7 +72,7 @@ pub fn home_redirect() -> ReactAppTemplate<'static> {
     home()
 }
 
-#[get("/inventory")]
+#[get("/wines/inventory")]
 pub fn inventory() -> ReactAppTemplate<'static> {
     ReactAppTemplate {
         app: "inventory",

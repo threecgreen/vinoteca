@@ -42,12 +42,14 @@ fn main() {
         write_interface(&mut writer, Region::type_script_ify());
         write_interface(&mut writer, RegionForm::type_script_ify());
         write_interface(&mut writer, Store::type_script_ify());
+        write_interface(&mut writer, StoreForm::type_script_ify());
         write_interface(&mut writer, VitiArea::type_script_ify());
         write_interface(&mut writer, VitiAreaForm::type_script_ify());
         write_interface(&mut writer, WineType::type_script_ify());
         write_interface(&mut writer, WineTypeForm::type_script_ify());
         write_interface(&mut writer, WineGrape::type_script_ify());
         write_interface(&mut writer, Wine::type_script_ify());
+        write_interface(&mut writer, WineForm::type_script_ify());
 
         writeln!(&mut writer);
         // Other models

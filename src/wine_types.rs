@@ -79,7 +79,7 @@ pub fn post(
         .map_err(error_status)
 }
 
-#[put("/wine-types?<id>", format = "json", data = "<wine_type_form>")]
+#[put("/wine-types/<id>", format = "json", data = "<wine_type_form>")]
 pub fn put(
     id: i32,
     wine_type_form: Json<WineTypeForm>,

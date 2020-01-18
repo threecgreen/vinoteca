@@ -86,8 +86,6 @@ interface IProps {
 }
 
 export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
-    const ratingIsEnabled = data.rating !== null;
-
     return (
         <>
             <ColorInput selection={ data.color }
@@ -107,6 +105,7 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
             />
             <RegionInput value={ data.region }
                 onChange={ (region) => dispatch({type: "setRegion", region}) }
+                producerText={ data.producer }
             />
             <RatingInput isChecked={ data.isRatingEnabled }
                 onIsCheckedChange={ (isRatingEnabled) => dispatch({type: "setIsRatingEnabled", isRatingEnabled}) }
@@ -115,6 +114,7 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
             />
             <VitiAreaInput value={ data.vitiArea }
                 onChange={ (vitiArea) => dispatch({type: "setVitiArea", vitiArea}) }
+                regionText={ data.region }
             />
             <TextInput name="Description" className=""
                 value={ data.description }

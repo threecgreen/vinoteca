@@ -19,16 +19,14 @@ interface IProps {
 export const TextInput: React.FC<IProps> = (props) => {
     const [timestamp, _] = React.useState(new Date());
     const [isActive, setIsActive] = React.useState(false);
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     const onSpecialCharClick = (e: React.MouseEvent, char: string) => {
         e.preventDefault();
         setIsActive(true);
-        // @ts-ignore
-        const position = this.inputRef.current?.selectionStart ?? NaN;
+        const position = inputRef.current?.selectionStart ?? NaN;
         props.onChange(SimpleSpecialChars.insertCharAt(props.value, char, position))
-        // @ts-ignore
-        setTimeout(() => this.inputRef.current.setSelectionRange(position + 1, position + 1), 10);
+        setTimeout(() => inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     };
 
     const onBlur = () => {

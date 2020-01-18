@@ -50,7 +50,7 @@ pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> Result<Json<Re
         .map_err(error_status)
 }
 
-#[put("/regions?<id>", format = "json", data = "<region_form>")]
+#[put("/regions/<id>", format = "json", data = "<region_form>")]
 pub fn put(
     id: i32,
     region_form: Json<RegionForm>,

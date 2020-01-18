@@ -1,10 +1,10 @@
 import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
 import Logger from "./Logger";
-import { IProducer, IPurchase, IRegion, IRegionForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineGrape, IWineType, IColor, IStore, IGrape } from "./Rest";
+import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
+         IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
+         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
-
-// TODO: does it make sense to throw an error if the response is an empty list?
 
 export function toDict(models: IRestModel[]): IDict<string | null> {
     let result: IDict<string | null> = {};
@@ -35,32 +35,53 @@ function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryPara
     return q;
 }
 
-function singleEntityGetter<T, U>(
-    listGetter: (params: T) => Promise<U[]>,
-): (params: T) => Promise<U> {
+function singleEntityGetter<Params, Resp>(
+    listGetter: (params: Params) => Promise<Resp[]>,
+): (params: Params) => Promise<Resp> {
+    // Shave off 'get'
     const objName = listGetter.name.substr(3);
-    return async (params: T) => {
+    return async (params: Params) => {
         const results = await listGetter(params);
         if (results.length > 1) {
             const message = `Received more than one ${objName} result when one was expected`;
             const logger = new Logger("RestApi");
-            logger.logCritical(message);
-            return Promise.reject(message);
+            logger.logError(message);
+            throw Error(message);
         }
         return results[0];
     };
 }
 
+function getOrCreate<ReqParams, Resp, Form>(
+    listGetter: (params: ReqParams) => Promise<Resp[]>,
+    creator: (form: Form) => Promise<Resp>,
+): (params: ReqParams, form: Form) => Promise<Resp> {
+    const objName = listGetter.name.substr(3);
+    return async (params, form) => {
+        const results = await listGetter(params);
+        if (results.length === 0) {
+            const newObj = await creator(form);
+        }
+        if (results.length === 1) {
+            return results[0];
+        }
+        const message = `Received more than one ${objName} result when one was expected`;
+        new Logger("RestApi").logError(message);
+        throw Error(message);
+    }
+}
+
 /* COLORS */
 interface IGetColorParams {
     id?: number;
+    name?: string;
 }
 
-export async function getColors({ id }: IGetColorParams): Promise<IColor[]> {
-    const nonNullParams = nonNulls({ id });
+export async function getColors({ id, name }: IGetColorParams): Promise<IColor[]> {
+    const nonNullParams = nonNulls({ id, name });
     const colors: IColor[] = await get("/rest/colors", nonNullParams);
     if (colors.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for color"));
+        throw new EmptyResultError("Empty result returned for color");
     }
     return colors;
 }
@@ -75,26 +96,29 @@ export async function getGrapes(): Promise<IGrape[]> {
 /* PRODUCERS */
 interface IGetProducersParams {
     id?: number;
+    name?: string;
     regionId?: number;
 }
 
-export async function getProducers({ id, regionId }: IGetProducersParams): Promise<IProducer[]> {
-    const nonNullParams = nonNulls({ id, region_id: regionId });
+export async function getProducers({ id, name, regionId }: IGetProducersParams): Promise<IProducer[]> {
+    const nonNullParams = nonNulls({ id, name, region_id: regionId });
     const producers: IProducer[] = await get("/rest/producers", nonNullParams);
-    if (producers.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for producer"));
-    }
     return producers;
 }
 
 export const getProducer = singleEntityGetter(getProducers);
+export const getOrCreateProducer = getOrCreate(getProducers, createProducer);
+
+export async function createProducer(producer: IProducerForm): Promise<IProducer> {
+    return post("/rest/producers", producer);
+}
 
 export async function updateProducer(producer: IProducer): Promise<IProducer> {
-    return put(`/rest/producers/${producer.id}/`, producer);
+    return put(`/rest/producers/${producer.id}`, producer);
 }
 
 export async function deleteProducer(id: number): Promise<void> {
-    return delete_(`/rest/producers/${id}/`);
+    return delete_(`/rest/producers/${id}`);
 }
 
 /* PURCHASES */
@@ -105,10 +129,11 @@ interface IGetPurchasesParams {
 export async function getPurchases({wineId}: IGetPurchasesParams): Promise<IPurchase[]> {
     const nonNullParams = nonNulls({ wine_id: wineId });
     const purchases = await get<IPurchase[]>("/rest/purchases", nonNullParams);
-    if (purchases.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for purchase"));
-    }
     return purchases;
+}
+
+export async function createPurchase(purchase: IPurchaseForm): Promise<IPurchase> {
+    return post("/rest/purchases", purchase);
 }
 
 /* REGIONS */
@@ -121,13 +146,11 @@ interface IGetRegionParams {
 export async function getRegions({ id, name, producerName }: IGetRegionParams): Promise<IRegion[]> {
     const nonNullParams = nonNulls({ id, name, producer_name: producerName });
     const regions: IRegion[] = await get("/rest/regions", nonNullParams);
-    if (regions.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for region"));
-    }
     return regions;
 }
 
 export const getRegion = singleEntityGetter(getRegions);
+export const getOrCreateRegion = getOrCreate(getRegions, createRegion);
 
 export async function createRegion(region: IRegionForm): Promise<IRegion> {
     return post("/rest/regions", region);
@@ -150,6 +173,11 @@ export async function getStores({id, name}: IGetStoreParams): Promise<IStore[]> 
 }
 
 export const getStore = singleEntityGetter(getStores);
+export const getOrCreateStore = getOrCreate(getStores, createStore);
+
+export async function createStore(store: IStoreForm): Promise<IStore> {
+    return post("/rest/stores", store);
+}
 
 /* VITI AREAS */
 interface IGetVitiAreasParams {
@@ -163,13 +191,11 @@ export async function getVitiAreas(
 ): Promise<IVitiArea[]> {
     const nonNullParams = nonNulls({ id, name, region_name: regionName });
     const vitiAreas: IVitiArea[] = await get("/rest/viti-areas", nonNullParams);
-    if (vitiAreas.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for viti area"));
-    }
     return vitiAreas;
 }
 
 export const getVitiArea = singleEntityGetter(getVitiAreas);
+export const getOrCreateVitiArea = getOrCreate(getVitiAreas, createVitiArea);
 
 export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {
     return post("/rest/viti-areas", vitiArea);
@@ -208,13 +234,14 @@ export async function getWines(
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
     const wines: IWine[] = await get("/rest/wines", nonNullParams);
-    if (wines.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for wines"));
-    }
     return wines;
 }
 
 export const getWine = singleEntityGetter(getWines);
+
+export async function createWine(wine: IWineForm): Promise<IWine> {
+    return post("/rest/wines", wine);
+}
 
 interface ISearchWinesParams {
     colorLike?: string;
@@ -249,19 +276,21 @@ export async function getWineGrapes({ wineId, grapeId }: IGetWineGrapesParams): 
 /* WINE TYPES */
 interface IGetWineTypesParams {
     id?: number;
-    name?: number;
+    name?: string;
 }
 
 export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<IWineType[]> {
     const nonNullParams = nonNulls({ id, name });
     const wineTypes: IWineType[] = await get("/rest/wine-types", nonNullParams);
-    if (wineTypes.length === 0) {
-        return Promise.reject(new EmptyResultError("Empty result returned for wine types"));
-    }
     return wineTypes;
 }
 
 export const getWineType = singleEntityGetter(getWineTypes);
+export const getOrCreateWineType = getOrCreate(getWineTypes, createWineType);
+
+export async function createWineType(wineType: IWineTypeForm): Promise<IWineType> {
+    return post("/rest/wine-types", wineType);
+}
 
 export async function updateWineType(wineType: IWineType): Promise<IWineType> {
     return put(`/rest/wine-types/${wineType.id}`, wineType);

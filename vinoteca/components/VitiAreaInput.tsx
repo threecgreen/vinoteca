@@ -8,16 +8,17 @@ import { TextInput } from "./TextInput";
 
 interface IProps extends IOnChange {
     value: string;
+    regionText?: string;
 }
 
-export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
+export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) => {
     const logger = new Logger(VitiAreaInput.name);
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
-                const vitiAreas: IVitiArea[] = await getVitiAreas({});
+                const vitiAreas: IVitiArea[] = await getVitiAreas({regionName: regionText});
                 autocomplete(inputRef, toDict(vitiAreas), onChange);
             } catch (e) {
                 logger.logError("Failed to get viti area autocomplete options");
@@ -25,7 +26,7 @@ export const VitiAreaInput: React.FC<IProps> = ({value, onChange}) => {
         }
 
         fetchVitiAreas();
-    }, [inputRef]);
+    }, [inputRef, regionText]);
 
     return (
         <TextInput name="Viti Area"

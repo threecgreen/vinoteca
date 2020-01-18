@@ -32,10 +32,11 @@ export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
                 />
                 <RegionInput value={ props.regionText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Region, v) }
-                    producerFilter={ props.producerText }
+                    producerText={ props.producerText }
                 />
                 <VitiAreaInput value={ props.vitiAreaText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.VitiArea, v) }
+                    regionText={ props.regionText }
                 />
             </Row>
         </form>
