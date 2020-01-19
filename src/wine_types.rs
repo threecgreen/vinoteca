@@ -41,7 +41,10 @@ pub struct TopWineType {
 }
 
 #[get("/wine-types/top?<limit>")]
-pub fn top(limit: Option<usize>, connection: DbConn) -> Result<Json<Vec<TopWineType>>, Json<VinotecaError>> {
+pub fn top(
+    limit: Option<usize>,
+    connection: DbConn,
+) -> Result<Json<Vec<TopWineType>>, Json<VinotecaError>> {
     let limit = limit.unwrap_or(10);
     wine_types::table
         .inner_join(wines::table.inner_join(purchases::table))

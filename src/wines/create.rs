@@ -1,7 +1,7 @@
 use crate::error::VinotecaError;
 use crate::models::{Wine, WineForm};
-use crate::DbConn;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
@@ -9,7 +9,10 @@ use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
 
 #[post("/wines", format = "json", data = "<wine_form>")]
-pub fn post(wine_form: Json<WineForm>, connection: DbConn) -> Result<Json<Wine>, Json<VinotecaError>> {
+pub fn post(
+    wine_form: Json<WineForm>,
+    connection: DbConn,
+) -> Result<Json<Wine>, Json<VinotecaError>> {
     let wine_form = wine_form.into_inner();
     diesel::insert_into(wines::table)
         .values(&wine_form)

@@ -7,7 +7,11 @@ use diesel::prelude::*;
 use rocket_contrib::json::Json;
 
 #[get("/stores?<id>&<name>")]
-pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<Json<Vec<Store>>, Json<VinotecaError>> {
+pub fn get(
+    id: Option<i32>,
+    name: Option<String>,
+    connection: DbConn,
+) -> Result<Json<Vec<Store>>, Json<VinotecaError>> {
     let mut query = stores::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(stores::id.eq(id));
@@ -23,7 +27,10 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> Result<
 }
 
 #[post("/stores", format = "json", data = "<store_form>")]
-pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> Result<Json<Store>, Json<VinotecaError>> {
+pub fn post(
+    store_form: Json<StoreForm>,
+    connection: DbConn,
+) -> Result<Json<Store>, Json<VinotecaError>> {
     let store_form = store_form.into_inner();
     diesel::insert_into(stores::table)
         .values(&store_form)

@@ -1,7 +1,7 @@
-use crate::DbConn;
 use crate::error::VinotecaError;
 use crate::models::{Purchase, PurchaseForm};
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
+use crate::DbConn;
 
 use diesel;
 use diesel::dsl::{sql, sum};
@@ -171,7 +171,10 @@ pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseD
 }
 
 #[post("/purchases", format = "json", data = "<purchase_form>")]
-pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> Result<Json<Purchase>, Json<VinotecaError>> {
+pub fn post(
+    purchase_form: Json<PurchaseForm>,
+    connection: DbConn,
+) -> Result<Json<Purchase>, Json<VinotecaError>> {
     let purchase_form = purchase_form.into_inner();
     diesel::insert_into(purchases::table)
         .values(&purchase_form)

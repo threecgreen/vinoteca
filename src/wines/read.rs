@@ -1,7 +1,7 @@
 use crate::error::VinotecaError;
 use crate::models::Wine;
-use crate::DbConn;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;

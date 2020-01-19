@@ -1,7 +1,7 @@
+use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
-use std::fmt::{Display, self};
-use serde::Serialize;
+use std::fmt::{self, Display};
 
 #[derive(Debug, Serialize)]
 pub enum VinotecaError {
@@ -17,7 +17,9 @@ impl From<diesel::result::Error> for VinotecaError {
         // TODO: set status?
         match diesel_error {
             e @ diesel::result::Error::NotFound => VinotecaError::NotFound(format!("{}", e)),
-            diesel::result::Error::DatabaseError(kind, _info) => VinotecaError::MissingConstraint(format!("{:#?}", kind)),
+            diesel::result::Error::DatabaseError(kind, _info) => {
+                VinotecaError::MissingConstraint(format!("{:#?}", kind))
+            }
             e => VinotecaError::Internal(format!("{}", e)),
         }
     }

@@ -36,7 +36,10 @@ pub fn get(
 }
 
 #[post("/regions", format = "json", data = "<region_form>")]
-pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> Result<Json<Region>, Json<VinotecaError>> {
+pub fn post(
+    region_form: Json<RegionForm>,
+    connection: DbConn,
+) -> Result<Json<Region>, Json<VinotecaError>> {
     let region_form = region_form.into_inner();
     diesel::insert_into(regions::table)
         .values(&region_form)
