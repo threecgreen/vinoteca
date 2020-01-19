@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Btn } from "./Buttons";
 import { IChildrenProp } from "./IProps";
 
@@ -7,6 +7,7 @@ interface IModalProps extends IChildrenProp {
 }
 
 export const Modal: React.FC<IModalProps> = (props) => {
+    // // TODO: use ref
     // React.useEffect(() => {
     //     setTimeout(() => {
     //         modal("#vinoteca-modal");

@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { render } from "react-dom";
-import { onLoad } from "../../lib/JQueryCompat";
+import { onLoad } from "../../lib/utils";
 import { navbar } from "../../lib/widgets";
 import { VitiAreaProfile } from "./VitiAreaProfileApp";
 

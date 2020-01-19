@@ -186,3 +186,7 @@ export function getNameAndType(name: string | null, wineType: string): string {
 export function redirect(url: string) {
     location.href = url;
 }
+
+export function onLoad(fun: () => void) {
+    document.addEventListener("DOMContentLoaded", fun);
+}
