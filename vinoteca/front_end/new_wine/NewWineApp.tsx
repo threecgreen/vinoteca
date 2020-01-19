@@ -7,7 +7,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { initPurchaseInputData, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IColor, IProducer, IVitiArea, IWineType } from "../../lib/Rest";
-import { getColor, getOrCreateProducer, getOrCreateRegion, getOrCreateStore, getOrCreateVitiArea, getOrCreateWineType, createWine, createPurchase } from "../../lib/RestApi";
+import { createPurchase, createWine, getColor, getOrCreateProducer, getOrCreateRegion, getOrCreateStore, getOrCreateVitiArea, getOrCreateWineType } from "../../lib/RestApi";
 import { redirect } from "../../lib/utils";
 import { initWineInputData, wineInputReducer, WineInputs } from "./WineInputs";
 
@@ -93,7 +93,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                         dispatch={ wineDispatch }
                     />
                 </Row>
-                <GrapesInputs wineGrapes={ grapes }
+                <GrapesInputs grapes={ grapes }
                     dispatch={ grapesDispatch }
                 />
                 <Btn classes={ ["green-bg"] }

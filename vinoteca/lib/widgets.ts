@@ -9,7 +9,6 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
                              completions: IDict<string | null>,
                              onChange: OnChange, minLength = 1, limit = 5) {
     if (elem.current) {
-        console.log(`Starting autocomplete with ${elem.current}`)
         const instance = new Autocomplete(elem.current, {
             data: completions,
             limit,

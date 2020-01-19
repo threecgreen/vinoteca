@@ -33,15 +33,16 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
             const maxId = maxBy(grapes, (grape) => grape.id)?.id ?? 0;
             const hasGrapePct = grapes.some((grape) => grape.percent !== null && grape.grape);
             const remPct = remainingGrapePct(grapes);
-            const winedId = grapes.length > 0 ? grapes[grapes.length - 1].wineId : 0;
-            grapes.push({
+            const wineId = grapes.length > 0 ? grapes[grapes.length - 1].wineId : 0;
+            // Need to create new array to assuage React diffing algo
+            return [
+                ...grapes, {
                 id: maxId + 1,
                 percent: hasGrapePct ? remPct : null,
                 grape: "",
                 grapeId: 0,
-                wineId: winedId
-            });
-            return grapes;
+                wineId,
+            }];
         case "deleteGrape":
             return grapes.filter((grape) => grape.id !== action.id);
         case "modifyGrape":
@@ -61,11 +62,11 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
 }
 
 interface IProps {
-    wineGrapes: IWineGrape[];
+    grapes: IWineGrape[];
     dispatch: React.Dispatch<Action>;
 }
 
-export const GrapesInputs: React.FC<IProps> = ({wineGrapes, dispatch}) => {
+export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
     const [completions, setCompletions] = React.useState<IDict<string | null>>({});
 
     React.useEffect(() => {
@@ -86,20 +87,17 @@ export const GrapesInputs: React.FC<IProps> = ({wineGrapes, dispatch}) => {
         <Row>
             <Col s={ 12 }>
                 <h6>Grape composition</h6>
-            </Col> {
-                wineGrapes.map((grape) => {
-                    return (
-                        <GrapeInput key={ grape.id }
-                            id={ grape.id }
-                            completions={ completions }
-                            grape={ grape.grape }
-                            percent={ grape.percent }
-                            handleDelete={ (id) => dispatch({type: "deleteGrape", id}) }
-                            onChange={ (id, grape, percent) => dispatch({type: "modifyGrape", id, grape, percent}) }
-                        />
-                    );
-                })
-            }
+            </Col>
+            { grapes.map((grape) => (
+                <GrapeInput key={ grape.id }
+                    id={ grape.id }
+                    completions={ completions }
+                    grape={ grape.grape }
+                    percent={ grape.percent }
+                    handleDelete={ (id) => dispatch({type: "deleteGrape", id}) }
+                    onChange={ (id, grape, percent) => dispatch({type: "modifyGrape", id, grape, percent}) }
+                />
+            )) }
             <InputField>
                 <FloatingBtn onClick={ handleAdd }
                     classes={ ["green-bg"] }

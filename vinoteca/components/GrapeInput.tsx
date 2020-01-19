@@ -1,11 +1,11 @@
 import React from "react";
 import { IDict } from "../lib/utils";
+import { autocomplete } from "../lib/widgets";
 import { FloatingBtn } from "./Buttons";
-import { InputField } from "./Grid";
+import { Col, InputField } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
 import { NumberInput } from "./NumberInput";
 import { TextInput } from "./TextInput";
-import { autocomplete } from "../lib/widgets";
 
 interface IProps {
     id: number;
@@ -29,7 +29,7 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
     }
 
     return (
-        <>
+        <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
             <InputField s={ 1 }>
                 <FloatingBtn onClick={ (e) => onDelete(e) }
                     classes={ ["red-bg"] }
@@ -43,16 +43,16 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
                 min={ 0 }
                 max={ 100 }
                 step="1"
-                onChange={ (n) => onChange(id, name, n) }
+                onChange={ (n) => onChange(id, grape, n) }
             />
             <TextInput name="Grape"
                 s={ 8 }
                 className="autocomplete"
                 value={ grape }
-                onChange={ (v) => onChange(id, v, percent) }
+                onChange={ (grape) => onChange(id, grape, percent) }
                 inputRef={ inputRef }
             />
-        </>
+        </Col>
     );
 }
 GrapeInput.displayName = "GrapeInput";
