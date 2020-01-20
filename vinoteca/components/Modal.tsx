@@ -1,4 +1,5 @@
 import React from "react";
+import M from "materialize-css";
 import { Btn } from "./Buttons";
 import { IChildrenProp } from "./IProps";
 
@@ -6,24 +7,39 @@ interface IModalProps extends IChildrenProp {
     display: boolean;
 }
 
-export const Modal: React.FC<IModalProps> = (props) => {
-    // // TODO: use ref
-    // React.useEffect(() => {
-    //     setTimeout(() => {
-    //         modal("#vinoteca-modal");
-    //     }, 200);
-    // });
+export const Modal: React.FC<IModalProps> = ({children, display}) => {
+    const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    React.useEffect(() => {
+        if (display) {
+            const instance = new M.Modal(ref.current);
+            instance.open();
+        }
+    }, [display, ref]);
 
-    if (props.display) {
+    if (display) {
         return (
-            <div>
-                { props.children }
+            <div ref={ ref } className="modal">
+                { children }
             </div>
         )
     }
     return null;
 }
 Modal.displayName = "Modal";
+
+export const ModalContent: React.FC<IChildrenProp> = ({children}) => (
+    <section className="modal-content">
+        { children }
+    </section>
+)
+ModalContent.displayName = "ModalContent";
+
+export const ModalFooter: React.FC<IChildrenProp> = ({children}) => (
+    <section className="modal-footer">
+        { children }
+    </section>
+)
+ModalFooter.displayName = "ModalFooter";
 
 interface IDeleteModalProps {
     display: boolean;
@@ -35,11 +51,11 @@ interface IDeleteModalProps {
 export const DeleteModal: React.FC<IDeleteModalProps> = (props) => {
     return (
         <Modal display={ props.display }>
-            <section className="modal-content">
+            <ModalContent>
                 <h5>Are you sure you want to delete this { props.item }?</h5>
                 <p>This action is irreversible.</p>
-            </section>
-            <section className="modal-footer">
+            </ModalContent>
+            <ModalFooter>
                 <Btn classes={ ["modal-action", "red-bg"] }
                     onClick={ props.onYesClick }
                 >
@@ -50,7 +66,7 @@ export const DeleteModal: React.FC<IDeleteModalProps> = (props) => {
                 >
                     No
                 </Btn>
-            </section>
+            </ModalFooter>
         </Modal>
     )
 }
