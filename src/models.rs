@@ -158,22 +158,22 @@ pub struct Wine {
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "wines"]
 #[serde(rename_all = "camelCase")]
-pub struct WineForm<'a> {
+pub struct WineForm {
     #[validate(length(min = 1))]
-    pub description: Option<&'a str>,
+    pub description: Option<String>,
     #[validate(length(min = 1))]
-    pub notes: Option<&'a str>,
+    pub notes: Option<String>,
     #[validate(range(min = 0, max = 10))]
     pub rating: Option<f32>,
     #[validate(range(min = 0))]
     pub inventory: i32,
     #[validate(length(min = 1))]
-    pub why: Option<&'a str>,
+    pub why: Option<String>,
     pub color_id: i32,
     pub producer_id: i32,
     pub viti_area_id: Option<i32>,
     #[validate(length(min = 1))]
-    pub name: Option<&'a str>,
+    pub name: Option<String>,
     pub wine_type_id: i32,
 }
 

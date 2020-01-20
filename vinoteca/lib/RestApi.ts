@@ -1,4 +1,4 @@
-import { delete_, get, IQueryParams, post, put } from "./ApiHelper";
+import { delete_, get, IQueryParams, post, put, postForm } from "./ApiHelper";
 import Logger from "./Logger";
 import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
          IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
@@ -239,8 +239,13 @@ export async function getWines(
 
 export const getWine = singleEntityGetter(getWines);
 
-export async function createWine(wine: IWineForm): Promise<IWine> {
-    return post("/rest/wines", wine);
+export async function createWine(wine: IWineForm, file: File | null): Promise<IWine> {
+    const form = new FormData();
+    form.append("wine_form", JSON.stringify(wine));
+    if (file) {
+        form.append("image", file);
+    }
+    return postForm("/rest/wines", form);
 }
 
 interface ISearchWinesParams {

@@ -2,11 +2,12 @@ import format from "date-fns/esm/format";
 import { Datepicker } from "materialize-css";
 import React from "react";
 import { Input } from "./Input";
+import { dateToNum, numToDate } from "../lib/utils";
 
 interface IProps {
-    date: Date | null;
+    date: number | null;
     name: string;
-    onChange: (date: Date) => void;
+    onChange: (date: number) => void;
 }
 
 export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
@@ -19,13 +20,13 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
             maxDate: new Date(),
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
-                onChange(datepicker.date);
+                onChange(dateToNum(datepicker.date));
             },
             yearRange: 15,
         });
     }, [inputRef]);
 
-    const dateString = date ? format(date, "MMM dd, yyyy") : "";
+    const dateString = date ? format(numToDate(date), "MMM dd, yyyy") : "";
     const isValueSet = date !== null;
 
     return (

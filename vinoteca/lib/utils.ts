@@ -62,7 +62,7 @@ export function numToDate(num: number): Date {
 }
 
 export function dateToNum(date: Date): number {
-    return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDay();
+    return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
 }
 
 /**

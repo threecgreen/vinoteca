@@ -2,7 +2,7 @@ import React from "react";
 import Logger from "../lib/Logger";
 import { IStore } from "../lib/Rest";
 import { getStores, toDict } from "../lib/RestApi";
-import { dateToNum, defaultVintageYear, numToDate } from "../lib/utils";
+import { dateToNum, defaultVintageYear } from "../lib/utils";
 import { autocomplete } from "../lib/widgets";
 import { CheckboxInput } from "./CheckboxInput";
 import { DateInput } from "./DateInput";
@@ -98,8 +98,8 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
     return (
         <>
             <DateInput name="Purchase Date"
-                date={ data.date !== null ? numToDate(data.date) : data.date }
-                onChange={ (date) => dispatch({type: "setDate", date: dateToNum(date)}) }
+                date={ data.date }
+                onChange={ (date) => dispatch({type: "setDate", date: date}) }
             />
             <NumberInput name="Quantity"
                 number={ data.quantity }

@@ -10,11 +10,13 @@ import { IColor, IProducer, IVitiArea, IWineType } from "../../lib/Rest";
 import { createPurchase, createWine, getColor, getOrCreateProducer, getOrCreateRegion, getOrCreateStore, getOrCreateVitiArea, getOrCreateWineType } from "../../lib/RestApi";
 import { redirect } from "../../lib/utils";
 import { initWineInputData, wineInputReducer, WineInputs } from "./WineInputs";
+import { PreloaderCirc } from "../../components/Preloader";
 
 export const NewWineApp: React.FC<{}> = (_props) => {
     const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
     const [wineState, wineDispatch] = React.useReducer(wineInputReducer, initWineInputData());
     const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
+    const [isSaving, setIsSaving] = React.useState(false);
 
     const getOrCreateVitiAreaForRegion = async (regionId: number) => {
         if (wineState.vitiArea) {
@@ -33,7 +35,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
 
     const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        // TODO: buildWineForm
+        setIsSaving(true);
         // TODO: check certain forms aren't empty
         const logger = new Logger(NewWineApp.name);
         try {
@@ -53,8 +55,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                 rating: wineState.isRatingEnabled ? wineState.rating : null,
                 inventory: purchaseState.shouldAddToInventory ? purchaseState.quantity : 0,
                 notes: wineState.notes || null,
-            });
-            // TODO: upload image
+            }, wineState.file);
             let store = null;
             if (purchaseState.store) {
                 store = await getOrCreateStore({name: purchaseState.store}, {name: purchaseState.store});
@@ -70,6 +71,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
             });
             redirect(`/wines/${wine.id}`);
         } catch (err) {
+            setIsSaving(false);
             logger.logError(`Error creating new wine: ${err.message}`);
         }
     }
@@ -107,6 +109,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                 >
                     Cancel
                 </Btn>
+                { isSaving && <PreloaderCirc /> }
             </form>
         </div>
     );

@@ -62,6 +62,14 @@ export async function post<Response>(url: string, body: object, params: IQueryPa
     return checkResponse(response);
 }
 
+export async function postForm<Response>(url: string, form: FormData, params: IQueryParams = {}): Promise<Response> {
+    const response = await fetch(url + encodeParams(params), {
+        body: form,
+        method: "POST",
+    });
+    return checkResponse(response);
+}
+
 /**
  * Makes an HTTP PUT request to the url with the optional parameters containing
  * the body, then parses the JSON response.

@@ -21,6 +21,7 @@ interface IData {
     vitiArea: string;
     description: string;
     notes: string;
+    file: File | null,
 }
 
 export const initWineInputData: () => IData = () => ({
@@ -35,6 +36,7 @@ export const initWineInputData: () => IData = () => ({
     vitiArea: "",
     description: "",
     notes: "",
+    file: null,
 });
 
 type Action =
@@ -48,7 +50,8 @@ type Action =
     | {type: "setWhy", why: string}
     | {type: "setVitiArea", vitiArea: string}
     | {type: "setDescription", description: string}
-    | {type: "setNotes", notes: string};
+    | {type: "setNotes", notes: string}
+    | {type: "setFile", file: File | null};
 
 export const wineInputReducer: React.Reducer<IData, Action> = (state, action) => {
     switch (action.type) {
@@ -74,6 +77,8 @@ export const wineInputReducer: React.Reducer<IData, Action> = (state, action) =>
             return { ...state, description: action.description };
         case "setNotes":
             return { ...state, notes: action.notes };
+        case "setFile":
+            return { ...state, file: action.file };
         default:
             return state;
     }
@@ -126,7 +131,7 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
                 value={ data.notes }
                 onChange={ (notes) => dispatch({type: "setNotes", notes}) }
             />
-            <FileInput name="Wine Image" onChange={ () => null } />
+            <FileInput name="Wine Image" onChange={ (file) => dispatch({type: "setFile", file}) } />
         </>
     );
 }

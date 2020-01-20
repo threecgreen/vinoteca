@@ -1,20 +1,23 @@
 use crate::error::VinotecaError;
-use crate::models::{Wine, WineForm};
+use super::models::RawWineForm;
+use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
 
+use std::io::Cursor;
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
 
-#[post("/wines", format = "json", data = "<wine_form>")]
+#[post("/wines", data = "<raw_wine_form>")]
 pub fn post(
-    wine_form: Json<WineForm>,
+    raw_wine_form: RawWineForm,
     connection: DbConn,
 ) -> Result<Json<Wine>, Json<VinotecaError>> {
-    let wine_form = wine_form.into_inner();
-    diesel::insert_into(wines::table)
+    let wine_form = raw_wine_form.wine_form;
+
+    let result: Result<Json<Wine>, Json<VinotecaError>> = diesel::insert_into(wines::table)
         .values(&wine_form)
         .execute(&*connection)
         .and_then(|_| {
@@ -68,5 +71,20 @@ pub fn post(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
+        .map_err(Json);
+
+    if let Ok(wine) = &result {
+        if let Some(image) = raw_wine_form.image {
+            handle_image(wine, image);
+        }
+    }
+    result
+}
+
+fn handle_image(wine: &Wine, raw_img: Vec<u8>) -> Result<(), VinotecaError> {
+    let img = image::io::Reader::new(Cursor::new(raw_img))
+        .with_guessed_format()?
+        .decode()?;
+    img.save(format!("media/{}.png", wine.id))?;
+    Ok(())
 }

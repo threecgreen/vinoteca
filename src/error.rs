@@ -1,3 +1,4 @@
+use image::ImageError;
 use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
@@ -22,6 +23,18 @@ impl From<diesel::result::Error> for VinotecaError {
             }
             e => VinotecaError::Internal(format!("{}", e)),
         }
+    }
+}
+
+impl From<std::io::Error> for VinotecaError {
+    fn from(io_error: std::io::Error) -> Self {
+        VinotecaError::Internal(format!("{}", io_error))
+    }
+}
+
+impl From<ImageError> for VinotecaError {
+    fn from(img_error: ImageError) -> Self {
+        VinotecaError::Internal(format!("{}", img_error))
     }
 }
 

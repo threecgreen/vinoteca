@@ -24,8 +24,8 @@ fn write_interface(writer: &mut BufWriter<&File>, ts_def: Cow<'static, str>) {
 
 #[allow(unused)]
 fn main() {
-    if cfg!(any(debug_assertions, feature = "export-typescript")) {
-        // Truncate file if it already existopens
+    if cfg!(debug_assertions) {
+        // Truncate file if it already exists
         let file =
             File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("vinoteca/lib/Rest.d.ts"))
                 .expect("Couldn't open TypeScript contracts file");
