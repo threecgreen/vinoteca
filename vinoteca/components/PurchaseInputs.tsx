@@ -1,7 +1,7 @@
 import React from "react";
 import Logger from "../lib/Logger";
-import { IStore } from "../lib/Rest";
-import { getStores, toDict } from "../lib/RestApi";
+import { IPurchaseForm, IStore } from "../lib/Rest";
+import { getOrCreateStore, getStores, toDict } from "../lib/RestApi";
 import { dateToNum, defaultVintageYear } from "../lib/utils";
 import { autocomplete } from "../lib/widgets";
 import { CheckboxInput } from "./CheckboxInput";
@@ -9,17 +9,17 @@ import { DateInput } from "./DateInput";
 import { NumberInput } from "./NumberInput";
 import { TextInput } from "./TextInput";
 
-interface IData {
-    date: number;
-    quantity: number;
+export interface IPurchaseData {
+    date: number | null;
+    quantity: number | null;
     shouldAddToInventory: boolean | null;
-    price: number;
-    vintage: number;
+    price: number | null;
+    vintage: number | null;
     store: string;
     memo: string;
 }
 
-export const initPurchaseInputData: () => IData = () => ({
+export const initPurchaseInputData: () => IPurchaseData = () => ({
     date: dateToNum(new Date()),
     quantity: 1,
     shouldAddToInventory: true,
@@ -28,6 +28,22 @@ export const initPurchaseInputData: () => IData = () => ({
     store: "",
     memo: "",
 });
+
+export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): Promise<IPurchaseForm> => {
+    let store = null;
+    if (data.store) {
+        store = await getOrCreateStore({name: data.store}, {name: data.store});
+    }
+    return {
+        date: data.date,
+        wineId,
+        quantity: data.quantity,
+        storeId: store?.id ?? null,
+        price: data.price,
+        vintage: data.vintage,
+        memo: data.memo
+    };
+}
 
 type Action =
     | { type: "setDate", date: number }
@@ -38,7 +54,7 @@ type Action =
     | { type: "setStore", store: string }
     | { type: "setMemo", memo: string };
 
-export const purchaseInputReducer: React.Reducer<IData, Action> = (state, action) => {
+export const purchaseInputReducer: React.Reducer<IPurchaseData, Action> = (state, action) => {
     switch (action.type) {
         case "setDate":
             return { ...state, date: action.date };
@@ -61,7 +77,7 @@ export const purchaseInputReducer: React.Reducer<IData, Action> = (state, action
 
 interface IProps {
     displayInventoryBtn: boolean;
-    data: IData;
+    data: IPurchaseData;
     dispatch: React.Dispatch<Action>;
 }
 

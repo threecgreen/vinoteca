@@ -136,6 +136,10 @@ export async function createPurchase(purchase: IPurchaseForm): Promise<IPurchase
     return post("/rest/purchases", purchase);
 }
 
+export async function updatePurchase(id: number, purchase: IPurchaseForm): Promise<IPurchase> {
+    return put(`/rest/purchases/${id}`, purchase);
+}
+
 /* REGIONS */
 interface IGetRegionParams {
     id?: number;
@@ -246,6 +250,10 @@ export async function createWine(wine: IWineForm, file: File | null): Promise<IW
         form.append("image", file);
     }
     return postForm("/rest/wines", form);
+}
+
+export async function updateWine(id: number, wine: IWineForm): Promise<IWine> {
+    return put(`/rest/wines/${id}`, wine);
 }
 
 interface ISearchWinesParams {

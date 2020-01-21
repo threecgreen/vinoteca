@@ -4,7 +4,7 @@ import { CSRFToken } from "../../components/CSRFToken";
 import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
-import { initPurchaseInputData, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
+import { initPurchaseInputData, purchaseInputReducer, PurchaseInputs, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IColor, IProducer, IVitiArea, IWineType } from "../../lib/Rest";
 import { createPurchase, createWine, getColor, getOrCreateProducer, getOrCreateRegion, getOrCreateStore, getOrCreateVitiArea, getOrCreateWineType } from "../../lib/RestApi";
@@ -53,22 +53,11 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                 why: wineState.why || null,
                 description: wineState.description || null,
                 rating: wineState.isRatingEnabled ? wineState.rating : null,
-                inventory: purchaseState.shouldAddToInventory ? purchaseState.quantity : 0,
+                inventory: purchaseState.shouldAddToInventory ? purchaseState.quantity ?? 0 : 0,
                 notes: wineState.notes || null,
             }, wineState.file);
-            let store = null;
-            if (purchaseState.store) {
-                store = await getOrCreateStore({name: purchaseState.store}, {name: purchaseState.store});
-            }
-            await createPurchase({
-                date: purchaseState.date,
-                wineId: wine.id,
-                quantity: purchaseState.quantity,
-                storeId: store?.id ?? null,
-                price: purchaseState.price,
-                vintage: purchaseState.vintage,
-                memo: purchaseState.memo
-            });
+            const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);
+            await createPurchase(purchaseForm);
             redirect(`/wines/${wine.id}`);
         } catch (err) {
             setIsSaving(false);

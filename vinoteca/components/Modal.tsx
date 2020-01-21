@@ -10,9 +10,14 @@ interface IModalProps extends IChildrenProp {
 export const Modal: React.FC<IModalProps> = ({children, display}) => {
     const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
     React.useEffect(() => {
+        const instance = new M.Modal(ref.current);
         if (display) {
-            const instance = new M.Modal(ref.current);
             instance.open();
+            // Returning function from useEffect will be called when the
+            // component is unmounted
+            return () => instance.close()
+        } else {
+            instance.close();
         }
     }, [display, ref]);
 
