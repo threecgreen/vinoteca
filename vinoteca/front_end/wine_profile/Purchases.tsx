@@ -34,7 +34,7 @@ export const Purchases: React.FC<IProps> = ({purchases, onEditClick, onDeleteCli
             setAscending(false);
         }
     }
-
+    // FIXME: fix sorting
     const tableHeaderProps = (sortingVal: SortingValue) => {
         if (sorting === sortingVal) {
             const sortingState = ascending ? SortingState.Ascending : SortingState.Descending;
