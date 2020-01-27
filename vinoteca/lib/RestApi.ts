@@ -140,6 +140,10 @@ export async function updatePurchase(id: number, purchase: IPurchaseForm): Promi
     return put(`/rest/purchases/${id}`, purchase);
 }
 
+export async function deletePurchase(id: number): Promise<void> {
+    return delete_(`/rest/purchases/${id}`);
+}
+
 /* REGIONS */
 interface IGetRegionParams {
     id?: number;

@@ -235,4 +235,14 @@ pub fn put(
         .map_err(Json)
 }
 
-// TODO: delete
+#[delete("/purchases/<id>")]
+pub fn delete(
+    id: i32,
+    connection: DbConn,
+) -> Result<(), Json<VinotecaError>> {
+    diesel::delete(purchases::table.filter(purchases::id.eq(id)))
+        .execute(&*connection)
+        .map(|_| ())
+        .map_err(VinotecaError::from)
+        .map_err(Json)
+}

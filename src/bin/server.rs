@@ -50,6 +50,7 @@ fn main() {
                 purchases::get,
                 purchases::post,
                 purchases::put,
+                purchases::delete,
                 purchases::by_year,
                 purchases::total_liters,
                 purchases::most_common_purchase_date,

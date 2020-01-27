@@ -3,11 +3,11 @@ import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
-import { getPurchases, getWine, getWineGrapes, updateWine, updatePurchase } from "../../lib/RestApi";
+import { deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
 import { imageExists } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { EditPurchase } from "./EditPurchase";
@@ -20,15 +20,6 @@ import { WineImg } from "./WineImg";
 
 interface IProps {
     id: number;
-}
-
-interface IState {
-    isEditing: boolean;
-    // "Pure" state
-    hasImage: boolean;
-    grapes: IWineGrape[];
-    wine?: IWine;
-    purchases: IPurchase[];
 }
 
 export const WineProfileApp: React.FC<IProps> = ({id}) => {
@@ -105,7 +96,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         const purchaseId = state.mode.id;
         try {
             const form = await purchaseDataToForm(purchase, id);
-            const updatedPurchase = await updatePurchase(id, form);
+            const updatedPurchase = await updatePurchase(purchaseId, form);
             dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
                 if (purchase.id === purchaseId) {
                     return updatedPurchase;
@@ -114,6 +105,17 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             })});
         } catch (err) {
             logger.logWarning(`Failed to update purchase: ${err.message}`);
+        } finally {
+            dispatch({type: "setMode", mode: {"type": "display"}});
+        }
+    }
+
+    const onDeletePurchase = async (e: React.MouseEvent, purchaseId: number) => {
+        e.preventDefault();
+        try {
+            await deletePurchase(purchaseId);
+        } catch (e) {
+            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e}`);
         } finally {
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
@@ -187,17 +189,33 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     // Displays relevant modal for editing/deleting
     const renderModal = () => {
-        switch (state.mode.type) {
-            case "editPurchase":
+        if (state.mode.type === "editPurchase") {
+            const purchaseId = state.mode.id;
+            const purchase = state.purchases.find((p) => p.id === purchaseId);
+            if (purchase) {
                 return (
-                    // @ts-ignore : not sure why it can't detect state.mode.id here
-                    <EditPurchase purchase={ state.purchases.find((purchase) => purchase.id === state.mode.id!)! }
+                    <EditPurchase purchase={ purchase }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                         onSubmit={ onSubmitPurchaseEdit }
                     />
                 );
-            default:
-                return null;
+            }
+            return null;
+        } else if (state.mode.type === "deletePurchase") {
+            const purchaseId = state.mode.id;
+            const purchase = state.purchases.find((p) => p.id === purchaseId);
+            if (purchase) {
+                return (
+                    <DeleteModal display
+                        item="Purchase"
+                        onYesClick={ (e) => onDeletePurchase(e, purchaseId) }
+                        onNoClick={ (e) => { e.preventDefault(); dispatch({type: "setMode", mode: {type: "display"}}); } }
+                    />
+                )
+            }
+            return null;
+        } else {
+            return null;
         }
     }
 

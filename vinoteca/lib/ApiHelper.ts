@@ -19,15 +19,22 @@ function encodeJson(obj: object): string {
     return JSON.stringify(obj);
 }
 
+async function decodeJsonIfAny(response: Response) {
+    if (parseFloat(response.headers.get("content-length") ?? "0") > 0
+        && response.headers.get("content-type") === "application/json") {
+        return await response.json();
+    }
+}
+
 async function checkResponse(response: Response): Promise<any> {
     try {
         if (response.status > 310) {
-            throw Error(await response.json());
+            throw Error(await decodeJsonIfAny(response));
         }
         if (response.status === 204) {
             return [];
         }
-        return response.json();
+        return decodeJsonIfAny(response);
     } catch (err) {
         throw Error(await response.text())
     }
