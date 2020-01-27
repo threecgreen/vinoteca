@@ -6,12 +6,13 @@ import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "../../compo
 import { IPurchase } from "../../lib/Rest";
 
 interface IProps {
+    title: string;
     purchase: IPurchase;
-    onSubmit: (editedPurchase: IPurchaseData) => void;
+    onSubmit: (purchase: IPurchaseData) => void;
     onCancel: () => void;
 }
 
-export const EditPurchase: React.FC<IProps> = ({purchase, onCancel, onSubmit}) => {
+export const ModifyPurchase: React.FC<IProps> = ({title, purchase, onCancel, onSubmit}) => {
     const [state, dispatch] = React.useReducer(purchaseInputReducer, {
         ...purchase,
         store: purchase.store ?? "",
@@ -33,7 +34,7 @@ export const EditPurchase: React.FC<IProps> = ({purchase, onCancel, onSubmit}) =
         <Modal display>
             <ModalContent>
                 <Row>
-                    <h4>Edit purchase</h4>
+                    <h4>{ title }</h4>
                     <PurchaseInputs displayInventoryBtn={ false }
                         data={ state }
                         dispatch={ dispatch }
@@ -49,4 +50,4 @@ export const EditPurchase: React.FC<IProps> = ({purchase, onCancel, onSubmit}) =
         </Modal>
     );
 }
-EditPurchase.displayName = "EditPurchase";
+ModifyPurchase.displayName = "ModifyPurchase";

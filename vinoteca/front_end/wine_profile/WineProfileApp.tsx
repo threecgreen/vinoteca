@@ -5,18 +5,19 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
-import { IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
+import { IPurchaseData, purchaseDataToForm, initPurchaseInputData } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
+import { deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, createPurchase } from "../../lib/RestApi";
 import { imageExists } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
-import { EditPurchase } from "./EditPurchase";
+import { ModifyPurchase } from "./ModifyPurchase";
 import { GrapesTable } from "./GrapesTable";
 import { Purchases } from "./Purchases";
 import { initState, wineReducer } from "./State";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
+import { IPurchase, IPurchaseForm } from "../../lib/Rest";
 
 interface IProps {
     id: number;
@@ -115,7 +116,20 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         try {
             await deletePurchase(purchaseId);
         } catch (e) {
-            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e}`);
+            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`);
+        } finally {
+            dispatch({type: "setMode", mode: {"type": "display"}});
+        }
+    }
+
+    // TODO: add to inventory
+    const onSubmitAddPurchase = async (purchase: IPurchaseData) => {
+        try {
+            const form = await purchaseDataToForm(purchase, id);
+            const newPurchase = await createPurchase(form);
+            dispatch({type: "setPurchases", purchases: state.purchases.concat([newPurchase])});
+        } catch (err) {
+            logger.logWarning(`Failed to create new purchase: ${err.message}`);
         } finally {
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
@@ -194,7 +208,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             const purchase = state.purchases.find((p) => p.id === purchaseId);
             if (purchase) {
                 return (
-                    <EditPurchase purchase={ purchase }
+                    <ModifyPurchase title="Edit purchase"
+                        purchase={ purchase }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                         onSubmit={ onSubmitPurchaseEdit }
                     />
@@ -214,6 +229,21 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 )
             }
             return null;
+        } else if (state.mode.type === "addPurchase") {
+            const newPurchaseData = initPurchaseInputData();
+            const newPurchase: IPurchase = {
+                ...newPurchaseData,
+                id: 0,
+                wineId: id,
+                storeId: null,
+            };
+            return (
+                <ModifyPurchase title="Add purchase"
+                    purchase={ newPurchase }
+                    onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                    onSubmit={ onSubmitAddPurchase }
+                />
+            );
         } else {
             return null;
         }
