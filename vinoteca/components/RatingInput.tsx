@@ -1,6 +1,7 @@
-import * as React from "react";
-import { Col } from "./Grid";
+import { Range } from "materialize-css";
+import React from "react";
 import { CheckboxInput } from "./CheckboxInput";
+import { Col } from "./Grid";
 
 interface IProps {
     isChecked: boolean;
@@ -10,6 +11,12 @@ interface IProps {
 }
 
 export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rating, onRatingChange})  => {
+    const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+
+    React.useEffect(() => {
+        new Range(ref.current)
+    }, [ref]);
+
     return (
         <Col s={ 4 } l={ 2 } classes={ ["range-field" ] }>
             <CheckboxInput name="has-rating"
@@ -18,8 +25,9 @@ export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rat
                 onClick={ onIsCheckedChange }
             />
             <label htmlFor="rating" />
-            <p className="range-field" id="rating-slider">
-                <input type="range" id="rating" name="rating"
+            <p className="range-field">
+                <input type="range" name="rating"
+                    ref={ ref }
                     min={ 0 } max={ 10 } step={ 1 }
                     value={ rating }
                     disabled={ !isChecked }
