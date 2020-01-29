@@ -187,6 +187,15 @@ pub struct WineGrape {
     pub wine_id: i32,
 }
 
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
+#[table_name = "wine_grapes"]
+#[serde(rename_all = "camelCase")]
+pub struct WineGrapeForm {
+    pub percent: Option<i32>,
+    pub grape_id: i32,
+    pub wine_id: i32,
+}
+
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineType {

@@ -1,5 +1,5 @@
 use crate::error::{RestResult, VinotecaError};
-use crate::models::WineGrape;
+use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
 use crate::DbConn;
 
@@ -30,4 +30,9 @@ pub fn get(
         .load::<WineGrape>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
+}
+
+#[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
+pub fn post(wine_grape_form: Json<WineGrapeForm>, connection: DbConn) -> RestResult<Vec<WineGrape>> {
+    todo!();
 }

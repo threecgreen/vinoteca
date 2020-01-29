@@ -9,6 +9,7 @@ import { Btn } from "../../components/Buttons";
 import { download, generateCSV } from "../../lib/CSV";
 import format from "date-fns/esm/format";
 import { numToDate } from "../../lib/utils";
+import { updateWine } from "../../lib/RestApi";
 
 
 interface IState {
@@ -65,8 +66,17 @@ export class InventoryApp extends React.Component<{}, IState> {
     public async onInventoryChange(e: React.MouseEvent, id: number, change: InventoryChange) {
         e.preventDefault();
         try {
-            await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
-            await this.updateInventory();
+            const wine = this.state.wines.find((w) => w.id === id);
+            if (wine) {
+                if (change === InventoryChange.Increase) {
+                    wine.inventory += 1;
+                } else if (wine.inventory > 0) {
+                    wine.inventory -= 1;
+                }
+                await updateWine(id, wine, null);
+                await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
+                await this.updateInventory();
+            }
         } catch (err) {
             this.setState({hasLoaded: true});
             this.logger.logWarning(err);

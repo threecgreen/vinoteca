@@ -71,7 +71,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 copy.inventory -= 1;
             }
             try {
-                const wine = await updateWine(id, copy);
+                // TODO: include file
+                const wine = await updateWine(id, copy, null);
                 dispatch({type: "setWine", wine});
             } catch (e) {
                 logger.logWarning(`Failed to change inventory. ${e.message}`);

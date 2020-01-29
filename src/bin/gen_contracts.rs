@@ -48,6 +48,7 @@ fn main() {
         write_interface(&mut writer, WineType::type_script_ify());
         write_interface(&mut writer, WineTypeForm::type_script_ify());
         write_interface(&mut writer, WineGrape::type_script_ify());
+        write_interface(&mut writer, WineGrapeForm::type_script_ify());
         write_interface(&mut writer, Wine::type_script_ify());
         write_interface(&mut writer, WineForm::type_script_ify());
 
