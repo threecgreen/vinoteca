@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::{VitiArea, VitiAreaForm};
 use crate::schema::{purchases, regions, viti_areas, wines};
 use crate::DbConn;
@@ -17,7 +17,7 @@ pub fn get(
     name: Option<String>,
     region_name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<VitiArea>>, Json<VinotecaError>> {
+) -> RestResult<Vec<VitiArea>> {
     // Inner join because viti areas must have a region id
     let mut query = viti_areas::table.inner_join(regions::table).into_boxed();
     if let Some(id) = id {
@@ -34,7 +34,6 @@ pub fn get(
         .load::<VitiArea>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]
@@ -52,7 +51,7 @@ pub fn stats(
     id: Option<i32>,
     region_id: Option<i32>,
     connection: DbConn,
-) -> Result<Json<Vec<VitiAreaStats>>, Json<VinotecaError>> {
+) -> RestResult<Vec<VitiAreaStats>> {
     let mut query = viti_areas::table
         .select((
             viti_areas::id,
@@ -76,14 +75,13 @@ pub fn stats(
         .load::<VitiAreaStats>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]
 pub fn post(
     viti_area_form: Json<VitiAreaForm>,
     connection: DbConn,
-) -> Result<Json<VitiArea>, Json<VinotecaError>> {
+) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
     diesel::insert_into(viti_areas::table)
         .values(&viti_area_form)
@@ -98,7 +96,6 @@ pub fn post(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[put("/viti-areas/<id>", format = "json", data = "<viti_area_form>")]
@@ -106,7 +103,7 @@ pub fn put(
     id: i32,
     viti_area_form: Json<VitiAreaForm>,
     connection: DbConn,
-) -> Result<Json<VitiArea>, Json<VinotecaError>> {
+) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
     diesel::update(viti_areas::table.filter(viti_areas::id.eq(id)))
         .set(viti_area_form)
@@ -120,5 +117,4 @@ pub fn put(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

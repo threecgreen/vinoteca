@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
@@ -33,7 +33,7 @@ pub fn get(
     viti_area: Option<String>,
 
     connection: DbConn,
-) -> Result<Json<Vec<Wine>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Wine>> {
     let mut query = wines::table
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
@@ -115,7 +115,6 @@ pub fn get(
         .load::<Wine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
@@ -150,12 +149,11 @@ pub struct InventoryWine {
 }
 
 #[get("/wines/inventory")]
-pub fn inventory(connection: DbConn) -> Result<Json<Vec<InventoryWine>>, Json<VinotecaError>> {
+pub fn inventory(connection: DbConn) -> RestResult<Vec<InventoryWine>> {
     sql_query(include_str!("inventory.sql"))
         .load::<InventoryWine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 fn wrap_in_wildcards(filter_str: &str) -> String {
@@ -170,7 +168,7 @@ pub fn search(
     region_like: Option<String>,
     viti_area_like: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Wine>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Wine>> {
     let mut query = wines::table
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
@@ -236,5 +234,4 @@ pub fn search(
         .load::<Wine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

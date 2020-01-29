@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use super::models::RawWineForm;
 use super::image::handle_image;
 use crate::models::Wine;
@@ -15,10 +15,10 @@ pub fn put(
     id: i32,
     raw_wine_form: RawWineForm,
     connection: DbConn,
-) -> Result<Json<Wine>, Json<VinotecaError>> {
+) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
 
-    let result: Result<Json<Wine>, Json<VinotecaError>> = diesel::update(wines::table.filter(wines::id.eq(id)))
+    let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wine_form)
         .execute(&*connection)
         .and_then(|_| {
@@ -71,8 +71,7 @@ pub fn put(
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(VinotecaError::from)
-        .map_err(Json);
+        .map_err(VinotecaError::from);
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {

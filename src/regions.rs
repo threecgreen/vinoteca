@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::{Region, RegionForm};
 use crate::schema::{producers, regions};
 use crate::DbConn;
@@ -14,7 +14,7 @@ pub fn get(
     name: Option<String>,
     producer_name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Region>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Region>> {
     // Still want to include regions that don't have a producer associated with them
     let mut query = regions::table.left_join(producers::table).into_boxed();
     if let Some(id) = id {
@@ -32,14 +32,13 @@ pub fn get(
         .load::<Region>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[post("/regions", format = "json", data = "<region_form>")]
 pub fn post(
     region_form: Json<RegionForm>,
     connection: DbConn,
-) -> Result<Json<Region>, Json<VinotecaError>> {
+) -> RestResult<Region> {
     let region_form = region_form.into_inner();
     diesel::insert_into(regions::table)
         .values(&region_form)
@@ -51,7 +50,6 @@ pub fn post(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[put("/regions/<id>", format = "json", data = "<region_form>")]
@@ -59,7 +57,7 @@ pub fn put(
     id: i32,
     region_form: Json<RegionForm>,
     connection: DbConn,
-) -> Result<Json<Region>, Json<VinotecaError>> {
+) -> RestResult<Region> {
     let region_form = region_form.into_inner();
     diesel::update(regions::table.filter(regions::id.eq(id)))
         .set(regions::name.eq(region_form.name))
@@ -71,5 +69,4 @@ pub fn put(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

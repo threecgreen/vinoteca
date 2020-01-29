@@ -1,4 +1,4 @@
-use super::error::VinotecaError;
+use super::error::{RestResult, VinotecaError};
 use super::DbConn;
 
 use diesel::dsl::sql;
@@ -13,7 +13,7 @@ pub fn get(
     id: Option<i32>,
     name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Grape>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Grape>> {
     let mut query = grapes::table
         .inner_join(wine_grapes::table.inner_join(wines::table))
         .group_by((grapes::id, grapes::name))
@@ -29,7 +29,6 @@ pub fn get(
         .load::<Grape>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]
@@ -37,7 +36,7 @@ pub fn put(
     id: i32,
     grape_form: Json<GrapeForm>,
     connection: DbConn,
-) -> Result<Json<Grape>, Json<VinotecaError>> {
+) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     diesel::update(grapes::table.filter(grapes::id.eq(id)))
         .set(grapes::name.eq(grape_form.name))
@@ -52,5 +51,4 @@ pub fn put(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

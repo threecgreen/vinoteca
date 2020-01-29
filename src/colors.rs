@@ -1,4 +1,4 @@
-use super::error::VinotecaError;
+use super::error::{RestResult, VinotecaError};
 use super::models::Color;
 use super::schema::colors;
 use super::DbConn;
@@ -11,7 +11,7 @@ pub fn get(
     id: Option<i32>,
     name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Color>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Color>> {
     let mut query = colors::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(colors::id.eq(id));
@@ -23,5 +23,4 @@ pub fn get(
         .load::<Color>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

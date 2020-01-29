@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineType, WineTypeForm};
 use crate::schema::{purchases, wine_types, wines};
 use crate::DbConn;
@@ -15,7 +15,7 @@ pub fn get(
     id: Option<i32>,
     name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<WineType>>, Json<VinotecaError>> {
+) -> RestResult<Vec<WineType>> {
     let mut query = wine_types::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(wine_types::id.eq(id));
@@ -27,7 +27,6 @@ pub fn get(
         .load::<WineType>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]
@@ -44,7 +43,7 @@ pub struct TopWineType {
 pub fn top(
     limit: Option<usize>,
     connection: DbConn,
-) -> Result<Json<Vec<TopWineType>>, Json<VinotecaError>> {
+) -> RestResult<Vec<TopWineType>> {
     let limit = limit.unwrap_or(10);
     wine_types::table
         .inner_join(wines::table.inner_join(purchases::table))
@@ -62,14 +61,13 @@ pub fn top(
         .load::<TopWineType>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
 pub fn post(
     wine_type_form: Json<WineTypeForm>,
     connection: DbConn,
-) -> Result<Json<WineType>, Json<VinotecaError>> {
+) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)
@@ -81,7 +79,6 @@ pub fn post(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[put("/wine-types/<id>", format = "json", data = "<wine_type_form>")]
@@ -89,7 +86,7 @@ pub fn put(
     id: i32,
     wine_type_form: Json<WineTypeForm>,
     connection: DbConn,
-) -> Result<Json<WineType>, Json<VinotecaError>> {
+) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
         .set(wine_types::name.eq(wine_type_form.name))
@@ -101,5 +98,4 @@ pub fn put(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

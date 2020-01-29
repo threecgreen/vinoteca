@@ -1,16 +1,37 @@
 use image::ImageError;
+use rocket::http::Status;
+use rocket::request::Request;
+use rocket::response::{self, Responder};
+use rocket_contrib::json::Json;
 use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
 
-#[derive(Debug, Serialize)]
+#[derive(Clone, Debug, Serialize)]
 pub enum VinotecaError {
     NotFound(String),
     Internal(String),
     // Foreign key
     MissingConstraint(String),
     BadRequest(String),
+}
+
+pub type RestResult<T> = Result<Json<T>, VinotecaError>;
+
+impl<'r> Responder<'r> for VinotecaError {
+    fn respond_to(self, _r: &Request) -> response::Result<'static> {
+        Json(self.clone()).respond_to(_r)
+            .map(|mut res| {
+                res.set_status(match self {
+                    VinotecaError::NotFound(_) => Status::NotFound,
+                    VinotecaError::Internal(_) => Status::InternalServerError,
+                    VinotecaError::MissingConstraint(_) => Status::BadRequest,
+                    VinotecaError::BadRequest(_) => Status::BadRequest,
+                });
+                res
+            })
+    }
 }
 
 impl From<diesel::result::Error> for VinotecaError {

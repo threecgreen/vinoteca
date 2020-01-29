@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::{Store, StoreForm};
 use crate::schema::stores;
 use crate::DbConn;
@@ -11,7 +11,7 @@ pub fn get(
     id: Option<i32>,
     name: Option<String>,
     connection: DbConn,
-) -> Result<Json<Vec<Store>>, Json<VinotecaError>> {
+) -> RestResult<Vec<Store>> {
     let mut query = stores::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(stores::id.eq(id));
@@ -23,14 +23,13 @@ pub fn get(
         .load::<Store>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }
 
 #[post("/stores", format = "json", data = "<store_form>")]
 pub fn post(
     store_form: Json<StoreForm>,
     connection: DbConn,
-) -> Result<Json<Store>, Json<VinotecaError>> {
+) -> RestResult<Store> {
     let store_form = store_form.into_inner();
     diesel::insert_into(stores::table)
         .values(&store_form)
@@ -42,5 +41,4 @@ pub fn post(
                 .map(Json)
         })
         .map_err(VinotecaError::from)
-        .map_err(Json)
 }

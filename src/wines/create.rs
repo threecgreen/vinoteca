@@ -1,4 +1,4 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 use super::image::handle_image;
 use super::models::RawWineForm;
 use crate::models::Wine;
@@ -14,10 +14,10 @@ use rocket_contrib::json::Json;
 pub fn post(
     raw_wine_form: RawWineForm,
     connection: DbConn,
-) -> Result<Json<Wine>, Json<VinotecaError>> {
+) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
 
-    let result: Result<Json<Wine>, Json<VinotecaError>> = diesel::insert_into(wines::table)
+    let result: RestResult<Wine> = diesel::insert_into(wines::table)
         .values(&wine_form)
         .execute(&*connection)
         .and_then(|_| {
@@ -70,8 +70,7 @@ pub fn post(
                 .first(&*connection)
                 .map(Json)
         })
-        .map_err(VinotecaError::from)
-        .map_err(Json);
+        .map_err(VinotecaError::from);
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
