@@ -36,12 +36,14 @@ pub fn get(
 }
 
 #[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct AssociatedGrape {
     pub percent: Option<i32>,
     pub grape_id: i32,
 }
 
 #[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct WineGrapesForm {
     pub wine_id: i32,
     #[validate(length(min = 1))]
@@ -71,6 +73,8 @@ pub fn post(wine_grape_form: Json<WineGrapesForm>, connection: DbConn) -> RestRe
     if total_percentage > 100 {
         return Err(VinotecaError::BadRequest(format!("Grape percentage adds to {}. Maximum of 100 allowed", total_percentage)));
     }
+
+    // TODO: Validate unique grape ids
 
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::id.eq(wine_id)))

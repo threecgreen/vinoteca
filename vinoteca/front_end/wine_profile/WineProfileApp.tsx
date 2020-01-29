@@ -13,7 +13,7 @@ import { InventoryChange } from "../inventory/InventoryTable";
 import { ModifyPurchase } from "./ModifyPurchase";
 import { GrapesTable } from "./GrapesTable";
 import { Purchases } from "./Purchases";
-import { initState, wineReducer } from "./State";
+import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";

@@ -31,6 +31,21 @@ pub fn get(
         .map_err(VinotecaError::from)
 }
 
+#[post("/grapes", format = "json", data = "<grape_form>")]
+pub fn post(
+    grape_form: Json<GrapeForm>,
+    connection: DbConn,
+) -> RestResult<Grape> {
+    let grape_form = grape_form.into_inner();
+    let grape_name = grape_form.name.to_owned();
+    diesel::insert_into(grapes::table)
+        .values(grape_form)
+        .execute(&*connection)?;
+    get(None, Some(grape_name), connection)
+        .and_then(|grapes| grapes.get(0).map(|g| g.to_owned()).ok_or_else(|| VinotecaError::Internal("Couldn't find inserted grape".to_owned())))
+        .map(Json)
+}
+
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]
 pub fn put(
     id: i32,

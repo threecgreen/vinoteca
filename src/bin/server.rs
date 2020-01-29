@@ -41,6 +41,7 @@ fn main() {
             routes![
                 colors::get,
                 grapes::get,
+                grapes::post,
                 grapes::put,
                 logs::post,
                 producers::get,

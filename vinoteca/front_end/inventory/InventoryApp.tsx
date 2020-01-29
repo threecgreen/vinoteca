@@ -1,16 +1,15 @@
-import * as React from "react";
+import format from "date-fns/esm/format";
+import React from "react";
+import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
+import { Preloader } from "../../components/Preloader";
 import { get, post } from "../../lib/ApiHelper";
+import { download, generateCSV } from "../../lib/CSV";
 import Logger from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
-import { InventoryChange, InventoryTable } from "./InventoryTable";
-import { Preloader } from "../../components/Preloader";
-import { Btn } from "../../components/Buttons";
-import { download, generateCSV } from "../../lib/CSV";
-import format from "date-fns/esm/format";
+import { getWine, updateWine } from "../../lib/RestApi";
 import { numToDate } from "../../lib/utils";
-import { updateWine } from "../../lib/RestApi";
-
+import { InventoryChange, InventoryTable } from "./InventoryTable";
 
 interface IState {
     wines: IInventoryWine[],
@@ -68,18 +67,20 @@ export class InventoryApp extends React.Component<{}, IState> {
         try {
             const wine = this.state.wines.find((w) => w.id === id);
             if (wine) {
+                // get the full wine for now to avoid creating a separate method
+                const fullWine = await getWine({id});
                 if (change === InventoryChange.Increase) {
-                    wine.inventory += 1;
+                    fullWine.inventory += 1;
                 } else if (wine.inventory > 0) {
-                    wine.inventory -= 1;
+                    fullWine.inventory -= 1;
                 }
-                await updateWine(id, wine, null);
+                await updateWine(id, fullWine, null);
                 await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
                 await this.updateInventory();
             }
         } catch (err) {
             this.setState({hasLoaded: true});
-            this.logger.logWarning(err);
+            this.logger.logWarning(`Failed to update inventory: ${err.message}`);
         }
     }
 

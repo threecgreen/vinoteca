@@ -1,137 +1,56 @@
-import * as React from "react";
+import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import { SpecialChars } from "../../components/SpecialChars";
-import { get, put } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
-import { IGrape } from "../../lib/Rest";
+import { IGrape, IGrapeForm } from "../../lib/Rest";
+import { getGrapes, updateGrape } from "../../lib/RestApi";
 import { GrapesList } from "./GrapesList";
+import { grapeStateReducer, initGrapeState } from "./state";
 
-export class GrapeItem {
-    constructor(public id: number, public name: string, public wineCount: number,
-            public isEditable = false) {
-    }
-}
+export const GrapesApp: React.FC<{}> = (_props) => {
+    const logger = new Logger(GrapesApp.name);
+    const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
-interface IGrapesAppState {
-    grapes: GrapeItem[];
-    // Keep track of id of last active grape name input for special characters
-    lastActiveId?: number;
-    logger: Logger;
-}
-
-export class GrapesApp extends React.Component<{}, IGrapesAppState> {
-    private static grapesUrl = "/rest/grapes";
-
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            grapes: [],
-            lastActiveId: undefined,
-            logger: new Logger(this.constructor.name),
-        };
-    }
-
-    public render() {
-        if (!this.state) {
-            return <Preloader />;
+    React.useEffect(() => {
+        async function fetchGrapes() {
+            const grapes: IGrape[] = await getGrapes({});
+            dispatch({type: "setGrapes", grapes});
         }
-        return (
-            <div className="container">
-                <Row>
-                    <Col s={ 12 }>
-                        <h3 className="page-title">Grapes</h3>
-                        <div>
-                            <GrapesList grapes={this.state.grapes}
-                                handleEdit={this.handleEdit.bind(this)}
-                                handleSave={this.handleSave.bind(this)}
-                                onChange={this.onChange.bind(this)}
-                            />
-                            <SpecialChars onClick={this.handleSpecialChar.bind(this)}
-                                display={this.hasEditableGrapes}
-                                classes={ ["floating-bar", "z-depth-2"] }
-                            />
-                        </div>
-                    </Col>
-                </Row>
-            </div>
-        );
-    }
 
-    public async componentDidMount() {
-        const restGrapes: IGrape[] = await get(GrapesApp.grapesUrl);
-        const grapes: GrapeItem[] = restGrapes.map(
-            (g) => new GrapeItem(g.id, g.name, g.wineCount),
-        );
-        this.setState({ grapes });
-    }
+        fetchGrapes();
+    }, []);
 
-    public onChange(id: number, name: string) {
-        this.setState((state) => ({
-            grapes: state.grapes.map((g) => {
-                if (g.id === id) {
-                    g.name = name;
-                }
-                return g;
-            }),
-        }));
-    }
-
-    /** Updates state to reflect that a grape is editable. */
-    public handleEdit(e: React.MouseEvent, id: number) {
-        e.preventDefault();
-        let lastActiveId: number;
-        this.setState((state) => ({
-            grapes: state.grapes.map((g) => {
-                if (g.id === id) {
-                    g.isEditable = true;
-                    lastActiveId = g.id;
-                }
-                return g;
-            }),
-            lastActiveId,
-        }));
-    }
-
-    public handleSave(e: React.MouseEvent, id: number) {
-        e.preventDefault();
-        this.setState((state) => {
-            let lastActiveId = state.lastActiveId;
-            const grapes = state.grapes.map((g) => {
-                if (g.id === id) {
-                    g.isEditable = false;
-                    lastActiveId = lastActiveId === id ? undefined : lastActiveId;
-                    put(GrapesApp.grapesUrl, {id, name: g.name})
-                        .catch((e) => {
-                            state.logger.logError(
-                                `Failed to save grape change for grape with id ${id}`
-                                + ` and error message ${e.message}`,
-                            );
-                        });
-                }
-                return g;
-            });
-            return {
-                grapes,
-                lastActiveId,
-            };
-        });
-    }
-
-    public handleSpecialChar(e: React.MouseEvent, char: string) {
-        e.preventDefault();
-        if (this.state.lastActiveId) {
-            this.setState((state) => ({
-                grapes: state.grapes.map((g) => {
-                    return g.id === state.lastActiveId
-                        ? new GrapeItem(g.id, g.name + char, g.wineCount, g.isEditable)
-                        : g;
-                }),
-            }));
+    const onEditClick = (id: number) => dispatch({type: "setToEdit", id});
+    const onCancelClick  = () => dispatch({type: "setToDisplay"});
+    const onSaveClick = async (grape: IGrapeForm) => {
+        if (state.mode.type === "edit") {
+            const id = state.mode.id
+            try {
+                const updatedGrape = await updateGrape(id, grape);
+                dispatch({type: "setGrapes", grapes: state.grapes.map((g) => g.id === id ? updatedGrape : g)});
+            } catch (e) {
+                logger.logWarning(`Failed to save grape change for grape with id ${id}: ${e.message}`);
+            } finally {
+                dispatch({type: "setToDisplay"});
+            }
         }
     }
 
-    private get hasEditableGrapes(): boolean {
-        return this.state.grapes.some((g: GrapeItem) => g.isEditable);
+    if (state.grapes.length === 0) {
+        return <Preloader />;
     }
+    // TODO: show edit modal
+    return (
+        <div className="container">
+            <Row>
+                <Col s={ 12 }>
+                    <h3 className="page-title">Grapes</h3>
+                    <GrapesList grapes={ state.grapes }
+                        onEditClick={ onEditClick }
+                    />
+                </Col>
+            </Row>
+        </div>
+    );
 }
+GrapesApp.displayName = GrapesApp.name;

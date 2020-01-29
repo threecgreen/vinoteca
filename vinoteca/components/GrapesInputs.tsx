@@ -1,12 +1,26 @@
 import React from "react";
 import Logger from "../lib/Logger";
-import { IWineGrape } from "../lib/Rest";
-import { getGrapes, toDict } from "../lib/RestApi";
+import { IWineGrape, IWineGrapesForm } from "../lib/Rest";
+import { getGrapes, getOrCreateGrape, toDict } from "../lib/RestApi";
 import { IDict, maxBy, sumBy } from "../lib/utils";
 import { FloatingBtn } from "./Buttons";
 import { GrapeInput } from "./GrapeInput";
 import { Col, InputField, Row } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
+
+export const wineGrapesToForm = async (wineGrapes: IWineGrape[], wineId: number) => {
+    const wineGrapesForm: IWineGrapesForm = {
+        wineId,
+        grapes: await Promise.all(wineGrapes.map(async (wg) => {
+            const grape = await getOrCreateGrape({name: wg.grape}, {name: wg.grape});
+            return {
+                grapeId: grape.id,
+                percent: wg.percent,
+            };
+        })),
+    };
+    return wineGrapesForm;
+}
 
 type Action =
     | { type: "addGrape" }
@@ -71,7 +85,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
 
     React.useEffect(() => {
         async function fetchGrapes() {
-            const completions = await getGrapes();
+            const completions = await getGrapes({});
             setCompletions(toDict(completions));
         }
 

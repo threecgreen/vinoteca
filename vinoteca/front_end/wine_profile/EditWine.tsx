@@ -12,6 +12,7 @@ interface IProps {
 }
 
 // TODO: include file
+// TODO: include grapes
 export const EditWine: React.FC<IProps> = ({wine, onSubmit, onCancel}) => {
     const [state, dispatch] = React.useReducer(wineInputReducer, {
         ...wine,
@@ -52,6 +53,6 @@ export const EditWine: React.FC<IProps> = ({wine, onSubmit, onCancel}) => {
                 />
             </ModalFooter>
         </Modal>
-    )
+    );
 }
 EditWine.displayName = EditWine.name;

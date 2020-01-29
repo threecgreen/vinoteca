@@ -1,102 +1,85 @@
-import * as React from "react";
+import React from "react";
 import { SortingState, TableHeader } from "../../components/TableHeader";
-import { GrapeItem } from "./GrapesApp";
+import { IGrape } from "../../lib/Rest";
 import { GrapesListItem } from "./GrapesListItem";
 
 enum SortingValue {
     Name,
-    Wine,
-}
-
-interface IState {
-    ascending: boolean;
-    sorting: SortingValue;
+    Wines,
 }
 
 interface IProps {
-    grapes: GrapeItem[];
-    onChange: (id: number, name: string) => void;
-    handleEdit: (e: React.MouseEvent, id: number) => void;
-    handleSave: (e: React.MouseEvent, id: number) => void;
+    grapes: IGrape[];
+    onEditClick: (id: number) => void;
 }
 
-export class GrapesList extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
-        this.state = {
-            ascending: true,
-            sorting: SortingValue.Name,
-        };
-    }
+export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
+    const [sortingValue, setSortingValue] = React.useState(SortingValue.Name);
+    const [isAscending, setIsAscending] = React.useState(true);
 
-    public render() {
-        return (
-            <table className="responsive highlight condensed">
-                <thead>
-                    <tr key="headers">
-                        <TableHeader sortingState={ this.sortingStateForHeader(SortingValue.Name) }
-                            onClick={ (e) => this.onHeaderClick(e, SortingValue.Name) }
-                        >
-                            Name
-                        </TableHeader>
-                        <TableHeader sortingState={ this.sortingStateForHeader(SortingValue.Wine) }
-                            onClick={ (e) => this.onHeaderClick(e, SortingValue.Wine) }
-                            isNumCol
-                        >
-                            Wines
-                        </TableHeader>
-                        <th>Edit/Save</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.sortedGrapes.map((grape) => {
-                        return (
-                            <GrapesListItem
-                                key={ grape.id }
-                                item={ grape }
-                                onChange={ this.props.onChange }
-                                handleEdit={ this.props.handleEdit }
-                                handleSave={ this.props.handleSave }
-                            />
-                        );
-                    })}
-                </tbody>
-            </table>
-        );
-    }
-
-    private get sortedGrapes() {
-        const ascendingMultiplier = this.state.ascending ? 1 : -1;
-        switch (this.state.sorting) {
+    const sortedGrapes = () => {
+        const ascendingMultiplier = isAscending ? 1 : -1;
+        switch (sortingValue) {
             case SortingValue.Name:
-                return this.props.grapes.sort((g1, g2) => {
+                return grapes.sort((g1, g2) => {
                     return g1.name.localeCompare(g2.name) * ascendingMultiplier;
                 });
-            case SortingValue.Wine:
-                return this.props.grapes.sort((g1, g2) => {
+            case SortingValue.Wines:
+                return grapes.sort((g1, g2) => {
                     return (g1.wineCount || 0) > (g2.wineCount || 0) ? -ascendingMultiplier : ascendingMultiplier;
                 })
             default:
-                return this.props.grapes;
+                return grapes;
         }
     }
 
-    private onHeaderClick(e: React.MouseEvent, sortingVal: SortingValue) {
+    const onHeaderClick = (e: React.MouseEvent, clickedHeader: SortingValue) => {
         e.preventDefault();
-        if (sortingVal === this.state.sorting) {
-            this.setState((prevState) => ({ascending: !prevState.ascending}));
+        if (sortingValue === clickedHeader) {
+            setIsAscending(!isAscending);
         } else {
-            this.setState({
-                ascending: true,
-                sorting: sortingVal,
-            });
+            setIsAscending(true);
+            setSortingValue(clickedHeader);
         }
     }
 
-    private sortingStateForHeader(sortingVal: SortingValue): SortingState {
-        if (this.state.sorting === sortingVal) {
-            return this.state.ascending ? SortingState.Ascending : SortingState.Descending;
+    const sortingStateForHeader = (header: SortingValue): SortingState => {
+        if (sortingValue === header) {
+            return isAscending ? SortingState.Ascending : SortingState.Descending;
         }
         return SortingState.NotSorted;
     }
+
+    return (
+        <table className="responsive highlight condensed">
+            <thead>
+                <tr key="headers">
+                    <TableHeader sortingState={ sortingStateForHeader(SortingValue.Name) }
+                        onClick={ (e) => onHeaderClick(e, SortingValue.Name) }
+                    >
+                        Name
+                    </TableHeader>
+                    <TableHeader sortingState={ sortingStateForHeader(SortingValue.Wines) }
+                        onClick={ (e) => onHeaderClick(e, SortingValue.Wines) }
+                        isNumCol
+                    >
+                        Wines
+                    </TableHeader>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedGrapes().map((grape) => {
+                    return (
+                        <GrapesListItem
+                            key={ grape.id }
+                            grape={ grape }
+                            onEditClick={ onEditClick }
+                        />
+                    );
+                })}
+            </tbody>
+        </table>
+    );
 }
+GrapesList.displayName = GrapesList.name;

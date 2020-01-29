@@ -2,7 +2,7 @@ import { delete_, get, IQueryParams, post, put, postForm, putForm } from "./ApiH
 import Logger from "./Logger";
 import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
          IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
-         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm } from "./Rest";
+         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -89,8 +89,25 @@ export async function getColors({ id, name }: IGetColorParams): Promise<IColor[]
 export const getColor = singleEntityGetter(getColors);
 
 /* GRAPES */
-export async function getGrapes(): Promise<IGrape[]> {
-    return await get("/rest/grapes");
+interface IGetGrapesParams {
+    id?: number;
+    name?: string;
+}
+
+export async function getGrapes({ id, name }: IGetGrapesParams): Promise<IGrape[]> {
+    const nonNullParams = nonNulls({ id, name });
+    return get("/rest/grapes", nonNullParams);
+}
+
+export const getGrape = singleEntityGetter(getGrapes);
+export const getOrCreateGrape = getOrCreate(getGrapes, createGrape);
+
+export async function createGrape(grape: IGrapeForm): Promise<IGrape> {
+    return post("/rest/grapes", grape);
+}
+
+export async function updateGrape(id: number, grape: IGrapeForm): Promise<IGrape> {
+    return put(`/rest/grapes/${id}`, grape);
 }
 
 /* PRODUCERS */
@@ -294,6 +311,10 @@ export async function getWineGrapes({ wineId, grapeId }: IGetWineGrapesParams): 
     const nonNullParams = nonNulls({ wine_id: wineId, grape_id: grapeId });
     const wineGrapes: IWineGrape[] = await get("/rest/wine-grapes", nonNullParams);
     return wineGrapes;
+}
+
+export async function createWineGrapes(wineGrapes: IWineGrapesForm): Promise<IWineGrape[]> {
+    return post("/rest/wine-grapes", wineGrapes);
 }
 
 /* WINE TYPES */

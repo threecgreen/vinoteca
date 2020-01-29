@@ -1,61 +1,34 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
-import { GrapeItem } from "./GrapesApp";
 import { MaterialIcon } from "../../components/MaterialIcon";
-import { NumCell } from "../../components/TableCells";
+import { NumCell, TextCell } from "../../components/TableCells";
+import { IGrape } from "../../lib/Rest";
 
-interface IGrapeItemProps {
-    item: GrapeItem;
-    onChange: (id: number, name: string) => void;
-    handleEdit: (e: React.MouseEvent, id: number) => void;
-    handleSave: (e: React.MouseEvent, id: number) => void;
+interface IProps {
+    grape: IGrape;
+    onEditClick: (id: number) => void;
 }
 
-export class GrapesListItem extends React.Component<IGrapeItemProps, {}> {
-    public renderItem() {
-        return `${ this.props.item.name }`;
+export const GrapesListItem: React.FC<IProps> = ({grape, onEditClick}) => {
+    const handleEdit = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        onEditClick(grape.id);
     }
 
-    public renderEdit() {
-        const inputId = `grape-name-${this.props.item.id}`;
-        return <form id={ `grape-${this.props.item.id}` }>
-                <input type="text"
-                       id={ inputId }
-                       onChange={ (e) => this.props.onChange(this.props.item.id,
-                                                             e.target.value) }
-                       value={ this.props.item.name } />
-                <label htmlFor={ inputId }>Name</label>
-        </form>;
-    }
-
-    public renderButton() {
-        if (this.props.item.isEditable) {
-            return (
-                <FloatingBtn onClick={ (e) => this.props.handleSave(e, this.props.item.id) }
-                    classes={ ["small", "green-bg"] }
+    return (
+        <tr>
+            <TextCell text={ grape.name } />
+            <NumCell num={ grape.wineCount }
+                maxDecimals={ 0 }
+            />
+            <td>
+                <FloatingBtn onClick={ handleEdit }
+                    classes={ ["small", "red-bg"] }
                 >
-                    <MaterialIcon iconName="save" />
+                    <MaterialIcon iconName="edit" />
                 </FloatingBtn>
-            );
-        }
-        return (
-            <FloatingBtn onClick={ (e) => this.props.handleEdit(e, this.props.item.id) }
-                classes={ ["small", "red-bg"] }
-            >
-            <MaterialIcon iconName="edit" />
-            </FloatingBtn>
-        );
-    }
-
-    public render() {
-        return (
-            <tr>
-                <td>
-                    { this.props.item.isEditable ? this.renderEdit() : this.renderItem() }
-                </td>
-                <NumCell num={ this.props.item.wineCount } />
-                <td>{ this.renderButton() }</td>
-            </tr>
-        );
-    }
+            </td>
+        </tr>
+    );
 }
+GrapesListItem.displayName = GrapesListItem.name;

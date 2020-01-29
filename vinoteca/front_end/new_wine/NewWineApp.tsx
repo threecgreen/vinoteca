@@ -1,13 +1,13 @@
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { CSRFToken } from "../../components/CSRFToken";
-import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
+import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { PreloaderCirc } from "../../components/Preloader";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { createPurchase, createWine } from "../../lib/RestApi";
+import { createPurchase, createWine, createWineGrapes } from "../../lib/RestApi";
 import { redirect } from "../../lib/utils";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
@@ -25,8 +25,16 @@ export const NewWineApp: React.FC<{}> = (_props) => {
         try {
             const wineForm = await wineDataToForm(wineState, purchaseState.shouldAddToInventory ? purchaseState.quantity ?? 0 : 0);
             const wine = await createWine(wineForm, wineState.file);
-            const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);
-            await createPurchase(purchaseForm);
+            await Promise.all([
+                async () => {
+                    const grapeForm = await wineGrapesToForm(grapes, wine.id);
+                    await createWineGrapes(grapeForm);
+                },
+                async () => {
+                    const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);
+                    await createPurchase(purchaseForm);
+                }
+            ].map((f) => f()));
             redirect(`/wines/${wine.id}`);
         } catch (err) {
             setIsSaving(false);
