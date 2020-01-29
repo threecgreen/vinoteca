@@ -1,6 +1,6 @@
 use crate::error::VinotecaError;
-use super::image::handle_image;
 use super::models::RawWineForm;
+use super::image::handle_image;
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
@@ -10,18 +10,20 @@ use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
 
-#[post("/wines", data = "<raw_wine_form>")]
-pub fn post(
+#[put("/wines/<id>", data = "<raw_wine_form>")]
+pub fn put(
+    id: i32,
     raw_wine_form: RawWineForm,
     connection: DbConn,
 ) -> Result<Json<Wine>, Json<VinotecaError>> {
     let wine_form = raw_wine_form.wine_form;
 
-    let result: Result<Json<Wine>, Json<VinotecaError>> = diesel::insert_into(wines::table)
-        .values(&wine_form)
+    let result: Result<Json<Wine>, Json<VinotecaError>> = diesel::update(wines::table.filter(wines::id.eq(id)))
+        .set(wine_form)
         .execute(&*connection)
         .and_then(|_| {
             wines::table
+                .filter(wines::id.eq(id))
                 .inner_join(producers::table.inner_join(regions::table))
                 .inner_join(colors::table)
                 .inner_join(wine_types::table)
@@ -66,7 +68,6 @@ pub fn post(
                     wine_types::name,
                     sql::<Nullable<Integer>>("max(purchases.vintage)"),
                 ))
-                .order(wines::id.desc())
                 .first(&*connection)
                 .map(Json)
         })

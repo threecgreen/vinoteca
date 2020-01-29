@@ -155,7 +155,7 @@ pub struct Wine {
     pub last_purchase_vintage: Option<i32>,
 }
 
-#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
+#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "wines"]
 #[serde(rename_all = "camelCase")]
 pub struct WineForm {

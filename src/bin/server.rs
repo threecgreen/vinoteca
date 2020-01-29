@@ -66,6 +66,7 @@ fn main() {
                 viti_areas::stats,
                 wines::get,
                 wines::post,
+                wines::put,
                 wines::inventory,
                 wines::search,
                 wine_grapes::get,

@@ -7,9 +7,11 @@ import { RegionInput } from "../../components/RegionInput";
 import { TextInput } from "../../components/TextInput";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { WineTypeInput } from "../../components/WineTypeInput";
+import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
+import { getColor, getOrCreateWineType, getOrCreateProducer, getOrCreateVitiArea, getOrCreateRegion } from "../../lib/RestApi";
 
 // TODO: handle file
-interface IData {
+export interface IWineData {
     color: string;
     wineType: string;
     producer: string;
@@ -24,7 +26,7 @@ interface IData {
     file: File | null,
 }
 
-export const initWineInputData: () => IData = () => ({
+export const initWineInputData = (): IWineData => ({
     color: "",
     wineType: "",
     producer: "",
@@ -38,6 +40,41 @@ export const initWineInputData: () => IData = () => ({
     notes: "",
     file: null,
 });
+
+const getOrCreateVitiAreaForRegion = async (data: IWineData, regionId: number) => {
+    if (data.vitiArea) {
+        return getOrCreateVitiArea({name: data.vitiArea}, {name: data.vitiArea, regionId});
+    }
+    return null;
+}
+
+const getProducerAndVitiArea = async (data: IWineData) => {
+    const region = await getOrCreateRegion({name: data.region}, {name: data.region});
+    return Promise.all<IProducer, IVitiArea | null>([
+        getOrCreateProducer({name: data.producer}, {name: data.producer, regionId: region.id}),
+        getOrCreateVitiAreaForRegion(data, region.id),
+    ]);
+}
+
+export const wineDataToForm = async (data: IWineData, inventory: number): Promise<IWineForm> => {
+    const [color, wineType, [producer, vitiArea]] = await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
+        getColor({name: data.color}),
+        getOrCreateWineType({name: data.wineType}, {name: data.wineType}),
+        getProducerAndVitiArea(data),
+    ]);
+    return {
+        colorId: color.id,
+        wineTypeId: wineType.id,
+        producerId: producer.id,
+        vitiAreaId: vitiArea?.id ?? null,
+        name: data.name || null,
+        why: data.why || null,
+        description: data.description || null,
+        rating: data.isRatingEnabled ? data.rating : null,
+        inventory: inventory,
+        notes: data.notes || null,
+    };
+}
 
 type Action =
     | {type: "setColor", color: string}
@@ -53,7 +90,7 @@ type Action =
     | {type: "setNotes", notes: string}
     | {type: "setFile", file: File | null};
 
-export const wineInputReducer: React.Reducer<IData, Action> = (state, action) => {
+export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action) => {
     switch (action.type) {
         case "setColor":
             return { ...state, color: action.color };
@@ -86,7 +123,7 @@ export const wineInputReducer: React.Reducer<IData, Action> = (state, action) =>
 
 
 interface IProps {
-    data: IData,
+    data: IWineData,
     dispatch: React.Dispatch<Action>;
 }
 

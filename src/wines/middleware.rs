@@ -59,13 +59,12 @@ impl FromDataSimple for RawWineForm {
         // Verify only one text field
         let wine_form = match wine_form_json {
             TextField::Single(text) => {
-                let json_string = text.text.replace('\'', "\"");
-                match serde_json::from_str::<WineForm>(&json_string) {
+                match serde_json::from_str::<WineForm>(&text.text) {
                     Ok(parsed) => parsed,
                     Err(e) => {
                         return Failure((
                             Status::BadRequest,
-                            VinotecaError::BadRequest(format!("{:?}", e)),
+                            VinotecaError::BadRequest(format!("Failed to parse wine form JSON: {:?}", e)),
                         ))
                     }
                 }

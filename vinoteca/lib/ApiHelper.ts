@@ -94,6 +94,14 @@ export async function put<Response>(url: string, body: object, params: IQueryPar
     return checkResponse(response);
 }
 
+export async function putForm<Response>(url: string, form: FormData, params: IQueryParams = {}): Promise<Response> {
+    const response = await fetch(url + encodeParams(params), {
+        body: form,
+        method: "PUT",
+    });
+    return checkResponse(response);
+}
+
 export async function delete_<Response>(url: string, params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         headers: HEADERS,

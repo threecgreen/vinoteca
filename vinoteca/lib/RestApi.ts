@@ -1,4 +1,4 @@
-import { delete_, get, IQueryParams, post, put, postForm } from "./ApiHelper";
+import { delete_, get, IQueryParams, post, put, postForm, putForm } from "./ApiHelper";
 import Logger from "./Logger";
 import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
          IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
@@ -247,17 +247,23 @@ export async function getWines(
 
 export const getWine = singleEntityGetter(getWines);
 
-export async function createWine(wine: IWineForm, file: File | null): Promise<IWine> {
+const createWineHttpForm = (wine: IWineForm, file: File | null) => {
     const form = new FormData();
-    form.append("wine_form", JSON.stringify(wine));
+    form.append("wine_form", new Blob([JSON.stringify(wine)], {type: "application/json"}));
     if (file) {
         form.append("image", file);
     }
+    return form;
+}
+
+export async function createWine(wine: IWineForm, file: File | null): Promise<IWine> {
+    const form = createWineHttpForm(wine, file);
     return postForm("/rest/wines", form);
 }
 
-export async function updateWine(id: number, wine: IWineForm): Promise<IWine> {
-    return put(`/rest/wines/${id}`, wine);
+export async function updateWine(id: number, wine: IWineForm, file: File | null): Promise<IWine> {
+    const form = createWineHttpForm(wine, file);
+    return putForm(`/rest/wines/${id}`, form);
 }
 
 interface ISearchWinesParams {

@@ -18,6 +18,8 @@ import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
 import { IPurchase, IPurchaseForm } from "../../lib/Rest";
+import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
+import { EditWine } from "./EditWine";
 
 interface IProps {
     id: number;
@@ -71,8 +73,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             try {
                 const wine = await updateWine(id, copy);
                 dispatch({type: "setWine", wine});
-            } catch {
-                logger.logWarning("Failed to change inventory");
+            } catch (e) {
+                logger.logWarning(`Failed to change inventory. ${e.message}`);
             }
         }
     }
@@ -90,6 +92,18 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onAddPurchaseClick = (e: React.MouseEvent) => {
         e.preventDefault();
         dispatch({type: "setMode", mode: {type: "addPurchase"}});
+    }
+
+    const onSubmitWineEdit = async (editedWine: IWineData) => {
+        try {
+            const form = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
+            // TODO: handle file edit
+            const updatedWine = await updateWine(id, form, null);
+            dispatch({type: "setWine", wine: updatedWine});
+            dispatch({type: "setMode", mode: {type: "display"}});
+        } catch (e) {
+            logger.logWarning(`Failed to update wine. ${e.message}`);
+        }
     }
 
     const onSubmitPurchaseEdit = async (purchase: IPurchaseData) => {
@@ -203,7 +217,16 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     // Displays relevant modal for editing/deleting
     const renderModal = () => {
-        if (state.mode.type === "editPurchase") {
+        if (state.mode.type === "editWine") {
+            if (state.wine) {
+                return (
+                    <EditWine wine={ state.wine }
+                        onSubmit={ onSubmitWineEdit }
+                        onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                    />
+                );
+            }
+        } else if (state.mode.type === "editPurchase") {
             const purchaseId = state.mode.id;
             const purchase = state.purchases.find((p) => p.id === purchaseId);
             if (purchase) {
