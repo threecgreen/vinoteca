@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IWine } from "../lib/Rest";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";
-import { FilterHeader, SortingState, TableHeader } from "./TableHeader";
+import { FilterHeader, SortingState, TableHeader, SelectFilterHeader } from "./TableHeader";
 
 enum SortingValue {
     Inventory,
@@ -57,7 +57,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             ? (
                 <tr key="filters">
                     <FilterHeader { ...this.filterHeaderProps("inventory") } />
-                    <FilterHeader { ...this.filterHeaderProps("color") } />
+                    <SelectFilterHeader { ...this.filterHeaderProps("color") } />
                     <FilterHeader { ...this.filterHeaderProps("wineType") } />
                     <FilterHeader { ...this.filterHeaderProps("producer") } />
                     <FilterHeader { ...this.filterHeaderProps("region") } />

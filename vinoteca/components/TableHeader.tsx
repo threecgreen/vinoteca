@@ -1,5 +1,8 @@
 import * as React from "react";
 import { MaterialIcon } from "./MaterialIcon";
+import { SelectInput } from "./SelectInput";
+import { ColorInput, useColorsSelect } from "./ColorInput";
+import Logger from "../lib/Logger";
 
 export enum SortingState {
     NotSorted,
@@ -82,3 +85,31 @@ export const FilterHeader: React.FC<IFilterProps> = (props) => {
     );
 }
 FilterHeader.displayName = "FilterHeader";
+
+export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
+    const extraChoice = "Any";
+    const logger = new Logger(SelectFilterHeader.name);
+
+    const onChange = (selection: string) => {
+        if (selection === extraChoice) {
+            props.onChange("");
+        } else {
+            props.onChange(selection);
+        }
+    };
+    const selection = props.text === "" ? extraChoice : props.text;
+
+    const [selectionOptions, selectRef] = useColorsSelect(logger, extraChoice);
+
+    return (
+        <td>
+            <SelectInput name=""
+                selectRef={ selectRef }
+                options={ selectionOptions }
+                selection={ selection }
+                onChange={ onChange }
+            />
+        </td>
+    );
+}
+SelectFilterHeader.displayName = SelectFilterHeader.name;

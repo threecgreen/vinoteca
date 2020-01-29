@@ -1,5 +1,5 @@
 import { FormSelect } from "materialize-css";
-import * as React from "react";
+import React from "react";
 import Logger from "../lib/Logger";
 import { IColor } from "../lib/Rest";
 import { getColors } from "../lib/RestApi";
@@ -11,15 +11,13 @@ interface IProps extends IOnChange {
     extraChoice?: string;
 }
 
-export const ColorInput: React.FC<IProps> = (props) => {
+export const useColorsSelect = (logger: Logger, extraChoice?: string): [string[], React.MutableRefObject<HTMLSelectElement>] => {
     const [selectionOptions, setSelectionOptions] = React.useState<string[]>([]);
-    const selectRef = React.useRef() as React.RefObject<HTMLSelectElement>;
-
-    const logger = new Logger(ColorInput.name);
+    const selectRef = React.useRef() as React.MutableRefObject<HTMLSelectElement>;
 
     const concatIfNotNull= (options: string[]): string[] => {
-        if (props.extraChoice) {
-            return [props.extraChoice].concat(options);
+        if (extraChoice) {
+            return [extraChoice].concat(options);
         }
         return options;
     }
@@ -29,7 +27,7 @@ export const ColorInput: React.FC<IProps> = (props) => {
             try {
                 const colors: IColor[] = await getColors({});
                 setSelectionOptions(concatIfNotNull(colors.map((color) => color.name)));
-                const formSelect = new FormSelect(selectRef.current!);
+                new FormSelect(selectRef.current!);
             } catch {
                 logger.logError("Failed to get colors");
             }
@@ -37,6 +35,13 @@ export const ColorInput: React.FC<IProps> = (props) => {
 
         fetchColors();
     }, []);
+    return [selectionOptions, selectRef]
+}
+
+export const ColorInput: React.FC<IProps> = (props) => {
+    const logger = new Logger(ColorInput.name);
+
+    const [selectionOptions, selectRef] = useColorsSelect(logger, props.extraChoice);
 
     return (
         <SelectInput name="Color"
