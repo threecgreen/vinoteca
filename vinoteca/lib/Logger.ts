@@ -70,7 +70,8 @@ export default class Logger {
         }
         const response: ILogResult = await post("/rest/logs", {
             level,
-            message,
+            // @ts-ignore
+            message: message instanceof Object ? "" : message,
             module: this.module,
         });
         if (!response.success) {
