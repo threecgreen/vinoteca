@@ -10,6 +10,7 @@ use diesel::sql_types::{Float, Integer, Nullable};
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
+use validator::Validate;
 
 #[get("/viti-areas?<id>&<name>&<region_name>")]
 pub fn get(
@@ -80,6 +81,8 @@ pub fn stats(
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]
 pub fn post(viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
+    viti_area_form.validate()?;
+
     diesel::insert_into(viti_areas::table)
         .values(&viti_area_form)
         .execute(&*connection)
@@ -102,6 +105,8 @@ pub fn put(
     connection: DbConn,
 ) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
+    viti_area_form.validate()?;
+
     diesel::update(viti_areas::table.filter(viti_areas::id.eq(id)))
         .set(viti_area_form)
         .execute(&*connection)

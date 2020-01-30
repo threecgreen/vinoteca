@@ -9,6 +9,7 @@ use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
+use validator::Validate;
 
 #[get("/wine-types?<id>&<name>")]
 pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<WineType>> {
@@ -59,6 +60,8 @@ pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<TopWineTy
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
 pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
+    wine_type_form.validate()?;
+
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)
         .execute(&*connection)
@@ -78,6 +81,8 @@ pub fn put(
     connection: DbConn,
 ) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
+    wine_type_form.validate()?;
+
     diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
         .set(wine_types::name.eq(wine_type_form.name))
         .execute(&*connection)

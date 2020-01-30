@@ -7,6 +7,7 @@ use diesel::sql_types::Integer;
 use models::{Grape, GrapeForm};
 use rocket_contrib::json::Json;
 use schema::{grapes, wine_grapes, wines};
+use validator::Validate;
 
 #[get("/grapes?<id>&<name>")]
 pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Grape>> {
@@ -30,6 +31,7 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
 #[post("/grapes", format = "json", data = "<grape_form>")]
 pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
+    grape_form.validate()?;
     let grape_name = grape_form.name.to_owned();
     diesel::insert_into(grapes::table)
         .values(grape_form)
@@ -47,6 +49,7 @@ pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]
 pub fn put(id: i32, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
+    grape_form.validate()?;
     diesel::update(grapes::table.filter(grapes::id.eq(id)))
         .set(grapes::name.eq(grape_form.name))
         .execute(&*connection)

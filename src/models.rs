@@ -28,10 +28,11 @@ pub struct Grape {
     pub wine_count: i32,
 }
 
-#[derive(Deserialize, Insertable, TypeScriptify, Debug)]
+#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "grapes"]
 #[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
+    #[validate(length(min = 1))]
     pub name: &'a str,
 }
 

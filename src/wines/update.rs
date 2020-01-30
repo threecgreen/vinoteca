@@ -9,10 +9,12 @@ use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
+use validator::Validate;
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
 pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
+    wine_form.validate()?;
 
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wine_form)

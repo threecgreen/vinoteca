@@ -9,10 +9,12 @@ use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
+use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
 pub fn post(raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
+    wine_form.validate()?;
 
     let result: RestResult<Wine> = diesel::insert_into(wines::table)
         .values(&wine_form)

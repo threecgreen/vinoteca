@@ -70,6 +70,7 @@ pub fn post(
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
     let wine_grape_form = wine_grape_form.into_inner();
+    wine_grape_form.validate()?;
     let wine_id = wine_grape_form.wine_id;
     let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
 
@@ -100,4 +101,14 @@ pub fn post(
         .values(&wine_grapes)
         .execute(&*connection)?;
     get(Some(wine_id), None, connection)
+}
+
+#[cfg(tests)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_post_validation() {
+        unimplemented!();
+    }
 }

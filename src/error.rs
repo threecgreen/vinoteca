@@ -7,6 +7,7 @@ use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
+use validator::ValidationErrors;
 
 #[derive(Clone, Debug, Serialize)]
 pub enum VinotecaError {
@@ -55,6 +56,12 @@ impl From<std::io::Error> for VinotecaError {
 impl From<ImageError> for VinotecaError {
     fn from(img_error: ImageError) -> Self {
         VinotecaError::Internal(format!("{}", img_error))
+    }
+}
+
+impl From<ValidationErrors> for VinotecaError {
+    fn from(val_errors: ValidationErrors) -> Self {
+        VinotecaError::BadRequest(format!("{}", val_errors))
     }
 }
 

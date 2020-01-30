@@ -6,6 +6,7 @@ use crate::DbConn;
 use diesel;
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
+use validator::Validate;
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]
 pub fn get(
@@ -40,6 +41,7 @@ pub fn get(
 #[post("/producers", format = "json", data = "<producer_form>")]
 pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
+    producer_form.validate()?;
     diesel::insert_into(producers::table)
         .values(&producer_form)
         .execute(&*connection)
@@ -54,8 +56,10 @@ pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
 pub fn put(id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
+    let producer_form = producer_form.into_inner();
+    producer_form.validate()?;
     diesel::update(producers::table.filter(producers::id.eq(id)))
-        .set(producer_form.into_inner())
+        .set(producer_form)
         .execute(&*connection)
         .and_then(|_| {
             producers::table

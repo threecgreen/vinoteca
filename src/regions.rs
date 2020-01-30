@@ -6,6 +6,7 @@ use crate::DbConn;
 use diesel;
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
+use validator::Validate;
 
 // TODO: get flag data for autocomplete
 #[get("/regions?<id>&<name>&<producer_name>")]
@@ -37,6 +38,8 @@ pub fn get(
 #[post("/regions", format = "json", data = "<region_form>")]
 pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
     let region_form = region_form.into_inner();
+    region_form.validate()?;
+
     diesel::insert_into(regions::table)
         .values(&region_form)
         .execute(&*connection)
@@ -52,6 +55,8 @@ pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Reg
 #[put("/regions/<id>", format = "json", data = "<region_form>")]
 pub fn put(id: i32, region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
     let region_form = region_form.into_inner();
+    region_form.validate()?;
+
     diesel::update(regions::table.filter(regions::id.eq(id)))
         .set(regions::name.eq(region_form.name))
         .execute(&*connection)

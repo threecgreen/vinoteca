@@ -16,6 +16,7 @@ extern crate validator;
 extern crate validator_derive;
 extern crate image;
 extern crate rocket_multipart_form_data;
+use rocket_contrib::serve::StaticFiles;
 
 // Diesel modules
 pub mod models;
@@ -24,22 +25,94 @@ mod schema;
 // Rocket handlers //
 /////////////////////
 // Templates (HTML)
-pub mod templates;
+mod templates;
 // Rest
-pub mod colors;
-pub mod grapes;
-pub mod logs;
-pub mod producers;
+mod colors;
+mod grapes;
+mod logs;
+mod producers;
 pub mod purchases;
 pub mod regions;
-pub mod stores;
+mod stores;
 pub mod viti_areas;
 pub mod wine_grapes;
 pub mod wine_types;
 pub mod wines;
 // Misc
-pub mod error;
+mod error;
 mod query_utils;
+// Tests
+#[cfg(tests)]
+mod tests;
 
 #[database("vinoteca")]
 pub struct DbConn(SqliteConnection);
+
+pub fn rocket() -> rocket::Rocket {
+    rocket::ignite()
+        .attach(DbConn::fairing())
+        .mount(
+            "/",
+            routes![
+                templates::about,
+                templates::dashboards,
+                templates::grapes,
+                templates::home,
+                templates::home_redirect,
+                templates::inventory,
+                templates::new_wine,
+                templates::producer_profile,
+                templates::region_profile,
+                templates::search_wines,
+                templates::viti_area_profile,
+                templates::wines,
+                templates::wine_profile,
+                templates::wine_type_profile,
+            ],
+        )
+        .mount(
+            "/rest",
+            routes![
+                colors::get,
+                grapes::get,
+                grapes::post,
+                grapes::put,
+                logs::post,
+                producers::get,
+                producers::put,
+                producers::post,
+                producers::delete,
+                purchases::get,
+                purchases::post,
+                purchases::put,
+                purchases::delete,
+                purchases::by_year,
+                purchases::total_liters,
+                purchases::most_common_purchase_date,
+                purchases::recent,
+                regions::get,
+                regions::put,
+                regions::post,
+                stores::get,
+                stores::post,
+                viti_areas::get,
+                viti_areas::put,
+                viti_areas::post,
+                viti_areas::stats,
+                wines::get,
+                wines::post,
+                wines::put,
+                wines::inventory,
+                wines::search,
+                wine_grapes::get,
+                wine_grapes::post,
+                wine_types::get,
+                wine_types::put,
+                wine_types::post,
+                wine_types::top,
+            ],
+        )
+        .mount("/static", StaticFiles::from("static"))
+        // TODO: make configurable
+        .mount("/media", StaticFiles::from("media"))
+}
