@@ -17,6 +17,7 @@ fn add_wildcards(query: &str) -> String {
 }
 
 /// Contains all information used in the wine table
+#[allow(clippy::too_many_arguments)]
 #[get("/wines?<id>&<producer_id>&<region_id>&<viti_area_id>&<wine_type_id>&<color>&<wine_type>&<producer>&<region>&<viti_area>")]
 pub fn get(
     // Exact match parameters

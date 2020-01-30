@@ -1,6 +1,6 @@
-use crate::error::{RestResult, VinotecaError};
-use super::models::RawWineForm;
 use super::image::handle_image;
+use super::models::RawWineForm;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
@@ -11,11 +11,7 @@ use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
-pub fn put(
-    id: i32,
-    raw_wine_form: RawWineForm,
-    connection: DbConn,
-) -> RestResult<Wine> {
+pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
 
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
@@ -75,10 +71,9 @@ pub fn put(
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            match handle_image(wine, image) {
-                Err(e) => warn!("Error updating image for wine with id {}: {}", id, e),
-                _ => (),
-            };
+            if let Err(e) = handle_image(wine, image) {
+                warn!("Error updating image for wine with id {}: {}", id, e);
+            }
         }
     }
     result

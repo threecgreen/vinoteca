@@ -14,8 +14,8 @@ extern crate typescript_definitions;
 extern crate validator;
 #[macro_use]
 extern crate validator_derive;
-extern crate rocket_multipart_form_data;
 extern crate image;
+extern crate rocket_multipart_form_data;
 
 // Diesel modules
 pub mod models;

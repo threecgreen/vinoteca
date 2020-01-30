@@ -11,11 +11,7 @@ use serde::Serialize;
 use typescript_definitions::TypeScriptify;
 
 #[get("/wine-types?<id>&<name>")]
-pub fn get(
-    id: Option<i32>,
-    name: Option<String>,
-    connection: DbConn,
-) -> RestResult<Vec<WineType>> {
+pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<WineType>> {
     let mut query = wine_types::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(wine_types::id.eq(id));
@@ -40,10 +36,7 @@ pub struct TopWineType {
 }
 
 #[get("/wine-types/top?<limit>")]
-pub fn top(
-    limit: Option<usize>,
-    connection: DbConn,
-) -> RestResult<Vec<TopWineType>> {
+pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<TopWineType>> {
     let limit = limit.unwrap_or(10);
     wine_types::table
         .inner_join(wines::table.inner_join(purchases::table))
@@ -64,10 +57,7 @@ pub fn top(
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
-pub fn post(
-    wine_type_form: Json<WineTypeForm>,
-    connection: DbConn,
-) -> RestResult<WineType> {
+pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)

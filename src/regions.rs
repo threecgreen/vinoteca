@@ -35,10 +35,7 @@ pub fn get(
 }
 
 #[post("/regions", format = "json", data = "<region_form>")]
-pub fn post(
-    region_form: Json<RegionForm>,
-    connection: DbConn,
-) -> RestResult<Region> {
+pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
     let region_form = region_form.into_inner();
     diesel::insert_into(regions::table)
         .values(&region_form)
@@ -53,11 +50,7 @@ pub fn post(
 }
 
 #[put("/regions/<id>", format = "json", data = "<region_form>")]
-pub fn put(
-    id: i32,
-    region_form: Json<RegionForm>,
-    connection: DbConn,
-) -> RestResult<Region> {
+pub fn put(id: i32, region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
     let region_form = region_form.into_inner();
     diesel::update(regions::table.filter(regions::id.eq(id)))
         .set(regions::name.eq(region_form.name))

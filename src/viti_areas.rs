@@ -78,10 +78,7 @@ pub fn stats(
 }
 
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]
-pub fn post(
-    viti_area_form: Json<VitiAreaForm>,
-    connection: DbConn,
-) -> RestResult<VitiArea> {
+pub fn post(viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
     diesel::insert_into(viti_areas::table)
         .values(&viti_area_form)

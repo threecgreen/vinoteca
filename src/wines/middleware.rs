@@ -1,13 +1,12 @@
+use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
-use super::models::RawWineForm;
 
 use rocket::data::{FromDataSimple, Outcome};
 use rocket::http::Status;
 use rocket::{Data, Outcome::*, Request};
 use rocket_multipart_form_data::{
-    mime, MultipartFormData, MultipartFormDataField,
-    MultipartFormDataOptions, RawField, TextField,
+    mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
 };
 
 impl FromDataSimple for RawWineForm {
@@ -18,11 +17,13 @@ impl FromDataSimple for RawWineForm {
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
             MultipartFormDataField::raw("image")
-                .size_limit(16 * 1024 * 1024)    // 16 MB
+                .size_limit(16 * 1024 * 1024) // 16 MB
                 .content_type_by_string(Some(mime::IMAGE_STAR))
                 .unwrap(),
         );
-        options.allowed_fields.push(MultipartFormDataField::text("wine_form").content_type(Some(mime::STAR_STAR)));
+        options
+            .allowed_fields
+            .push(MultipartFormDataField::text("wine_form").content_type(Some(mime::STAR_STAR)));
 
         // Check if content type is correct
         // info!("Content type: {:?}", request.content_type());
@@ -31,7 +32,9 @@ impl FromDataSimple for RawWineForm {
             _ => {
                 return Failure((
                     Status::BadRequest,
-                    VinotecaError::BadRequest("Incorrect content-type, should be 'multipart/form-data'".to_owned())
+                    VinotecaError::BadRequest(
+                        "Incorrect content-type, should be 'multipart/form-data'".to_owned(),
+                    ),
                 ))
             }
         };
@@ -41,7 +44,10 @@ impl FromDataSimple for RawWineForm {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
-                return Failure((Status::BadRequest, VinotecaError::BadRequest(format!("Failed to parse multipart form. {:?}", e))))
+                return Failure((
+                    Status::BadRequest,
+                    VinotecaError::BadRequest(format!("Failed to parse multipart form. {:?}", e)),
+                ));
             }
         };
         // Check for wine_form field
@@ -58,17 +64,18 @@ impl FromDataSimple for RawWineForm {
         let image_part: Option<&RawField> = multipart_form.raw.get("image");
         // Verify only one text field
         let wine_form = match wine_form_json {
-            TextField::Single(text) => {
-                match serde_json::from_str::<WineForm>(&text.text) {
-                    Ok(parsed) => parsed,
-                    Err(e) => {
-                        return Failure((
-                            Status::BadRequest,
-                            VinotecaError::BadRequest(format!("Failed to parse wine form JSON: {:?}", e)),
-                        ))
-                    }
+            TextField::Single(text) => match serde_json::from_str::<WineForm>(&text.text) {
+                Ok(parsed) => parsed,
+                Err(e) => {
+                    return Failure((
+                        Status::BadRequest,
+                        VinotecaError::BadRequest(format!(
+                            "Failed to parse wine form JSON: {:?}",
+                            e
+                        )),
+                    ))
                 }
-            }
+            },
             TextField::Multiple(_text) => {
                 return Failure((
                     Status::BadRequest,
@@ -85,12 +92,9 @@ impl FromDataSimple for RawWineForm {
                     VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
                 ))
             }
-            None => None
+            None => None,
         };
 
-        Success(RawWineForm{
-            wine_form,
-            image,
-        })
+        Success(RawWineForm { wine_form, image })
     }
 }

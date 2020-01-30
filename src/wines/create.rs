@@ -1,6 +1,6 @@
-use crate::error::{RestResult, VinotecaError};
 use super::image::handle_image;
 use super::models::RawWineForm;
+use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
@@ -11,10 +11,7 @@ use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
 
 #[post("/wines", data = "<raw_wine_form>")]
-pub fn post(
-    raw_wine_form: RawWineForm,
-    connection: DbConn,
-) -> RestResult<Wine> {
+pub fn post(raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
 
     let result: RestResult<Wine> = diesel::insert_into(wines::table)
@@ -74,9 +71,8 @@ pub fn post(
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            match handle_image(wine, image) {
-                Err(e) => warn!("Error adding image for new wine with id {}: {}", wine.id, e),
-                _ => (),
+            if let Err(e) = handle_image(wine, image) {
+                warn!("Error adding image for new wine with id {}: {}", wine.id, e);
             };
         }
     }
