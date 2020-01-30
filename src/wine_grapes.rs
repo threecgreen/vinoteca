@@ -5,6 +5,9 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
+use serde::{Deserialize, Serialize};
+use typescript_definitions::TypeScriptify;
+use validator::Validate;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub fn get(
@@ -32,7 +35,52 @@ pub fn get(
         .map_err(VinotecaError::from)
 }
 
+#[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
+pub struct AssociatedGrape {
+    pub percent: Option<i32>,
+    pub grape_id: i32,
+}
+
+#[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
+pub struct WineGrapesForm {
+    pub wine_id: i32,
+    #[validate(length(min = 1))]
+    pub grapes: Vec<AssociatedGrape>,
+}
+
+impl From<WineGrapesForm> for Vec<WineGrapeForm> {
+    fn from(wine_grapes_form: WineGrapesForm) -> Self {
+        wine_grapes_form.grapes.iter().map(|g| {
+            WineGrapeForm {
+                percent: g.percent,
+                grape_id: g.grape_id,
+                wine_id: wine_grapes_form.wine_id
+            }
+        }).collect()
+    }
+}
+
 #[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
-pub fn post(wine_grape_form: Json<WineGrapeForm>, connection: DbConn) -> RestResult<Vec<WineGrape>> {
-    todo!();
+pub fn post(wine_grape_form: Json<WineGrapesForm>, connection: DbConn) -> RestResult<Vec<WineGrape>> {
+    let wine_grape_form = wine_grape_form.into_inner();
+    let wine_id = wine_grape_form.wine_id;
+    let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
+
+    // Validate percentages
+    let total_percentage = wine_grapes.iter().fold(0, |sum, wg| sum + wg.percent.unwrap_or(0));
+    if total_percentage > 100 {
+        return Err(VinotecaError::BadRequest(format!("Grape percentage adds to {}. Maximum of 100 allowed", total_percentage)));
+    }
+
+    // Delete existing wine grapes
+    let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::id.eq(wine_id)))
+        .execute(&*connection);
+    if let Err(e) = delete_result {
+        return Err(VinotecaError::Internal(format!("Error deleting existing wine grapes for wine with id{}: {}", wine_id, e)));
+    }
+
+    diesel::insert_into(wine_grapes::table)
+        .values(&wine_grapes)
+        .execute(&*connection)?;
+    get(Some(wine_id), None, connection)
 }

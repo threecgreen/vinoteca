@@ -74,7 +74,10 @@ pub fn post(
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            handle_image(wine, image);
+            match handle_image(wine, image) {
+                Err(e) => warn!("Error adding image for new wine with id {}: {}", wine.id, e),
+                _ => (),
+            };
         }
     }
     result

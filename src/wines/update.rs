@@ -75,7 +75,10 @@ pub fn put(
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            handle_image(wine, image);
+            match handle_image(wine, image) {
+                Err(e) => warn!("Error updating image for wine with id {}: {}", id, e),
+                _ => (),
+            };
         }
     }
     result

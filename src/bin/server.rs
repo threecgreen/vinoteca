@@ -70,6 +70,7 @@ fn main() {
                 wines::inventory,
                 wines::search,
                 wine_grapes::get,
+                wine_grapes::post,
                 wine_types::get,
                 wine_types::put,
                 wine_types::post,

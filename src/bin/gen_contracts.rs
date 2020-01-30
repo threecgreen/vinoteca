@@ -4,6 +4,7 @@ extern crate vinoteca;
 use vinoteca::models::*;
 use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases};
 use vinoteca::viti_areas::VitiAreaStats;
+use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wine_types::TopWineType;
 use vinoteca::wines::InventoryWine;
 
@@ -45,14 +46,15 @@ fn main() {
         write_interface(&mut writer, StoreForm::type_script_ify());
         write_interface(&mut writer, VitiArea::type_script_ify());
         write_interface(&mut writer, VitiAreaForm::type_script_ify());
-        write_interface(&mut writer, WineType::type_script_ify());
-        write_interface(&mut writer, WineTypeForm::type_script_ify());
-        write_interface(&mut writer, WineGrape::type_script_ify());
-        write_interface(&mut writer, WineGrapeForm::type_script_ify());
         write_interface(&mut writer, Wine::type_script_ify());
         write_interface(&mut writer, WineForm::type_script_ify());
+        write_interface(&mut writer, WineGrape::type_script_ify());
+        write_interface(&mut writer, WineGrapeForm::type_script_ify());
+        write_interface(&mut writer, WineType::type_script_ify());
+        write_interface(&mut writer, WineTypeForm::type_script_ify());
 
-        writeln!(&mut writer);
+        // Write this one normally because it's referenced in `WineGrapesForm`
+        writeln!(&mut writer, "{}", AssociatedGrape::type_script_ify());
         // Other models
         write_interface(&mut writer, InventoryWine::type_script_ify());
         write_interface(&mut writer, MostCommonPurchaseDate::type_script_ify());
@@ -60,6 +62,7 @@ fn main() {
         write_interface(&mut writer, TopWineType::type_script_ify());
         write_interface(&mut writer, TotalLiters::type_script_ify());
         write_interface(&mut writer, VitiAreaStats::type_script_ify());
+        write_interface(&mut writer, WineGrapesForm::type_script_ify());
         write_interface(&mut writer, YearsPurchases::type_script_ify());
     };
 }

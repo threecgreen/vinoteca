@@ -12,6 +12,7 @@
         "**/.coverage": true,
         ".coveragerc": false,
         "tags": true,
+        "vinoteca/node_modules": true,
     },
     "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
