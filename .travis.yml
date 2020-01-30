@@ -1,0 +1,31 @@
+language: rust
+cache: cargo
+matrix:
+  include:
+    - os: linux
+      rust: nightly
+      env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: nightly
+      env: TARGET=x86_64-unknown-linux-musl
+
+env:
+  global:
+    # Default target on travis-ci.
+    # Used as conditional check in the install stage
+    - HOST=x86_64-unknown-linux-gnu
+
+sudo: required
+
+install:
+  # prevent target re-add error from rustup
+  - if [[ $TRAVIS_OS_NAME = linux && $HOST != $TARGET ]]; then rustup target add $TARGET; fi
+
+script:
+  - bash scripts/install.sh
+  - bash scripts/test.sh
+  - bash scripts/lint.sh
+
+notifications:
+  email:
+    on_success: never

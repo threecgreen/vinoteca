@@ -55,8 +55,8 @@ rust_build()
 {
     info_text "Building web server…"
     cd $root_dir
-    cargo run --bin gen_contracts || error_exit "Failed generating contracts"
     cargo build --release || error_exit "Failed build rust web server"
+    cargo run --release --bin gen_contracts || error_exit "Failed generating contracts"
     cd -
 }
 

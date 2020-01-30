@@ -17,11 +17,10 @@ log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 serde_json = "1.0"
-typescript-definitions = "0.1.10"
 validator = "0.10"
 validator_derive = "0.10"
-rocket-multipart-form-data = "0.7.2"
-image = "0.22.4"
+rocket-multipart-form-data = "0.7"
+image = "0.22"
 
 [dependencies.rocket_contrib]
 version = "*"
@@ -31,3 +30,8 @@ features = ["json", "diesel_sqlite_pool", "serve"]
 [dependencies.askama]
 version = "0.8"
 features = ["with-rocket"]
+
+[dependencies.typescript-definitions]
+version = "0.1"
+# Enable export in release build
+features = ["export-typescript"]
