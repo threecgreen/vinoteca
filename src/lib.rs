@@ -21,6 +21,10 @@ use rocket_contrib::serve::StaticFiles;
 // Diesel modules
 pub mod models;
 mod schema;
+// Misc
+mod error;
+#[macro_use] // Must be declared before modules using macros
+mod query_utils;
 /////////////////////
 // Rocket handlers //
 /////////////////////
@@ -36,11 +40,8 @@ pub mod regions;
 mod stores;
 pub mod viti_areas;
 pub mod wine_grapes;
-pub mod wine_types;
+mod wine_types;
 pub mod wines;
-// Misc
-mod error;
-mod query_utils;
 // Tests
 #[cfg(tests)]
 mod tests;
@@ -82,6 +83,7 @@ pub fn rocket() -> rocket::Rocket {
                 producers::put,
                 producers::post,
                 producers::delete,
+                producers::top,
                 purchases::get,
                 purchases::post,
                 purchases::put,
@@ -93,6 +95,7 @@ pub fn rocket() -> rocket::Rocket {
                 regions::get,
                 regions::put,
                 regions::post,
+                regions::top,
                 stores::get,
                 stores::post,
                 viti_areas::get,

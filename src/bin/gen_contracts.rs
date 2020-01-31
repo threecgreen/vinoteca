@@ -5,7 +5,6 @@ use vinoteca::models::*;
 use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
-use vinoteca::wine_types::TopWineType;
 use vinoteca::wines::InventoryWine;
 
 use std::borrow::Cow;
@@ -26,9 +25,8 @@ fn write_interface(writer: &mut BufWriter<&File>, ts_def: Cow<'static, str>) {
 #[allow(unused)]
 fn main() {
     // Truncate file if it already exists
-    let file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("vinoteca/lib/Rest.d.ts"))
-            .expect("Couldn't open TypeScript contracts file");
+    let file = File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("vinoteca/lib/Rest.d.ts"))
+        .expect("Couldn't open TypeScript contracts file");
     let mut writer = BufWriter::new(&file);
     // Main db models
     write_interface(&mut writer, Color::type_script_ify());
@@ -58,7 +56,7 @@ fn main() {
     write_interface(&mut writer, InventoryWine::type_script_ify());
     write_interface(&mut writer, MostCommonPurchaseDate::type_script_ify());
     write_interface(&mut writer, RecentPurchase::type_script_ify());
-    write_interface(&mut writer, TopWineType::type_script_ify());
+    write_interface(&mut writer, generic::TopEntity::type_script_ify());
     write_interface(&mut writer, TotalLiters::type_script_ify());
     write_interface(&mut writer, VitiAreaStats::type_script_ify());
     write_interface(&mut writer, WineGrapesForm::type_script_ify());

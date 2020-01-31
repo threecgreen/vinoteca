@@ -1,10 +1,11 @@
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{Producer, ProducerForm};
-use crate::schema::{producers, regions};
+use crate::models::{generic, Producer, ProducerForm};
+use crate::schema::{producers, purchases, regions, wines};
 use crate::DbConn;
 
-use diesel;
+use diesel::dsl::sql;
 use diesel::prelude::*;
+use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -36,6 +37,18 @@ pub fn get(
         .load::<Producer>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
+}
+
+#[get("/producers/top?<limit>")]
+pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+    let limit = limit.unwrap_or(10);
+    top_table!(
+        producers::table.inner_join(wines::table.inner_join(purchases::table)),
+        producers::id,
+        producers::name,
+        limit,
+        connection
+    )
 }
 
 #[post("/producers", format = "json", data = "<producer_form>")]

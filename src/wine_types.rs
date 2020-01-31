@@ -1,5 +1,5 @@
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{WineType, WineTypeForm};
+use crate::models::{generic, WineType, WineTypeForm};
 use crate::schema::{purchases, wine_types, wines};
 use crate::DbConn;
 
@@ -7,8 +7,6 @@ use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
-use serde::Serialize;
-use typescript_definitions::TypeScriptify;
 use validator::Validate;
 
 #[get("/wine-types?<id>&<name>")]
@@ -26,35 +24,16 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
         .map_err(VinotecaError::from)
 }
 
-#[derive(Queryable, Serialize, TypeScriptify, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct TopWineType {
-    pub id: i32,
-    pub name: String,
-    pub quantity: i32,
-    pub varieties: i32,
-    pub avg_price: f32,
-}
-
 #[get("/wine-types/top?<limit>")]
-pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<TopWineType>> {
+pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
-    wine_types::table
-        .inner_join(wines::table.inner_join(purchases::table))
-        .group_by((wine_types::id, wine_types::name))
-        .select((
-            wine_types::id,
-            wine_types::name,
-            sql::<Integer>("sum(purchases.quantity)"),
-            // Should probably be distinct
-            sql::<Integer>("count(wines.id)"),
-            sql::<Float>("avg(purchases.price)"),
-        ))
-        .order_by(sql::<Integer>("sum(purchases.quantity) DESC"))
-        .limit(limit as i64)
-        .load::<TopWineType>(&*connection)
-        .map(Json)
-        .map_err(VinotecaError::from)
+    top_table!(
+        wine_types::table.inner_join(wines::table.inner_join(purchases::table)),
+        wine_types::id,
+        wine_types::name,
+        limit,
+        connection
+    )
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]

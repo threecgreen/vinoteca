@@ -211,3 +211,17 @@ pub struct WineTypeForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
 }
+
+pub mod generic {
+    use super::*;
+
+    #[derive(Queryable, Serialize, TypeScriptify, Debug)]
+    #[serde(rename_all = "camelCase")]
+    pub struct TopEntity {
+        pub id: i32,
+        pub name: String,
+        pub quantity: i32,
+        pub varieties: i32,
+        pub avg_price: f32,
+    }
+}
