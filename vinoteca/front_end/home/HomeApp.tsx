@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { ParallaxImg } from "../../components/ParallaxImg";
 import { Row, Col } from "../../components/Grid";
 import { RecentPurchases } from "./RecentPurchases";

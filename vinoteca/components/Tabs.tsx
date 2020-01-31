@@ -3,7 +3,7 @@ import { IChildrenProp } from "./IProps";
 import { Tabs as MTabs } from "materialize-css"
 
 export enum TabColor {
-    Green = "wine-gree-tab",
+    Green = "wine-green-tab",
     Red = "wine-red-tab",
 }
 
