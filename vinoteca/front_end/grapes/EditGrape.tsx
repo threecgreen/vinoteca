@@ -19,7 +19,7 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
             <ModalContent>
                 <Row>
                     <h4>Edit grape</h4>
-                    <TextInput name="Grape name"
+                    <TextInput name="Name"
                         className=""
                         value={ text }
                         onChange={ setText }

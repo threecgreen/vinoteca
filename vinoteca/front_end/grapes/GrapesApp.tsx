@@ -4,6 +4,7 @@ import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { IGrape, IGrapeForm } from "../../lib/Rest";
 import { getGrapes, updateGrape } from "../../lib/RestApi";
+import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
@@ -23,6 +24,7 @@ export const GrapesApp: React.FC<{}> = (_props) => {
     const onEditClick = (id: number) => dispatch({type: "setToEdit", id});
     const onCancelClick  = () => dispatch({type: "setToDisplay"});
     const onSaveClick = async (grape: IGrapeForm) => {
+        dispatch({type: "setToDisplay"});
         if (state.mode.type === "edit") {
             const id = state.mode.id
             try {
@@ -30,8 +32,6 @@ export const GrapesApp: React.FC<{}> = (_props) => {
                 dispatch({type: "setGrapes", grapes: state.grapes.map((g) => g.id === id ? updatedGrape : g)});
             } catch (e) {
                 logger.logWarning(`Failed to save grape change for grape with id ${id}: ${e.message}`);
-            } finally {
-                dispatch({type: "setToDisplay"});
             }
         }
     }
@@ -39,7 +39,16 @@ export const GrapesApp: React.FC<{}> = (_props) => {
     if (state.grapes.length === 0) {
         return <Preloader />;
     }
-    // TODO: show edit modal
+    let editComponent = null;
+    if (state.mode.type === "edit") {
+        const id = state.mode.id;
+        editComponent = (
+            <EditGrape name={ state.grapes.find((g) => g.id === id)?.name ?? "" }
+                onCancelClick={ onCancelClick }
+                onSaveClick={ onSaveClick }
+            />
+        )
+    }
     return (
         <div className="container">
             <Row>
@@ -48,6 +57,7 @@ export const GrapesApp: React.FC<{}> = (_props) => {
                     <GrapesList grapes={ state.grapes }
                         onEditClick={ onEditClick }
                     />
+                    { editComponent }
                 </Col>
             </Row>
         </div>
