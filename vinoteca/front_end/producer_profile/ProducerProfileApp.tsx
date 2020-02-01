@@ -5,7 +5,7 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { SpecialChars } from "../../components/SpecialChars";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
@@ -153,11 +153,11 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         switch (input) {
             case ProducerProfileTextInput.Producer:
                 return this.setState((prevState) => ({
-                    producerText: SimpleSpecialChars.insertCharAt(prevState.producerText, char, position),
+                    producerText: SpecialChars.insertCharAt(prevState.producerText, char, position),
                 }));
             case ProducerProfileTextInput.Region:
                 return this.setState((prevState) => ({
-                    regionText: SimpleSpecialChars.insertCharAt(prevState.regionText, char, position),
+                    regionText: SpecialChars.insertCharAt(prevState.regionText, char, position),
                 }));
             default:
                 this.logger.logError("The special char controller should not be displayed"

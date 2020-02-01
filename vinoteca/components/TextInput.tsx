@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "./Input";
-import { SimpleSpecialChars } from "./SimpleSpecialChars";
+import { SpecialChars } from "./SpecialChars";
 
 interface IProps {
     name: string;
@@ -24,7 +24,7 @@ export const TextInput: React.FC<IProps> = (props) => {
     const onSpecialCharClick = (char: string) => {
         setIsActive(true);
         const position = inputRef.current?.selectionStart ?? NaN;
-        props.onChange(SimpleSpecialChars.insertCharAt(props.value, char, position))
+        props.onChange(SpecialChars.insertCharAt(props.value, char, position))
         setTimeout(() => inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     };
 
@@ -37,13 +37,13 @@ export const TextInput: React.FC<IProps> = (props) => {
         props.onBlur?.();
     };
 
-    const onChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onChange = (val: string) => {
         setIsActive(true);
-        props.onChange(e.target.value);
+        props.onChange(val);
     }
 
     const onFocus = () => {
-        setIsActive(false);
+        setIsActive(true);
         props.onFocus?.();
     }
 
@@ -53,14 +53,14 @@ export const TextInput: React.FC<IProps> = (props) => {
                 name={ props.name }
                 value={ props.value }
                 enabled={ props.enabled }
-                onChangeEvent={ (e) => onChangeEvent(e) }
-                onBlur={ () => onBlur() }
-                onFocus={ () => onFocus() }
+                onChange={ (val) => onChange(val) }
+                onBlur={ onBlur }
+                onFocus={ onFocus }
                 className={ props.className }
                 s={ props.s } m={ props.m } l={ props.l }
                 inputRef={ inputRef }
             />
-            <SimpleSpecialChars
+            <SpecialChars
                 classes={ ["inline-block"] }
                 onClick={ (c) => onSpecialCharClick(c) }
                 display={ isActive }

@@ -4,7 +4,7 @@ import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
-import { SimpleSpecialChars } from "../../components/SimpleSpecialChars";
+import { SpecialChars } from "../../components/SpecialChars";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/Rest";

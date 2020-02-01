@@ -1,5 +1,5 @@
-import * as React from "react";
-import * as M from "materialize-css";
+import M from "materialize-css";
+import React from "react";
 import { nameToId } from "../lib/utils";
 import { InputField } from "./Grid";
 
@@ -11,7 +11,6 @@ export interface IInputProps<T extends IInputValue> {
     enabled: boolean;
     className: string;
     onChange: (val: string) => void;
-    onChangeEvent: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onFocus: () => void;
     onBlur: () => void;
     inputRef?: React.Ref<HTMLInputElement>;
@@ -25,15 +24,10 @@ export interface IInputProps<T extends IInputValue> {
     l?: number;
 }
 
-/**
- * A generic form input that should always be used within another input component
- * that holds state.
- */
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
     public static defaultProps = {
         enabled: true,
         onChange: () => undefined,
-        onChangeEvent: (_: React.ChangeEvent<HTMLInputElement>) => undefined,
         onFocus: () => undefined,
         onBlur: (_: React.FocusEvent<HTMLInputElement>) => undefined,
     };
@@ -55,8 +49,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     step={ this.props.step }
                     min={ this.props.min }
                     max={ this.props.max }
-                >
-                </input>
+                />
                 <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
                     { this.props.name }
                 </label>
@@ -64,12 +57,15 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
         );
     }
 
+    public componentDidMount() {
+        M.updateTextFields();
+    }
+
     public componentDidUpdate() {
         M.updateTextFields();
     }
 
     public onChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.props.onChangeEvent(e);
         this.props.onChange(e.target.value);
     }
 }

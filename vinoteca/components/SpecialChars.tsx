@@ -19,7 +19,7 @@ interface IState {
     currentCase: Case;
 }
 
-export class SimpleSpecialChars extends React.Component<IProps, IState> {
+export class SpecialChars extends React.Component<IProps, IState> {
     public static insertCharAt(val: string, char: string, position: number) {
         if (isNaN(position)) {
             return val + char;
@@ -42,7 +42,7 @@ export class SimpleSpecialChars extends React.Component<IProps, IState> {
         const classes = ["special-chars"];
         if (this.props.display) {
             return (
-                <Row classes={ classes.concat(this.props.classes || []) }>
+                <Row classes={ classes.concat(this.props.classes ?? []) }>
                     {/* Shift button */}
                     <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
                         onClick={ () => null }
