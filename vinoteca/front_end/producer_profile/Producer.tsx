@@ -4,7 +4,6 @@ import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/Rest";
-import { ProducerProfileTextInput } from "./ProducerProfileApp";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -14,7 +13,6 @@ interface IProducerProps {
     regionText: string;
     region?: IRegion
     onRegionChange: (text: string) => void;
-    onSpecialCharClick: (input: ProducerProfileTextInput, char: string, position: number) => void;
     onConfirmClick: () => void;
     onCancelClick: () => void;
 }

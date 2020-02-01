@@ -5,13 +5,12 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
-import { SpecialChars } from "../../components/SpecialChars";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
 import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
-import { Producer } from "./Producer";
 import { redirect } from "../../lib/utils";
+import { Producer } from "./Producer";
 
 export enum ProducerProfileTextInput {
     Producer,
@@ -53,7 +52,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);
-        this.onSpecialCharClick = this.onSpecialCharClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onShowDeleteModalClick = this.onShowDeleteModalClick.bind(this);
@@ -79,7 +77,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                     region={ this.state.region }
                     regionText={ this.state.regionText }
                     onRegionChange={ this.onRegionChange }
-                    onSpecialCharClick={ this.onSpecialCharClick }
                     onConfirmClick={ this.onConfirmClick }
                     onCancelClick={ this.onCancelClick }
                 />
@@ -147,22 +144,6 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
 
     private onRegionChange(text: string) {
         this.setState({regionText: text});
-    }
-
-    private onSpecialCharClick(input: ProducerProfileTextInput, char: string, position: number) {
-        switch (input) {
-            case ProducerProfileTextInput.Producer:
-                return this.setState((prevState) => ({
-                    producerText: SpecialChars.insertCharAt(prevState.producerText, char, position),
-                }));
-            case ProducerProfileTextInput.Region:
-                return this.setState((prevState) => ({
-                    regionText: SpecialChars.insertCharAt(prevState.regionText, char, position),
-                }));
-            default:
-                this.logger.logError("The special char controller should not be displayed"
-                                     + " before a text input has come into focus.");
-        }
     }
 
     private async onConfirmClick() {
