@@ -165,8 +165,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         }
     }
 
-    private async onConfirmClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private async onConfirmClick() {
         try {
             const [regionChanged, regionId] = await this.handleRegionChanges();
             if (this.state.producer
@@ -223,8 +222,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         })
     }
 
-    private onCancelClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onCancelClick() {
         this.setState((state) => ({
             isEditing: false,
             producerText: state.producer ? state.producer.name : "",
@@ -232,13 +230,11 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         }));
     }
 
-    private onShowDeleteModalClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onShowDeleteModalClick() {
         this.setState({showDeleteModal: true});
     }
 
-    private async onDeleteClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private async onDeleteClick() {
         try {
             await deleteProducer(this.props.producerId);
             // Redirect home

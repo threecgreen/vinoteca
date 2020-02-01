@@ -94,7 +94,7 @@ export class WinesApp extends React.Component<{}, IState> {
                         You haven&rsquo;t entered any wines yet.
                     </h6>
                     <Btn classes={ ["green-bg"] }
-                        onClick={ (_) => redirect("/wines/new/") }
+                        onClick={ () => redirect("/wines/new/") }
                     >
                         Add a new wine
                     </Btn>
@@ -105,7 +105,7 @@ export class WinesApp extends React.Component<{}, IState> {
                 <>
                     <h3 className="page-title">Wines</h3>
                     <Btn classes={ ["yellow-bg"] }
-                        onClick={ (e) => this.onResetFilters(e) }
+                        onClick={ this.onResetFilters.bind(this) }
                     >
                         Reset Filters
                     </Btn>
@@ -167,17 +167,15 @@ export class WinesApp extends React.Component<{}, IState> {
         }, this.serializeFilters);
     }
 
-    private onResetFilters(e: React.MouseEvent) {
-        e.preventDefault();
+    private onResetFilters() {
         this.setState({
             predicates: new Map(),
             filterTexts: new Map(),
         }, this.serializeFilters);
     }
 
-    private onPageClick(e: React.MouseEvent, pageNumber: number) {
+    private onPageClick(pageNumber: number) {
         if (pageNumber === this.state.currentPage) {
-            e.preventDefault();
             return;
         }
         this.setState({

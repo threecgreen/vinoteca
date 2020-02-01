@@ -92,11 +92,6 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
         fetchGrapes();
     }, [setCompletions])
 
-    const handleAdd = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        dispatch({type: "addGrape"});
-    }
-
     return (
         <Row>
             <Col s={ 12 }>
@@ -113,7 +108,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
                 />
             )) }
             <InputField>
-                <FloatingBtn onClick={ handleAdd }
+                <FloatingBtn onClick={ () => dispatch({type: "addGrape"}) }
                     classes={ ["green-bg"] }
                 >
                     <MaterialIcon iconName="add" />

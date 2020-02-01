@@ -16,7 +16,7 @@ export const FixedActionList: React.FC<IChildrenProp> = (props) => {
                 ref={ divRef }
             >
                 <FloatingBtn classes={ ["btn-large", "red-bg"] }
-                    onClick={ (_) => undefined }
+                    onClick={ () => null }
                 >
                     <MaterialIcon iconName="menu" />
                 </FloatingBtn>

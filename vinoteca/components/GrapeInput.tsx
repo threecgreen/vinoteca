@@ -23,15 +23,10 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
         autocomplete(inputRef, completions, (s) => onChange(id, s, percent))
     }, [inputRef, completions, onChange, id, percent]);
 
-    const onDelete = (e: React.MouseEvent) => {
-        e.preventDefault();
-        handleDelete(id);
-    }
-
     return (
         <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
             <InputField s={ 1 }>
-                <FloatingBtn onClick={ (e) => onDelete(e) }
+                <FloatingBtn onClick={ () => handleDelete(id) }
                     classes={ ["red-bg"] }
                 >
                     <MaterialIcon iconName="remove" />

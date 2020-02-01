@@ -118,8 +118,7 @@ export class RegionProfile extends React.Component<IProps, IState> {
         });
     }
 
-    private async onConfirmClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private async onConfirmClick() {
         try {
             const region = await updateRegion({id: this.props.regionId, name: this.state.regionText});
             this.setState({
@@ -131,8 +130,7 @@ export class RegionProfile extends React.Component<IProps, IState> {
         }
     }
 
-    private onCancelClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onCancelClick() {
         this.setState((state) => ({
             isEditing: false,
             regionText: state.region ? state.region.name : "",

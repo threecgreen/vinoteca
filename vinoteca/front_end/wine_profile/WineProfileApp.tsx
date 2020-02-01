@@ -5,21 +5,21 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
-import { IPurchaseData, purchaseDataToForm, initPurchaseInputData } from "../../components/PurchaseInputs";
+import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, createPurchase } from "../../lib/RestApi";
+import { IPurchase } from "../../lib/Rest";
+import { createPurchase, deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
 import { imageExists } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
-import { ModifyPurchase } from "./ModifyPurchase";
+import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
+import { EditWine } from "./EditWine";
 import { GrapesTable } from "./GrapesTable";
+import { ModifyPurchase } from "./ModifyPurchase";
 import { Purchases } from "./Purchases";
 import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
-import { IPurchase, IPurchaseForm } from "../../lib/Rest";
-import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
-import { EditWine } from "./EditWine";
 
 interface IProps {
     id: number;
@@ -80,21 +80,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
-    const onEditClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        dispatch({type: "setMode", mode: {type: "editWine"}});
-    }
-
-    const onDeleteClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        dispatch({type: "setMode", mode: {type: "deleteWine"}});
-    }
-
-    const onAddPurchaseClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        dispatch({type: "setMode", mode: {type: "addPurchase"}});
-    }
-
     const onSubmitWineEdit = async (editedWine: IWineData) => {
         try {
             const form = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
@@ -126,8 +111,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
-    const onDeletePurchase = async (e: React.MouseEvent, purchaseId: number) => {
-        e.preventDefault();
+    const onDeletePurchase = async (purchaseId: number) => {
         try {
             await deletePurchase(purchaseId);
         } catch (e) {
@@ -247,8 +231,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 return (
                     <DeleteModal display
                         item="Purchase"
-                        onYesClick={ (e) => onDeletePurchase(e, purchaseId) }
-                        onNoClick={ (e) => { e.preventDefault(); dispatch({type: "setMode", mode: {type: "display"}}); } }
+                        onYesClick={ () => onDeletePurchase(purchaseId) }
+                        onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />
                 )
             }
@@ -294,17 +278,17 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 </Col>
                 <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] }>
                     <FixedActionList>
-                        <FloatingBtn onClick={ onAddPurchaseClick }
+                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
                             classes={ ["green-bg"] }
                         >
                             <MaterialIcon iconName="add" />
                         </FloatingBtn>
-                        <FloatingBtn onClick={ onEditClick }
+                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "editWine"}}) }
                             classes={ ["yellow-bg"] }
                         >
                             <MaterialIcon iconName="edit" />
                         </FloatingBtn>
-                        <FloatingBtn onClick={ onDeleteClick }
+                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "deleteWine"}}) }
                             classes={ ["red-bg"] }
                         >
                             <MaterialIcon iconName="delete" />

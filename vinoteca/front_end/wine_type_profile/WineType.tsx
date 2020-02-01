@@ -1,17 +1,16 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
-import { IRestModel } from "../../lib/RestTypes";
 import { WineTypeInput } from "../../components/WineTypeInput";
+import { IRestModel } from "../../lib/RestTypes";
 
 interface IProps {
     isEditing: boolean;
     wineTypeText: string;
     wineType: IRestModel;
     onWineTypeChange: (val: string) => void;
-    onConfirmClick: (e: React.MouseEvent) => void;
-    onCancelClick: (e: React.MouseEvent) => void;
+    onConfirmClick: () => void;
+    onCancelClick: () => void;
 }
 
 export class WineType extends React.Component<IProps> {

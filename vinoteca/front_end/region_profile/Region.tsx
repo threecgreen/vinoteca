@@ -1,17 +1,17 @@
 import React from "react";
-import { Col, Row } from "../../components/Grid";
-import { IRegion } from "../../lib/Rest";
-import { RegionInput } from "../../components/RegionInput";
-import { Flag } from "../../components/Flag";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Flag } from "../../components/Flag";
+import { Col, Row } from "../../components/Grid";
+import { RegionInput } from "../../components/RegionInput";
+import { IRegion } from "../../lib/Rest";
 
 interface IRegionProps {
     isEditing: boolean;
     regionText: string;
     region: IRegion;
     onRegionChange: (val: string) => void;
-    onConfirmClick: (e: React.MouseEvent) => void;
-    onCancelClick: (e: React.MouseEvent) => void;
+    onConfirmClick: () => void;
+    onCancelClick: () => void;
 }
 
 // TODO: stats component?

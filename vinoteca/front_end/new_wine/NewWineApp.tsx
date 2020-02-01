@@ -17,8 +17,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
     const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
     const [isSaving, setIsSaving] = React.useState(false);
 
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const onSubmit = async () => {
         setIsSaving(true);
         // TODO: check certain forms aren't empty
         const logger = new Logger(NewWineApp.name);
@@ -40,11 +39,6 @@ export const NewWineApp: React.FC<{}> = (_props) => {
             setIsSaving(false);
             logger.logError(`Error creating new wine: ${err.message}`);
         }
-    }
-
-    const onCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        redirect("/");
     }
 
     return (
@@ -71,7 +65,7 @@ export const NewWineApp: React.FC<{}> = (_props) => {
                     <MaterialIcon className="right" iconName="send" />
                 </Btn>
                 <Btn classes={ ["red-bg"] }
-                    onClick={ onCancel }
+                    onClick={ () => redirect("/") }
                 >
                     Cancel
                 </Btn>

@@ -118,8 +118,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         });
     }
 
-    private async onConfirmClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private async onConfirmClick() {
         try {
             const vitiArea = await updateVitiArea({
                 id: this.props.vitiAreaId,
@@ -136,8 +135,7 @@ export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVit
         }
     }
 
-    private onCancelClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onCancelClick() {
         this.setState((state) => ({
             isEditing: false,
             vitiAreaText: state.vitiArea ? state.vitiArea.name : "",

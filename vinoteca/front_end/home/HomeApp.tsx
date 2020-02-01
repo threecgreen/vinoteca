@@ -22,7 +22,7 @@ export const HomeApp: React.FC<{}> = (_) => {
                         </Col>
                         <div className="center-align">
                             <Btn classes={ ["yellow-bg"] }
-                                onClick={ (_) => redirect("/wines/new") }
+                                onClick={ () => redirect("/wines/new") }
                             >
                                 <MaterialIcon iconName="add_circle" />
                                 add wine

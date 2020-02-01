@@ -10,11 +10,6 @@ interface IProps {
 }
 
 export const GrapesListItem: React.FC<IProps> = ({grape, onEditClick}) => {
-    const handleEdit = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault();
-        onEditClick(grape.id);
-    }
-
     return (
         <tr>
             <TextCell text={ grape.name } />
@@ -22,7 +17,7 @@ export const GrapesListItem: React.FC<IProps> = ({grape, onEditClick}) => {
                 maxDecimals={ 0 }
             />
             <td>
-                <FloatingBtn onClick={ handleEdit }
+                <FloatingBtn onClick={ () => onEditClick(grape.id) }
                     classes={ ["small", "red-bg"] }
                 >
                     <MaterialIcon iconName="edit" />

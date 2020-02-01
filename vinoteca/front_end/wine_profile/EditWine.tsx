@@ -26,16 +26,6 @@ export const EditWine: React.FC<IProps> = ({wine, onSubmit, onCancel}) => {
         why: wine.why ?? "",
     });
 
-    const onConfirmClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        onSubmit(state);
-    }
-
-    const onCancelClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        onCancel();
-    }
-
     return (
         <Modal display>
             <ModalContent>
@@ -48,8 +38,8 @@ export const EditWine: React.FC<IProps> = ({wine, onSubmit, onCancel}) => {
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ onConfirmClick }
-                    onCancelClick={ onCancelClick }
+                    onConfirmClick={ () => onSubmit(state) }
+                    onCancelClick={ onCancel }
                 />
             </ModalFooter>
         </Modal>

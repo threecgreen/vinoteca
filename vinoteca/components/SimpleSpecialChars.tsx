@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "./Buttons";
 import { Row } from "./Grid";
 import { SpecialCharBtn } from "./SpecialCharBtn";
@@ -9,7 +9,7 @@ enum Case {
 }
 
 interface IProps {
-    onClick: (event: React.MouseEvent, char: string) => void;
+    onClick: (char: string) => void;
     classes?: string[];
     display: boolean;
 }
@@ -45,7 +45,7 @@ export class SimpleSpecialChars extends React.Component<IProps, IState> {
                 <Row classes={ classes.concat(this.props.classes || []) }>
                     {/* Shift button */}
                     <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
-                        onClick={ (e) => e.preventDefault() }
+                        onClick={ () => null }
                         onMouseDown={ this.handleShift.bind(this) }
                     >
                         { this.state.currentCase === Case.Lower ? "↑" : "↓" }
@@ -54,7 +54,7 @@ export class SimpleSpecialChars extends React.Component<IProps, IState> {
                         return (
                             <SpecialCharBtn char={ char }
                                 key={ char }
-                                onClick={ (e, c) => this.props.onClick(e, c) }
+                                onClick={ (c) => this.props.onClick(c) }
                             />
                         );
                     }) }
@@ -64,8 +64,7 @@ export class SimpleSpecialChars extends React.Component<IProps, IState> {
         return null;
     }
 
-    public handleShift(e: React.MouseEvent) {
-        e.preventDefault();
+    public handleShift() {
         this.setState((state) => {
             if (state.currentCase === Case.Lower) {
                 return {

@@ -37,7 +37,7 @@ export class InventoryApp extends React.Component<{}, IState> {
             ? (
                 <>
                     <Btn classes={ ["green-bg"] }
-                        onClick={ (e) => this.downloadInventory(e) }
+                        onClick={ this.downloadInventory.bind(this) }
                     >
                         Export to CSV
                     </Btn>
@@ -62,8 +62,7 @@ export class InventoryApp extends React.Component<{}, IState> {
         this.updateInventory();
     }
 
-    public async onInventoryChange(e: React.MouseEvent, id: number, change: InventoryChange) {
-        e.preventDefault();
+    public async onInventoryChange(id: number, change: InventoryChange) {
         try {
             const wine = this.state.wines.find((w) => w.id === id);
             if (wine) {
@@ -94,12 +93,11 @@ export class InventoryApp extends React.Component<{}, IState> {
         }
     }
 
-    private downloadInventory(e: React.MouseEvent) {
-        e.preventDefault();
+    private downloadInventory() {
         download(`vinoteca_inventory_${format(new Date(), 'yyyy-MM-dd')}.csv`,
                  generateCSV(this.state.wines, [
                      "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
                      "lastPurchaseDate", "lastPurchasePrice"
-                ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
+                 ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
     }
 }

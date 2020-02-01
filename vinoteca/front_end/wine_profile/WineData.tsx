@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { MaterialIcon } from "../../components/MaterialIcon";
@@ -19,11 +19,6 @@ interface IProps {
 }
 
 export const WineData: React.FC<IProps> = (props) => {
-    const onInventoryChange = (event: React.MouseEvent, inventoryChange: InventoryChange) => {
-        event.preventDefault();
-        props.onInventoryChange(inventoryChange);
-    }
-
     return (
         <>
             <h5 className="light">{ capitalizeFirstLetter(props.color) }</h5>
@@ -32,13 +27,13 @@ export const WineData: React.FC<IProps> = (props) => {
             </h5>
             &nbsp;
             <FloatingBtn classes={ ["green-bg", "btn-floating-small"] }
-                onClick={ (e) => onInventoryChange(e, InventoryChange.Increase) }
+                onClick={ () => props.onInventoryChange(InventoryChange.Increase) }
             >
                 <MaterialIcon iconName="add_circle" />
             </FloatingBtn>
             &thinsp;
             <FloatingBtn classes={ ["red-bg", "btn-floating-small"] }
-                onClick={ (e) => onInventoryChange(e, InventoryChange.Decrease) }
+                onClick={ () => props.onInventoryChange(InventoryChange.Decrease) }
             >
                 <MaterialIcon iconName="do_not_disturb_on" />
             </FloatingBtn>

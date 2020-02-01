@@ -28,7 +28,7 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ onConfirmClick }
+                    onConfirmClick={ () => onSaveClick({name: text}) }
                     onCancelClick={ onCancelClick }
                 />
             </ModalFooter>

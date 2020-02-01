@@ -97,8 +97,7 @@ export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
         }
     }
 
-    private onResetClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onResetClick() {
         this.setState(SearchWinesApp.defaultState);
     }
 

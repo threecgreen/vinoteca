@@ -9,8 +9,8 @@ interface IProps {
     vitiAreaText: string;
     vitiArea: IVitiArea;
     onVitiAreaChange: (val: string) => void;
-    onConfirmClick: (e: React.MouseEvent) => void;
-    onCancelClick: (e: React.MouseEvent) => void;
+    onConfirmClick: () => void;
+    onCancelClick: () => void;
 }
 
 // TODO: stats component?

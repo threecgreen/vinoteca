@@ -90,12 +90,12 @@ export const Purchases: React.FC<IProps> = ({purchases, onEditClick, onDeleteCli
                             <tr key={ purchase.id }>
                                 <td>
                                     <Btn classes={ ["btn-small", "yellow-bg"] }
-                                        onClick={ (e) => {e.preventDefault(); onEditClick(purchase.id);} }
+                                        onClick={ () => onEditClick(purchase.id) }
                                     >
                                         <MaterialIcon iconName="edit" />
                                     </Btn>
                                     <Btn classes={ ["btn-small", "red-bg"] }
-                                        onClick={ (e) => {e.preventDefault(); onDeleteClick(purchase.id);} }
+                                        onClick={ () => onDeleteClick(purchase.id) }
                                     >
                                         <MaterialIcon iconName="delete" />
                                     </Btn>

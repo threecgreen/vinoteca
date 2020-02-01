@@ -24,16 +24,6 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, onCancel, onS
         shouldAddToInventory: null
     });
 
-    const onConfirmClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        onSubmit(state);
-    }
-
-    const onCancelClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        onCancel();
-    }
-
     return (
         <Modal display>
             <ModalContent>
@@ -47,8 +37,8 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, onCancel, onS
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ onConfirmClick }
-                    onCancelClick={ onCancelClick }
+                    onConfirmClick={ () => onSubmit(state) }
+                    onCancelClick={ onCancel }
                 />
             </ModalFooter>
         </Modal>

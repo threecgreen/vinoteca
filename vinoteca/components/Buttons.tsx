@@ -4,7 +4,7 @@ import { Col } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
-    onClick: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
+    onClick: () => void;
     onMouseDown?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
 
@@ -19,10 +19,15 @@ export const FloatingBtn: React.FC<IFloatingBtnProps> = (props) => {
             props.onMouseDown(e)
         }
     }
+    const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        props.onClick();
+    }
+
     return (
         <a href="#"
             className={ `waves-effect waves-light btn-floating ${classes}` }
-            onClick={ props.onClick }
+            onClick={ onClick }
             onMouseDown={ mouseDown }
         >
             { props.children }
@@ -33,14 +38,19 @@ FloatingBtn.displayName = "FloatingBtn";
 FloatingBtn.defaultProps = { onMouseDown: (_) => undefined };
 
 interface IBtnProps extends IChildrenProp, IClassesProp {
-    onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+    onClick: () => void;
 }
 
 export const Btn: React.FC<IBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
+    const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        props.onClick();
+    }
+
     return (
         <button className={ `rbtn waves-effect waves-light btn ${classes}` }
-            onClick={ props.onClick }
+            onClick={ onClick }
         >
             { props.children }
         </button>
@@ -49,8 +59,8 @@ export const Btn: React.FC<IBtnProps> = (props) => {
 Btn.displayName = "Btn";
 
 interface ICancelOrConfirmProps {
-    onConfirmClick: (e: React.MouseEvent) => void;
-    onCancelClick: (e: React.MouseEvent) => void;
+    onConfirmClick: () => void;
+    onCancelClick: () => void;
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =

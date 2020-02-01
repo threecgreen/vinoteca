@@ -15,8 +15,8 @@ interface IProducerProps {
     region?: IRegion
     onRegionChange: (text: string) => void;
     onSpecialCharClick: (input: ProducerProfileTextInput, char: string, position: number) => void;
-    onConfirmClick: (e: React.MouseEvent) => void;
-    onCancelClick: (e: React.MouseEvent) => void;
+    onConfirmClick: () => void;
+    onCancelClick: () => void;
 }
 
 export class Producer extends React.Component<IProducerProps> {

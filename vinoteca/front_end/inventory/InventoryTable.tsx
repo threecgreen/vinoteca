@@ -23,7 +23,7 @@ enum SortingValue {
 
 interface IProps {
     wines: IInventoryWine[],
-    onInventoryChange: (e: React.MouseEvent, id: number, change: InventoryChange) => void,
+    onInventoryChange: (id: number, change: InventoryChange) => void,
 }
 
 interface IState {
@@ -79,8 +79,8 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                 <td className="inventory-plus-minus">
                                     <FloatingBtn classes={ ["green-bg", "btn-small"] }
                                         onClick={
-                                            (e) => this.props.onInventoryChange(
-                                                e, wine.id, InventoryChange.Increase
+                                            () => this.props.onInventoryChange(
+                                                wine.id, InventoryChange.Increase
                                             )
                                         }
                                     >
@@ -88,8 +88,8 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                     </FloatingBtn>
                                     <FloatingBtn classes={ ["red-bg", "btn-small"] }
                                         onClick={
-                                            (e) => this.props.onInventoryChange(
-                                                e, wine.id, InventoryChange.Decrease
+                                            () => this.props.onInventoryChange(
+                                                wine.id, InventoryChange.Decrease
                                             )
                                         }
                                     >

@@ -104,8 +104,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         });
     }
 
-    private async onConfirmClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private async onConfirmClick() {
         try {
             const wineType = await updateWineType({id: this.props.wineTypeId, name: this.state.wineTypeText});
             this.setState({
@@ -117,8 +116,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
         }
     }
 
-    private onCancelClick(e: React.MouseEvent) {
-        e.preventDefault();
+    private onCancelClick() {
         this.setState((state) => ({
             isEditing: false,
             wineTypeText: state.wineType ? state.wineType.name : "",

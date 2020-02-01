@@ -21,8 +21,7 @@ export const TextInput: React.FC<IProps> = (props) => {
     const [isActive, setIsActive] = React.useState(false);
     const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-    const onSpecialCharClick = (e: React.MouseEvent, char: string) => {
-        e.preventDefault();
+    const onSpecialCharClick = (char: string) => {
         setIsActive(true);
         const position = inputRef.current?.selectionStart ?? NaN;
         props.onChange(SimpleSpecialChars.insertCharAt(props.value, char, position))
@@ -63,7 +62,7 @@ export const TextInput: React.FC<IProps> = (props) => {
             />
             <SimpleSpecialChars
                 classes={ ["inline-block"] }
-                onClick={ (e, c) => onSpecialCharClick(e, c) }
+                onClick={ (c) => onSpecialCharClick(c) }
                 display={ isActive }
             />
         </>

@@ -5,7 +5,7 @@ import { range } from "../lib/utils";
 interface IProps {
     currentPage: number;
     pageCount: number;
-    onClick: (e: React.MouseEvent, pageNumber: number) => void;
+    onClick: (pageNumber: number) => void;
 }
 
 enum Arrow {
@@ -27,7 +27,7 @@ export class Pagination extends React.Component<IProps> {
                         <li className={ this.props.currentPage === pgNum ? "active red-bg" : "waves-effect"}
                             key={ pgNum }
                         >
-                            <a onClick={ (e) => this.props.onClick(e, pgNum) }>
+                            <a onClick={ (e) => {e.preventDefault(); this.props.onClick(pgNum)} }>
                                 { pgNum }
                             </a>
                         </li>
@@ -54,18 +54,18 @@ export class Pagination extends React.Component<IProps> {
     }
 
     private onArrowClick(e: React.MouseEvent, arrow: Arrow) {
+        e.preventDefault();
         if (this.arrowIsEnabled(arrow)) {
             switch (arrow) {
                 case Arrow.Left:
-                    this.props.onClick(e, this.props.currentPage - 1);
+                    this.props.onClick(this.props.currentPage - 1);
                     return;
                 case Arrow.Right:
-                    this.props.onClick(e, this.props.currentPage + 1);
+                    this.props.onClick(this.props.currentPage + 1);
                     return;
                 default:
                     return;
             }
         }
-        e.preventDefault();
     }
 }

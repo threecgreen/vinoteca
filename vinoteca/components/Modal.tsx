@@ -49,8 +49,8 @@ ModalFooter.displayName = "ModalFooter";
 interface IDeleteModalProps {
     display: boolean;
     item: string;
-    onYesClick: (e: React.MouseEvent) => void;
-    onNoClick: (e: React.MouseEvent) => void;
+    onYesClick: () => void;
+    onNoClick: () => void;
 }
 
 export const DeleteModal: React.FC<IDeleteModalProps> = (props) => {
