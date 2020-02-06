@@ -1,10 +1,12 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{Producer, ProducerForm};
-use crate::schema::{producers, regions};
+use crate::schema::{producers, purchases, regions, wines};
+use crate::wine_types::TopWineType;
 use crate::DbConn;
 
-use diesel;
+use diesel::dsl::sql;
 use diesel::prelude::*;
+use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -34,6 +36,46 @@ pub fn get(
         .distinct();
     final_query
         .load::<Producer>(&*connection)
+        .map(Json)
+        .map_err(VinotecaError::from)
+}
+
+pub fn top<Table: diesel::Table + diesel::query_dsl::InternalJoinDsl<_, diesel::query_source::joins::Inner, _>>(table: Table, limit: usize, connection: DbConn) -> RestResult<Vec<TopWineType>> {
+    table
+        .inner_join(wines::table.inner_join(purchases::table))
+        .group_by((producers::id, producers::name))
+        .select((
+            wines::id,
+            wines::name,
+            sql::<Integer>("sum(purchases.quantity)"),
+            // Should probably be distinct
+            sql::<Integer>("count(wines.id)"),
+            sql::<Float>("avg(purchases.price)"),
+        ))
+        .order_by(sql::<Integer>("sum(purchases.quantity) DESC"))
+        .limit(limit as i64)
+        .load::<TopWineType>(&*connection)
+        .map(Json)
+        .map_err(VinotecaError::from)
+}
+
+#[get("/producers/top?<limit>")]
+pub fn top2(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<TopWineType>> {
+    let limit = limit.unwrap_or(10);
+    producers::table
+        .inner_join(wines::table.inner_join(purchases::table))
+        .group_by((producers::id, producers::name))
+        .select((
+            producers::id,
+            producers::name,
+            sql::<Integer>("sum(purchases.quantity)"),
+            // Should probably be distinct
+            sql::<Integer>("count(wines.id)"),
+            sql::<Float>("avg(purchases.price)"),
+        ))
+        .order_by(sql::<Integer>("sum(purchases.quantity) DESC"))
+        .limit(limit as i64)
+        .load::<TopWineType>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
 }
