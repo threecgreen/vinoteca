@@ -1,8 +1,6 @@
 import format from "date-fns/esm/format";
-import * as React from "react";
-import { capitalizeFirstLetter, numToDate, getNameAndType } from "../lib/utils";
-
-const EN_DASH: string = "–";
+import React from "react";
+import { capitalizeFirstLetter, EN_DASH, getNameAndType, numToDate } from "../lib/utils";
 
 interface ITextCellProps {
     default?: string;

@@ -1,5 +1,5 @@
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{VitiArea, VitiAreaForm};
+use crate::models::{generic, VitiArea, VitiAreaForm};
 use crate::schema::{purchases, regions, viti_areas, wines};
 use crate::DbConn;
 
@@ -76,6 +76,18 @@ pub fn stats(
         .load::<VitiAreaStats>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
+}
+
+#[get("/viti-areas/top?<limit>")]
+pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+    let limit = limit.unwrap_or(10);
+    top_table!(
+        viti_areas::table,
+        viti_areas::id,
+        viti_areas::name,
+        limit,
+        connection
+    )
 }
 
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]

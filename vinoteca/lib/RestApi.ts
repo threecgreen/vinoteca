@@ -2,7 +2,7 @@ import { delete_, get, IQueryParams, post, put, postForm, putForm } from "./ApiH
 import Logger from "./Logger";
 import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
          IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
-         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm } from "./Rest";
+         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm, ITopEntity, IMostCommonPurchaseDate, ITotalLiters, IWineCount, IPurchaseCount } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -138,6 +138,11 @@ export async function deleteProducer(id: number): Promise<void> {
     return delete_(`/rest/producers/${id}`);
 }
 
+export async function getTopProducers(limit?: number): Promise<ITopEntity[]> {
+    const nonNullParams = nonNulls({limit});
+    return get("/rest/producers/top", nonNullParams);
+}
+
 /* PURCHASES */
 interface IGetPurchasesParams {
     wineId?: number;
@@ -159,6 +164,18 @@ export async function updatePurchase(id: number, purchase: IPurchaseForm): Promi
 
 export async function deletePurchase(id: number): Promise<void> {
     return delete_(`/rest/purchases/${id}`);
+}
+
+export async function getMostCommonPurchaseDate(): Promise<IMostCommonPurchaseDate> {
+    return get("/rest/purchases/most-common-purchase-date");
+}
+
+export async function getTotalLiters(): Promise<ITotalLiters> {
+    return get("/rest/purchases/total-liters");
+}
+
+export async function getPurchaseCount(): Promise<IPurchaseCount> {
+    return get("/rest/purchases/count");
 }
 
 /* REGIONS */
@@ -183,6 +200,11 @@ export async function createRegion(region: IRegionForm): Promise<IRegion> {
 
 export async function updateRegion(region: IRegion): Promise<IRegion> {
     return put(`/rest/regions/${region.id}`, region);
+}
+
+export async function getTopRegions(limit?: number): Promise<ITopEntity[]> {
+    const nonNullParams = nonNulls({limit});
+    return get("/rest/regions/top", nonNullParams);
 }
 
 /* STORES */
@@ -240,6 +262,11 @@ export async function getVitiAreaStats(
 ): Promise<IVitiAreaStats[]> {
     const nonNullParams = nonNulls({ id, region_id: regionId });
     return get("/rest/viti-areas/stats", nonNullParams);
+}
+
+export async function getTopVitiAreas(limit?: number): Promise<ITopEntity[]> {
+    const nonNullParams = nonNulls({limit});
+    return get("/rest/viti-areas/top", nonNullParams);
 }
 
 /* WINES */
@@ -301,6 +328,10 @@ export async function searchWines(
     return await get("/rest/wines/search", nonNullParams);
 }
 
+export async function getWineVarieties(): Promise<IWineCount> {
+    return get("/rest/wines/count");
+}
+
 /* WINE GRAPES */
 interface IGetWineGrapesParams {
     wineId?: number;
@@ -338,4 +369,9 @@ export async function createWineType(wineType: IWineTypeForm): Promise<IWineType
 
 export async function updateWineType(wineType: IWineType): Promise<IWineType> {
     return put(`/rest/wine-types/${wineType.id}`, wineType);
+}
+
+export async function getTopWineTypes(limit?: number): Promise<ITopEntity[]> {
+    const nonNullParams = nonNulls({limit});
+    return get("/rest/wine-types/top", nonNullParams);
 }

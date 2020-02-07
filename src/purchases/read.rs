@@ -1,4 +1,4 @@
-use super::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases};
+use super::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases, PurchaseCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Purchase;
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
@@ -105,11 +105,23 @@ pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
 pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseDate> {
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
         .load::<MostCommonPurchaseDate>(&*connection)
-        .unwrap_or_else(|_| {
+        .unwrap_or_else(|e| {
+            warn!("Error getting most common purchase date: {}", e);
             vec![MostCommonPurchaseDate {
                 most_common_purchase_date: None,
             }]
         });
 
     Json(res.remove(0))
+}
+
+#[get("/purchases/count")]
+pub fn count(connection: DbConn) -> Json<PurchaseCount> {
+    let res: Result<Option<i64>, _> = purchases::table
+        .select(sum(purchases::quantity))
+        .first(&*connection);
+    let total_liters = PurchaseCount {
+        count: res.unwrap_or(Some(0)).unwrap_or(0),
+    };
+    Json(total_liters)
 }

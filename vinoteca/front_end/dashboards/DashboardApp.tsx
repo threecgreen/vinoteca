@@ -1,6 +1,8 @@
-import * as React from "react";
+import React from "react";
 import { Col, Row } from "../../components/Grid";
+import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYear } from "./PurchasesByYear";
+import { TopProducers, TopRegions, TopVitiAreas } from "./Top";
 
 export const DashboardApp: React.FC<{}> = (_) => {
     return (
@@ -15,10 +17,14 @@ export const DashboardApp: React.FC<{}> = (_) => {
                     <PurchasesByYear />
                 </Col>
                 <Col s={ 12 } l={ 6 } xl={ 4 }>
+                    <TopProducers />
+                    <TopRegions />
                 </Col>
                 <Col s={ 12 } l={ 6 } xl={ 4 }>
+                    <ByTheNumbers />
                 </Col>
                 <Col s={ 12 } l={ 6 } xl={ 4 }>
+                    <TopVitiAreas />
                 </Col>
             </Row>
         </div>

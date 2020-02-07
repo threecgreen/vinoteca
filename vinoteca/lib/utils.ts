@@ -10,29 +10,6 @@ export interface IDict<T> {
 }
 
 /**
- * Basic piped value interface  used to pipe the return values of one function
- * to arguments of the next function.
- *
- * Solution from @regiontog on https://github.com/Microsoft/TypeScript/issues/17718
- */
-interface IPipe<T> {
-    readonly value: () => T;
-    chain<R>(fn: (x: T) => R): IPipe<R>;
-}
-
-/**
- * Given a function, returns an object containing the function's return value
- * accessed with .value() and chaining with .chain(fn(x)).
- * @param val
- */
-export function pipe<T>(val: T): IPipe<T> {
-    return {
-        chain: (fn) => pipe(fn(val)),
-        value: () => val,
-    };
-}
-
-/**
  * Converts the objects to a single object of names to null for use with materialize
  * autocomplete.
  * @param objects An array of REST models
@@ -64,6 +41,8 @@ export function numToDate(num: number): Date {
 export function dateToNum(date: Date): number {
     return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
 }
+
+export const EN_DASH: string = "–";
 
 /**
  * Returns the default vintage year, which is two years prior to the current

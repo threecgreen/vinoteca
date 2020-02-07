@@ -2,10 +2,10 @@ extern crate typescript_definitions;
 extern crate vinoteca;
 
 use vinoteca::models::*;
-use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases};
+use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases, PurchaseCount};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
-use vinoteca::wines::InventoryWine;
+use vinoteca::wines::{InventoryWine, WineCount};
 
 use std::borrow::Cow;
 use std::fs::File;
@@ -57,8 +57,10 @@ fn main() {
     write_interface(&mut writer, MostCommonPurchaseDate::type_script_ify());
     write_interface(&mut writer, RecentPurchase::type_script_ify());
     write_interface(&mut writer, generic::TopEntity::type_script_ify());
+    write_interface(&mut writer, PurchaseCount::type_script_ify());
     write_interface(&mut writer, TotalLiters::type_script_ify());
     write_interface(&mut writer, VitiAreaStats::type_script_ify());
+    write_interface(&mut writer, WineCount::type_script_ify());
     write_interface(&mut writer, WineGrapesForm::type_script_ify());
     write_interface(&mut writer, YearsPurchases::type_script_ify());
 }

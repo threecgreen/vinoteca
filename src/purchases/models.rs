@@ -43,6 +43,12 @@ pub struct TotalLiters {
     pub total_liters: f32,
 }
 
+#[derive(Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct PurchaseCount {
+    pub count: i64,
+}
+
 #[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MostCommonPurchaseDate {
