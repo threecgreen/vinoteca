@@ -36,25 +36,30 @@ impl<'r> Responder<'r> for VinotecaError {
 
 impl From<diesel::result::Error> for VinotecaError {
     fn from(diesel_error: diesel::result::Error) -> Self {
-        // TODO: set status?
         match diesel_error {
             e @ diesel::result::Error::NotFound => VinotecaError::NotFound(format!("{}", e)),
-            diesel::result::Error::DatabaseError(kind, _info) => {
-                VinotecaError::MissingConstraint(format!("{:#?}", kind))
+            diesel::result::Error::DatabaseError(kind, info) => {
+                warn!("diesel database error. Kind: {:#?} Info: {:#?}", kind, info);
+                VinotecaError::MissingConstraint(format!("{:?}", info))
             }
-            e => VinotecaError::Internal(format!("{}", e)),
+            e => {
+                warn!("other diesel error. {:#?}", e);
+                VinotecaError::Internal(format!("{}", e))
+            }
         }
     }
 }
 
 impl From<std::io::Error> for VinotecaError {
     fn from(io_error: std::io::Error) -> Self {
+        warn!("IOError: {:#?}", io_error);
         VinotecaError::Internal(format!("{}", io_error))
     }
 }
 
 impl From<ImageError> for VinotecaError {
     fn from(img_error: ImageError) -> Self {
+        warn!("Error reading or writing image: {:#?}", img_error);
         VinotecaError::Internal(format!("{}", img_error))
     }
 }

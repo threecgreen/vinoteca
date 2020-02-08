@@ -33,8 +33,8 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
             try {
                 const entities = await fetchEntity();
                 setTopEntities(entities);
-            } catch {
-                logger.logError(`Error fetching top ${name}s`);
+            } catch (e) {
+                logger.logError(`Error fetching top ${name}s. ${e.message}`);
             } finally {
                 setHasLoaded(true);
             }
