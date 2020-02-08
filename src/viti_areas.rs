@@ -82,7 +82,7 @@ pub fn stats(
 pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        viti_areas::table,
+        viti_areas::table.inner_join(wines::table.inner_join(purchases::table)),
         viti_areas::id,
         viti_areas::name,
         limit,

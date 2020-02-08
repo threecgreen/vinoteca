@@ -74,7 +74,6 @@ export class InventoryApp extends React.Component<{}, IState> {
                     fullWine.inventory -= 1;
                 }
                 await updateWine(id, fullWine, null);
-                await post(`/rest/wines/${id}/change/${change == InventoryChange.Increase ? "add" : "subtract"}/`, {});
                 await this.updateInventory();
             }
         } catch (err) {
