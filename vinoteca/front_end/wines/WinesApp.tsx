@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";

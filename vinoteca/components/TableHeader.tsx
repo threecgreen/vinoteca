@@ -59,12 +59,12 @@ export class TableHeader extends React.Component<IProps> {
 
     private renderIcon() {
         switch (this.props.sortingState) {
-            case SortingState.NotSorted:
-                return <MaterialIcon iconName="arrow_drop_down" className="invisible" />;
             case SortingState.Ascending:
-                return <MaterialIcon iconName="arrow_drop_down" />;
-            case SortingState.Descending:
                 return <MaterialIcon iconName="arrow_drop_up" />;
+            case SortingState.Descending:
+                return <MaterialIcon iconName="arrow_drop_down" />;
+            default:
+                return <MaterialIcon iconName="arrow_drop_down" className="invisible" />;
         }
     }
 }

@@ -51,7 +51,7 @@ export const PriceCell: React.FC<IPriceCellProps> = (props) => {
 PriceCell.displayName = "PriceCell";
 
 export const YearCell: React.FC<{year: number | null}> = (props) => {
-    const year = props.year ? props.year.toString() : EN_DASH;
+    const year = props.year?.toString() ?? "NV";
     return (
         <td className="num-col">
             { year }
