@@ -12,7 +12,7 @@ function encodeParams(params: IQueryParams): string {
     if (isEmpty(params)) {
         return "";
     }
-    return "?" + Object.entries(params).map(([k, v]) => `${k}=${v}`).join("&");
+    return "?" + Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
 }
 
 function encodeJson(obj: object): string {
@@ -22,18 +22,34 @@ function encodeJson(obj: object): string {
 async function decodeJsonIfAny(response: Response) {
     if (parseFloat(response.headers.get("content-length") ?? "0") > 0
         && response.headers.get("content-type") === "application/json") {
-        return await response.json();
+        return response.json();
     }
 }
 
+type VinotecaError =
+    | {"NotFound": string}
+    | {"Internal": string}
+    | {"MissingConstraint": string}
+    | {"BadRequest": string};
+
+function isVinotecaError(obj: object): obj is VinotecaError {
+    const keys = Object.keys(obj);
+    return keys.length === 1
+        && ["NotFound", "Internal", "MissingConstraint", "BadRequest"].find((i) => i === keys[0]) !== undefined;
+}
+
 async function checkResponse(response: Response): Promise<any> {
+    if (response.status > 310) {
+        const message = await decodeJsonIfAny(response);
+        if (isVinotecaError(message)) {
+            throw Error(`${Object.keys(message)[0]}: ${Object.values(message)[0]}`);
+        }
+        throw Error(message);
+    }
+    if (response.status === 204) {
+        return [];
+    }
     try {
-        if (response.status > 310) {
-            throw Error(await decodeJsonIfAny(response));
-        }
-        if (response.status === 204) {
-            return [];
-        }
         return decodeJsonIfAny(response);
     } catch (err) {
         throw Error(await response.text())
