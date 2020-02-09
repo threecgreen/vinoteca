@@ -1,13 +1,14 @@
-import { delete_, get, IQueryParams, post, put, postForm, putForm, patch } from "./ApiHelper";
+import { delete_, get, IQueryParams, patch, post, postForm, put, putForm } from "./ApiHelper";
 import Logger from "./Logger";
-import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
-         IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
-         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm, ITopEntity, IMostCommonPurchaseDate, ITotalLiters, IWineCount, IPurchaseCount, IWinePatchForm } from "./Rest";
+import { IColor, IGrape, IGrapeForm, IMostCommonPurchaseDate, IProducer, IProducerForm, IPurchase,
+         IPurchaseCount, IPurchaseForm, IRegion, IRegionForm, IStore, IStoreForm, ITopEntity,
+         ITotalLiters, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineCount, IWineForm,
+         IWineGrape, IWineGrapesForm, IWinePatchForm, IWineType, IWineTypeForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
 export function toDict(models: IRestModel[]): IDict<string | null> {
-    let result: IDict<string | null> = {};
+    const result: IDict<string | null> = {};
     models.forEach((model) => {
         result[model.name] = null;
     });
@@ -68,7 +69,7 @@ function getOrCreate<ReqParams, Resp, Form>(
         const message = `Received more than one ${objName} result when one was expected`;
         new Logger("RestApi").logError(message);
         throw Error(message);
-    }
+    };
 }
 
 /* COLORS */
@@ -126,8 +127,9 @@ interface IGetProducersParams {
     regionId?: number;
 }
 
-export async function getProducers({ id, name, regionId }: IGetProducersParams): Promise<IProducer[]> {
-    const nonNullParams = nonNulls({ id, name, region_id: regionId });
+// tslint:disable-next-line max-line-length
+export async function getProducers({id, name, regionId}: IGetProducersParams): Promise<IProducer[]> {
+    const nonNullParams = nonNulls({id, name, region_id: regionId});
     const producers: IProducer[] = await get("/rest/producers", nonNullParams);
     return producers;
 }
@@ -307,7 +309,7 @@ const createWineHttpForm = (wine: IWineForm, file: File | null) => {
         form.append("image", file);
     }
     return form;
-}
+};
 
 export async function createWine(wine: IWineForm, file: File | null): Promise<IWine> {
     const form = createWineHttpForm(wine, file);
@@ -332,13 +334,13 @@ interface ISearchWinesParams {
 }
 
 export async function searchWines(
-    { colorLike, wineTypeLike, producerLike, regionLike, vitiAreaLike }: ISearchWinesParams
+    { colorLike, wineTypeLike, producerLike, regionLike, vitiAreaLike }: ISearchWinesParams,
 ): Promise<IWine[]> {
     const nonNullParams = nonNulls({
         color_like: colorLike, wine_type_like: wineTypeLike, producer_like: producerLike,
-        region_like: regionLike, viti_area_like: vitiAreaLike
+        region_like: regionLike, viti_area_like: vitiAreaLike,
     });
-    return await get("/rest/wines/search", nonNullParams);
+    return get("/rest/wines/search", nonNullParams);
 }
 
 export async function getWineVarieties(): Promise<IWineCount> {
@@ -351,6 +353,7 @@ interface IGetWineGrapesParams {
     grapeId?: number;
 }
 
+// tslint:disable-next-line max-line-length
 export async function getWineGrapes({ wineId, grapeId }: IGetWineGrapesParams): Promise<IWineGrape[]> {
     const nonNullParams = nonNulls({ wine_id: wineId, grape_id: grapeId });
     const wineGrapes: IWineGrape[] = await get("/rest/wine-grapes", nonNullParams);

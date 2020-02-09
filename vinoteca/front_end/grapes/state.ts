@@ -2,7 +2,7 @@ import { IGrape } from "../../lib/Rest";
 
 export type Mode =
     | {type: "display"}
-    | {type: "edit", id: number}
+    | {type: "edit", id: number};
 
 export interface IGrapeState {
     mode: Mode;
@@ -10,8 +10,8 @@ export interface IGrapeState {
 }
 
 export const initGrapeState: () => IGrapeState = () => ({
-    mode: {type: "display"},
     grapes: [],
+    mode: {type: "display"},
 });
 
 type Action =
@@ -30,4 +30,4 @@ export const grapeStateReducer: React.Reducer<IGrapeState, Action> = (state, act
         default:
             return state;
     }
-}
+};

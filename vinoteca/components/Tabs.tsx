@@ -13,7 +13,7 @@ export const Tabs: React.FC<IChildrenProp> = ({children}) => {
         const _ = new MTabs(tabsRef.current);
     }, [tabsRef]);
     return (
-        <ul className="tabs tabs-fixed-width z-depth-1" ref={ tabsRef }>
+        <ul className="tabs tabs-fixed-width narrow-tabs z-depth-1" ref={ tabsRef }>
             { ...children }
         </ul>
     );

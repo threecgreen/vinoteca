@@ -1,5 +1,5 @@
 import React from "react";
-import { IWineGrape, IWine, IPurchase } from "../../lib/Rest";
+import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
 
 export interface IState {
     mode: Mode;
@@ -50,4 +50,4 @@ export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
         default:
             return state;
     }
-}
+};

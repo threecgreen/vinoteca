@@ -8,9 +8,9 @@ export function generateCSV<O>(objects: O[], columnOrder: Array<keyof O>,
                 // @ts-ignore
                 return hooks[col](obj[col]);
             }
-            return obj[col]
+            return obj[col];
         });
-        return `${acc}\n${fields.join(',')}`;
+        return `${acc}\n${fields.join(",")}`;
     // Column names
     }, columnOrder.join(","));
 }
@@ -18,10 +18,10 @@ export function generateCSV<O>(objects: O[], columnOrder: Array<keyof O>,
 export function download(fileName: string, data: string, type = "text/csv") {
     const blob = new Blob([data], {type});
     // Create a link element, click it, then destroy it
-    const elem = window.document.createElement('a');
+    const elem = window.document.createElement("a");
     elem.href = window.URL.createObjectURL(blob);
     elem.download = fileName;
-    elem.style.display = 'none';
+    elem.style.display = "none";
     document.body.appendChild(elem);
     elem.click();
     document.body.removeChild(elem);

@@ -9,11 +9,12 @@
             "options": [100]
         },
         "no-consecutive-blank-lines": true,
-        "no-reference": false,
+        "no-reference": true,
         "max-classes-per-file": false,
-        "no-string-literal": false,
+        "no-string-literal": true,
         "forin": false,
-        "no-console": false
+        "no-console": false,
+        "object-literal-sort-keys": false
     },
     "rulesDirectory": [],
     "linterOptions": {

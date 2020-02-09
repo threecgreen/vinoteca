@@ -8,6 +8,7 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
                              completions: IDict<string | null>,
                              onChange: OnChange, minLength = 1, limit = 5) {
     if (elem.current) {
+        // tslint:disable-next-line no-unused-expression
         new Autocomplete(elem.current, {
             data: completions,
             limit,
@@ -32,8 +33,10 @@ export function navbar(activeNavTabId?: string) {
         activateNavbarTab(activeNavTabId);
     }
     const sideNavElem = document.querySelector(".sidenav");
+    // tslint:disable-next-line no-unused-expression
     new Sidenav(sideNavElem!);
     const dropdownElem = document.querySelector(".dropdown-trigger");
+    // tslint:disable-next-line no-unused-expression
     new Dropdown(dropdownElem!);
 }
 

@@ -1,6 +1,5 @@
 import { readCookie } from "./Cookies";
 import { IDict, isEmpty } from "./utils";
-import { format } from "date-fns";
 
 const HEADERS = {
     "Content-Type": "application/json",
@@ -36,7 +35,8 @@ type VinotecaError =
 function isVinotecaError(obj: object): obj is VinotecaError {
     const keys = Object.keys(obj);
     return keys.length === 1
-        && ["NotFound", "Internal", "MissingConstraint", "BadRequest"].find((i) => i === keys[0]) !== undefined;
+        && ["NotFound", "Internal", "MissingConstraint", "BadRequest"]
+            .find((i) => i === keys[0]) !== undefined;
 }
 
 async function checkResponse(response: Response): Promise<any> {
@@ -53,7 +53,7 @@ async function checkResponse(response: Response): Promise<any> {
     try {
         return decodeJsonIfAny(response);
     } catch (err) {
-        throw Error(await response.text())
+        throw Error(await response.text());
     }
 }
 
@@ -77,7 +77,9 @@ export async function get<Response>(url: string, params: IQueryParams = {}): Pro
  * @param params An optional dictionary of parameters to their values
  * @returns parsed JSON response
  */
-export async function post<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
+export async function post<Response>(url: string, body: object,
+                                     params: IQueryParams = {}): Promise<Response> {
+
     const response = await fetch(url + encodeParams(params), {
         body: encodeJson(body),
         headers: HEADERS,
@@ -86,7 +88,8 @@ export async function post<Response>(url: string, body: object, params: IQueryPa
     return checkResponse(response);
 }
 
-export async function postForm<Response>(url: string, form: FormData, params: IQueryParams = {}): Promise<Response> {
+export async function postForm<Response>(url: string, form: FormData,
+                                         params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: form,
         method: "POST",
@@ -102,7 +105,8 @@ export async function postForm<Response>(url: string, form: FormData, params: IQ
  * @param params An optional dictionary of parameters and their values
  * @returns parsed JSON response
  */
-export async function put<Response>(url: string, body: object, params: IQueryParams = {}): Promise<Response> {
+export async function put<Response>(url: string, body: object,
+                                    params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: encodeJson(body),
         headers: HEADERS,
@@ -111,7 +115,8 @@ export async function put<Response>(url: string, body: object, params: IQueryPar
     return checkResponse(response);
 }
 
-export async function putForm<Response>(url: string, form: FormData, params: IQueryParams = {}): Promise<Response> {
+export async function putForm<Response>(url: string, form: FormData,
+                                        params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: form,
         method: "PUT",
@@ -119,7 +124,8 @@ export async function putForm<Response>(url: string, form: FormData, params: IQu
     return checkResponse(response);
 }
 
-export async function patch<Response>(url: string, body: object, params: IQueryParams= {}): Promise<Response> {
+export async function patch<Response>(url: string, body: object,
+                                      params: IQueryParams= {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: encodeJson(body),
         headers: HEADERS,
