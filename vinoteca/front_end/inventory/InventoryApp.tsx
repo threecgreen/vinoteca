@@ -3,11 +3,11 @@ import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import { get, post } from "../../lib/ApiHelper";
+import { get } from "../../lib/ApiHelper";
 import { download, generateCSV } from "../../lib/CSV";
 import Logger from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
-import { getWine, updateWine } from "../../lib/RestApi";
+import { partUpdateWine } from "../../lib/RestApi";
 import { numToDate } from "../../lib/utils";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 
@@ -66,15 +66,17 @@ export class InventoryApp extends React.Component<{}, IState> {
         try {
             const wine = this.state.wines.find((w) => w.id === id);
             if (wine) {
-                // get the full wine for now to avoid creating a separate method
-                const fullWine = await getWine({id});
+                let newInventory = wine.inventory;
                 if (change === InventoryChange.Increase) {
-                    fullWine.inventory += 1;
+                    newInventory += 1;
                 } else if (wine.inventory > 0) {
-                    fullWine.inventory -= 1;
+                    newInventory -= 1;
                 }
-                await updateWine(id, fullWine, null);
-                await this.updateInventory();
+                const updatedWine = await partUpdateWine(id, {inventory: newInventory});
+                this.setState((prevState, _) => ({
+                    ...prevState,
+                    wines: prevState.wines.map((w) => w.id === id ? {...w, inventory: updatedWine.inventory} : w)
+                }));
             }
         } catch (err) {
             this.setState({hasLoaded: true});

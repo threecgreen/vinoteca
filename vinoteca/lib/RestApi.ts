@@ -1,8 +1,8 @@
-import { delete_, get, IQueryParams, post, put, postForm, putForm } from "./ApiHelper";
+import { delete_, get, IQueryParams, post, put, postForm, putForm, patch } from "./ApiHelper";
 import Logger from "./Logger";
 import { IColor, IGrape, IProducer, IProducerForm, IPurchase, IRegion, IRegionForm,
          IStore, IStoreForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
-         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm, ITopEntity, IMostCommonPurchaseDate, ITotalLiters, IWineCount, IPurchaseCount } from "./Rest";
+         IWineForm, IWineGrape, IWineType, IWineTypeForm, IPurchaseForm, IGrapeForm, IWineGrapesForm, ITopEntity, IMostCommonPurchaseDate, ITotalLiters, IWineCount, IPurchaseCount, IWinePatchForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -317,6 +317,10 @@ export async function createWine(wine: IWineForm, file: File | null): Promise<IW
 export async function updateWine(id: number, wine: IWineForm, file: File | null): Promise<IWine> {
     const form = createWineHttpForm(wine, file);
     return putForm(`/rest/wines/${id}`, form);
+}
+
+export async function partUpdateWine(id: number, wine: IWinePatchForm): Promise<IWine> {
+    return patch(`/rest/wines/${id}`, wine);
 }
 
 interface ISearchWinesParams {

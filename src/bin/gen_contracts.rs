@@ -5,7 +5,7 @@ use vinoteca::models::*;
 use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases, PurchaseCount};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
-use vinoteca::wines::{InventoryWine, WineCount};
+use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
 
 use std::borrow::Cow;
 use std::fs::File;
@@ -61,6 +61,7 @@ fn main() {
     write_interface(&mut writer, TotalLiters::type_script_ify());
     write_interface(&mut writer, VitiAreaStats::type_script_ify());
     write_interface(&mut writer, WineCount::type_script_ify());
+    write_interface(&mut writer, WinePatchForm::type_script_ify());
     write_interface(&mut writer, WineGrapesForm::type_script_ify());
     write_interface(&mut writer, YearsPurchases::type_script_ify());
 }

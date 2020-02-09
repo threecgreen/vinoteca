@@ -1,5 +1,6 @@
 import { readCookie } from "./Cookies";
 import { IDict, isEmpty } from "./utils";
+import { format } from "date-fns";
 
 const HEADERS = {
     "Content-Type": "application/json",
@@ -114,6 +115,15 @@ export async function putForm<Response>(url: string, form: FormData, params: IQu
     const response = await fetch(url + encodeParams(params), {
         body: form,
         method: "PUT",
+    });
+    return checkResponse(response);
+}
+
+export async function patch<Response>(url: string, body: object, params: IQueryParams= {}): Promise<Response> {
+    const response = await fetch(url + encodeParams(params), {
+        body: encodeJson(body),
+        headers: HEADERS,
+        method: "PATCH",
     });
     return checkResponse(response);
 }

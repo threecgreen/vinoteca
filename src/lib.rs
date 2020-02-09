@@ -107,6 +107,7 @@ pub fn rocket() -> rocket::Rocket {
                 viti_areas::stats,
                 viti_areas::top,
                 wines::get,
+                wines::patch,
                 wines::post,
                 wines::put,
                 wines::inventory,

@@ -9,7 +9,7 @@ export const DashboardApp: React.FC<{}> = (_) => {
         <div className="container">
             <Row>
                 <Col s={ 12 }>
-                    <h3 className="page-title">Wine purchase Stats</h3>
+                    <h3 className="page-title">Wine purchase stats</h3>
                 </Col>
             </Row>
             <Row>
