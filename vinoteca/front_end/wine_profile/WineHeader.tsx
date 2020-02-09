@@ -1,8 +1,8 @@
-import * as React from "react";
+import React from "react";
 import { Row, Col } from "../../components/Grid";
 
 interface IProps {
-    name?: string;
+    name: string | null;
     producer: string;
     producerId: number;
     region: string;
@@ -35,7 +35,7 @@ export const WineHeader: React.FC<IProps> = (props) => {
 };
 WineHeader.displayName = "WineHeader";
 
-const NameType: React.FC<{name?: string, wineType: string, wineTypeId: number}> = ({name, wineType, wineTypeId}) => {
+const NameType: React.FC<{name: string | null, wineType: string, wineTypeId: number}> = ({name, wineType, wineTypeId}) => {
     const wineTypeElem = (
         <a href={ `/wine-types/${wineTypeId}/` }>
             { wineType }
@@ -44,8 +44,7 @@ const NameType: React.FC<{name?: string, wineType: string, wineTypeId: number}> 
     if (name) {
         return (
             <h3 className="bold">
-                { name }
-                { wineTypeElem }
+                { name } { wineTypeElem }
             </h3>
         );
     }

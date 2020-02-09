@@ -26,8 +26,10 @@ export const NewWineApp: React.FC<{}> = (_props) => {
             const wine = await createWine(wineForm, wineState.file);
             await Promise.all([
                 async () => {
-                    const grapeForm = await wineGrapesToForm(grapes, wine.id);
-                    await createWineGrapes(grapeForm);
+                    if (grapes.length > 0) {
+                        const grapeForm = await wineGrapesToForm(grapes, wine.id);
+                        await createWineGrapes(grapeForm);
+                    }
                 },
                 async () => {
                     const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);

@@ -263,6 +263,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     return (
         <div className="container">
             <WineHeader
+                name={ state.wine.name }
                 producer={ state.wine.producer }
                 producerId={ state.wine.producerId }
                 region={ state.wine.region }
