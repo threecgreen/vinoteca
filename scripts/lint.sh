@@ -7,7 +7,7 @@ rust()
     info_text "Running rust linter."
     cd $root_dir
     if [ "$CI" = "true" ]; then
-        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || exit 0
+        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || return 0
     fi
     cargo clippy || error_exit "Clippy error(s)"
     cd -
