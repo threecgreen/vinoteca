@@ -27,7 +27,7 @@ export const EditWine: React.FC<IProps> = ({wine, onSubmit, onCancel}) => {
     });
 
     return (
-        <Modal display>
+        <Modal>
             <ModalContent>
                 <Row>
                     <h4>Edit wine</h4>

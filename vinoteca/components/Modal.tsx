@@ -4,31 +4,23 @@ import { Btn } from "./Buttons";
 import { IChildrenProp } from "./IProps";
 
 interface IModalProps extends IChildrenProp {
-    display: boolean;
 }
 
-export const Modal: React.FC<IModalProps> = ({children, display}) => {
+export const Modal: React.FC<IModalProps> = ({children}) => {
     const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
     React.useEffect(() => {
         const instance = new M.Modal(ref.current);
-        if (display) {
-            instance.open();
-            // Returning function from useEffect will be called when the
-            // component is unmounted
-            return () => instance.close()
-        } else {
-            instance.close();
-        }
-    }, [display, ref]);
+        instance.open();
+        // Returning function from useEffect will be called when the
+        // component is unmounted
+        return () => instance?.close()
+    }, [ref]);
 
-    if (display) {
-        return (
-            <div ref={ ref } className="modal">
-                { children }
-            </div>
-        )
-    }
-    return null;
+    return (
+        <div ref={ ref } className="modal">
+            { children }
+        </div>
+    );
 }
 Modal.displayName = "Modal";
 
@@ -47,7 +39,6 @@ export const ModalFooter: React.FC<IChildrenProp> = ({children}) => (
 ModalFooter.displayName = "ModalFooter";
 
 interface IDeleteModalProps {
-    display: boolean;
     item: string;
     onYesClick: () => void;
     onNoClick: () => void;
@@ -55,7 +46,7 @@ interface IDeleteModalProps {
 
 export const DeleteModal: React.FC<IDeleteModalProps> = (props) => {
     return (
-        <Modal display={ props.display }>
+        <Modal>
             <ModalContent>
                 <h5>Are you sure you want to delete this { props.item }?</h5>
                 <p>This action is irreversible.</p>
@@ -73,6 +64,6 @@ export const DeleteModal: React.FC<IDeleteModalProps> = (props) => {
                 </Btn>
             </ModalFooter>
         </Modal>
-    )
+    );
 }
 DeleteModal.displayName = "DeleteModal";

@@ -68,6 +68,11 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
         if (!this.state.producer) {
             return <Preloader />;
         }
+        const modal = this.state.showDeleteModal
+            ? <DeleteModal item="producer"
+                onNoClick={ () => this.setState({showDeleteModal: false}) }
+                onYesClick={ this.onDeleteClick }
+            /> : null;
         return (
             <div className="container">
                 <Producer isEditing={ this.state.isEditing }
@@ -104,11 +109,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
                         />
                     </Col>
                 </Row>
-                <DeleteModal item="producer"
-                    display={ this.state.showDeleteModal }
-                    onNoClick={ () => this.setState({showDeleteModal: false}) }
-                    onYesClick={ this.onDeleteClick }
-                />
+                { modal }
             </div>
         );
     }

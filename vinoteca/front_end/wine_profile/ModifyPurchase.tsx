@@ -25,7 +25,7 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, onCancel, onS
     });
 
     return (
-        <Modal display>
+        <Modal>
             <ModalContent>
                 <Row>
                     <h4>{ title }</h4>

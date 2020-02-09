@@ -229,7 +229,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             const purchase = state.purchases.find((p) => p.id === purchaseId);
             if (purchase) {
                 return (
-                    <DeleteModal display
+                    <DeleteModal
                         item="Purchase"
                         onYesClick={ () => onDeletePurchase(purchaseId) }
                         onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }

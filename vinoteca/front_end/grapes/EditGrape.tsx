@@ -15,7 +15,7 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
     const [text, setText] = React.useState(name);
 
     return (
-        <Modal display>
+        <Modal>
             <ModalContent>
                 <Row>
                     <h4>Edit grape</h4>
