@@ -1,9 +1,0 @@
-<td>
-  {% if id %}
-    <a href="{% url "Region Profile" region_id=id %}">
-      {{ name }}
-    </a>
-  {% else %}
-    {{ name|default_if_none:"" }}
-  {% endif %}
-</td>

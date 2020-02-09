@@ -17,8 +17,8 @@ typescript()
 # Runs typescript linter called tslint
 {
     info_text "Running Typescript linter."
-    "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/front_end/**/*.ts" \
-            "$root_dir/vinoteca/lib/**/*.ts" "$root_dir/vinoteca/@types/**/*.ts" || error_exit "TSLint error(s)"
+    "$tslint" -c "$root_dir/tslint.json" "$root_dir/web/front_end/**/*.ts" \
+            "$root_dir/web/lib/**/*.ts" "$root_dir/web/@types/**/*.ts" || error_exit "TSLint error(s)"
 }
 
 case $# in

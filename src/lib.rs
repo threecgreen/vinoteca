@@ -121,7 +121,7 @@ pub fn rocket() -> rocket::Rocket {
                 wine_types::top,
             ],
         )
-        .mount("/static", StaticFiles::from("static"))
+        .mount("/static", StaticFiles::from("web/static"))
         // TODO: make configurable
         .mount("/media", StaticFiles::from("media"))
 }

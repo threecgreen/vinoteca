@@ -31,17 +31,11 @@ info_text()
     echo -e "\033[1;34m$1\033[0m"
 }
 
-update_path()
-# Adds vinoteca environment to path
-{
-    export PATH="$PATH:$py_env"
-}
-
-find_vinoteca_version()
-{
-    local git_ver="$(git --git-dir="$root_dir/.git" --work-tree="$root_dir" branch | grep \* | cut -d' ' -f2)"
-    vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')-$git_ver"
-}
+# find_vinoteca_version()
+# {
+#     local git_ver="$(git --git-dir="$root_dir/.git" --work-tree="$root_dir" branch | grep \* | cut -d' ' -f2)"
+#     vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')-$git_ver"
+# }
 
 check_for_node()
 {
@@ -70,7 +64,7 @@ js_install_and_build()
 {
     info_text "Building web application…"
     check_for_node
-    cd "$root_dir/vinoteca"
+    cd "$root_dir/web"
     npm ci || error_exit "Failed installing JavaScript dependencies"
     npm run-script build || error_exit "Failed building webpack bundles"
     cd -
@@ -82,7 +76,7 @@ find_tslint()
     if [ $? = 0 ]; then
         tslint="tslint"
     else
-        tslint="$root_dir/vinoteca/node_modules/.bin/tslint"
+        tslint="$root_dir/web/node_modules/.bin/tslint"
     fi
 }
 
