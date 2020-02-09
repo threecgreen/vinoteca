@@ -10,4 +10,3 @@ strip out/vinoteca
 cp -r static out
 
 tar --create --gzip --file vinoteca.tar.gz --directory=out
-

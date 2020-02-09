@@ -56,7 +56,7 @@ rust_build()
     info_text "Building web server…"
     cd $root_dir
     local flag
-    if [ $1 = "release" ]; then
+    if [ "$1" = "release" ]; then
         flag="--release"
     else
         flag="--verbose"
