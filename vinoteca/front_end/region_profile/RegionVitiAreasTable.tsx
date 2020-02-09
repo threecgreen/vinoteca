@@ -20,9 +20,9 @@ export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps
             { props.vitiAreas.map((vitiArea) => {
                 return (
                     <tr key={ vitiArea.id }>
-                        <VitiAreaCell id={ vitiArea.id }>
-                            { vitiArea.name }
-                        </VitiAreaCell>
+                        <VitiAreaCell id={ vitiArea.id }
+                            name={ vitiArea.name }
+                        />
                         <NumCell num={ vitiArea.totalWines } />
                         <PriceCell price={ vitiArea.avgPrice } />
                         <NumCell num={ vitiArea.avgRating }

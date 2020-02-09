@@ -46,8 +46,12 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                                 name={ purchase.wineName }
                                 wineType={ purchase.wineType }
                             />
-                            <ProducerCell id={ purchase.producerId }>{ purchase.producer }</ProducerCell>
-                            <RegionCell id={ purchase.regionId }>{ purchase.region }</RegionCell>
+                            <ProducerCell id={ purchase.producerId }
+                                name={ purchase.producer }
+                            />
+                            <RegionCell id={ purchase.regionId }
+                                name={ purchase.region }
+                            />
                             <PriceCell price={ purchase.price } />
                             <NumCell num={ purchase.quantity } />
                         </tr>

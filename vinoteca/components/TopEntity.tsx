@@ -17,6 +17,7 @@ interface IEntity {
 
 interface IEntityCellProps {
     id: number;
+    name: string;
 }
 
 interface IProps<Entity> {
@@ -76,9 +77,9 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                     >
                         {topEntities.map((entity) =>
                             <tr key={entity.id}>
-                                <EntityCell id={ entity.id }>
-                                    { entity.name }
-                                </EntityCell>
+                                <EntityCell id={ entity.id }
+                                    name={ entity.name }
+                                />
                                 <NumCell maxDecimals={0} num={entity.quantity} />
                                 <NumCell maxDecimals={0} num={entity.varieties} />
                                 <PriceCell price={entity.avgPrice} />

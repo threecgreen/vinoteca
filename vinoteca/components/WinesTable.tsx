@@ -113,17 +113,17 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
                                 wineType={ wine.wineType }
                             />
                             { exCol === ColumnToExclude.Producer
-                                || <ProducerCell id={ wine.producerId }>
-                                    { wine.producer }
-                                </ProducerCell> }
+                                || <ProducerCell id={ wine.producerId }
+                                    name={ wine.producer }
+                                /> }
                             { exCol === ColumnToExclude.Region
-                                || <RegionCell id={ wine.regionId }>
-                                    { wine.region }
-                                </RegionCell> }
+                                || <RegionCell id={ wine.regionId }
+                                    name={ wine.region }
+                                /> }
                             { exCol === ColumnToExclude.VitiArea
-                                || <VitiAreaCell id={ wine.vitiAreaId }>
-                                    { wine.vitiArea }
-                                </VitiAreaCell> }
+                                || <VitiAreaCell id={ wine.vitiAreaId }
+                                    name={ wine.vitiArea }
+                                /> }
                             <YearCell year={ wine.lastPurchaseVintage } />
                             <NumCell maxDecimals={ 0 } num={ wine.rating } />
                         </tr>

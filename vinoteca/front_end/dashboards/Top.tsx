@@ -42,10 +42,10 @@ export const TopVitiAreas: React.FC<{}> = (_) => {
 }
 TopVitiAreas.displayName = TopVitiAreas.name;
 
-const NonLinkCell: React.FC<{id: number}> = (props) => {
+const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
     return(
         <td>
-            { props.children }
+            { name }
         </td>
     );
 }

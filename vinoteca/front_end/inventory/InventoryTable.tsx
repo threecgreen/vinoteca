@@ -104,12 +104,12 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                     name={ wine.name }
                                     wineType={wine.wineType}
                                 />
-                                <ProducerCell id={ wine.producerId }>
-                                    { wine.producer }
-                                </ProducerCell>
-                                <RegionCell id={ wine.regionId }>
-                                    { wine.region }
-                                </RegionCell>
+                                <ProducerCell id={ wine.producerId }
+                                    name={ wine.producer }
+                                />
+                                <RegionCell id={ wine.regionId }
+                                    name={ wine.region }
+                                />
                                 <YearCell year={ wine.lastPurchaseVintage } />
                                 <DateCell date={ wine.lastPurchaseDate } />
                                 <PriceCell price={ wine.lastPurchasePrice } />

@@ -13,7 +13,7 @@ export class TextCell extends React.Component<ITextCellProps> {
     }
 
     public render() {
-        return <td>{ this.props.text || this.props.default }</td>;
+        return <td>{ this.props.text ?? this.props.default }</td>;
     }
 };
 
@@ -87,6 +87,7 @@ ColorCell.displayName = "ColorCell";
 interface ILinkedCellProps {
     id: number;
     model: string;
+    name: string;
 }
 
 const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
@@ -94,7 +95,7 @@ const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
     return (
         <td>
             <a href={ url }>
-                { props.children }
+                { props.name }
             </a>
         </td>
     )
@@ -117,48 +118,53 @@ export const NameAndTypeCell: React.FC<INameAndTypeProps> = (props) => {
         </td>
     }
     return (
-        <LinkedCell id={ props.id } model="wines">
-            { getNameAndType(props.name, props.wineType) }
-        </LinkedCell>
+        <LinkedCell id={ props.id }
+            model="wines"
+            name={ getNameAndType(props.name, props.wineType) }
+        />
     );
 };
 NameAndTypeCell.displayName = "NameAndTypeCell";
 
-export const ProducerCell: React.FC<{id: number}> = (props) => {
+export const ProducerCell: React.FC<{id: number, name: string}> = (props) => {
     return (
-        <LinkedCell id={ props.id } model="producers">
-            { props.children }
-        </LinkedCell>
-    )
+        <LinkedCell id={ props.id }
+            model="producers"
+            name={ props.name }
+        />
+    );
 }
 ProducerCell.displayName = "ProducerCell"
 
-export const RegionCell: React.FC<{id: number}> = (props) => {
+export const RegionCell: React.FC<{id: number, name: string}> = (props) => {
     return (
-        <LinkedCell id={ props.id } model="regions">
-            { props.children }
-        </LinkedCell>
-    )
+        <LinkedCell id={ props.id }
+            model="regions"
+            name={ props.name }
+        />
+    );
 }
 RegionCell.displayName = "RegionCell"
 
-export const VitiAreaCell: React.FC<{id: number | null}> = (props) => {
-    if (!props.id) {
+export const VitiAreaCell: React.FC<{id: number | null, name: string | null}> = (props) => {
+    if (!props.id || !props.name) {
         return <td />;
     }
     return (
-        <LinkedCell id={ props.id } model="viti-areas">
-            { props.children }
-        </LinkedCell>
-    )
+        <LinkedCell id={ props.id }
+            model="viti-areas"
+            name={ props.name }
+        />
+    );
 }
 VitiAreaCell.displayName = "VitiAreaCell"
 
-export const WineTypeCell: React.FC<{id: number}> = (props) => {
+export const WineTypeCell: React.FC<{id: number, name: string}> = (props) => {
     return (
-        <LinkedCell id={ props.id } model="wine-types">
-            { props.children }
-        </LinkedCell>
+        <LinkedCell id={ props.id }
+            model="wine-types"
+            name={ props.name }
+        />
     );
 }
 WineTypeCell.displayName = "WineTypeCell";
