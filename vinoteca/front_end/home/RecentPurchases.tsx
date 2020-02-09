@@ -38,7 +38,9 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                 { purchases.map((purchase) => {
                     return (
                         <tr key={ purchase.id }>
-                            <DateCell date={ purchase.date } />
+                            <DateCell date={ purchase.date }
+                                format="MMM dd"
+                            />
                             <TextCell text={ purchase.store } />
                             <NameAndTypeCell id={ purchase.wineId }
                                 name={ purchase.wineName }

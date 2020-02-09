@@ -62,9 +62,10 @@ YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
     date: number | null;
+    format?: string;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
-    const dateStr = props.date ? format(numToDate(props.date), "MMM dd, yyyy") : EN_DASH;
+    const dateStr = props.date ? format(numToDate(props.date), props.format ?? "MMM dd, yyyy") : EN_DASH;
     return (
         <td>{ dateStr }</td>
     );
