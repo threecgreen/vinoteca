@@ -49,8 +49,8 @@ mod tests;
 #[database("vinoteca")]
 pub struct DbConn(SqliteConnection);
 
-pub fn rocket() -> rocket::Rocket {
-    rocket::ignite()
+pub fn create_rocket() -> rocket::Rocket {
+    let rocket = rocket::ignite()
         .attach(DbConn::fairing())
         .mount(
             "/",
@@ -120,8 +120,19 @@ pub fn rocket() -> rocket::Rocket {
                 wine_types::post,
                 wine_types::top,
             ],
-        )
-        .mount("/static", StaticFiles::from("web/static"))
-        // TODO: make configurable
-        .mount("/media", StaticFiles::from("media"))
+        );
+    let static_dir = rocket
+        .config()
+        .get_str("static_dir")
+        .unwrap_or("web/static")
+        .to_string();
+    let media_dir = rocket
+        .config()
+        .get_str("media_dir")
+        .unwrap_or("media")
+        .to_string();
+
+    rocket
+        .mount("/static", StaticFiles::from(static_dir))
+        .mount("/media", StaticFiles::from(media_dir))
 }

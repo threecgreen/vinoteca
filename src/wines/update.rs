@@ -78,7 +78,7 @@ pub fn patch(
         .map_err(VinotecaError::from)
 }
 
-#[put("/wines/<id>", format = "json", data = "<raw_wine_form>")]
+#[put("/wines/<id>", data = "<raw_wine_form>")]
 pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;

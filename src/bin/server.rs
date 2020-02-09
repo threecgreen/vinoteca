@@ -1,5 +1,5 @@
 extern crate vinoteca;
 
 fn main() {
-    vinoteca::rocket().launch();
+    vinoteca::create_rocket().launch();
 }

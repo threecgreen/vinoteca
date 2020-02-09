@@ -27,7 +27,7 @@ fn write_interface(writer: &mut BufWriter<&File>, ts_def: Cow<'static, str>) {
 #[allow(unused)]
 fn main() {
     // Truncate file if it already exists
-    let file = File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("vinoteca/lib/Rest.d.ts"))
+    let file = File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/Rest.d.ts"))
         .expect("Couldn't open TypeScript contracts file");
     let mut writer = BufWriter::new(&file);
     // Main db models
