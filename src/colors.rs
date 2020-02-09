@@ -1,5 +1,5 @@
 use super::error::{RestResult, VinotecaError};
-use super::models::{Color, generic};
+use super::models::{generic, Color};
 use super::schema::{colors, purchases, wines};
 use super::DbConn;
 

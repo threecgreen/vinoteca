@@ -2,7 +2,9 @@ extern crate typescript_definitions;
 extern crate vinoteca;
 
 use vinoteca::models::*;
-use vinoteca::purchases::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases, PurchaseCount};
+use vinoteca::purchases::{
+    MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
+};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};

@@ -1,8 +1,8 @@
+use super::models::WineCount;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::DbConn;
-use super::models::WineCount;
 
 use diesel::dsl::{count, sql};
 use diesel::prelude::*;
@@ -240,9 +240,7 @@ pub fn search(
 
 #[get("/wines/count")]
 pub fn varieties(connection: DbConn) -> Json<WineCount> {
-    let res = wines::table
-        .select(count(wines::id))
-        .first(&*connection);
+    let res = wines::table.select(count(wines::id)).first(&*connection);
     let total_liters = WineCount {
         count: res.unwrap_or(0),
     };

@@ -1,4 +1,4 @@
-use super::{MostCommonPurchaseDate, RecentPurchase, TotalLiters, YearsPurchases, PurchaseCount};
+use super::{MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Purchase;
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};

@@ -63,7 +63,11 @@ fn get_wine_by_id(id: i32, connection: &DbConn) -> Result<Json<Wine>, diesel::re
 }
 
 #[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
-pub fn patch(id: i32, wine_patch_form: Json<WinePatchForm>, connection: DbConn) -> RestResult<Wine> {
+pub fn patch(
+    id: i32,
+    wine_patch_form: Json<WinePatchForm>,
+    connection: DbConn,
+) -> RestResult<Wine> {
     let wine_patch_form = wine_patch_form.into_inner();
     wine_patch_form.validate()?;
 

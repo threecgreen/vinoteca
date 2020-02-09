@@ -1,7 +1,7 @@
 use super::error::{RestResult, VinotecaError};
 use super::models::{generic, Grape, GrapeForm};
-use super::DbConn;
 use super::schema::{grapes, purchases, wine_grapes, wines};
+use super::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
@@ -32,7 +32,8 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
 pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        grapes::table.inner_join(wine_grapes::table.inner_join(wines::table.inner_join(purchases::table))),
+        grapes::table
+            .inner_join(wine_grapes::table.inner_join(wines::table.inner_join(purchases::table))),
         grapes::id,
         grapes::name,
         limit,
