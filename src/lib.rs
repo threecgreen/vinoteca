@@ -75,9 +75,11 @@ pub fn rocket() -> rocket::Rocket {
             "/rest",
             routes![
                 colors::get,
+                colors::top,
                 grapes::get,
                 grapes::post,
                 grapes::put,
+                grapes::top,
                 logs::post,
                 producers::get,
                 producers::put,

@@ -1,12 +1,12 @@
 use super::error::{RestResult, VinotecaError};
+use super::models::{generic, Grape, GrapeForm};
 use super::DbConn;
+use super::schema::{grapes, purchases, wine_grapes, wines};
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use diesel::sql_types::Integer;
-use models::{Grape, GrapeForm};
+use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
-use schema::{grapes, wine_grapes, wines};
 use validator::Validate;
 
 #[get("/grapes?<id>&<name>")]
@@ -26,6 +26,18 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
         .load::<Grape>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
+}
+
+#[get("/grapes/top?<limit>")]
+pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+    let limit = limit.unwrap_or(10);
+    top_table!(
+        grapes::table.inner_join(wine_grapes::table.inner_join(wines::table.inner_join(purchases::table))),
+        grapes::id,
+        grapes::name,
+        limit,
+        connection
+    )
 }
 
 #[post("/grapes", format = "json", data = "<grape_form>")]

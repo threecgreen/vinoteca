@@ -88,6 +88,10 @@ export async function getColors({ id, name }: IGetColorParams): Promise<IColor[]
 
 export const getColor = singleEntityGetter(getColors);
 
+export async function getTopColors(): Promise<ITopEntity[]> {
+    return get("/rest/colors/top");
+}
+
 /* GRAPES */
 interface IGetGrapesParams {
     id?: number;
@@ -108,6 +112,11 @@ export async function createGrape(grape: IGrapeForm): Promise<IGrape> {
 
 export async function updateGrape(id: number, grape: IGrapeForm): Promise<IGrape> {
     return put(`/rest/grapes/${id}`, grape);
+}
+
+export async function getTopGrapes(limit?: number): Promise<ITopEntity[]> {
+    const nonNullParams = nonNulls({limit});
+    return get("/rest/grapes/top", nonNullParams);
 }
 
 /* PRODUCERS */

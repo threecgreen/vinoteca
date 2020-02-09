@@ -23,8 +23,11 @@ interface IProps<Entity> {
     name: string;
     EntityCell: React.FC<IEntityCellProps>;
     fetchEntity: () => Promise<Entity[]>;
+    minQuantity?: number;
 }
-export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity}: IProps<Entity>) {
+export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity, minQuantity}: IProps<Entity>) {
+    minQuantity = minQuantity ?? 5;
+
     const logger = new Logger(TopEntity.name);
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
@@ -47,7 +50,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
     if (!hasLoaded) {
         return <PreloaderCirc />;
     }
-    if (topEntities.length >= 5) {
+    if (topEntities.length >= minQuantity) {
         const tabIdxer = indexFactory(nameToId(name));
         const canvasHeight = "350px";
         return (

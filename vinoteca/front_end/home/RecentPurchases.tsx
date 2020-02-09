@@ -57,7 +57,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
         content = <h6 className="bold">No purchases yet</h6>;
     }
     return (
-        <GreenCard title="Recent Purchases">
+        <GreenCard title="Recent purchases">
             { content }
         </GreenCard>
     );

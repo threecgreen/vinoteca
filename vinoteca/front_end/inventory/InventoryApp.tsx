@@ -50,7 +50,7 @@ export class InventoryApp extends React.Component<{}, IState> {
             <div className="container">
                 <Row>
                     <Col s={ 12 }>
-                        <h3 className="page-title">Current Inventory</h3>
+                        <h3 className="page-title">Current inventory</h3>
                         { table }
                     </Col>
                 </Row>

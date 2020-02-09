@@ -80,3 +80,5 @@ pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResul
     }
     result
 }
+
+// FIXME: update inventory with PATCH
