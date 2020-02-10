@@ -18,19 +18,17 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) =
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     // Get autocomplete options
-    const [autocompleteOptions, setAutocompleteOptions] = React.useState<IDict<string | null>>({});
     React.useEffect(() => {
         async function fetchAutocompleteOptions() {
             try {
                 const regions: IRegion[] = await getRegions({});
-                setAutocompleteOptions(toDict(regions));
-                autocomplete(inputRef, autocompleteOptions, onChange);
-            } catch {
-                logger.logError("Failed to get region autocomplete options");
+                autocomplete(inputRef, toDict(regions), onChange);
+            } catch (e) {
+                logger.logError(`Failed to get region autocomplete options. ${e.message}`);
             }
         }
         fetchAutocompleteOptions();
-    }, [inputRef, setAutocompleteOptions]);
+    }, [inputRef]);
 
     const [enabled, setEnabled] = React.useState(true);
 
@@ -49,8 +47,8 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) =
             } catch (e) {
                 // Ignore empty result errors
                 if (!EmptyResultError.isInstance(e)) {
-                    logger.logWarning(`Error fetching regions based on producer. ${e}`);
-                    Promise.reject(e);
+                    logger.logWarning(`Error fetching regions based on producer. ${e.message}`);
+                    throw e;
                 }
             }
         }
@@ -66,6 +64,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) =
         <TextInput name="Region"
             className="autocomplete"
             s={ 6 } l={ 3 }
+            inputRef={ inputRef }
             enabled={ enabled }
             value={ value }
             onChange={ onChange }

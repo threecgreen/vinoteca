@@ -19,8 +19,8 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
             try {
                 const producers: IProducer[] = await getProducers({});
                 autocomplete(inputRef, toDict(producers), onChange);
-            } catch {
-                logger.logError("Failed to get producer autocomplete options");
+            } catch (e) {
+                logger.logError(`Failed to get producer autocomplete options. ${e.message}`);
             }
         }
 
