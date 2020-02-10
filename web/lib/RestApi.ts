@@ -325,6 +325,10 @@ export async function partUpdateWine(id: number, wine: IWinePatchForm): Promise<
     return patch(`/rest/wines/${id}`, wine);
 }
 
+export async function deleteWine(id: number): Promise<void> {
+    return delete_(`/rest/wines/${id}`);
+}
+
 interface ISearchWinesParams {
     colorLike?: string;
     wineTypeLike?: string;

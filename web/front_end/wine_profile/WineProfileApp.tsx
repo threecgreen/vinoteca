@@ -8,8 +8,9 @@ import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IPurchase } from "../../lib/Rest";
-import { createPurchase, deletePurchase, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
-import { imageExists } from "../../lib/utils";
+import { createPurchase, deletePurchase, deleteWine, getPurchases, getWine,
+         getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
+import { imageExists, redirect } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
 import { EditWine } from "./EditWine";
@@ -92,6 +93,15 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
+    const onDeleteWine = async () => {
+        try {
+            await deleteWine(id);
+            redirect("/wines");
+        } catch (e) {
+            logger.logWarning(`Failed to delete wine. ${e.message}`);
+        }
+    }
+
     const onSubmitPurchaseEdit = async (purchase: IPurchaseData) => {
         // @ts-ignore
         const purchaseId = state.mode.id;
@@ -114,6 +124,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onDeletePurchase = async (purchaseId: number) => {
         try {
             await deletePurchase(purchaseId);
+            dispatch({type: "setPurchases", purchases: state.purchases.filter((p) => p.id !== purchaseId)});
         } catch (e) {
             logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`);
         } finally {
@@ -210,6 +221,15 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />
                 );
+            }
+        } else if (state.mode.type === "deleteWine") {
+            if (state.wine) {
+                return (
+                    <DeleteModal item="Wine"
+                        onYesClick={ onDeleteWine }
+                        onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                    />
+                )
             }
         } else if (state.mode.type === "editPurchase") {
             const purchaseId = state.mode.id;

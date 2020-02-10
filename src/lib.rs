@@ -110,6 +110,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::patch,
                 wines::post,
                 wines::put,
+                wines::delete,
                 wines::inventory,
                 wines::search,
                 wines::varieties,
