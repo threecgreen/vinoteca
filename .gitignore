@@ -4,9 +4,6 @@
 # Compiled
 *.pyc
 
-# Configuration files
-vinoteca/config.yaml
-
 # Data files
 data/*.csv
 data/*.db
@@ -31,11 +28,8 @@ scripts/*.cache
 
 # Javascript
 node_modules
-vinoteca/static/*bundle*
-vinoteca/webpack.stats.json
-
-# Ctags
-tags
+web/static/*bundle*
+web/webpack.stats.json
 
 # Logs
 vinoteca.log
@@ -50,5 +44,9 @@ Rocket.toml
 **/*.rs.bk
 Rocket.toml
 
+# Build
+vinoteca
+vinoteca.tar.gz
+
 # Generated
-vinoteca/lib/Rest.d.ts
+web/lib/Rest.d.ts
