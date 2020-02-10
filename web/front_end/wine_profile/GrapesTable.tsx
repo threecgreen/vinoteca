@@ -11,6 +11,8 @@ interface IProps {
 
 export const GrapesTable: React.FC<IProps> = ({grapes}) => {
     const tabIdxer = indexFactory(GrapesTable.name);
+
+    const grapeChartEnabled = grapes.every((grape) => grape.percent !== null);
     return (
         <>
             <h5 className="light">Grape composition</h5>
@@ -18,7 +20,10 @@ export const GrapesTable: React.FC<IProps> = ({grapes}) => {
                 <Tab target={tabIdxer(0)} color={TabColor.Red}>
                     Table
                 </Tab>
-                <Tab target={tabIdxer(1)} color={TabColor.Green}>
+                <Tab target={tabIdxer(1)}
+                    color={TabColor.Green}
+                    enabled={ grapeChartEnabled }
+                >
                     Pie chart
                 </Tab>
             </Tabs>

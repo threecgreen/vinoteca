@@ -27,11 +27,14 @@ export function indexFactory(name: string) {
 interface ITabProps extends IChildrenProp {
     target: string;
     color: TabColor,
+    enabled?: boolean;
 }
 
-export const Tab: React.FC<ITabProps> = ({children, color, target}) => {
+export const Tab: React.FC<ITabProps> = ({children, color, target, enabled}) => {
+    enabled = enabled ?? true;
+    const enabledClass = enabled ? "" : "disabled";
     return (
-        <li className={ `tab ${color.valueOf()}` }>
+        <li className={ `tab ${color.valueOf()} ${enabledClass}` }>
             <a href={ `#${target}` }>
                 { ...children }
             </a>
