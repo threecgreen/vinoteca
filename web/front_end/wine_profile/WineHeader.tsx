@@ -1,5 +1,6 @@
 import React from "react";
 import { Row, Col } from "../../components/Grid";
+import { Link } from "@reach/router";
 
 interface IProps {
     name: string | null;
@@ -18,15 +19,15 @@ export const WineHeader: React.FC<IProps> = (props) => {
             <Col s={ 12 }>
                 <NameType { ...props } />
                 <h4>
-                    <a href={ `/producers/${props.producerId}` }
+                    <Link to={ `/producers/${props.producerId}` }
                         className="text-link"
                     >
                         { props.producer }
-                    </a> of <a href={ `/regions/${props.regionId}` }
+                    </Link> of <Link to={ `/regions/${props.regionId}` }
                         className="text-link"
                     >
                         { props.region }
-                    </a>
+                    </Link>
                 </h4>
             </Col>
             { ...props.children }

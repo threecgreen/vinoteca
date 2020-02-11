@@ -1,6 +1,6 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { Btn } from "../../components/Buttons";
+import { Btn, BtnLink } from "../../components/Buttons";
 import { CSRFToken } from "../../components/CSRFToken";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
@@ -67,11 +67,11 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                     Confirm
                     <MaterialIcon className="right" iconName="send" />
                 </Btn>
-                <Btn classes={ ["red-bg"] }
-                    onClick={ () => redirect("/") }
+                <BtnLink classes={ ["red-bg"] }
+                    to="/"
                 >
                     Cancel
-                </Btn>
+                </BtnLink>
                 { isSaving && <PreloaderCirc /> }
             </form>
         </div>

@@ -161,7 +161,10 @@ export function getNameAndType(name: string | null, wineType: string): string {
     return `${(name ? name + " " : "")}${wineType}`;
 }
 
-// TODO: move to use React router or something similar
+/**
+ * Only to be used as a last resort when declaritive links don't fit
+ * @param url
+ */
 export function redirect(url: string) {
     location.href = url;
 }

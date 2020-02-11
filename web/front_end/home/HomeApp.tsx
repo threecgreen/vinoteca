@@ -1,10 +1,9 @@
-import { RouteComponentProps, Link } from "@reach/router";
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { Btn } from "../../components/Buttons";
+import { BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
-import { redirect } from "../../lib/utils";
 import { RecentPurchases } from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
 
@@ -22,10 +21,10 @@ export const HomeApp: React.FC<RouteComponentProps> = (_) => {
                             <h5 className="center">A wine purchase tracker and review system</h5>
                         </Col>
                         <div className="center-align">
-                            <Link className="yellow-bg" to="wines/add">
+                            <BtnLink classes={ ["yellow-bg"] } to="/wines/new">
                                 <MaterialIcon iconName="add_circle" />
                                 add wine
-                            </Link>
+                            </BtnLink>
                         </div>
                     </Row>
                     <Row>

@@ -4,6 +4,7 @@ import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/Rest";
+import { Link } from "@reach/router";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -40,11 +41,11 @@ export class Producer extends React.Component<IProducerProps> {
         if (this.props.region) {
             regionInfo = (
                 <h4 className="light">
-                    <a href={ `/regions/${this.props.region.id}/` }
+                    <Link to={ `/regions/${this.props.region.id}/` }
                          className="text-link"
                     >
                         { this.props.region.name }
-                    </a>
+                    </Link>
                 </h4>
             );
         } else {

@@ -1,6 +1,7 @@
 import format from "date-fns/esm/format";
 import React from "react";
 import { capitalizeFirstLetter, EN_DASH, getNameAndType, numToDate } from "../lib/utils";
+import { Link } from "@reach/router";
 
 interface ITextCellProps {
     default?: string;
@@ -94,11 +95,11 @@ const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
     const url = `/${props.model}/${props.id}`;
     return (
         <td>
-            <a href={ url }>
+            <Link to={ url }>
                 { props.name }
-            </a>
+            </Link>
         </td>
-    )
+    );
 }
 LinkedCell.displayName = "LinkedCell"
 
@@ -112,9 +113,9 @@ interface INameAndTypeProps {
 export const NameAndTypeCell: React.FC<INameAndTypeProps> = (props) => {
     if (props.url) {
         <td>
-            <a href={ props.url }>
+            <Link to={ props.url }>
                 { getNameAndType(props.name, props.wineType) }
-            </a>
+            </Link>
         </td>
     }
     return (

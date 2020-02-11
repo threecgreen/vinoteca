@@ -3,6 +3,7 @@ import { FloatingBtn } from "../../components/Buttons";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { capitalizeFirstLetter } from "../../lib/utils";
+import { Link } from "@reach/router";
 
 interface IProps {
     color: string;
@@ -43,11 +44,11 @@ export const WineData: React.FC<IProps> = (props) => {
             { props.vitiArea && props.vitiAreaId &&
                 <h5>
                     <b>Viticultural area:</b>&nbsp;
-                    <a href={ `/viti-areas/${props.vitiAreaId}` }
+                    <Link to={ `/viti-areas/${props.vitiAreaId}` }
                         className="text-link"
                     >
                         { props.vitiArea }
-                    </a>
+                    </Link>
                 </h5>
             }
             { props.description &&

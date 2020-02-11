@@ -1,7 +1,8 @@
-import * as React from "react";
+import React from "react";
 import { IChildrenProp, IClassesProp } from "./IProps";
 import { Col } from "./Grid";
 import { MaterialIcon } from "./MaterialIcon";
+import { Link } from "@reach/router";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
@@ -57,6 +58,21 @@ export const Btn: React.FC<IBtnProps> = (props) => {
     );
 }
 Btn.displayName = "Btn";
+
+interface IBtnLinkProps extends IChildrenProp, IClassesProp {
+    to: string;
+}
+
+export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
+    const classes = combineClasses(props.classes);
+
+    return (
+        <Link to={ props.to } className={ `rbtn waves-effect waves-light btn ${classes}` }>
+            { props.children }
+        </Link>
+    );
+}
+BtnLink.displayName = BtnLink.name;
 
 interface ICancelOrConfirmProps {
     onConfirmClick: () => void;

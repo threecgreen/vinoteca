@@ -19,12 +19,13 @@ export const Router: React.FC<{}> = (_) => {
             <HomeApp path="/" />
             <DashboardApp path="dashboards" />
             <GrapesApp path="grapes" />
-            <WinesApp path="wines">
-                <WineProfileApp path=":id" />
-                <InventoryApp path="inventory" />
-                <NewWineApp path="new" />
-                <SearchWinesApp path="search" />
-            </WinesApp>
+
+            <WinesApp path="wines" />
+            <WineProfileApp path="wines/:id" />
+            <InventoryApp path="wines/inventory" />
+            <NewWineApp path="wines/new" />
+            <SearchWinesApp path="wines/search" />
+
             <ProducerProfileApp path="/producers/:producerId" />
             <RegionProfileApp path="/regions/:regionId" />
             <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />

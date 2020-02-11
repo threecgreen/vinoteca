@@ -105,6 +105,7 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
+            // TODO: do using reach router
             redirect("/wines");
         } catch (e) {
             logger.logWarning(`Failed to delete wine. ${e.message}`);

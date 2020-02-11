@@ -1,6 +1,6 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { Btn } from "../../components/Buttons";
+import { Btn, BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
@@ -10,7 +10,6 @@ import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { getWines } from "../../lib/RestApi";
-import { redirect } from "../../lib/utils";
 
 interface IState {
     wines: IWine[];
@@ -94,11 +93,11 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
                     <h6 className="bold center-align">
                         You haven&rsquo;t entered any wines yet.
                     </h6>
-                    <Btn classes={ ["green-bg"] }
-                        onClick={ () => redirect("/wines/new/") }
+                    <BtnLink classes={ ["green-bg"] }
+                        to="/wines/new/"
                     >
                         Add a new wine
-                    </Btn>
+                    </BtnLink>
                 </>
             );
         } else {
