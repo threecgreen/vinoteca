@@ -28,6 +28,9 @@ interface IProps {
 }
 
 export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
+    if (id === undefined) {
+        return <h2>Wine not found</h2>;
+    }
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = new Logger(WineProfileApp.name);

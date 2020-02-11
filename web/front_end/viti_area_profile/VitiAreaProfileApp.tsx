@@ -70,6 +70,9 @@ export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public render() {
+        if (this.props.vitiAreaId === undefined) {
+            return <h1>Viticultural area not found</h1>;
+        }
         if (!this.state.vitiArea) {
             return <Preloader />;
         }
@@ -121,7 +124,7 @@ export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IPro
     private async onConfirmClick() {
         try {
             const vitiArea = await updateVitiArea({
-                id: this.props.vitiAreaId,
+                id: this.props.vitiAreaId!,
                 name: this.state.vitiAreaText,
                 region: this.state.vitiArea!.region,
                 regionId: this.state.vitiArea!.regionId,

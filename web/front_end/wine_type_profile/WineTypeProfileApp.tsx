@@ -62,6 +62,9 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public render() {
+        if (this.props.wineTypeId === undefined) {
+            return <h1>Wine type not found</h1>;
+        }
         if (!this.state.wineType) {
             return <Preloader />;
         }
@@ -107,7 +110,7 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
 
     private async onConfirmClick() {
         try {
-            const wineType = await updateWineType({id: this.props.wineTypeId, name: this.state.wineTypeText});
+            const wineType = await updateWineType({id: this.props.wineTypeId!, name: this.state.wineTypeText});
             this.setState({
                 isEditing: false,
                 wineType: wineType,
