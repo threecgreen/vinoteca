@@ -217,6 +217,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             if (state.wine) {
                 return (
                     <EditWine wine={ state.wine }
+                        hasImage={ state.hasImage }
                         onSubmit={ onSubmitWineEdit }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />

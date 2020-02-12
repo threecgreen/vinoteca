@@ -53,9 +53,8 @@ export const WineData: React.FC<IProps> = (props) => {
             { props.description &&
                 <h6><b>Description:</b> { props.description }</h6>
             }
-            {/* TODO: Float formatting */}
             { props.rating &&
-                <h6><b>Rating:</b> { props.rating }</h6>
+                <h6><b>Rating:</b> { props.rating.toFixed(0) }</h6>
             }
             { props.notes &&
                 <h6><b>Notes:</b> { props.notes }</h6>

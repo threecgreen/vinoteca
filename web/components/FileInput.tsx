@@ -4,9 +4,10 @@ import { nameToId } from "../lib/utils";
 interface IProps {
     name: string;
     onChange: (files: File | null) => void;
+    fileName?: string;
 }
 
-export const FileInput: React.FC<IProps> = ({name, onChange}) => {
+export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
     const id = nameToId(name);
 
     // TODO: hint file extensions
@@ -22,7 +23,10 @@ export const FileInput: React.FC<IProps> = ({name, onChange}) => {
                     />
                 </div>
                 <div className="file-path-wrapper">
-                    <input type="text" className="file-path validate" />
+                    <input type="text"
+                        className="file-path validate"
+                        defaultValue={ fileName }
+                    />
                 </div>
             </div>
         </>

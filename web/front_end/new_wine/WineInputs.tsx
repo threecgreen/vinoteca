@@ -168,7 +168,11 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
                 value={ data.notes }
                 onChange={ (notes) => dispatch({type: "setNotes", notes}) }
             />
-            <FileInput name="Wine Image" onChange={ (file) => dispatch({type: "setFile", file}) } />
+            <FileInput name="Wine Image"
+                onChange={ (file) => dispatch({type: "setFile", file}) }
+                // This to display something while editing if the wine already has an image
+                fileName={ data.file?.name }
+            />
         </>
     );
 }
