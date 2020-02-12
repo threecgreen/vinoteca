@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -24,7 +25,7 @@ interface IProps {
     wineTypeId: number;
 }
 
-export class WineTypeProfileApp extends React.Component<IProps, IState> {
+export class WineTypeProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {

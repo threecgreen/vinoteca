@@ -1,13 +1,14 @@
+import { RouteComponentProps, Link } from "@reach/router";
 import React from "react";
-import { ParallaxImg } from "../../components/ParallaxImg";
-import { Row, Col } from "../../components/Grid";
-import { RecentPurchases } from "./RecentPurchases";
-import { MaterialIcon } from "../../components/MaterialIcon";
 import { Btn } from "../../components/Buttons";
-import { TopWineTypes } from "./TopWineTypes";
+import { Col, Row } from "../../components/Grid";
+import { MaterialIcon } from "../../components/MaterialIcon";
+import { ParallaxImg } from "../../components/ParallaxImg";
 import { redirect } from "../../lib/utils";
+import { RecentPurchases } from "./RecentPurchases";
+import { TopWineTypes } from "./TopWineTypes";
 
-export const HomeApp: React.FC<{}> = (_) => {
+export const HomeApp: React.FC<RouteComponentProps> = (_) => {
     return (
         <>
             <ParallaxImg src="/static/img/bourgogne.jpg" alt="Vineyard" />
@@ -21,12 +22,10 @@ export const HomeApp: React.FC<{}> = (_) => {
                             <h5 className="center">A wine purchase tracker and review system</h5>
                         </Col>
                         <div className="center-align">
-                            <Btn classes={ ["yellow-bg"] }
-                                onClick={ () => redirect("/wines/new") }
-                            >
+                            <Link className="yellow-bg" to="wines/add">
                                 <MaterialIcon iconName="add_circle" />
                                 add wine
-                            </Btn>
+                            </Link>
                         </div>
                     </Row>
                     <Row>

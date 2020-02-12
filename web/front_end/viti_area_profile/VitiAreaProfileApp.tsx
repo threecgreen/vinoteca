@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -11,7 +12,7 @@ import { getVitiArea, getVitiAreaStats, getWines, updateVitiArea } from "../../l
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 
-interface IVitiAreaProfileState {
+interface IState {
     isEditing: boolean;
     // Editable
     vitiAreaText: string;
@@ -21,14 +22,14 @@ interface IVitiAreaProfileState {
     stats?: IVitiAreaStats;
 }
 
-interface IVitiAreaProfileProps {
+interface IProps {
     vitiAreaId: number;
 }
 
-export class VitiAreaProfile extends React.Component<IVitiAreaProfileProps, IVitiAreaProfileState> {
+export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
     private logger: Logger;
 
-    constructor(props: IVitiAreaProfileProps) {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             isEditing: false,

@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -25,7 +26,7 @@ interface IProps {
     regionId: number;
 }
 
-export class RegionProfile extends React.Component<IProps, IState> {
+export class RegionProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {
@@ -120,7 +121,7 @@ export class RegionProfile extends React.Component<IProps, IState> {
 
     private async onConfirmClick() {
         try {
-            const region = await updateRegion({id: this.props.regionId, name: this.state.regionText});
+            const region = await updateRegion({id: this.props.regionId!, name: this.state.regionText});
             this.setState({
                 isEditing: false,
                 region: region,

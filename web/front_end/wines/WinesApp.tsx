@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
@@ -20,7 +21,7 @@ interface IState {
     winesPerPage: number;
 }
 
-export class WinesApp extends React.Component<{}, IState> {
+export class WinesApp extends React.Component<RouteComponentProps, IState> {
     private readonly logger: Logger;
     private static cookieName: string = "WinesAppPredicates";
 

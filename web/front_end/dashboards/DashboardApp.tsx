@@ -1,10 +1,11 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYearGraph, PurchasesByYearTable } from "./PurchasesByYear";
-import { TopGrapes, TopProducers, TopRegions, TopVitiAreas, TopColors } from "./Top";
+import { TopColors, TopGrapes, TopProducers, TopRegions, TopVitiAreas } from "./Top";
 
-export const DashboardApp: React.FC<{}> = (_) => {
+export const DashboardApp: React.FC<RouteComponentProps> = (_) => {
     return (
         <div className="container">
             <Row>

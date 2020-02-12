@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -34,7 +35,7 @@ interface IProducerProfileAppProps {
     producerId: number;
 }
 
-export class ProducerProfileApp extends React.Component<IProducerProfileAppProps, IProducerProfileAppState> {
+export class ProducerProfileApp extends React.Component<RouteComponentProps<IProducerProfileAppProps>, IProducerProfileAppState> {
     private logger: Logger;
 
     constructor(props: IProducerProfileAppProps) {
@@ -218,7 +219,7 @@ export class ProducerProfileApp extends React.Component<IProducerProfileAppProps
 
     private async onDeleteClick() {
         try {
-            await deleteProducer(this.props.producerId);
+            await deleteProducer(this.props.producerId!);
             // Redirect home
             redirect("/");
         } catch (ex) {

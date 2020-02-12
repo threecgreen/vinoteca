@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import format from "date-fns/esm/format";
 import React from "react";
 import { Btn } from "../../components/Buttons";
@@ -16,7 +17,7 @@ interface IState {
     hasLoaded: boolean,
 }
 
-export class InventoryApp extends React.Component<{}, IState> {
+export class InventoryApp extends React.Component<RouteComponentProps, IState> {
     private readonly logger: Logger;
 
     constructor(props: {}) {

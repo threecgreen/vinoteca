@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
@@ -33,7 +34,7 @@ interface ISearchWinesAppState {
     lastActiveTextInput?: SearchWinesTextInput;
 }
 
-export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
+export class SearchWinesApp extends React.Component<RouteComponentProps, ISearchWinesAppState> {
     private static defaultState: Readonly<ISearchWinesAppState> = {
             colorSelection: "",
             wineTypeText: "",

@@ -1,6 +1,8 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
+import { wineGrapesToForm } from "../../components/GrapesInputs";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
@@ -8,8 +10,7 @@ import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
-import { createPurchase, deletePurchase, deleteWine, getPurchases, getWine,
-         getWineGrapes, updatePurchase, updateWine, createWineGrapes } from "../../lib/RestApi";
+import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
 import { imageExists, redirect } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
@@ -21,13 +22,12 @@ import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
-import { wineGrapesToForm } from "../../components/GrapesInputs";
 
 interface IProps {
     id: number;
 }
 
-export const WineProfileApp: React.FC<IProps> = ({id}) => {
+export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = new Logger(WineProfileApp.name);

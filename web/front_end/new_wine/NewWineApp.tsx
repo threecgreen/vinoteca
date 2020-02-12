@@ -1,3 +1,4 @@
+import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { CSRFToken } from "../../components/CSRFToken";
@@ -11,7 +12,7 @@ import { createPurchase, createWine, createWineGrapes } from "../../lib/RestApi"
 import { redirect } from "../../lib/utils";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
-export const NewWineApp: React.FC<{}> = (_props) => {
+export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
     const [wineState, wineDispatch] = React.useReducer(wineInputReducer, initWineInputData());
     const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
