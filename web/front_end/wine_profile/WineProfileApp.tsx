@@ -7,9 +7,9 @@ import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { IPurchase } from "../../lib/Rest";
+import { IPurchase, IWineGrape } from "../../lib/Rest";
 import { createPurchase, deletePurchase, deleteWine, getPurchases, getWine,
-         getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
+         getWineGrapes, updatePurchase, updateWine, createWineGrapes } from "../../lib/RestApi";
 import { imageExists, redirect } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
@@ -21,6 +21,7 @@ import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
+import { wineGrapesToForm } from "../../components/GrapesInputs";
 
 interface IProps {
     id: number;
@@ -81,11 +82,16 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
-    const onSubmitWineEdit = async (editedWine: IWineData) => {
+    const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
+
         try {
-            const form = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
+            const [wineForm, grapesForm] = await Promise.all([
+                wineDataToForm(editedWine, state.wine?.inventory ?? 0),
+                wineGrapesToForm(editedGrapes, id),
+            ]);
             // TODO: handle file edit
-            const updatedWine = await updateWine(id, form, null);
+            const updatedWine = await updateWine(id, wineForm, null);
+            const updateGrapes = await createWineGrapes(grapesForm);
             dispatch({type: "setWine", wine: updatedWine});
             dispatch({type: "setMode", mode: {type: "display"}});
         } catch (e) {
@@ -217,6 +223,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             if (state.wine) {
                 return (
                     <EditWine wine={ state.wine }
+                        grapes={ state.grapes }
                         hasImage={ state.hasImage }
                         onSubmit={ onSubmitWineEdit }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }

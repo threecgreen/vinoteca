@@ -2,19 +2,21 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
-import { IWine } from "../../lib/Rest";
+import { IWine, IWineGrape } from "../../lib/Rest";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
+import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
 
 interface IProps {
     wine: IWine;
+    grapes: IWineGrape[];
     hasImage: boolean;
-    onSubmit: (wine: IWineData) => void;
+    onSubmit: (wine: IWineData, grapes: IWineGrape[]) => void;
     onCancel: () => void;
 }
 
 // TODO: include grapes
-export const EditWine: React.FC<IProps> = ({wine, hasImage, onSubmit, onCancel}) => {
-    const [state, dispatch] = React.useReducer(wineInputReducer, {
+export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, onCancel}) => {
+    const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,
         name: wine.name ?? "",
         description: wine.description ?? "",
@@ -25,13 +27,14 @@ export const EditWine: React.FC<IProps> = ({wine, hasImage, onSubmit, onCancel})
         vitiArea: wine.vitiArea ?? "",
         why: wine.why ?? "",
     });
+    const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
 
     const checkFileAndSubmit = () => {
-        if (state.file && state.file.name === `${wine.id}.png`) {
+        if (mutableWine.file && mutableWine.file.name === `${wine.id}.png`) {
             // Don't submit mock file
-            onSubmit({...state, file: null});
+            onSubmit({...mutableWine, file: null}, mutableGrapes);
         }
-        onSubmit(state);
+        onSubmit(mutableWine, mutableGrapes);
     }
 
     return (
@@ -39,8 +42,11 @@ export const EditWine: React.FC<IProps> = ({wine, hasImage, onSubmit, onCancel})
             <ModalContent>
                 <Row>
                     <h4>Edit wine</h4>
-                    <WineInputs data={ state }
-                        dispatch={ dispatch }
+                    <WineInputs data={ mutableWine }
+                        dispatch={ wineDispatch }
+                    />
+                    <GrapesInputs grapes={ mutableGrapes }
+                        dispatch={ grapesDispatch }
                     />
                 </Row>
             </ModalContent>
