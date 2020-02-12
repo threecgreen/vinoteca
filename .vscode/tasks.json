@@ -76,22 +76,21 @@
                 "panel": "dedicated",
                 "showReuseMessage": false
             }
-        },
-        {
-            "type": "cargo",
-            "subcommand": "run",
-            "problemMatcher": [
-                "$rustc"
-            ]
-        },
-        {
-            "type": "cargo",
-            "subcommand": "build",
-            "problemMatcher": [
-                "$rustc"
-            ],
-            "group": "build"
         }
+        // {
+        //     "type": "cargo",
+        //     "subcommand": "run",
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ]
+        // },
+        // {
+        //     "type": "cargo",
+        //     "subcommand": "build",
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ],
+        //     "group": "build"
+        // }
     ],
 }
-95977062

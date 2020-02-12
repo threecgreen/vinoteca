@@ -5,8 +5,6 @@ authors = ["Carter Green <cartergr@usc.edu>"]
 readme = "../README.md"
 default-run = "server"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 chrono = "0.4"
 rocket = "0.4.2"
