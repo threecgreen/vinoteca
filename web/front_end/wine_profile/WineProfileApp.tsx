@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "@reach/router";
+import { navigate, RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -11,7 +11,7 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
 import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
-import { imageExists, redirect } from "../../lib/utils";
+import { imageExists } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
 import { EditWine } from "./EditWine";
@@ -106,7 +106,7 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
         try {
             await deleteWine(id);
             // TODO: do using reach router
-            redirect("/wines");
+            navigate("/wines");
         } catch (e) {
             logger.logWarning(`Failed to delete wine. ${e.message}`);
         }

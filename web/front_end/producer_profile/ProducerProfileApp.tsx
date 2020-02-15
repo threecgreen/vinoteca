@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "@reach/router";
+import { navigate, RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -10,7 +10,6 @@ import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
 import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
-import { redirect } from "../../lib/utils";
 import { Producer } from "./Producer";
 
 export enum ProducerProfileTextInput {
@@ -221,7 +220,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
         try {
             await deleteProducer(this.props.producerId!);
             // Redirect home
-            redirect("/");
+            navigate("/");
         } catch (ex) {
             this.logger.logWarning(`Failed to delete producer with id ${this.props.producerId}`
                                    + ` with exception: ${ex.body}`);

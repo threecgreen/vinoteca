@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "@reach/router";
+import { navigate, RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn, BtnLink } from "../../components/Buttons";
 import { CSRFToken } from "../../components/CSRFToken";
@@ -9,7 +9,6 @@ import { PreloaderCirc } from "../../components/Preloader";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { createPurchase, createWine, createWineGrapes } from "../../lib/RestApi";
-import { redirect } from "../../lib/utils";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
 export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
@@ -37,7 +36,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                     await createPurchase(purchaseForm);
                 }
             ].map((f) => f()));
-            redirect(`/wines/${wine.id}`);
+            navigate(`/wines/${wine.id}`);
         } catch (err) {
             setIsSaving(false);
             logger.logError(`Error creating new wine: ${err.message}`);

@@ -161,14 +161,6 @@ export function getNameAndType(name: string | null, wineType: string): string {
     return `${(name ? name + " " : "")}${wineType}`;
 }
 
-/**
- * Only to be used as a last resort when declaritive links don't fit
- * @param url
- */
-export function redirect(url: string) {
-    location.href = url;
-}
-
 export function onLoad(fun: () => void) {
     document.addEventListener("DOMContentLoaded", fun);
 }
