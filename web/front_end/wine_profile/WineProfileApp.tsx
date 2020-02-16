@@ -11,7 +11,8 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
 import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
-import { imageExists } from "../../lib/utils";
+import { getNameAndType, imageExists } from "../../lib/utils";
+import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
 import { EditWine } from "./EditWine";
@@ -34,6 +35,8 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = new Logger(WineProfileApp.name);
+
+    useTitle(state.wine ? getNameAndType(state.wine.name, state.wine.wineType) : "Wine profile");
 
     // Data fetchers
     const fetchWine = async () => {

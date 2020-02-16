@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="text/html">
-  <title>vinoteca | {{ page_name }}</title>
+  <title>vinoteca</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
@@ -11,11 +11,8 @@
   <link rel="manifest" href="/static/img/manifest.json">
   <link rel="mask-icon" href="/static/img/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="theme-color" content="#ffffff">
-{#    Materialize CSS Links#}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-{#    Google Icon font#}
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{#    Let browser know website is optimized for mobile#}
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   {% block head %}
@@ -46,7 +43,7 @@
 
   </ul>
   <main>
-    {% block body %}{% endblock %}
+    <div id="app-container"></div>
   </main>
 
 
@@ -56,9 +53,9 @@
         <div class="col l6 s12">
           <h5 class="white-text brand-logo">vinoteca</h5>
           <ul>
-            <li><a class="footer-link" href="/about/">About</a></li>
-            <li><a class="footer-link" href="/about/#changelog">Changelog</a></li>
-            <li><a class="footer-link" href="/about/#help">Help</a></li>
+            <li><a class="footer-link" href="/about">About</a></li>
+            <li><a class="footer-link" href="/about#changelog">Changelog</a></li>
+            <li><a class="footer-link" href="/about#help">Help</a></li>
           </ul>
         </div>
         <div class="col l4 offset-s12 s12">
@@ -76,7 +73,6 @@
       <div class="container">
         <div class="row">
           <div class="col s12 l4">
-            {# TODO: calc year #}
             <p>© {{ this_year }} Carter Green<p>
           </div>
           <div class="col s12 l4">
@@ -91,7 +87,5 @@
   </footer>
 
   <script src="/static/vendors.bundle.js"></script>
-  {% block js %}
-    <script src="/static/global.bundle.js"></script>
-  {% endblock %}
+  <script src="/static/vinoteca.bundle.js"></script>
 </body>

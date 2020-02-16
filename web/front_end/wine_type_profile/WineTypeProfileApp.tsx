@@ -11,6 +11,7 @@ import { IWine } from "../../lib/Rest";
 import { getWines, getWineType, updateWineType } from "../../lib/RestApi";
 import { IRestModel } from "../../lib/RestTypes";
 import { WineType } from "./WineType";
+import { setTitle } from "../../lib/widgets";
 
 interface IState {
     isEditing: boolean;
@@ -45,10 +46,11 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        Promise.all([
+        await Promise.all([
             this.getAndSetWineTypes(),
             this.getAndSetWines(),
         ]);
+        setTitle(this.state.wineType?.name ?? "Wine type profile");
     }
 
     private async getAndSetWineTypes() {

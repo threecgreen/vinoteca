@@ -5,6 +5,7 @@ import { Row } from "../../components/Grid";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { searchWines } from "../../lib/RestApi";
+import { setTitle } from "../../lib/widgets";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
 
@@ -79,6 +80,10 @@ export class SearchWinesApp extends React.Component<RouteComponentProps, ISearch
                 />
             </div>
         );
+    }
+
+    public componentDidMount() {
+        setTitle("Search wines");
     }
 
     private onInputChange(input: SearchWinesInput, val: string) {

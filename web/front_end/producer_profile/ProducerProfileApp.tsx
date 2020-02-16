@@ -10,6 +10,7 @@ import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
 import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
+import { setTitle } from "../../lib/widgets";
 import { Producer } from "./Producer";
 
 export enum ProducerProfileTextInput {
@@ -59,8 +60,11 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        this.getCurrentProducerData();
-        const wines = await getWines({producerId: this.props.producerId})
+        const [_, wines] = await Promise.all([
+            this.getCurrentProducerData(),
+            getWines({producerId: this.props.producerId}),
+        ]);
+        setTitle(this.state.producer?.name ?? "Producer profile");
         this.setState({wines: wines});
     }
 

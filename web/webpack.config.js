@@ -13,27 +13,8 @@ module.exports = (env, argv) => {
     // console.log(`This is ${isProd ? 'production' : 'development'}`);
     return {
         devtool: isProd ? false : "inline-source-map",
-        // Dead-code elimination fails for multiple entries per https://github.com/webpack/webpack/issues/4453
-        // Creating an array of entries resulted in a core dump
         entry: {
-            // global: [inputPath + "vinoteca-style.sass"],
-            home: [inputPath + "home/home.ts", inputPath + "vinoteca-style.sass"],
-            // // Dashboards
-            // dashboards: [inputPath + "dashboards/dashboards.ts"],
-            // // Producers
-            // producer_profile: [inputPath + "producer_profile/producer_profile.ts"],
-            // // Places
-            // region_profile: [inputPath + "region_profile/region_profile.ts"],
-            // viti_area_profile: [inputPath + "viti_area_profile/viti_area_profile.ts"],
-            // // Wines
-            // inventory: [inputPath + "inventory/inventory.ts"],
-            // new_wine: [inputPath + "new_wine/new_wine.ts"],
-            // search_wines: [inputPath + "search_wines/search_wines.ts"],
-            // wine_profile: [inputPath + "wine_profile/wine_profile.ts"],
-            // wines: [inputPath + "wines/wines.ts"],
-            // // Wine Attrs
-            // grapes: [inputPath + "grapes/grapes.ts"],
-            // wine_type_profile: [inputPath + "wine_type_profile/wine_type_profile.ts"]
+            vinoteca: [inputPath + "app.ts", inputPath + "vinoteca-style.sass"],
         },
         module: {
             rules: [

@@ -10,6 +10,7 @@ import Logger from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
 import { partUpdateWine } from "../../lib/RestApi";
 import { numToDate } from "../../lib/utils";
+import { setTitle } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 
 interface IState {
@@ -60,6 +61,7 @@ export class InventoryApp extends React.Component<RouteComponentProps, IState> {
     }
 
     public componentDidMount() {
+        setTitle("Inventory");
         this.updateInventory();
     }
 

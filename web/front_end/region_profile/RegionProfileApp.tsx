@@ -11,6 +11,7 @@ import { IRegion, IVitiAreaStats, IWine } from "../../lib/Rest";
 import { getRegion, getVitiAreaStats, getWines, updateRegion } from "../../lib/RestApi";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
+import { setTitle } from "../../lib/widgets";
 
 interface IState {
     isEditing: boolean;
@@ -47,11 +48,12 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
     }
 
     public async componentDidMount() {
-        Promise.all([
+        await Promise.all([
             this.getAndSetRegion(),
             this.getAndSetWines(),
             this.getAndSetVitiAreaStats(),
         ]);
+        setTitle(this.state.region?.name ?? "Region profile");
     }
 
     private async getAndSetRegion() {

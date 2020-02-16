@@ -1,5 +1,6 @@
 import { Autocomplete, Dropdown, Sidenav } from "materialize-css";
 import { IDict } from "./utils";
+import React from "react";
 
 type OnChange = (e: string) => void;
 
@@ -47,4 +48,14 @@ export function toast(message: string) {
         displayLength: 10000,
         html: message,
     });
+}
+
+export function useTitle(title: string) {
+    React.useEffect(() => {
+        setTitle(title);
+    }, [title]);
+}
+
+export function setTitle(title: string) {
+    document.title = `vinoteca | ${title}`;
 }

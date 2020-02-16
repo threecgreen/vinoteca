@@ -4,10 +4,13 @@ import { BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
+import { useTitle } from "../../lib/widgets";
 import { RecentPurchases } from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
 
 export const HomeApp: React.FC<RouteComponentProps> = (_) => {
+    useTitle("Wine purchase tracker");
+
     return (
         <>
             <ParallaxImg src="/static/img/bourgogne.jpg" alt="Vineyard" />

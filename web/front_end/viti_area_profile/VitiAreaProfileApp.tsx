@@ -11,6 +11,7 @@ import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/Rest";
 import { getVitiArea, getVitiAreaStats, getWines, updateVitiArea } from "../../lib/RestApi";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
+import { setTitle } from "../../lib/widgets";
 
 interface IState {
     isEditing: boolean;
@@ -47,11 +48,12 @@ export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        Promise.all([
+        await Promise.all([
             this.getAndSetVitiArea(),
             this.getAndSetWines(),
             this.getAndSetStats(),
         ]);
+        setTitle(this.state.vitiArea?.name ?? "Viticultural area profile");
     }
 
     private async getAndSetVitiArea() {

@@ -5,6 +5,7 @@ import { Preloader } from "../../components/Preloader";
 import Logger from "../../lib/Logger";
 import { IGrape, IGrapeForm } from "../../lib/Rest";
 import { getGrapes, updateGrape } from "../../lib/RestApi";
+import { useTitle } from "../../lib/widgets";
 import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
@@ -12,6 +13,8 @@ import { grapeStateReducer, initGrapeState } from "./state";
 export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
     const logger = new Logger(GrapesApp.name);
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
+
+    useTitle("Grapes");
 
     React.useEffect(() => {
         async function fetchGrapes() {
