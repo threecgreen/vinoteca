@@ -6,5 +6,5 @@ import { Router } from "./Router";
 
 onLoad(() => {
     navbar();
-    render(createElement(Router), document.getElementById("app-container"))
+    render(createElement(Router), document.getElementById("app-container"));
 });

@@ -1,6 +1,6 @@
 import { Autocomplete, Dropdown, Sidenav } from "materialize-css";
-import { IDict } from "./utils";
 import React from "react";
+import { IDict } from "./utils";
 
 type OnChange = (e: string) => void;
 
