@@ -3,7 +3,7 @@ name = "vinoteca"
 version = "5.0.0"
 authors = ["Carter Green <cartergr@usc.edu>"]
 readme = "../README.md"
-default-run = "server"
+default-run = "vinoteca"
 
 [dependencies]
 chrono = "0.4"
