@@ -7,6 +7,7 @@ use diesel::prelude::*;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
+use std::collections::HashSet;
 use validator::Validate;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
@@ -85,7 +86,12 @@ pub fn post(
         )));
     }
 
-    // TODO: Validate unique grape ids
+    let mut unique_grapes = HashSet::new();
+    for wg in &wine_grapes {
+        if unique_grapes.insert(wg.grape_id) == false {
+            return Err(VinotecaError::BadRequest("Duplicate grapes".to_owned()));
+        }
+    }
 
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::id.eq(wine_id)))
