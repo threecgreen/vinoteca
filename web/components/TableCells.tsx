@@ -112,11 +112,13 @@ interface INameAndTypeProps {
 
 export const NameAndTypeCell: React.FC<INameAndTypeProps> = (props) => {
     if (props.url) {
-        <td>
-            <Link to={ props.url }>
-                { getNameAndType(props.name, props.wineType) }
-            </Link>
-        </td>
+        return (
+            <td>
+                <Link to={ props.url }>
+                    { getNameAndType(props.name, props.wineType) }
+                </Link>
+            </td>
+        );
     }
     return (
         <LinkedCell id={ props.id }
