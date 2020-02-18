@@ -10,7 +10,7 @@ import { MaterialIcon } from "./MaterialIcon";
 
 export const wineGrapesToForm = async (wineGrapes: IWineGrape[], wineId: number) => {
     const wineGrapesForm: IWineGrapesForm = {
-        wineId,
+        wineId: wineId,
         grapes: await Promise.all(wineGrapes.map(async (wg) => {
             const grape = await getOrCreateGrape({name: wg.grape}, {name: wg.grape});
             return {

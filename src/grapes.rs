@@ -12,7 +12,8 @@ use validator::Validate;
 #[get("/grapes?<id>&<name>")]
 pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Grape>> {
     let mut query = grapes::table
-        .inner_join(wine_grapes::table.inner_join(wines::table))
+        // Left to include grapes with no wine
+        .left_join(wine_grapes::table.inner_join(wines::table))
         .group_by((grapes::id, grapes::name))
         .into_boxed();
     if let Some(id) = id {
