@@ -5,7 +5,6 @@ import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import { WinesTable } from "../../components/WinesTable";
-import { createCookie, deleteCookie, readCookie } from "../../lib/Cookies";
 import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
@@ -23,14 +22,14 @@ interface IState {
 
 export class WinesApp extends React.Component<RouteComponentProps, IState> {
     private readonly logger: Logger;
-    private static cookieName: string = "WinesAppPredicates";
+    private static localStorageKey: string = "WinesAppPredicates";
 
     public constructor(props: {}) {
         super(props);
 
         this.logger = new Logger(this.constructor.name);
 
-        const filterTexts = this.deserializeFilters(readCookie(WinesApp.cookieName))
+        const filterTexts = this.deserializeFilters(window.localStorage.getItem(WinesApp.localStorageKey) ?? "")
         this.state = {
             wines: [],
             filterTexts: filterTexts,
@@ -47,10 +46,9 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
             this.logger.logInfo(`Filter texts: '${predStrings}'`)
             const serializedPredicates = JSON.stringify(predStrings);
             this.logger.logDebug(`Updating cookie to '${serializedPredicates}'`);
-            deleteCookie(WinesApp.cookieName);
-            createCookie(WinesApp.cookieName, serializedPredicates, 90);
+            window.localStorage.setItem(WinesApp.localStorageKey, serializedPredicates);
         } else {
-            deleteCookie(WinesApp.cookieName);
+            window.localStorage.removeItem(WinesApp.localStorageKey);
         }
     }
 
@@ -68,7 +66,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
             });
             return predicates;
         } catch (err) {
-            deleteCookie(WinesApp.cookieName);
+            window.localStorage.removeItem(WinesApp.localStorageKey);
             this.logger.logWarning(`Failed reading filters cookie with error: ${err}`);
             return new Map();
         }

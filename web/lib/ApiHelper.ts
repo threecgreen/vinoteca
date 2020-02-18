@@ -1,9 +1,7 @@
-import { readCookie } from "./Cookies";
 import { IDict, isEmpty } from "./utils";
 
 const HEADERS = {
     "Content-Type": "application/json",
-    "X-CSRFToken": readCookie("csrftoken") || "",
 };
 
 export type IQueryParams = IDict<string | number | boolean>;
