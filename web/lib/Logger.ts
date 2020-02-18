@@ -73,6 +73,7 @@ export default class Logger {
             // @ts-ignore
             message: message instanceof Object ? "" : message,
             module: this.module,
+            url: window.location.pathname,
         });
         if (!response.success) {
             this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
