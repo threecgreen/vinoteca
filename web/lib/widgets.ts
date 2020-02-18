@@ -28,6 +28,10 @@ function activateNavbarTab(name: string): void {
     (document.getElementById(`${name}-nav`) as HTMLElement).classList.add("active");
 }
 
+function deactivateNavbarTab(name: string): void {
+    (document.getElementById(`${name}-nav`) as HTMLElement).classList.remove("active");
+}
+
 /** Enables navbar menus. Should be called on every page. */
 export function navbar(activeNavTab?: string) {
     if (activeNavTab) {
@@ -44,6 +48,7 @@ export function navbar(activeNavTab?: string) {
 export function useNavBar(activeNavTab: string) {
     React.useEffect(() => {
         activateNavbarTab(activeNavTab);
+        return () => deactivateNavbarTab(activeNavTab);
     }, [activeNavTab]);
 }
 
