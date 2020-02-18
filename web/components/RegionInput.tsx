@@ -2,10 +2,10 @@ import React from "react";
 import Logger from "../lib/Logger";
 import { IRegion } from "../lib/Rest";
 import { EmptyResultError, getRegions, toDict } from "../lib/RestApi";
-import { IDict } from "../lib/utils";
 import { autocomplete } from "../lib/widgets";
 import { IOnChange } from "./IProps";
 import { TextInput } from "./TextInput";
+import { IDict } from "../lib/utils";
 
 interface IProps extends IOnChange {
     value: string;
@@ -22,7 +22,11 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) =
         async function fetchAutocompleteOptions() {
             try {
                 const regions: IRegion[] = await getRegions({});
-                autocomplete(inputRef, toDict(regions), onChange);
+                const result: IDict<string> = {};
+                regions.forEach((region) => {
+                    result[region.name] = `/static/img/flags/${region.name}.svg`;
+                });
+                autocomplete(inputRef, result, onChange);
             } catch (e) {
                 logger.logError(`Failed to get region autocomplete options. ${e.message}`);
             }

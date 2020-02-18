@@ -9,7 +9,6 @@ use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 use validator::Validate;
 
-// TODO: get flag data for autocomplete
 #[get("/regions?<id>&<name>&<producer_name>")]
 pub fn get(
     id: Option<i32>,
