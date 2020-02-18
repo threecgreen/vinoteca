@@ -14,7 +14,6 @@ interface IProps {
     onCancel: () => void;
 }
 
-// TODO: include grapes
 export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, onCancel}) => {
     const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,

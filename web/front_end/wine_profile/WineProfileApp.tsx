@@ -10,7 +10,7 @@ import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
-import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
+import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, updateGrape } from "../../lib/RestApi";
 import { getNameAndType, imageExists } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";
@@ -79,7 +79,6 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
                 copy.inventory -= 1;
             }
             try {
-                // TODO: include file
                 const wine = await updateWine(id, copy, null);
                 dispatch({type: "setWine", wine});
             } catch (e) {
@@ -89,16 +88,15 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
     }
 
     const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
-
         try {
             const [wineForm, grapesForm] = await Promise.all([
                 wineDataToForm(editedWine, state.wine?.inventory ?? 0),
                 wineGrapesToForm(editedGrapes, id),
             ]);
-            // TODO: handle file edit
-            const updatedWine = await updateWine(id, wineForm, null);
+            const updatedWine = await updateWine(id, wineForm, editedWine.file);
             const updateGrapes = await createWineGrapes(grapesForm);
             dispatch({type: "setWine", wine: updatedWine});
+            dispatch({type: "setGrapes", grapes: updateGrapes});
             dispatch({type: "setMode", mode: {type: "display"}});
         } catch (e) {
             logger.logWarning(`Failed to update wine. ${e.message}`);
@@ -108,7 +106,6 @@ export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
-            // TODO: do using reach router
             navigate("/wines");
         } catch (e) {
             logger.logWarning(`Failed to delete wine. ${e.message}`);

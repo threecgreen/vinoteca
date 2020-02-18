@@ -10,7 +10,6 @@ import { WineTypeInput } from "../../components/WineTypeInput";
 import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
 import { getColor, getOrCreateWineType, getOrCreateProducer, getOrCreateVitiArea, getOrCreateRegion } from "../../lib/RestApi";
 
-// TODO: handle file
 export interface IWineData {
     color: string;
     wineType: string;

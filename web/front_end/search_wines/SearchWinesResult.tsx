@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { ColorCell, NameAndTypeCell, TextCell } from "../../components/TableCells";
 import { IWine } from "../../lib/Rest";
 

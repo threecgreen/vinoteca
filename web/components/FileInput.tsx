@@ -10,13 +10,13 @@ interface IProps {
 export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
     const id = nameToId(name);
 
-    // TODO: hint file extensions
     return (
         <>
             <div className="file-field input-field col s12 l6">
                 <div className="btn yellow darken-2">
                     <span>{ name }</span>
                     <input type="file"
+                        accept="image/*"
                         name={ id }
                         id={ id }
                         onChange={ (e) => onChange(e.target.files?.item(0) ?? null) }
