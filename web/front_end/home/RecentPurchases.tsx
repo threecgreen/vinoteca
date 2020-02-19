@@ -16,8 +16,8 @@ export const RecentPurchases: React.FC<{}> = (_) => {
             try {
                 const purchases = await get<IRecentPurchase[]>("/rest/purchases/recent");
                 setPurchases(purchases);
-            } catch {
-                logger.logError("Error fetching recent purchases");
+            } catch (e) {
+                logger.logError(`Error fetching recent purchases: ${e.message}`);
             } finally {
                 setHasLoaded(true);
             }

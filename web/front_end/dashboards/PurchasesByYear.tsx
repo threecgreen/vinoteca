@@ -16,8 +16,8 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
             try {
                 const yearsPurchases = await get<IYearsPurchases[]>("/rest/purchases/by-year");
                 setYearsPurchases(yearsPurchases);
-            } catch {
-                logger.logError("Error fetching purchases by year");
+            } catch (e) {
+                logger.logError(`Error fetching purchases by year: ${e.message}`);
             } finally {
                 setHasLoaded(true);
             }

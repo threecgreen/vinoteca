@@ -28,8 +28,8 @@ export const useColorsSelect = (logger: Logger, extraChoice?: string): [string[]
                 const colors: IColor[] = await getColors({});
                 setSelectionOptions(concatIfNotNull(colors.map((color) => color.name)));
                 new FormSelect(selectRef.current!);
-            } catch {
-                logger.logError("Failed to get colors");
+            } catch (e) {
+                logger.logError(`Failed to get colors: ${e.message}`);
             }
         }
 

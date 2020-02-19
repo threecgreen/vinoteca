@@ -143,8 +143,8 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
                 wines,
                 hasLoaded: true
             });
-        } catch {
-            this.logger.logError("Failed to get wines");
+        } catch (e) {
+            this.logger.logError(`Failed to get wines: ${e.message}`);
         }
     }
 

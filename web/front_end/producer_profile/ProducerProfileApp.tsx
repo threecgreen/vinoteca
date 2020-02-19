@@ -138,8 +138,8 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
                 region,
                 regionText: region.name
             });
-        } catch {
-            this.logger.logWarning("Error getting producer data");
+        } catch (e) {
+            this.logger.logWarning(`Error getting producer data: ${e.message}`);
         }
     }
 
@@ -160,7 +160,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
                 this.updateProducer(regionId === -1 ? null! : regionId);
             }
         } catch (err) {
-            this.logger.logWarning(`Failed to save changes to the database: ${err}`);
+            this.logger.logWarning(`Failed to save changes to the database: ${err.message}`);
         }
     }
 
@@ -186,7 +186,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
                     });
                     return [true, region.id];
                 }
-                return Promise.reject("Unknown error");
+                throw err;
             }
         }
         if (this.state.region) {
@@ -227,7 +227,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
             navigate("/");
         } catch (ex) {
             this.logger.logWarning(`Failed to delete producer with id ${this.props.producerId}`
-                                   + ` with exception: ${ex.body}`);
+                                   + ` with exception: ${ex.message}`);
         }
     }
 }
