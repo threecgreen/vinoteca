@@ -13,6 +13,7 @@ import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
 import { HomeApp } from "./home/HomeApp";
 import { AboutApp } from "./about/AboutApp";
+import { RouteById } from "../components/RouteById";
 
 export const Router: React.FC<{}> = (_) => {
     return (
@@ -23,7 +24,7 @@ export const Router: React.FC<{}> = (_) => {
             <GrapesApp path="grapes" />
 
             <WinesApp path="wines" />
-            <WineProfileApp path="wines/:id" />
+            <RouteById Component={ WineProfileApp } path="wines/:id" />
             <InventoryApp path="wines/inventory" />
             <NewWineApp path="wines/new" />
             <SearchWinesApp path="wines/search" />

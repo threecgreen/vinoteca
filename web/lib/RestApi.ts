@@ -62,6 +62,7 @@ function getOrCreate<ReqParams, Resp, Form>(
         const results = await listGetter(params);
         if (results.length === 0) {
             const newObj = await creator(form);
+            return newObj;
         }
         if (results.length === 1) {
             return results[0];

@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -10,7 +10,7 @@ import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
-import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, updateGrape } from "../../lib/RestApi";
+import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
 import { getNameAndType, imageExists } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";
@@ -28,14 +28,7 @@ interface IProps {
     id: number;
 }
 
-export const WineProfileApp: React.FC<RouteComponentProps<IProps>> = ({id}) => {
-    if (id === undefined) {
-        return <h2>Wine not found</h2>;
-    }
-    // TODO: we shouldn't need this
-    if (typeof id !== "number") {
-        id = parseInt(id);
-    }
+export const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = new Logger(WineProfileApp.name);
