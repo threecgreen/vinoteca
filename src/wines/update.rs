@@ -71,6 +71,7 @@ pub fn patch(
     let wine_patch_form = wine_patch_form.into_inner();
     wine_patch_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wines::inventory.eq(wine_patch_form.inventory))
         .execute(&*connection)
@@ -83,6 +84,7 @@ pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResul
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wine_form)
         .execute(&*connection)
@@ -98,5 +100,3 @@ pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResul
     }
     result
 }
-
-// FIXME: update inventory with PATCH

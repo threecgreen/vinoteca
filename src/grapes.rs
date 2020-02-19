@@ -47,6 +47,8 @@ pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
     let grape_name = grape_form.name.to_owned();
+
+    connection.set_timeout(1_000)?;
     diesel::insert_into(grapes::table)
         .values(grape_form)
         .execute(&*connection)?;
@@ -64,6 +66,8 @@ pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape
 pub fn put(id: i32, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
+
+    connection.set_timeout(1_000)?;
     diesel::update(grapes::table.filter(grapes::id.eq(id)))
         .set(grapes::name.eq(grape_form.name))
         .execute(&*connection)

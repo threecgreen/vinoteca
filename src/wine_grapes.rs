@@ -93,6 +93,7 @@ pub fn post(
         }
     }
 
+    connection.set_timeout(1_000)?;
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::id.eq(wine_id)))
         .execute(&*connection);

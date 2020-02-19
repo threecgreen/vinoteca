@@ -55,6 +55,8 @@ pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::
 pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
+
+    connection.set_timeout(1_000)?;
     diesel::insert_into(producers::table)
         .values(&producer_form)
         .execute(&*connection)
@@ -71,6 +73,8 @@ pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult
 pub fn put(id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
+
+    connection.set_timeout(1_000)?;
     diesel::update(producers::table.filter(producers::id.eq(id)))
         .set(producer_form)
         .execute(&*connection)

@@ -95,6 +95,7 @@ pub fn post(viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> RestResul
     let viti_area_form = viti_area_form.into_inner();
     viti_area_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::insert_into(viti_areas::table)
         .values(&viti_area_form)
         .execute(&*connection)
@@ -119,6 +120,7 @@ pub fn put(
     let viti_area_form = viti_area_form.into_inner();
     viti_area_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::update(viti_areas::table.filter(viti_areas::id.eq(id)))
         .set(viti_area_form)
         .execute(&*connection)

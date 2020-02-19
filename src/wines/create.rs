@@ -16,6 +16,7 @@ pub fn post(raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> 
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     let result: RestResult<Wine> = diesel::insert_into(wines::table)
         .values(&wine_form)
         .execute(&*connection)

@@ -6,7 +6,6 @@ extern crate diesel;
 extern crate log;
 #[macro_use]
 extern crate rocket_contrib;
-use rocket_contrib::databases::diesel::SqliteConnection;
 #[macro_use]
 extern crate rocket;
 extern crate serde;
@@ -46,8 +45,7 @@ pub mod wines;
 #[cfg(tests)]
 mod tests;
 
-#[database("vinoteca")]
-pub struct DbConn(SqliteConnection);
+use query_utils::DbConn;
 
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()

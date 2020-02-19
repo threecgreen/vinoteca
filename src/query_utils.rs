@@ -1,5 +1,9 @@
+use crate::error::VinotecaError;
+
+use diesel::Connection;
 use diesel::result::Error;
 use rocket::http::Status;
+use rocket_contrib::databases::diesel::SqliteConnection;
 
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
@@ -30,5 +34,18 @@ pub fn error_status(error: Error) -> Status {
             warn!("Error encountered: {:?}", e);
             Status::InternalServerError
         }
+    }
+}
+
+#[database("vinoteca")]
+pub struct DbConn(SqliteConnection);
+
+impl DbConn {
+    /// SQLite has a global write lock. This hack ups the timeout to
+    /// `timeout_ms` so that queries hopefully never timeout due to locking.
+    /// This would be fixed by moving to a non-'lite' database.
+    pub fn set_timeout(&self, timeout_ms: u32) -> Result<(), VinotecaError> {
+        self.execute(&format!("PRAGMA busy_timeout = {};", timeout_ms))?;
+        Ok(())
     }
 }

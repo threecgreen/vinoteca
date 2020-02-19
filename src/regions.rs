@@ -53,6 +53,7 @@ pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Reg
     let region_form = region_form.into_inner();
     region_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::insert_into(regions::table)
         .values(&region_form)
         .execute(&*connection)
@@ -70,6 +71,7 @@ pub fn put(id: i32, region_form: Json<RegionForm>, connection: DbConn) -> RestRe
     let region_form = region_form.into_inner();
     region_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::update(regions::table.filter(regions::id.eq(id)))
         .set(regions::name.eq(region_form.name))
         .execute(&*connection)

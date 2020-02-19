@@ -6,10 +6,14 @@ use crate::DbConn;
 use diesel;
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
+use validator::Validate;
 
 #[post("/purchases", format = "json", data = "<purchase_form>")]
 pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
+    purchase_form.validate()?;
+
+    connection.set_timeout(1_000)?;
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
         .execute(&*connection)
@@ -38,9 +42,12 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult
 
 #[put("/purchases/<id>", format = "json", data = "<purchase_form>")]
 pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult<Purchase> {
-    // TODO: validation
+    let purchase_form     = purchase_form.into_inner();
+    purchase_form.validate()?;
+
+    connection.set_timeout(1_000)?;
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
-        .set(purchase_form.into_inner())
+        .set(purchase_form)
         .execute(&*connection)
         .and_then(|_| {
             purchases::table
@@ -65,6 +72,7 @@ pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> Re
 
 #[delete("/purchases/<id>")]
 pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    connection.set_timeout(1_000)?;
     diesel::delete(purchases::table.filter(purchases::id.eq(id)))
         .execute(&*connection)
         .map(|_| ())

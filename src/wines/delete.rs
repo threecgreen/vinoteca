@@ -6,6 +6,7 @@ use diesel::prelude::*;
 
 #[delete("/wines/<id>")]
 pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    connection.set_timeout(1_000)?;
     diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(id))).execute(&*connection)?;
     diesel::delete(wines::table.filter(wines::id.eq(id)))
         .execute(&*connection)

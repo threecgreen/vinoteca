@@ -27,6 +27,7 @@ pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> RestResult<Store
     let store_form = store_form.into_inner();
     store_form.validate()?;
 
+    connection.set_timeout(1_000)?;
     diesel::insert_into(stores::table)
         .values(&store_form)
         .execute(&*connection)
