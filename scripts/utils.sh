@@ -79,12 +79,3 @@ find_tslint()
         tslint="$root_dir/web/node_modules/.bin/tslint"
     fi
 }
-
-check_for_install()
-{
-    command -v vinoteca > /dev/null 2>&1
-    if [ $? != 0 ]; then
-        info_text "Adding vinoteca CLI to PATH..."
-        sudo ln -s "$scripts_dir/cli.py" /usr/local/bin/vinoteca
-    fi
-}
