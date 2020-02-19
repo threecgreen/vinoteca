@@ -41,7 +41,7 @@ export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): P
         storeId: store?.id ?? null,
         price: data.price,
         vintage: data.vintage,
-        memo: data.memo
+        memo: data.memo || null
     };
 }
 
