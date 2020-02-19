@@ -77,10 +77,14 @@ export class InventoryApp extends React.Component<RouteComponentProps, IState> {
                     newInventory -= 1;
                 }
                 const updatedWine = await partUpdateWine(id, {inventory: newInventory});
-                this.setState((prevState, _) => ({
-                    ...prevState,
-                    wines: prevState.wines.map((w) => w.id === id ? {...w, inventory: updatedWine.inventory} : w)
-                }));
+                if (newInventory > 0) {
+                    this.setState((prevState, _) => ({
+                        ...prevState,
+                        wines: prevState.wines.map((w) => w.id === id ? {...w, inventory: updatedWine.inventory} : w)
+                    }));
+                } else {
+                    this.updateInventory();
+                }
             }
         } catch (err) {
             this.setState({hasLoaded: true});
