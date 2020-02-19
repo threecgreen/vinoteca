@@ -22,6 +22,7 @@ pub fn get(
     }
     if let Some(grape_id) = grape_id {
         query = query.filter(wine_grapes::grape_id.eq(grape_id));
+
     }
     query
         .select((
@@ -88,7 +89,7 @@ pub fn post(
 
     let mut unique_grapes = HashSet::new();
     for wg in &wine_grapes {
-        if unique_grapes.insert(wg.grape_id) == false {
+        if !unique_grapes.insert(wg.grape_id) {
             return Err(VinotecaError::BadRequest("Duplicate grapes".to_owned()));
         }
     }

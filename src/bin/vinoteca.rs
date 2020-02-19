@@ -18,14 +18,14 @@ fn print_subcommands() {
 
 fn print_help() {
     println!("vinoteca is a wine purchase tracking system.");
-    println!("");
+    println!();
     println!("Perform an action using the following format:");
     println!("    $ vinoteca SUBCOMMAND [...ARGS]");
     print_subcommands();
 }
 
 fn run(args: &[String]) {
-    if args.len() == 0 || (args[0] != "-n" && args[0] != "--no-tab") {
+    if args.is_empty() || (args[0] != "-n" && args[0] != "--no-tab") {
         let open = process::Command::new("bash")
             .args(&["-c", "sleep 1; xdg-open http://localhost:8000"])
             .spawn();
@@ -39,7 +39,7 @@ fn run(args: &[String]) {
 /// Bootstrap code to check latest GitHub release and download latest version
 /// if we're not already on it.
 fn update(args: &[String]) {
-    let should_force = args.len() > 0 && (args[0] == "-f" || args[1] == "--force");
+    let should_force = !args.is_empty() && (args[0] == "-f" || args[1] == "--force");
     let current_version = env!("CARGO_PKG_VERSION");
     // Get latest release
     let curl = process::Command::new("curl")
@@ -60,7 +60,7 @@ fn update(args: &[String]) {
         .as_str()
         .expect("tag_name wasn't a string");
     // GitHub tags start with 'v'
-    if should_force == false && &version[1..] == current_version {
+    if !should_force && &version[1..] == current_version {
         println!("{} is already the latest version", current_version);
         return;
     }
