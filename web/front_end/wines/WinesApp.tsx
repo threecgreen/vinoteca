@@ -10,7 +10,7 @@ import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { getWines } from "../../lib/RestApi";
-import { setTitle } from "../../lib/widgets";
+import { setTitle, navbar } from "../../lib/widgets";
 
 interface IState {
     wines: IWine[];
@@ -136,6 +136,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
     }
 
     public async componentDidMount() {
+        navbar("wines");
         try {
             setTitle("Wines");
             const wines = await getWines({});

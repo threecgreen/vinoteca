@@ -24,14 +24,14 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
     }
 }
 
-function activateNavbarTab(id: string): void {
-    (document.getElementById(id) as HTMLElement).classList.add("active");
+function activateNavbarTab(name: string): void {
+    (document.getElementById(`${name}-nav`) as HTMLElement).classList.add("active");
 }
 
 /** Enables navbar menus. Should be called on every page. */
-export function navbar(activeNavTabId?: string) {
-    if (activeNavTabId) {
-        activateNavbarTab(activeNavTabId);
+export function navbar(activeNavTab?: string) {
+    if (activeNavTab) {
+        activateNavbarTab(activeNavTab);
     }
     const sideNavElem = document.querySelector(".sidenav");
     // tslint:disable-next-line no-unused-expression
@@ -39,6 +39,12 @@ export function navbar(activeNavTabId?: string) {
     const dropdownElem = document.querySelector(".dropdown-trigger");
     // tslint:disable-next-line no-unused-expression
     new Dropdown(dropdownElem!);
+}
+
+export function useNavBar(activeNavTab: string) {
+    React.useEffect(() => {
+        activateNavbarTab(activeNavTab);
+    }, [activeNavTab]);
 }
 
 /** Simplifies displaying of toast messages to user */

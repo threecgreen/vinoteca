@@ -1,13 +1,14 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
-import { useTitle } from "../../lib/widgets";
+import { useTitle, useNavBar } from "../../lib/widgets";
 import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYearGraph, PurchasesByYearTable } from "./PurchasesByYear";
 import { TopColors, TopGrapes, TopProducers, TopRegions, TopVitiAreas } from "./Top";
 
 export const DashboardApp: React.FC<RouteComponentProps> = (_) => {
     useTitle("Dashboards");
+    useNavBar("dashboards");
 
     return (
         <div className="container">

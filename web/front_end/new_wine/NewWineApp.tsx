@@ -10,7 +10,7 @@ import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, Purcha
 import Logger from "../../lib/Logger";
 import { createPurchase, createWine, createWineGrapes } from "../../lib/RestApi";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
-import { useTitle } from "../../lib/widgets";
+import { useTitle, useNavBar } from "../../lib/widgets";
 
 export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
@@ -19,6 +19,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const [isSaving, setIsSaving] = React.useState(false);
 
     useTitle("New wine");
+    useNavBar("new-wine");
 
     const onSubmit = async () => {
         setIsSaving(true);
