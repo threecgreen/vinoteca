@@ -17,7 +17,7 @@ export class ErrorBoundary extends React.Component<{}, IState> {
             error: null,
             errorInfo: null,
         };
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new Logger(this.constructor.name, false, false);
     }
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {

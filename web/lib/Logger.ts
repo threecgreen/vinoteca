@@ -21,8 +21,9 @@ export default class Logger {
      *
      * @param module the name of the module from which the log messages originate.
      * @param toConsole whether to also print messages to the console
+     * @param shouldToast whether to display a toast message
      */
-    constructor(private module: string, private toConsole = false) {
+    constructor(private module: string, private toConsole = false, private shouldToast = true) {
     }
 
     /**
@@ -81,6 +82,8 @@ export default class Logger {
     }
 
     private toast(level: LogLevel, message: string) {
-        toast(`${level.toUpperCase()}: ${message}`);
+        if (this.shouldToast) {
+            toast(`${level.toUpperCase()}: ${message}`);
+        }
     }
 }
