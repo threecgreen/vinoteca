@@ -1,9 +1,24 @@
 [package]
 name = "vinoteca"
+description = "Wine purchase tracker"
+repository = "https://github.com/threecgreen/vinoteca"
 version = "5.0.0"
 authors = ["Carter Green <cartergr@usc.edu>"]
-readme = "../README.md"
+readme = "./README.md"
+license = "MIT"
 default-run = "vinoteca"
+
+# For generating .deb file for Linux installs
+[package.metadata.deb]
+depends = "$auto, npm, libsqlite3-dev"
+assets = [
+    ["target/release/vinoteca", "usr/bin/", "755"],
+    ["web/static/vinoteca.bundle.js", "usr/share/vinoteca/", "644"],
+    ["web/static/vinoteca.bundle.css", "usr/share/vinoteca/", "644"],
+    ["web/static/img/*", "usr/share/vinoteca/img/", "644"],
+    ["web/static/img/flags/*", "usr/share/vinoteca/img/flags/", "644"],
+    ["README.md", "usr/share/doc/vinoteca/README", "644"],
+]
 
 [dependencies]
 chrono = "0.4"
