@@ -24,6 +24,11 @@ fn print_help() {
     print_subcommands();
 }
 
+fn print_version() {
+    let version = env!("CARGO_PKG_VERSION");
+    println!("vinoteca version {}", version);
+}
+
 fn run(args: &[String]) {
     if args.is_empty() || (args[0] != "-n" && args[0] != "--no-tab") {
         let open = process::Command::new("bash")
@@ -99,6 +104,7 @@ fn main() {
 
     match subcommand.as_ref() {
         "-h" | "--help" | "help" => print_help(),
+        "-v" | "--version" => print_version(),
         "run" => run(&args[2..]),
         "update" => update(&args[2..]),
         _ => {
