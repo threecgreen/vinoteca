@@ -59,18 +59,19 @@ fn update(args: &[String]) {
     // Parse untyped json
     let map: serde_json::Value =
         serde_json::from_str(&curl_json).expect("Failed to deserialize curl version JSON");
-    let version = map
+    let version = &map
         .get("tag_name")
         .expect("No tag_name in version JSON")
         .as_str()
-        .expect("tag_name wasn't a string");
-    // GitHub tags start with 'v'
-    if !should_force && &version[1..] == current_version {
+        .expect("tag_name wasn't a string")
+        // GitHub tags start with 'v'
+        [1..];
+    if !should_force && version == current_version {
         println!("{} is already the latest version", current_version);
         return;
     }
     let url = format!(
-        "https://github.com/threecgreen/vinoteca/archive/{}.tar.gz",
+        "https://github.com/threecgreen/vinoteca/archive/vinoteca_{}_amd64.deb",
         version
     );
     let download_success = process::Command::new("curl")
@@ -81,15 +82,9 @@ fn update(args: &[String]) {
     if !download_success {
         panic!("Failed to download release");
     }
-    let unpack_success = process::Command::new("tar")
-        .args(&["-xzf", &format!("{}.tar.gz", version)])
-        .status()
-        .unwrap_or_else(|e| panic!("Failed to extract new release: {}", e))
-        .success();
-    if !unpack_success {
-        panic!("Failed to unpack release");
-    }
     println!("Successfully downloaded the latest version: {}", version);
+    println!("Please run the following to install:");
+    println!("$ sudo dpkg -i vinoteca*.deb");
     // TODO: run database migrations and any other necessary work here
 }
 
