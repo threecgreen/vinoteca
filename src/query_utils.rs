@@ -1,7 +1,7 @@
 use crate::error::VinotecaError;
 
-use diesel::Connection;
 use diesel::result::Error;
+use diesel::Connection;
 use rocket::http::Status;
 use rocket_contrib::databases::diesel::SqliteConnection;
 

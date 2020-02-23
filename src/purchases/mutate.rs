@@ -42,7 +42,7 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult
 
 #[put("/purchases/<id>", format = "json", data = "<purchase_form>")]
 pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult<Purchase> {
-    let purchase_form     = purchase_form.into_inner();
+    let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
 
     connection.set_timeout(1_000)?;

@@ -6,8 +6,8 @@ use crate::DbConn;
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
-use typescript_definitions::TypeScriptify;
 use std::collections::HashSet;
+use typescript_definitions::TypeScriptify;
 use validator::Validate;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
@@ -22,7 +22,6 @@ pub fn get(
     }
     if let Some(grape_id) = grape_id {
         query = query.filter(wine_grapes::grape_id.eq(grape_id));
-
     }
     query
         .select((

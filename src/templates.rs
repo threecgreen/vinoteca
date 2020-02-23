@@ -1,8 +1,8 @@
 extern crate askama;
 extern crate chrono;
 
-use templates::chrono::Datelike;
 use std::path::PathBuf;
+use templates::chrono::Datelike;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
