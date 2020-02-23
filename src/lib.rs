@@ -9,13 +9,13 @@ extern crate rocket_contrib;
 #[macro_use]
 extern crate rocket;
 extern crate serde;
+extern crate time;
 extern crate typescript_definitions;
 extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 extern crate image;
 extern crate rocket_multipart_form_data;
-use rocket_contrib::serve::StaticFiles;
 
 // Diesel modules
 pub mod models;
@@ -27,7 +27,7 @@ mod query_utils;
 /////////////////////
 // Rocket handlers //
 /////////////////////
-// Templates (HTML)
+mod cached_static;
 mod templates;
 // Rest
 mod colors;
@@ -46,17 +46,12 @@ pub mod wines;
 mod tests;
 
 use query_utils::DbConn;
+use cached_static::CachedStaticFiles;
 
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()
         .attach(DbConn::fairing())
-        .mount(
-            "/",
-            routes![
-                templates::home,
-                templates::any_other,
-            ],
-        )
+        .mount("/", routes![templates::home, templates::any_other,])
         .mount(
             "/rest",
             routes![
@@ -120,6 +115,6 @@ pub fn create_rocket() -> rocket::Rocket {
         .to_string();
 
     rocket
-        .mount("/static", StaticFiles::from(static_dir))
-        .mount("/media", StaticFiles::from(media_dir))
+        .mount("/static", CachedStaticFiles::from(static_dir))
+        .mount("/media", CachedStaticFiles::from(media_dir))
 }
