@@ -52,7 +52,7 @@ sudo echo
 
 # Check if dpkg is installed
 command -v dpkg
-if [ "$?" != "1" ]; then
+if [ "$?" != "0" ]; then
     error_exit "dpkg needs to be installed for this script to work"
 fi
 
