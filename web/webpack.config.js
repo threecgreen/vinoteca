@@ -72,7 +72,8 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new MiniCssExtractPlugin({
-                filename: "[name].bundle.css"
+                filename: "[name].bundle.css",
+                sourceMap: !isProd,
             }),
             // Reduce date-fns locales
             new webpack.ContextReplacementPlugin(
