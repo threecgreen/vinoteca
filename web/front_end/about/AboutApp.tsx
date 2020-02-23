@@ -57,6 +57,15 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             <h4><a className="page-link"
             // @ts-ignore
             name="changelog">Changelog</a></h4>
+            <h5>5.0.0</h5>
+            <ul className="bullets">
+                <li>Move to rust for performance and ease of deployment</li>
+                <li>Redesigned wine profiles</li>
+                <li>Convert front-end to single app</li>
+                <li>Many bug fixes</li>
+                <li>Consolidate special character implementations</li>
+                <li>Better error messages and error handling</li>
+            </ul>
             <h5>4.4.4</h5>
             <ul className="bullets">
                 <li>Extend sort by wine type then name to inventory</li>
