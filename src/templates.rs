@@ -11,7 +11,7 @@ fn this_year() -> u16 {
 }
 
 #[derive(askama::Template)]
-#[template(path = "base.html")]
+#[template(path = "index.html")]
 pub struct AppTemplate<'a> {
     this_year: u16,
     version: &'a str,
