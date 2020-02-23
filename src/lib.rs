@@ -45,8 +45,8 @@ pub mod wines;
 #[cfg(tests)]
 mod tests;
 
-use query_utils::DbConn;
 use cached_static::CachedStaticFiles;
+use query_utils::DbConn;
 
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()
@@ -115,6 +115,6 @@ pub fn create_rocket() -> rocket::Rocket {
         .to_string();
 
     rocket
-        .mount("/static", CachedStaticFiles::from(static_dir))
-        .mount("/media", CachedStaticFiles::from(media_dir))
+        .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
+        .mount("/media", CachedStaticFiles::from(media_dir).rank(1))
 }

@@ -17,8 +17,10 @@ pub struct AppTemplate<'a> {
     version: &'a str,
 }
 
+// TODO: handle robots.txt
+
 // Lower ranking than /static and /media
-#[get("/<_path..>", rank = 11)]
+#[get("/<_path..>", rank = 2)]
 pub fn any_other(_path: PathBuf) -> AppTemplate<'static> {
     home()
 }
