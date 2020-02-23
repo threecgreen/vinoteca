@@ -1,53 +1,46 @@
-[![Run Status](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/badge?branch=master)](https://app.shippable.com/github/threecgreen/vinoteca/runs?branchName=master)
-[![Coverage Badge](https://api.shippable.com/projects/5b0095e52ce7330700a7d8d5/coverageBadge?branch=master)](https://app.shippable.com/github/threecgreen/vinoteca/runs?branchName=master)
 # vinoteca
-A wine purchase tracker and review system in a Django web app.
-I created this project to give my dad a better way to track his wine purchases than the Excel spreadsheet he was using.
-As such, vinoteca is designed with one specific user in mind and it shows.
+A wine purchase tracker and review system in a rust web app.
+I created this project to give my dad a better way to track his wine purchases
+than the Excel spreadsheet he was using.
+As such, vinoteca was designed with a specific user in mind.
 
 ## Installation
  1. Install sqlite3 if not already installed
+ 1. Download and install the latest release
+
+### Building from source
  1. Clone the repository
      ```bash
      $ git clone https://github.com/threecgreen/vinoteca
      $ cd vinoteca
      ```
- 1. Create a new virtual environment and activate it
-     ```bash
-     $ conda create -n vinoteca python=3.6
-     $ conda activate vinoteca
-     ```
-     or use virtualenv
- 1. Install python dependencies
+ 1. Install rust via rustup if not already installed
     ```bash
-    $ pip install -r requirements.txt
+    $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     ```
- 1. Run Django migrations
+ 1. Build the web server
     ```bash
-    $ python manage.py migrate
+    $ rustup override add nightly
+    $ cargo build
     ```
- 1. Install JavaScript dependencies and build the webpack bundles
+ 1. Generate contracts
+    ```bash
+    $ cargo run --bin gen_contracts
+    ```
+ 1. Install JavaScript dependencies and create the webpack bundle
     ```bash
     $ npm install --save --no-optional
     $ npm run-script build
     ```
 
-**NB: Many of the tests currently rely on specific data in the database.
-I haven't gotten around to creating test data.**
-
 ## Configuration
-Configuration is managed via `vinoteca/config.yaml`.
-The file is for overrides of default locations and therefore does not contain any paths when it is initially created.
-The configuration options are:
- * Database path: where the database is stored (default `.../data/wine.db`)
- * Log path: where logs will be written to (default `.../vinoteca.log`)
- * Media path: where uploaded wine images will be stored (default `.../media/`)
+Configuration is managed via `Rocket.toml`.
 
 ## Built-With
-* Django
+* Rocket
 * sqlite3
 * Materialize CSS
-* Typescript
+* React
 * Webpack
 * Chart.js
 
