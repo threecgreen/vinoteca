@@ -41,6 +41,7 @@ media
 # Rust
 target
 Rocket.toml
+config.yaml.bak
 **/*.rs.bk
 Rocket.toml
 .vscode/tags

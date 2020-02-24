@@ -12,12 +12,12 @@ default-run = "vinoteca"
 [package.metadata.deb]
 depends = "$auto, libsqlite3-dev"
 assets = [
-    ["target/release/vinoteca", "usr/bin/", "755"],
-    ["web/static/vinoteca.bundle.js", "usr/share/vinoteca/", "644"],
-    ["web/static/vinoteca.bundle.css", "usr/share/vinoteca/", "644"],
-    ["web/static/img/*", "usr/share/vinoteca/img/", "644"],
-    ["web/static/img/flags/*", "usr/share/vinoteca/img/flags/", "644"],
-    ["README.md", "usr/share/doc/vinoteca/README", "644"],
+    ["target/release/vinoteca", "usr/local/bin/", "755"],
+    ["web/static/vinoteca.bundle.js", "usr/local/share/vinoteca/", "644"],
+    ["web/static/vinoteca.bundle.css", "usr/local/share/vinoteca/", "644"],
+    ["web/static/img/*", "usr/local/share/vinoteca/img/", "644"],
+    ["web/static/img/flags/*", "usr/local/share/vinoteca/img/flags/", "644"],
+    ["README.md", "usr/local/share/doc/vinoteca/README", "644"],
 ]
 
 [dependencies]

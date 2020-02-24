@@ -31,12 +31,6 @@ info_text()
     echo -e "\033[1;34m$1\033[0m"
 }
 
-# find_vinoteca_version()
-# {
-#     local git_ver="$(git --git-dir="$root_dir/.git" --work-tree="$root_dir" branch | grep \* | cut -d' ' -f2)"
-#     vinoteca_ver="$(cat "$root_dir/vinoteca/__init__.py" | awk 'NR==2 {print $3}' | sed 's/\"//g')-$git_ver"
-# }
-
 check_for_node()
 {
     command -v npm > /dev/null 2>&1
