@@ -9,9 +9,9 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
         <div className="container">
 
             <h3 className="page-title">About</h3>
-            <p>Vinoteca grew out of an Excel spreadsheet used to track wine purchases.
+            <p>Vinoteca grew out of an Excel spreadsheet used to track wine purchases.</p>
 
-            Features:</p>
+            <h5>Features</h5>
             <ul className="bullets">
                 <li>Wine ratings and pictures</li>
                 <li>Dashboard of wine purchase statistics and charts</li>
@@ -59,12 +59,22 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             name="changelog">Changelog</a></h4>
             <h5>5.0.0</h5>
             <ul className="bullets">
-                <li>Move to rust for performance and ease of deployment</li>
-                <li>Redesigned wine profiles</li>
-                <li>Convert front-end to single app</li>
+                <li>Move to rust
+                    <ul className="bullets">
+                        <li>Better performance</li>
+                        <li>Better error messages and error handling</li>
+                        <li>Ease and speed of updating</li>
+                    </ul>
+                </li>
+                <li>Move remaining front-end logic to React
+                    <ul className="bullets">
+                        <li>Redesigned wine profiles</li>
+                        <li>Incremental load dashboards</li>
+                        <li>Convert front-end to single app</li>
+                        <li>Consolidate special character implementations</li>
+                    </ul>
+                </li>
                 <li>Many bug fixes</li>
-                <li>Consolidate special character implementations</li>
-                <li>Better error messages and error handling</li>
             </ul>
             <h5>4.4.4</h5>
             <ul className="bullets">
