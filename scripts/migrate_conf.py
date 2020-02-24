@@ -1,4 +1,5 @@
 from pathlib import Path
+from os.path import expanduser
 
 import yaml
 
@@ -28,11 +29,11 @@ class ConfigurationManager(object):
                             or (Path(val).expanduser().parent.exists()
                                 and setting == "log_path")):
                     setattr(self, setting, str(Path(val).expanduser().resolve()))
-                else:
-                    if val:
-                        print(f"Invalid path set for {setting} with value '{val}'")
+                elif val:
+                    print(f"Invalid path set for {setting} with value '{val}'")
 
 TOML_TEMPLATE = """[global]
+log = "normal"
 media_dir = "{media_path}"
 static_dir = "/usr/local/share/vinoteca"
 
@@ -43,7 +44,8 @@ vinoteca = {{ url = "{database_path}" }}
 def main():
     path = Path(__file__).resolve().parent.parent / "vinoteca" / "config.yaml"
     config_man = ConfigurationManager(path, "", "", "")
-    rocket_path = Path("/usr/local/Rocket.toml")
+    # Write to home directory
+    rocket_path = expanduser(Path("~") / "Rocket.toml")
     with open(rocket_path, 'w') as fout:
         fout.write(TOML_TEMPLATE.format(media_path=config_man.media_path,
                                         database_path=config_man.database_path))

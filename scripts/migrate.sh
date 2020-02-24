@@ -62,10 +62,7 @@ find_python_env
 sudo rm /usr/local/bin/vinoteca
 
 # Download latest version
-curl --silent "https://api.github.com/repos/threecgreen/vinoteca/releases/latest" |
-    grep '"tag_name":' |
-    sed -E 's/.*"([^"]+)".*/\1/' |
-    xargs -I {} curl -sOL "https://github.com/threecgreen/vinoteca/archive/vinoteca_"{}'_amd64.deb'
+curl -sOL "$(curl --silent "https://api.github.com/repos/threecgreen/vinoteca/releases/latest" | grep '"browser_download_url":' | sed -E 's/.*"([^"]+)".*/\1/')"
 
 # Install
 sudo dpkg -i vinoteca*.deb || error_exit "Failed to install vinoteca package"

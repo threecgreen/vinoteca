@@ -95,10 +95,17 @@ fn update(args: &[String]) {
         println!("{} is already the latest version", current_version);
         return;
     }
-    let url = format!(
-        "https://github.com/threecgreen/vinoteca/archive/vinoteca_{}_amd64.deb",
-        version
-    );
+    let url = &map
+        .get("assets")
+        .expect("No assets in version JSON")
+        .as_array()
+        .expect("Assets not an array")
+        .get(0)
+        .expect("Array empty")
+        .get("browser_download_url")
+        .expect("No browser_download_url field")
+        .as_str()
+        .expect("browser_download_url wasn't a string");
     let download_success = process::Command::new("curl")
         .args(&["-sOL", &url])
         .status()

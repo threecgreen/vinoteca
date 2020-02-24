@@ -1,22 +1,15 @@
-# Editors
-.idea/
-
 # Compiled
 *.pyc
 
 # Data files
 data/*.csv
 data/*.db
-data/ipynb_checkpoints/
 .sass-cache/
 **.ipynb
 
 # Test files
-tests/cov_html/
-.pytest_cache/
 .cache/
 .coverage
-tests/.svn/
 
 # Media files
 media/*.png
@@ -47,8 +40,8 @@ Rocket.toml
 .vscode/tags
 
 # Build
-vinoteca
-vinoteca.tar.gz
+*.tar.gz
+*.deb
 
 # Generated
 web/lib/Rest.d.ts
