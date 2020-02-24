@@ -29,13 +29,38 @@ fn print_version() {
     println!("vinoteca version {}", version);
 }
 
+fn get_open_tab_command() -> Option<String> {
+    let url = "http://localhost:8000";
+    let sys_info = {
+        let uname_output = process::Command::new("uname")
+            .arg("-a")
+            .output()
+            .expect("Failed to run uname command");
+        String::from_utf8(uname_output.stdout).expect("Failed to convert uname output to string")
+    };
+    if sys_info.contains("Darwin") {
+        Some(format!("open {}", url))
+    // WSL
+    } else if sys_info.contains("Microsoft") {
+        Some(format!("cmd.exe /c \"start {}\"", url))
+    } else if sys_info.contains("Linux") {
+        Some(format!("xdg-open {}", url))
+    } else {
+        print_error(&format!("Don't know how to open URLs on {}", sys_info));
+        None
+    }
+}
+
 fn run(args: &[String]) {
     if args.is_empty() || (args[0] != "-n" && args[0] != "--no-tab") {
-        let open = process::Command::new("bash")
-            .args(&["-c", "sleep 1; xdg-open http://localhost:8000"])
-            .spawn();
-        if let Err(e) = open {
-            print_error(&format!("Couldn't open browser tab: {}", e));
+        let open_cmd = get_open_tab_command();
+        if let Some(open_cmd) = open_cmd {
+            let open = process::Command::new("bash")
+                .args(&["-c", &format!("sleep 1; {}", open_cmd)])
+                .spawn();
+            if let Err(e) = open {
+                print_error(&format!("Couldn't open browser tab: {}", e));
+            }
         }
     }
     vinoteca::create_rocket().launch();
@@ -53,7 +78,7 @@ fn update(args: &[String]) {
             "https://api.github.com/repos/threecgreen/vinoteca/releases/latest",
         ])
         .output()
-        .unwrap_or_else(|e| panic!("Failed to execute curl: {}", e));
+        .expect("Failed to execute curl");
     let curl_json =
         String::from_utf8(curl.stdout).expect("Failed to parse curl release version output");
     // Parse untyped json
@@ -77,7 +102,7 @@ fn update(args: &[String]) {
     let download_success = process::Command::new("curl")
         .args(&["-sOL", &url])
         .status()
-        .unwrap_or_else(|e| panic!("Failed to download latest release: {}", e))
+        .expect("Failed to download latest release")
         .success();
     if !download_success {
         panic!("Failed to download release");
