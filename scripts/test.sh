@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
-# Run Python tests
+# Run unit tests
 source "$(dirname $0)/utils.sh"
-find_python_env
 
 cd "$root_dir"
 if [ "$CI" == "true" ]; then
-    "$py_env/pytest" --cov=. --cov-branch --cov-config="$root_dir/.coveragerc" \
-        --cov-report=xml:shippable/codecoverage/coverage.xml \
-        --junitxml=shippable/testresults/nosetests.xml
+    cargo test --verbose || error_exit "Test(s) failed"
 else
-    "$py_env/pytest" --cov=. --cov-branch --cov-config="$root_dir/.coveragerc" \
-        --cov-report term-missing
+    cargo test || error_exit "Test(s) failed"
 fi
 cd -
-

@@ -2,42 +2,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run Server",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/run.sh",
-            "args": [
-                "--no-tab"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Pylint",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/lint.sh",
-            "args": [
-                "python"
-            ],
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
             "label": "Tslint",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/lint.sh",
@@ -54,22 +18,9 @@
             }
         },
         {
-            "label": "Pytest",
-            "type": "shell",
-            "command": "${workspaceFolder}/scripts/test.sh",
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": false
-            }
-        },
-        {
             "type": "npm",
             "script": "watch",
-            "path": "vinoteca/",
+            "path": "web/",
             "group": "build",
             "isBackground": true,
             "problemMatcher": [
@@ -80,13 +31,13 @@
         {
             "type": "npm",
             "script": "install",
-            "path": "vinoteca/",
+            "path": "web/",
             "problemMatcher": []
         },
         {
             "type": "npm",
             "script": "build",
-            "path": "vinoteca/",
+            "path": "web/",
             "problemMatcher": [
                 "$ts-webpack",
                 "$tslint-webpack"
@@ -95,14 +46,51 @@
         {
             "type": "npm",
             "script": "profile",
-            "path": "vinoteca/",
+            "path": "web/",
             "problemMatcher": []
         },
         {
             "type": "npm",
             "script": "analyze-bundle",
-            "path": "vinoteca/",
+            "path": "web/",
             "problemMatcher": []
+        },
+        {
+            "label": "cargo: generate contracts",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "run",
+                "--bin",
+                "gen_contracts"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$rustc",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            }
         }
+        // {
+        //     "type": "cargo",
+        //     "subcommand": "run",
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ]
+        // },
+        // {
+        //     "type": "cargo",
+        //     "subcommand": "build",
+        //     "problemMatcher": [
+        //         "$rustc"
+        //     ],
+        //     "group": "build"
+        // }
     ],
 }

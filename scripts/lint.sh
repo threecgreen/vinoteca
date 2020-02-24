@@ -1,37 +1,34 @@
 #!/usr/bin/env bash
-# Runs code linters. If no arguments are specified, all linters are run. To
-# run a specific linter, pass the name of the language. For example:
-# $ ./lint.sh python
-# will pylint, the Python linter.
 source "$(dirname $0)/utils.sh"
-find_python_env
 find_tslint
 
-pylint()
-# Runs Python linter called pylint
+rust()
 {
-    info_text "Running Python linter."
-    "$py_env/pylint" "$root_dir/dashboards" "$root_dir/places" "$root_dir/producers" \
-        "$root_dir/rest" "$root_dir/vinoteca" "$root_dir/wine_attrs" "$root_dir/wines" \
-        --rcfile="$root_dir/.pylintrc" --output-format=colorized
+    info_text "Running rust linter."
+    cd $root_dir
+    if [ "$CI" = "true" ]; then
+        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || return 0
+    fi
+    cargo clippy || error_exit "Clippy error(s)"
+    cd -
 }
 
 typescript()
 # Runs typescript linter called tslint
 {
     info_text "Running Typescript linter."
-    "$tslint" -c "$root_dir/tslint.json" "$root_dir/vinoteca/front_end/**/*.ts" \
-            "$root_dir/vinoteca/lib/**/*.ts" "$root_dir/vinoteca/@types/**/*.ts"
+    "$tslint" -c "$root_dir/tslint.json" "$root_dir/web/front_end/**/*.ts" \
+            "$root_dir/web/lib/**/*.ts" "$root_dir/web/@types/**/*.ts" || error_exit "TSLint error(s)"
 }
 
 case $# in
     0)
-        pylint
+        rust
         typescript
         ;;
     1)
-        if [ $1 = "python" ]; then
-            pylint
+        if [ $1 = "rust" ]; then
+            rust
         elif [ $1 = "typescript" ]; then
             typescript
         else

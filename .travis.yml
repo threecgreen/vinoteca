@@ -1,0 +1,44 @@
+language: rust
+cache:
+  directories:
+    - /home/travis/.cargo
+before_cache:
+  - rm -rf /home/travis/.cargo/git
+  - rm -rf /home/travis/.cargo/registry
+matrix:
+  include:
+    - os: linux
+      rust: nightly
+      env: TARGET=x86_64-unknown-linux-gnu
+
+env:
+  global:
+    - HOST=x86_64-unknown-linux-gnu
+
+sudo: required
+
+install:
+  - sudo apt update
+  - sudo apt install npm libsqlite3-dev -y
+
+script:
+  - bash scripts/build.sh
+  - bash scripts/test.sh
+  - bash scripts/lint.sh
+
+before_deploy:
+  - bash scripts/deploy.sh
+
+deploy:
+  provider: releases
+  api_key:
+    secure: 'imJXoB+U1IZ0Oo1ykr+cjZdaTku6Gosh3v2jap8sPo29TLAQINl12+YQ+4ooYxCfAFkF5PuqGbO5Xl2PFXmA2YcSPANMjR9QRsu6q9VZS15WVgpccb5p6+UFZWCyy0GnKxBWqbWHDmNRXjsXzL/F2Is7jPUei03Vao0Ubj00jos8AJDJDedF9VID2Ai2cwEoZpa7UdDoqwd2DRSc1+P6UPtIjT81o4HUqwRm7mB2wj3npseGIRQ0BLcz1KwntSat1GM/hT062VoTJG26utfQu2gB6bPNoOddqx6SwUw9LpTCVZ8Ue+DJ7cWkTfcHyvK3m+pUC+uFLEEFphWZF2pZddIeQFjBMZ9bxPeIAS/5ixQZDAnAZnrKumMWqdLnAVl6MxhF3zohYeGVNwJ/3d00XkT35SQPaFGvsOlQY4Bb/C86IYzG0ka5lW2g75pMoSwQSGC2HNPERHnF4p0wLi0lurr5eiInl3wmFHuWTUai14KyTTrq59svnvJYw8RCojvWZC62IXIQf1oXyx/vLwKEPmFRU3tMJpAeHnTCXrgA2QKfmSv1/BR4wxuanG73e5aQoiKJb6qTdZ6RMY2isBq0hwKrWNTxhwrXQUj52cSSL8TWzYadJdFkJlc5HZWaTSIAZO4R812ZYpR/E3ch+SU8dNezTueGk5C2WuwCeqc8csE='
+  file_glob: true
+  file: target/debian/vinoteca*.deb
+  skip_cleanup: true
+  on:
+    tags: true
+
+notifications:
+  email:
+    on_success: never
