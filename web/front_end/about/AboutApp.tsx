@@ -57,6 +57,10 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             <h4><a className="page-link"
             // @ts-ignore
             name="changelog">Changelog</a></h4>
+
+            <h5>5.0.1</h5>
+            <p>Fix migration and update scripts</p>
+
             <h5>5.0.0</h5>
             <ul className="bullets">
                 <li>Move to rust
