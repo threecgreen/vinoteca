@@ -58,6 +58,12 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.2</h5>
+            <ul className="bullets">
+                <li>Fix missing vendors bundle</li>
+                <li>Fix WSL detection for opening new tab</li>
+            </ul>
+
             <h5>5.0.1</h5>
             <p>Fix migration and update scripts</p>
 
