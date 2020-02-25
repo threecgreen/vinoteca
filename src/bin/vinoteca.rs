@@ -36,14 +36,16 @@ fn get_open_tab_command() -> Option<String> {
             .arg("-a")
             .output()
             .expect("Failed to run uname command");
-        String::from_utf8(uname_output.stdout).expect("Failed to convert uname output to string")
+        String::from_utf8(uname_output.stdout)
+            .expect("Failed to convert uname output to string")
+            .to_lowercase()
     };
-    if sys_info.contains("Darwin") {
+    if sys_info.contains("darwin") {
         Some(format!("open {}", url))
     // WSL
-    } else if sys_info.contains("Microsoft") {
+    } else if sys_info.contains("microsoft") {
         Some(format!("cmd.exe /c \"start {}\"", url))
-    } else if sys_info.contains("Linux") {
+    } else if sys_info.contains("linux") {
         Some(format!("xdg-open {}", url))
     } else {
         print_error(&format!("Don't know how to open URLs on {}", sys_info));
