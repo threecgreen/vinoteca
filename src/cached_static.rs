@@ -31,25 +31,21 @@ impl CachedFile {
     }
 
     /// Retrieve the underlying `File`.
-    #[inline(always)]
     pub fn file(&self) -> &File {
         &self.1
     }
 
     /// Take the underlying `File`.
-    #[inline(always)]
     pub fn take_file(self) -> File {
         self.1
     }
 
     /// Retrieve a mutable borrow to the underlying `File`.
-    #[inline(always)]
     pub fn file_mut(&mut self) -> &mut File {
         &mut self.1
     }
 
     /// Retrieve the path of this file.
-    #[inline(always)]
     pub fn path(&self) -> &Path {
         self.0.as_path()
     }
