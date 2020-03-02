@@ -18,13 +18,12 @@ FROM wines w
     INNER JOIN colors c ON w.color_id = c.id
     INNER JOIN wine_types wt ON w.wine_type_id = wt.id
     INNER JOIN purchases pu ON w.id = pu.wine_id
-    INNER JOIN (
+    LEFT JOIN (
         SELECT
             w2.id
             , max(p2.date) as last_purchase_date
         FROM wines w2
             INNER JOIN purchases p2 ON w2.id = p2.wine_id
-        WHERE p2.vintage IS NOT NULL
         GROUP BY w2.id
     ) AS sub ON sub.id = w.id
     INNER JOIN purchases p3 ON w.id = p3.wine_id

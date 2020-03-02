@@ -140,14 +140,14 @@ pub struct InventoryWine {
     region_id: i32,
     #[sql_type = "Text"]
     region: String,
-    #[sql_type = "Integer"]
-    last_purchase_vintage: i32,
-    #[sql_type = "Integer"]
-    last_purchase_date: i32,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_vintage: Option<i32>,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_date: Option<i32>,
     #[sql_type = "Integer"]
     inventory: i32,
-    #[sql_type = "Integer"]
-    last_purchase_price: i32,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_price: Option<i32>,
 }
 
 #[get("/wines/inventory")]

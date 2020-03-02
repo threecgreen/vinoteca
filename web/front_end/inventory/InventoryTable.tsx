@@ -160,19 +160,15 @@ export class InventoryTable extends React.Component<IProps, IState> {
                 })
             case SortingValue.Vintage:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchaseVintage || 0) > (w2.lastPurchaseVintage || 0) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseVintage ?? 0) > (w2.lastPurchaseVintage ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.PurchaseDate:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchaseDate) > (w2.lastPurchaseDate) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchaseDate ?? 0) > (w2.lastPurchaseDate ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             case SortingValue.Price:
                 return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchasePrice || 0) > (w2.lastPurchasePrice || 0) ? -ascendingMultiplier : ascendingMultiplier;
-                });
-            case SortingValue.PurchaseDate:
-                return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchaseDate) > (w2.lastPurchaseDate) ? -ascendingMultiplier : ascendingMultiplier;
+                    return (w1.lastPurchasePrice ?? 0) > (w2.lastPurchasePrice ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
                 });
             default:
                 return this.props.wines;
