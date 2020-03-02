@@ -58,6 +58,9 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.3</h5>
+            <p>Fix null handling in inventory</p>
+
             <h5>5.0.2</h5>
             <ul className="bullets">
                 <li>Fix missing vendors bundle</li>

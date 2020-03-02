@@ -2,7 +2,7 @@
 name = "vinoteca"
 description = "Wine purchase tracker"
 repository = "https://github.com/threecgreen/vinoteca"
-version = "5.0.2"
+version = "5.0.3"
 authors = ["Carter Green <cartergr@usc.edu>"]
 readme = "./README.md"
 license = "MIT"
@@ -23,8 +23,8 @@ assets = [
 
 [dependencies]
 chrono = "0.4"
-rocket = "0.4.2"
-rocket_codegen = "0.4.2"
+rocket = "0.4.3"
+rocket_codegen = "0.4.3"
 diesel = { version = "1.4", features = ["sqlite"] }
 dotenv = "0.15"
 log = "0.4"
@@ -34,7 +34,7 @@ serde_json = "1.0"
 time = "0.1.42"
 validator = "0.10"
 validator_derive = "0.10"
-rocket-multipart-form-data = "0.8.0"
+rocket-multipart-form-data = "0.8.1"
 image = "0.23.0"
 
 [dependencies.rocket_contrib]
