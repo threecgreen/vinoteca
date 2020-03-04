@@ -8,7 +8,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { PreloaderCirc } from "../../components/Preloader";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { createPurchase, createWine, createWineGrapes } from "../../lib/RestApi";
+import { createPurchase, createWine, createWineGrapes, deleteWine, deletePurchase } from "../../lib/RestApi";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 import { useTitle, useNavBar } from "../../lib/widgets";
 
@@ -25,9 +25,13 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
         setIsSaving(true);
         // TODO: check certain forms aren't empty
         const logger = new Logger(NewWineApp.name);
+
+        let wineId;
+        let purchaseId;
         try {
             const wineForm = await wineDataToForm(wineState, purchaseState.shouldAddToInventory ? purchaseState.quantity ?? 0 : 0);
             const wine = await createWine(wineForm, wineState.file);
+            wineId = wine.id;
             await Promise.all([
                 async () => {
                     if (grapes.length > 0) {
@@ -37,13 +41,21 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 },
                 async () => {
                     const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);
-                    await createPurchase(purchaseForm);
+                    const purchase = await createPurchase(purchaseForm);
+                    purchaseId = purchase.id;
                 }
             ].map((f) => f()));
             navigate(`/wines/${wine.id}`);
         } catch (err) {
-            setIsSaving(false);
             logger.logError(`Error creating new wine: ${err.message}`);
+            // Prevent partial data
+            if (purchaseId) {
+                await deletePurchase(purchaseId);
+            }
+            if (wineId) {
+                await deleteWine(wineId);
+            }
+            setIsSaving(false);
         }
     }
 
