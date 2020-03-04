@@ -35,9 +35,9 @@ fn get_open_tab_command() -> Option<String> {
         let uname_output = process::Command::new("uname")
             .arg("-a")
             .output()
-            .expect("Failed to run uname command");
+            .expect("To run uname command");
         String::from_utf8(uname_output.stdout)
-            .expect("Failed to convert uname output to string")
+            .expect("To convert uname output to string")
             .to_lowercase()
     };
     if sys_info.contains("darwin") {
@@ -65,6 +65,11 @@ fn run(args: &[String]) {
             }
         }
     }
+    // Set working directory to home to solve config issue
+    #[cfg(not(debug_assertions))]
+    std::env::set_current_dir(std::env::var("HOME").expect("User's home directory"))
+        .expect("Current working directory to be set");
+
     vinoteca::create_rocket().launch();
 }
 
@@ -80,17 +85,17 @@ fn update(args: &[String]) {
             "https://api.github.com/repos/threecgreen/vinoteca/releases/latest",
         ])
         .output()
-        .expect("Failed to execute curl");
+        .expect("To execute curl");
     let curl_json =
-        String::from_utf8(curl.stdout).expect("Failed to parse curl release version output");
+        String::from_utf8(curl.stdout).expect("Release version output");
     // Parse untyped json
     let map: serde_json::Value =
-        serde_json::from_str(&curl_json).expect("Failed to deserialize curl version JSON");
+        serde_json::from_str(&curl_json).expect("version JSON");
     let version = &map
         .get("tag_name")
-        .expect("No tag_name in version JSON")
+        .expect("tag_name in version JSON")
         .as_str()
-        .expect("tag_name wasn't a string")
+        .expect("tag_name to be a string")
         // GitHub tags start with 'v'
         [1..];
     if !should_force && version == current_version {
@@ -99,22 +104,22 @@ fn update(args: &[String]) {
     }
     let url = &map
         .get("assets")
-        .expect("No assets in version JSON")
+        .expect("Assets in version JSON")
         .as_array()
-        .expect("Assets not an array")
+        .expect("Assets to be an array")
         .get(0)
-        .expect("Array empty")
+        .expect("Assets to not be empty")
         .get("browser_download_url")
-        .expect("No browser_download_url field")
+        .expect("browser_download_url field")
         .as_str()
-        .expect("browser_download_url wasn't a string");
+        .expect("browser_download_url to be a string");
     let download_success = process::Command::new("curl")
         .args(&["-sOL", &url])
         .status()
-        .expect("Failed to download latest release")
+        .expect("To download latest release")
         .success();
     if !download_success {
-        panic!("Failed to download release");
+        panic!("To download release");
     }
     println!("Successfully downloaded the latest version: {}", version);
     println!("Please run the following to install:");
