@@ -86,11 +86,9 @@ fn update(args: &[String]) {
         ])
         .output()
         .expect("To execute curl");
-    let curl_json =
-        String::from_utf8(curl.stdout).expect("Release version output");
+    let curl_json = String::from_utf8(curl.stdout).expect("Release version output");
     // Parse untyped json
-    let map: serde_json::Value =
-        serde_json::from_str(&curl_json).expect("version JSON");
+    let map: serde_json::Value = serde_json::from_str(&curl_json).expect("version JSON");
     let version = &map
         .get("tag_name")
         .expect("tag_name in version JSON")
@@ -122,8 +120,18 @@ fn update(args: &[String]) {
         panic!("To download release");
     }
     println!("Successfully downloaded the latest version: {}", version);
-    println!("Please run the following to install:");
-    println!("$ sudo dpkg -i vinoteca*.deb");
+    let install_success = process::Command::new("sudo")
+        .args(&[
+            "apt",
+            "install",
+            &format!("./vinoteca_{}_amd64.deb", version),
+        ])
+        .status()
+        .expect("Installation")
+        .success();
+    if !install_success {
+        panic!("Failed to install release");
+    }
     // TODO: run database migrations and any other necessary work here
 }
 
