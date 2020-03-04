@@ -76,7 +76,7 @@ fn run(args: &[String]) {
 /// Bootstrap code to check latest GitHub release and download latest version
 /// if we're not already on it.
 fn update(args: &[String]) {
-    let should_force = !args.is_empty() && (args[0] == "-f" || args[1] == "--force");
+    let should_force = !args.is_empty() && (args[0] == "-f" || args[0] == "--force");
     let current_version = env!("CARGO_PKG_VERSION");
     // Get latest release
     let curl = process::Command::new("curl")
