@@ -29,10 +29,13 @@ export const initPurchaseInputData: () => IPurchaseData = () => ({
     memo: "",
 });
 
-export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): Promise<IPurchaseForm> => {
+export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): Promise<IPurchaseForm | null> => {
     let store = null;
     if (data.store) {
         store = await getOrCreateStore({name: data.store}, {name: data.store});
+    }
+    if (data.date === null && data.store === null && data.price === null && data.vintage === null) {
+        return null;
     }
     return {
         date: data.date,

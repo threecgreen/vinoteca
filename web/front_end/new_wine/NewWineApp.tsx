@@ -23,7 +23,6 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
 
     const onSubmit = async () => {
         setIsSaving(true);
-        // TODO: check certain forms aren't empty
         const logger = new Logger(NewWineApp.name);
 
         let wineId;
@@ -41,8 +40,10 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 },
                 async () => {
                     const purchaseForm = await purchaseDataToForm(purchaseState, wine.id);
-                    const purchase = await createPurchase(purchaseForm);
-                    purchaseId = purchase.id;
+                    if (purchaseForm) {
+                        const purchase = await createPurchase(purchaseForm);
+                        purchaseId = purchase.id;
+                    }
                 }
             ].map((f) => f()));
             navigate(`/wines/${wine.id}`);

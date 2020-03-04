@@ -18,9 +18,12 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
             autoClose: false,
             defaultDate: new Date(),
             maxDate: new Date(),
+            showClearBtn: true,
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
-                onChange(dateToNum(datepicker.date));
+                if (datepicker.date) {
+                    onChange(dateToNum(datepicker.date));
+                }
             },
             yearRange: 15,
         });
