@@ -117,7 +117,8 @@ fn update(args: &[String]) {
         .expect("To download latest release")
         .success();
     if !download_success {
-        panic!("To download release");
+        print_error("Failed to download latest release");
+        process::exit(1);
     }
     println!("Successfully downloaded the latest version: {}", version);
     let install_success = process::Command::new("sudo")
@@ -130,11 +131,11 @@ fn update(args: &[String]) {
         .expect("Installation")
         .success();
     if !install_success {
-        eprintln!(
+        print_error(&format!(
             "Try running `sudo apt install ./vinoteca_{}_amd64.deb` to complete the installation",
             version,
-        );
-        panic!("Failed to install release");
+        ));
+        process::exit(2);
     }
     // TODO: run database migrations and any other necessary work here
 }
