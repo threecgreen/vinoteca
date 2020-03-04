@@ -58,6 +58,12 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.4</h5>
+            <ul className="bullets">
+                <li>Fix issue where working directory affected which config was read</li>
+                <li>Update script installs <code>.deb</code></li>
+            </ul>
+
             <h5>5.0.3</h5>
             <p>Fix null handling in inventory</p>
 

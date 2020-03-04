@@ -130,6 +130,10 @@ fn update(args: &[String]) {
         .expect("Installation")
         .success();
     if !install_success {
+        eprintln!(
+            "Try running `sudo apt install ./vinoteca_{}_amd64.deb` to complete the installation",
+            version,
+        );
         panic!("Failed to install release");
     }
     // TODO: run database migrations and any other necessary work here
