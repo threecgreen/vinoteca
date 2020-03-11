@@ -69,7 +69,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Event handlers
     const onInventoryChange = async (inventoryChange: InventoryChange) => {
         if (state.wine) {
-            const copy = state.wine;
+            const copy = {...state.wine};
             if (inventoryChange == InventoryChange.Increase) {
                 copy.inventory += 1;
             } else {
@@ -143,13 +143,18 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
-    // TODO: add to inventory
     const onSubmitAddPurchase = async (purchase: IPurchaseData) => {
         try {
             const form = await purchaseDataToForm(purchase, id);
             if (form) {
                 const newPurchase = await createPurchase(form);
                 dispatch({type: "setPurchases", purchases: state.purchases.concat([newPurchase])});
+                if (purchase.quantity) {
+                    const copy = {...state.wine!};
+                    copy.inventory += purchase.quantity;
+                    const wine = await updateWine(id, copy, null);
+                    dispatch({type: "setWine", wine});
+                }
                 dispatch({type: "setMode", mode: {"type": "display"}});
             } else {
                 logger.logWarning("Not submitting new purchase form. Form is invalid");
@@ -254,6 +259,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             if (purchase) {
                 return (
                     <ModifyPurchase title="Edit purchase"
+                        displayInventoryBtn={ false }
                         purchase={ purchase }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                         onSubmit={ onSubmitPurchaseEdit }
@@ -284,6 +290,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             };
             return (
                 <ModifyPurchase title="Add purchase"
+                    displayInventoryBtn
                     purchase={ newPurchase }
                     onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     onSubmit={ onSubmitAddPurchase }
