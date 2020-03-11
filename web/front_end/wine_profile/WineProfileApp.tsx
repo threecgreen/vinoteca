@@ -114,16 +114,20 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         const purchaseId = state.mode.id;
         try {
             const form = await purchaseDataToForm(purchase, id);
-            const updatedPurchase = await updatePurchase(purchaseId, form);
-            dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
-                if (purchase.id === purchaseId) {
-                    return updatedPurchase;
-                }
-                return purchase;
-            })});
+            if (form) {
+                const updatedPurchase = await updatePurchase(purchaseId, form);
+                dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
+                    if (purchase.id === purchaseId) {
+                        return updatedPurchase;
+                    }
+                    return purchase;
+                })});
+                dispatch({type: "setMode", mode: {"type": "display"}});
+            } else {
+                logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
+            }
         } catch (err) {
             logger.logWarning(`Failed to update purchase: ${err.message}`);
-        } finally {
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
     }
@@ -143,11 +147,15 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onSubmitAddPurchase = async (purchase: IPurchaseData) => {
         try {
             const form = await purchaseDataToForm(purchase, id);
-            const newPurchase = await createPurchase(form);
-            dispatch({type: "setPurchases", purchases: state.purchases.concat([newPurchase])});
+            if (form) {
+                const newPurchase = await createPurchase(form);
+                dispatch({type: "setPurchases", purchases: state.purchases.concat([newPurchase])});
+                dispatch({type: "setMode", mode: {"type": "display"}});
+            } else {
+                logger.logWarning("Not submitting new purchase form. Form is invalid");
+            }
         } catch (err) {
             logger.logWarning(`Failed to create new purchase: ${err.message}`);
-        } finally {
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
     }
