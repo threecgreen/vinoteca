@@ -48,6 +48,9 @@ mod tests;
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
+/// Keep media dir as global variable for use when saving new images
+pub struct MediaDir(String);
+
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()
         .attach(DbConn::fairing())
@@ -115,6 +118,7 @@ pub fn create_rocket() -> rocket::Rocket {
         .to_string();
 
     rocket
+        .manage(MediaDir(media_dir.clone()))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
         .mount("/media", CachedStaticFiles::from(media_dir).rank(1))
 }

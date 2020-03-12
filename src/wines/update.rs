@@ -3,11 +3,12 @@ use super::models::{RawWineForm, WinePatchForm};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
-use crate::DbConn;
+use crate::{DbConn, MediaDir};
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
+use rocket::State;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -80,7 +81,12 @@ pub fn patch(
 }
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
-pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
+pub fn put(
+    id: i32,
+    raw_wine_form: RawWineForm,
+    connection: DbConn,
+    media_dir: State<MediaDir>,
+) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
 
@@ -93,7 +99,7 @@ pub fn put(id: i32, raw_wine_form: RawWineForm, connection: DbConn) -> RestResul
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            if let Err(e) = handle_image(wine, image) {
+            if let Err(e) = handle_image(wine, image, &media_dir.0) {
                 warn!("Error updating image for wine with id {}: {}", id, e);
             }
         }

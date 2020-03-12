@@ -3,16 +3,21 @@ use super::models::RawWineForm;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
-use crate::DbConn;
+use crate::{DbConn, MediaDir};
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Integer, Nullable};
+use rocket::State;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
-pub fn post(raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> {
+pub fn post(
+    raw_wine_form: RawWineForm,
+    connection: DbConn,
+    media_dir: State<MediaDir>,
+) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
 
@@ -74,7 +79,7 @@ pub fn post(raw_wine_form: RawWineForm, connection: DbConn) -> RestResult<Wine> 
 
     if let Ok(wine) = &result {
         if let Some(image) = raw_wine_form.image {
-            if let Err(e) = handle_image(wine, image) {
+            if let Err(e) = handle_image(wine, image, &media_dir.0) {
                 warn!("Error adding image for new wine with id {}: {}", wine.id, e);
             };
         }
