@@ -58,6 +58,19 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.5</h5>
+            <ul className="bullets">
+                <li>Add option to add new purchase to inventory</li>
+                <li>Fix bug with configurable media directory and adding new wine images</li>
+                <li>Fix out-of-bounds panic when forcing vinoteca update</li>
+                <li>Prevent partial entity creation when adding a new wine</li>
+                <li>Null handling:<ul className="bullets">
+                    <li>Allow new purchase without date</li>
+                    <li>Allow new wines without a purchase</li>
+                    <li>Fix error when creating a purchase without a store</li>
+                </ul></li>
+            </ul>
+
             <h5>5.0.4</h5>
             <ul className="bullets">
                 <li>Fix issue where working directory affected which config was read</li>
