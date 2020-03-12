@@ -17,9 +17,10 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
         .execute(&*connection)
+        .map_err(|_| VinotecaError::Internal("Creating new purchase".to_owned()))
         .and_then(|_| {
             purchases::table
-                .inner_join(stores::table)
+                .left_join(stores::table)
                 .inner_join(wines::table)
                 .filter(purchases::wine_id.eq(purchase_form.wine_id))
                 .filter(purchases::date.eq(purchase_form.date))
@@ -36,8 +37,8 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult
                 ))
                 .first(&*connection)
                 .map(Json)
+                .map_err(|_| VinotecaError::NotFound("Newly-created purchase".to_owned()))
         })
-        .map_err(VinotecaError::from)
 }
 
 #[put("/purchases/<id>", format = "json", data = "<purchase_form>")]
@@ -51,7 +52,7 @@ pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> Re
         .execute(&*connection)
         .and_then(|_| {
             purchases::table
-                .inner_join(stores::table)
+                .left_join(stores::table)
                 .filter(purchases::id.eq(id))
                 .select((
                     purchases::id,

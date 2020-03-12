@@ -18,7 +18,7 @@ pub fn get(
     connection: DbConn,
 ) -> RestResult<Vec<Purchase>> {
     let mut query = purchases::table
-        .inner_join(stores::table)
+        .left_join(stores::table)
         .inner_join(wines::table)
         .into_boxed();
     if let Some(id) = id {
