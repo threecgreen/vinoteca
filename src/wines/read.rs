@@ -1,4 +1,4 @@
-use super::models::WineCount;
+use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
@@ -7,11 +7,8 @@ use crate::DbConn;
 use diesel::dsl::{count, sql};
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{Integer, Nullable, Text};
-use diesel::QueryableByName;
+use diesel::sql_types::{Integer, Nullable};
 use rocket_contrib::json::Json;
-use serde::Serialize;
-use typescript_definitions::TypeScriptify;
 
 fn add_wildcards(query: &str) -> String {
     format!("%{}%", query)
@@ -117,37 +114,6 @@ pub fn get(
         .load::<Wine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-}
-
-#[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct InventoryWine {
-    #[sql_type = "Integer"]
-    id: i32,
-    #[sql_type = "Text"]
-    color: String,
-    #[sql_type = "Nullable<Text>"]
-    name: Option<String>,
-    #[sql_type = "Integer"]
-    wine_type_id: i32,
-    #[sql_type = "Text"]
-    wine_type: String,
-    #[sql_type = "Integer"]
-    producer_id: i32,
-    #[sql_type = "Text"]
-    producer: String,
-    #[sql_type = "Integer"]
-    region_id: i32,
-    #[sql_type = "Text"]
-    region: String,
-    #[sql_type = "Nullable<Integer>"]
-    last_purchase_vintage: Option<i32>,
-    #[sql_type = "Nullable<Integer>"]
-    last_purchase_date: Option<i32>,
-    #[sql_type = "Integer"]
-    inventory: i32,
-    #[sql_type = "Nullable<Integer>"]
-    last_purchase_price: Option<i32>,
 }
 
 #[get("/wines/inventory")]

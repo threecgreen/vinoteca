@@ -1,5 +1,7 @@
 use crate::models::WineForm;
 
+use diesel::sql_types::{Integer, Nullable, Text};
+use diesel::QueryableByName;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 use validator::Validate;
@@ -23,4 +25,35 @@ pub struct WineCount {
 pub struct WinePatchForm {
     #[validate(range(min = 0))]
     pub inventory: i32,
+}
+
+#[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct InventoryWine {
+    #[sql_type = "Integer"]
+    id: i32,
+    #[sql_type = "Text"]
+    color: String,
+    #[sql_type = "Nullable<Text>"]
+    name: Option<String>,
+    #[sql_type = "Integer"]
+    wine_type_id: i32,
+    #[sql_type = "Text"]
+    wine_type: String,
+    #[sql_type = "Integer"]
+    producer_id: i32,
+    #[sql_type = "Text"]
+    producer: String,
+    #[sql_type = "Integer"]
+    region_id: i32,
+    #[sql_type = "Text"]
+    region: String,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_vintage: Option<i32>,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_date: Option<i32>,
+    #[sql_type = "Integer"]
+    inventory: i32,
+    #[sql_type = "Nullable<Integer>"]
+    last_purchase_price: Option<i32>,
 }
