@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, Producer, ProducerForm};
+use crate::query_utils::IntoFirst;
 use crate::schema::{producers, purchases, regions, wines};
 use crate::DbConn;
 
@@ -60,13 +61,17 @@ pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult
     diesel::insert_into(producers::table)
         .values(&producer_form)
         .execute(&*connection)
-        .and_then(|_| {
-            producers::table
-                .filter(producers::name.eq((*producer_form.name).to_owned()))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| {
+            get(
+                None,
+                Some(producer_form.name.to_owned()),
+                None,
+                None,
+                connection,
+            )?
+            .into_first("Newly-created producer")
+        })
 }
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
@@ -78,13 +83,8 @@ pub fn put(id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> Re
     diesel::update(producers::table.filter(producers::id.eq(id)))
         .set(producer_form)
         .execute(&*connection)
-        .and_then(|_| {
-            producers::table
-                .filter(producers::id.eq(id))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| get(Some(id), None, None, None, connection)?.into_first("Edited producer"))
 }
 
 #[delete("/producers/<id>")]

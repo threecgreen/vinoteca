@@ -1,9 +1,10 @@
-use crate::error::VinotecaError;
+use crate::error::{RestResult, VinotecaError};
 
 use diesel::result::Error;
 use diesel::Connection;
 use rocket::http::Status;
 use rocket_contrib::databases::diesel::SqliteConnection;
+use rocket_contrib::json::Json;
 
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
@@ -47,5 +48,23 @@ impl DbConn {
     pub fn set_timeout(&self, timeout_ms: u32) -> Result<(), VinotecaError> {
         self.execute(&format!("PRAGMA busy_timeout = {};", timeout_ms))?;
         Ok(())
+    }
+}
+
+/// Used for reusing the `GET` request logic in `POST` and `PUT` methods to
+/// retrieved the created or modified entity. `GET` methods usually return a
+/// `Vec` of entities while `POST` and `PUT` should always return exactly one.
+/// This consumes the vector and extracts the first element. We return a result
+/// rather use `.remove()` directly in case of race conditions or a bad query.
+pub trait IntoFirst<I> {
+    fn into_first(self, not_found_msg: &str) -> RestResult<I>;
+}
+
+impl<I> IntoFirst<I> for Json<Vec<I>> {
+    fn into_first(self, not_found_msg: &str) -> RestResult<I> {
+        match self.get(0) {
+            Some(_) => Ok(Json(self.into_inner().remove(0))),
+            None => Err(VinotecaError::NotFound(not_found_msg.to_owned())),
+        }
     }
 }

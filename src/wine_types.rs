@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, WineType, WineTypeForm};
+use crate::query_utils::IntoFirst;
 use crate::schema::{purchases, wine_types, wines};
 use crate::DbConn;
 
@@ -45,13 +46,11 @@ pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> RestResul
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)
         .execute(&*connection)
-        .and_then(|_| {
-            wine_types::table
-                .filter(wine_types::name.eq((*wine_type_form.name).to_owned()))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| {
+            get(None, Some(wine_type_form.name.to_owned()), connection)?
+                .into_first("Newly-created wine type")
+        })
 }
 
 #[put("/wine-types/<id>", format = "json", data = "<wine_type_form>")]
@@ -67,11 +66,6 @@ pub fn put(
     diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
         .set(wine_types::name.eq(wine_type_form.name))
         .execute(&*connection)
-        .and_then(|_| {
-            wine_types::table
-                .filter(wine_types::id.eq(id))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| get(Some(id), None, connection)?.into_first("Edited wine type"))
 }

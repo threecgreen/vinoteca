@@ -21,6 +21,7 @@ impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
 }
 
 #[derive(Debug)]
+/// A file that we want to avoid reserving by setting the last-modified header
 pub struct CachedFile(PathBuf, File);
 
 impl CachedFile {
@@ -34,28 +35,11 @@ impl CachedFile {
     pub fn file(&self) -> &File {
         &self.1
     }
-
-    /// Take the underlying `File`.
-    pub fn take_file(self) -> File {
-        self.1
-    }
-
-    /// Retrieve a mutable borrow to the underlying `File`.
-    pub fn file_mut(&mut self) -> &mut File {
-        &mut self.1
-    }
-
-    /// Retrieve the path of this file.
-    pub fn path(&self) -> &Path {
-        self.0.as_path()
-    }
 }
 
 /// Streams the named file to the client. Sets or overrides the Content-Type in
 /// the response according to the file's extension if the extension is
-/// recognized. See [`ContentType::from_extension()`] for more information. If
-/// you would like to stream a file with a different Content-Type than that
-/// implied by its extension, use a [`File`] directly.
+/// recognized.
 impl<'r> Responder<'r> for CachedFile {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
         let mut response = self.1.respond_to(req)?;

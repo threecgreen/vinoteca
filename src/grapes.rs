@@ -1,5 +1,6 @@
 use super::error::{RestResult, VinotecaError};
 use super::models::{generic, Grape, GrapeForm};
+use super::query_utils::IntoFirst;
 use super::schema::{grapes, purchases, wine_grapes, wines};
 use super::DbConn;
 
@@ -51,15 +52,9 @@ pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape
     connection.set_timeout(1_000)?;
     diesel::insert_into(grapes::table)
         .values(grape_form)
-        .execute(&*connection)?;
-    get(None, Some(grape_name), connection)
-        .and_then(|grapes| {
-            grapes
-                .get(0)
-                .map(|g| g.to_owned())
-                .ok_or_else(|| VinotecaError::Internal("Couldn't find inserted grape".to_owned()))
-        })
-        .map(Json)
+        .execute(&*connection)
+        .map_err(VinotecaError::from)
+        .and_then(|_| get(None, Some(grape_name), connection)?.into_first("Newly-created grape"))
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]

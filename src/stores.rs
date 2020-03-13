@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{Store, StoreForm};
+use crate::query_utils::IntoFirst;
 use crate::schema::stores;
 use crate::DbConn;
 
@@ -31,11 +32,9 @@ pub fn post(store_form: Json<StoreForm>, connection: DbConn) -> RestResult<Store
     diesel::insert_into(stores::table)
         .values(&store_form)
         .execute(&*connection)
-        .and_then(|_| {
-            stores::table
-                .filter(stores::name.eq((*store_form.name).to_owned()))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| {
+            get(None, Some(store_form.name.to_owned()), connection)?
+                .into_first("Newly-created store")
+        })
 }

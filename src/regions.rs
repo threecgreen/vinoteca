@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, Region, RegionForm};
+use crate::query_utils::IntoFirst;
 use crate::schema::{producers, purchases, regions, wines};
 use crate::DbConn;
 
@@ -57,13 +58,11 @@ pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Reg
     diesel::insert_into(regions::table)
         .values(&region_form)
         .execute(&*connection)
-        .and_then(|_| {
-            regions::table
-                .filter(regions::name.eq((*region_form.name).to_owned()))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| {
+            get(None, Some(region_form.name.to_owned()), None, connection)?
+                .into_first("Newly-created region")
+        })
 }
 
 #[put("/regions/<id>", format = "json", data = "<region_form>")]
@@ -75,11 +74,6 @@ pub fn put(id: i32, region_form: Json<RegionForm>, connection: DbConn) -> RestRe
     diesel::update(regions::table.filter(regions::id.eq(id)))
         .set(regions::name.eq(region_form.name))
         .execute(&*connection)
-        .and_then(|_| {
-            regions::table
-                .filter(regions::id.eq(id))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| get(Some(id), None, None, connection)?.into_first("Edited region"))
 }
