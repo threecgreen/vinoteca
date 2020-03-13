@@ -36,6 +36,7 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
         onSubmit(mutableWine, mutableGrapes);
     }
 
+    // FIXME: some sort of indication confirm has already been clicked
     return (
         <Modal>
             <ModalContent>

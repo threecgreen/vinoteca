@@ -36,6 +36,6 @@ export const NumberInput: React.FC<IProps> = (props) => {
             m={ props.m }
             l={ props.l }
         />
-    )
+    );
 };
 NumberInput.displayName = "NumberInput";
