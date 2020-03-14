@@ -24,7 +24,6 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
                 <li><a className="text-link" href="http://materializecss.com/">Materialize <abbr title="Cascading Style Sheets">CSS</abbr></a></li>
                 <li><a className="text-link" href="https://www.sqlite.org/index.html">SQLite</a></li>
                 <li><a className="text-link" href="https://github.com/stevenrskelton/flag-icon">Flags by Steven Skelton</a></li>
-                <li><a className="text-link" href="https://github.com/stevenrskelton/flag-icon">More Flags</a></li>
                 <li><a className="text-link" href="https://www.reddit.com/r/travel/comments/6z7cu0/loved_visiting_burgundy_right_before_harvest/">Cover photo from /u/CollideStorm</a></li>
             </ul>
 
