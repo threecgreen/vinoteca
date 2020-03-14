@@ -17,7 +17,7 @@ FROM wines w
     INNER JOIN regions r ON p.region_id = r.id
     INNER JOIN colors c ON w.color_id = c.id
     INNER JOIN wine_types wt ON w.wine_type_id = wt.id
-    INNER JOIN purchases pu ON w.id = pu.wine_id
+    LEFT JOIN purchases pu ON w.id = pu.wine_id
     LEFT JOIN (
         SELECT
             w2.id
@@ -26,7 +26,7 @@ FROM wines w
             INNER JOIN purchases p2 ON w2.id = p2.wine_id
         GROUP BY w2.id
     ) AS sub ON sub.id = w.id
-    INNER JOIN purchases p3 ON w.id = p3.wine_id
+    LEFT JOIN purchases p3 ON w.id = p3.wine_id
         AND (p3.date = sub.last_purchase_date
             OR sub.last_purchase_date IS NULL)
 WHERE w.inventory > 0
