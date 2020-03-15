@@ -76,7 +76,7 @@ table! {
         id -> Integer,
         description -> Nullable<Text>,
         notes -> Nullable<Text>,
-        rating -> Nullable<Float>,
+        rating -> Nullable<Integer>,
         inventory -> Integer,
         why -> Nullable<Text>,
         color_id -> Integer,

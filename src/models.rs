@@ -139,7 +139,7 @@ pub struct Wine {
     pub id: i32,
     pub description: Option<String>,
     pub notes: Option<String>,
-    pub rating: Option<f32>,
+    pub rating: Option<i32>,
     pub inventory: i32,
     pub why: Option<String>,
     pub color_id: i32,
@@ -165,7 +165,7 @@ pub struct WineForm {
     #[validate(length(min = 1))]
     pub notes: Option<String>,
     #[validate(range(min = 0, max = 10))]
-    pub rating: Option<f32>,
+    pub rating: Option<i32>,
     #[validate(range(min = 0))]
     pub inventory: i32,
     #[validate(length(min = 1))]
