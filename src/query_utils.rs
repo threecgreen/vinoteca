@@ -68,3 +68,33 @@ impl<I> IntoFirst<I> for Json<Vec<I>> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn into_first_one_element() {
+        let v = Json(vec![1]);
+        let result = v.into_first("Error in test");
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().into_inner(), 1);
+    }
+
+    #[test]
+    fn into_first_many_elements() {
+        let v: Json<Vec<_>> = Json((1..5).collect());
+        let result = v.into_first("Error in test");
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().into_inner(), 1);
+    }
+
+    #[test]
+    fn into_first_no_elements() {
+        let v = Json(Vec::<i32>::new());
+        let err_msg = "Vec is";
+        let result = v.into_first(err_msg);
+        assert!(result.is_err());
+        assert!(matches!(result.unwrap_err(), VinotecaError::NotFound(msg) if msg == err_msg));
+    }
+}
