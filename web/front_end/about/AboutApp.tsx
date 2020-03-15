@@ -61,6 +61,12 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.6</h5>
+            <ul className="bullets">
+                <li>Fix bug where wines without a purchase woudn&rsquo;t show up in inventory</li>
+                <li>Run database migrations on startup</li>
+            </ul>
+
             <h5>5.0.5</h5>
             <ul className="bullets">
                 <li>Add option to add new purchase to inventory</li>
