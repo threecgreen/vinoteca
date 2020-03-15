@@ -36,6 +36,7 @@ validator = "0.10"
 validator_derive = "0.10"
 rocket-multipart-form-data = "0.8.1"
 image = "0.23.0"
+diesel_migrations = "1.4.0"
 
 [dependencies.rocket_contrib]
 version = "*"
