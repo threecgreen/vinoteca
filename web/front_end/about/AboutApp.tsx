@@ -32,20 +32,24 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
              name="help">Help</a></h4>
             <h5>Adding wines</h5>
-            <p>To add a new purchase click the new purchase button in the top navigation bar.
-               If this wine is already in the system, select &ldquo;Previously Purchased&rdquo; and find the wine using the
-               search utility.
-       If this is the first time you&rsquo;ve purchased this wine, select &ldquo;First-time Purchase&rdquo; and enter the relevant information.</p>
+            <p>
+                To add a new purchase click the new purchase button in the top navigation bar.
+                If this wine is already in the system, select &ldquo;Previously Purchased&rdquo; and find the wine using the
+                search utility.
+                If this is the first time you&rsquo;ve purchased this wine, select &ldquo;First-time Purchase&rdquo; and enter the relevant information.
+            </p>
 
             <h5>Viewing wines</h5>
             <p>Go to &ldquo;Wines&rdquo; to sort, filter and view wine information.</p>
 
             <h5>Editing wines</h5>
-            <p>In order to edit a wine&rsquo;s information, click on any wine to go its profile page.
-               Then hover over the menu button on the left side and click the pencil icon.
-               Make your changes and then click &ldquo;Confirm Edits.&rdquo;
-               To edit purchase details, simply click the pencil icon next to the purchase you would like to edit in the
-       wine&rsquo;s &ldquo;Purchases&rdquo; table.</p>
+            <p>
+                In order to edit a wine&rsquo;s information, click on any wine to go its profile page.
+                Then hover over the menu button on the left side and click the pencil icon.
+                Make your changes and then click &ldquo;Confirm Edits.&rdquo;
+                To edit purchase details, simply click the pencil icon next to the purchase you would like to edit in the
+                wine&rsquo;s &ldquo;Purchases&rdquo; table.
+            </p>
 
             <h5>Bugs and suggestions</h5>
             <p>Send me an <a className="text-link" href="mailto:cartergr@usc.edu?subject=vinoteca">email</a>
@@ -580,7 +584,7 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             </ul>
 
             <h5>0.2.1</h5>
-            <p>Minor improvements to the scripts including automatically opening the browser when running run.sh</p>
+            <p>Minor improvements to the scripts including automatically opening the browser when running <code>run.sh</code></p>
 
             <h5>0.2.0</h5>
             <ul className="bullets">

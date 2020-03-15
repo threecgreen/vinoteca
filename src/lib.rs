@@ -54,7 +54,7 @@ pub struct MediaDir(String);
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()
         .attach(DbConn::fairing())
-        .mount("/", routes![templates::home, templates::any_other,])
+        .mount("/", routes![templates::home, templates::any_other])
         .mount(
             "/rest",
             routes![
