@@ -48,12 +48,35 @@ mod tests;
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
+use rocket::fairing::AdHoc;
+
 /// Keep media dir as global variable for use when saving new images
 pub struct MediaDir(String);
 
+#[macro_use]
+extern crate diesel_migrations;
+embed_migrations!();
+
+fn run_db_migrations(rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
+    let connection = DbConn::get_one(&rocket).expect("database connection");
+    match embedded_migrations::run(&*connection) {
+        Ok(()) => {
+            info!("Successfully ran database migrations");
+            Ok(rocket)
+        }
+        Err(e) => {
+            error!("Failed to run database migrations: {:?}", e);
+            Err(rocket)
+        }
+    }
+}
+
 pub fn create_rocket() -> rocket::Rocket {
     let rocket = rocket::ignite()
+        // Allow handlers access to the database
         .attach(DbConn::fairing())
+        // Run embedded database migrations on startup
+        .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
         .mount("/", routes![templates::home, templates::any_other])
         .mount(
             "/rest",
@@ -116,7 +139,6 @@ pub fn create_rocket() -> rocket::Rocket {
         .get_str("media_dir")
         .unwrap_or("media")
         .to_string();
-
     rocket
         .manage(MediaDir(media_dir.clone()))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))

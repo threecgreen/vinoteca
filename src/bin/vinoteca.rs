@@ -137,7 +137,6 @@ fn update(args: &[String]) {
         ));
         process::exit(2);
     }
-    // TODO: run database migrations and any other necessary work here
 }
 
 fn main() {
