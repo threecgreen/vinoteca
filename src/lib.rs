@@ -41,9 +41,9 @@ pub mod viti_areas;
 pub mod wine_grapes;
 mod wine_types;
 pub mod wines;
-// Tests
-#[cfg(tests)]
-mod tests;
+// Test helpers
+#[cfg(test)]
+mod testing;
 
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
@@ -71,8 +71,30 @@ fn run_db_migrations(rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::R
     }
 }
 
+#[cfg(test)]
+fn test_rocket() -> rocket::Rocket {
+    use rocket::config::{Config, Environment, Value};
+    use std::collections::HashMap;
+
+    let mut database_config = HashMap::new();
+    let mut databases = HashMap::new();
+    database_config.insert("url", Value::from(":memory:"));
+    databases.insert("vinoteca", Value::from(database_config));
+    let config = Config::build(Environment::Development)
+        .extra("databases", databases)
+        .finalize()
+        .unwrap();
+    rocket::custom(config)
+}
+
 pub fn create_rocket() -> rocket::Rocket {
-    let rocket = rocket::ignite()
+    // Use in-memory database if testing
+    #[cfg(test)]
+    let mut rocket = test_rocket();
+    #[cfg(not(test))]
+    let mut rocket = rocket::ignite();
+
+    rocket = rocket
         // Allow handlers access to the database
         .attach(DbConn::fairing())
         // Run embedded database migrations on startup
