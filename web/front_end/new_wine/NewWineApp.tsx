@@ -82,6 +82,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 />
                 <Btn classes={ ["green-bg"] }
                     onClick={ onSubmit }
+                    disabled={ isSaving }
                 >
                     Confirm
                     <MaterialIcon className="right" iconName="send" />

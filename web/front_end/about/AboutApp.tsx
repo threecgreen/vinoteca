@@ -61,6 +61,13 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.0.7</h5>
+            <ul className="bullets">
+                <li>Add indication of when a form is being submitted</li>
+                <li>Prevent double submission of forms</li>
+                <li>Add tests</li>
+            </ul>
+
             <h5>5.0.6</h5>
             <ul className="bullets">
                 <li>Fix bug where wines without a purchase woudn&rsquo;t show up in inventory</li>
