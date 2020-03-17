@@ -212,30 +212,3 @@ pub fn varieties(connection: DbConn) -> Json<WineCount> {
     };
     Json(total_liters)
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    use crate::models::WineForm;
-    use crate::testing::create_client;
-    use rocket::http::ContentType;
-
-    fn inventory_includes_wines_without_purchases() {
-        let client = create_client();
-        let form = WineForm {
-            description: None,
-            notes: None,
-            rating: Some(5),
-            inventory: 1,
-            why: None,
-            color_id: 1,
-            producer_id: 1,
-            viti_area_id: Some(1),
-            name: None,
-            wine_type_id: 1,
-        };
-        client.post("/rest/wines")
-            .body(serde_json::to_string(&form).unwrap())
-            .header(ContentType::JSON);
-    }
-}

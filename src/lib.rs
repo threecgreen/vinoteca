@@ -57,7 +57,7 @@ pub struct MediaDir(String);
 extern crate diesel_migrations;
 embed_migrations!();
 
-fn run_db_migrations(rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
+pub fn run_db_migrations(rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::Rocket> {
     let connection = DbConn::get_one(&rocket).expect("database connection");
     match embedded_migrations::run(&*connection) {
         Ok(()) => {
@@ -71,26 +71,10 @@ fn run_db_migrations(rocket: rocket::Rocket) -> Result<rocket::Rocket, rocket::R
     }
 }
 
-#[cfg(test)]
-fn test_rocket() -> rocket::Rocket {
-    use rocket::config::{Config, Environment, Value};
-    use std::collections::HashMap;
-
-    let mut database_config = HashMap::new();
-    let mut databases = HashMap::new();
-    database_config.insert("url", Value::from(":memory:"));
-    databases.insert("vinoteca", Value::from(database_config));
-    let config = Config::build(Environment::Development)
-        .extra("databases", databases)
-        .finalize()
-        .unwrap();
-    rocket::custom(config)
-}
-
 pub fn create_rocket() -> rocket::Rocket {
     // Use in-memory database if testing
     #[cfg(test)]
-    let mut rocket = test_rocket();
+    let mut rocket = testing::test_rocket_config();
     #[cfg(not(test))]
     let mut rocket = rocket::ignite();
 

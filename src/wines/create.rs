@@ -86,3 +86,38 @@ pub fn post(
     }
     result
 }
+
+#[cfg(test)]
+mod test {
+    use super::super::models::RawWineForm;
+    use super::*;
+    use crate::models::WineForm;
+    use crate::testing::create_test_rocket;
+    use crate::DbConn;
+    use rocket::State;
+
+    #[test]
+    fn insert_wine() {
+        todo!("Waiting on embedded migrations to work fully");
+        let rocket = create_test_rocket();
+        let media_dir = State::from(&rocket).unwrap();
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let form = RawWineForm {
+            image: None,
+            wine_form: WineForm {
+                description: None,
+                notes: None,
+                rating: Some(5),
+                inventory: 1,
+                why: None,
+                color_id: 1,
+                producer_id: 1,
+                viti_area_id: None,
+                name: None,
+                wine_type_id: 1,
+            },
+        };
+        let response = post(form, connection, media_dir);
+        assert!(response.is_ok());
+    }
+}
