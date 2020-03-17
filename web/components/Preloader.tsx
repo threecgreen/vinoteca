@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 
 export const Preloader: React.FC<{}> = (_) => {
     return (
@@ -9,9 +9,9 @@ export const Preloader: React.FC<{}> = (_) => {
 }
 Preloader.displayName = "Preloader";
 
-export const PreloaderCirc: React.FC<{}> = (_) => {
+export const PreloaderCirc: React.FC<{className?: string}> = ({className}) => {
     return (
-        <div className="preloader-wrapper active">
+        <div className={ `preloader-wrapper active ${className ?? ''}` }>
             <div className="spinner-layer">
                 <div className="circle-clipper left">
                     <div className="circle"></div>

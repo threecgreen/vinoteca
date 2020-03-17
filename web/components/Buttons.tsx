@@ -1,8 +1,9 @@
-import React from "react";
-import { IChildrenProp, IClassesProp } from "./IProps";
-import { Col } from "./Grid";
-import { MaterialIcon } from "./MaterialIcon";
 import { Link } from "@reach/router";
+import React from "react";
+import { Col } from "./Grid";
+import { IChildrenProp, IClassesProp } from "./IProps";
+import { MaterialIcon } from "./MaterialIcon";
+import { PreloaderCirc } from "./Preloader";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
@@ -80,18 +81,26 @@ interface ICancelOrConfirmProps {
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
-    (props) => {
+    ({onConfirmClick, onCancelClick}) => {
+    const [isSaving, setIsSaving] = React.useState(false);
+
+    const submit = () => {
+        setIsSaving(true);
+        onConfirmClick();
+        setIsSaving(false);
+    }
 
     return (
         <Col s={ 12 }>
+            { isSaving && <PreloaderCirc className="hor-margin" /> }
             <Btn classes={ ["green-bg"] }
-                onClick={ props.onConfirmClick }
+                onClick={ submit }
             >
                 Confirm
                 <MaterialIcon iconName="send" className="right" />
             </Btn>
             <Btn classes={ ["red-bg"] }
-                onClick={ props.onCancelClick }
+                onClick={ onCancelClick }
             >
                 Cancel
             </Btn>

@@ -5,6 +5,7 @@ import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
 import { IWine, IWineGrape } from "../../lib/Rest";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
 import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
+import { PreloaderCirc } from "../../components/Preloader";
 
 interface IProps {
     wine: IWine;
@@ -36,7 +37,6 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
         onSubmit(mutableWine, mutableGrapes);
     }
 
-    // FIXME: some sort of indication confirm has already been clicked
     return (
         <Modal>
             <ModalContent>

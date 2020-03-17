@@ -63,7 +63,10 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     return (
         <div className="container">
             <h3 className="page-title">Enter new wine information</h3>
-            <form action="" className="col s12">
+            <form action="" className="col s12"
+                // FIXME: standardize with other forms
+                style={{ marginBottom: "20px" }}
+            >
                 <CSRFToken />
                 <Row s={ 12 }>
                     <PurchaseInputs displayInventoryBtn
@@ -88,7 +91,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 >
                     Cancel
                 </BtnLink>
-                { isSaving && <PreloaderCirc /> }
+                { isSaving && <PreloaderCirc className="hor-margin" /> }
             </form>
         </div>
     );
