@@ -69,7 +69,7 @@ impl From<WineGrapesForm> for Vec<WineGrapeForm> {
     }
 }
 
-fn validate_total_percentage(grapes: &Vec<AssociatedGrape>) -> Result<(), ValidationError> {
+fn validate_total_percentage(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
     let total_percentage = grapes
         .iter()
         .fold(0, |sum, wg| sum + wg.percent.unwrap_or(0));
@@ -82,7 +82,7 @@ fn validate_total_percentage(grapes: &Vec<AssociatedGrape>) -> Result<(), Valida
     }
 }
 
-fn validate_unique(grapes: &Vec<AssociatedGrape>) -> Result<(), ValidationError> {
+fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
     let mut unique_grapes = HashSet::new();
     for wg in grapes {
         if !unique_grapes.insert(wg.grape_id) {
