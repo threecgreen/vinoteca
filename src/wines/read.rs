@@ -212,3 +212,45 @@ pub fn varieties(connection: DbConn) -> Json<WineCount> {
     };
     Json(total_liters)
 }
+
+#[cfg(test)]
+mod test {
+    use super::super::models::RawWineForm;
+    use super::super::post;
+    use super::*;
+    use crate::models::WineForm;
+    use crate::testing::create_test_rocket;
+    use crate::DbConn;
+    use rocket::State;
+
+    #[test]
+    fn wine_without_purchases_appears_in_inventory() {
+        let rocket = create_test_rocket();
+        let media_dir = State::from(&rocket).unwrap();
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let form = RawWineForm {
+            image: None,
+            wine_form: WineForm {
+                description: None,
+                notes: None,
+                rating: Some(5),
+                inventory: 2,
+                why: None,
+                color_id: 1,
+                producer_id: 1,
+                viti_area_id: None,
+                name: None,
+                wine_type_id: 1,
+            },
+        };
+        let wine_response = post(form, connection, media_dir);
+        assert!(wine_response.is_ok());
+        let wine_id = wine_response.unwrap().id;
+
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let inventory_response = inventory(connection);
+        assert!(inventory_response.is_ok());
+        let inventory = inventory_response.unwrap().into_inner();
+        assert!(inventory.iter().any(|w| w.id == wine_id));
+    }
+}

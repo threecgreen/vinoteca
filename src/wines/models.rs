@@ -31,29 +31,29 @@ pub struct WinePatchForm {
 #[serde(rename_all = "camelCase")]
 pub struct InventoryWine {
     #[sql_type = "Integer"]
-    id: i32,
+    pub id: i32,
     #[sql_type = "Text"]
-    color: String,
+    pub color: String,
     #[sql_type = "Nullable<Text>"]
-    name: Option<String>,
+    pub name: Option<String>,
     #[sql_type = "Integer"]
-    wine_type_id: i32,
+    pub wine_type_id: i32,
     #[sql_type = "Text"]
-    wine_type: String,
+    pub wine_type: String,
     #[sql_type = "Integer"]
-    producer_id: i32,
+    pub producer_id: i32,
     #[sql_type = "Text"]
-    producer: String,
+    pub producer: String,
     #[sql_type = "Integer"]
-    region_id: i32,
+    pub region_id: i32,
     #[sql_type = "Text"]
-    region: String,
+    pub region: String,
     #[sql_type = "Nullable<Integer>"]
-    last_purchase_vintage: Option<i32>,
+    pub last_purchase_vintage: Option<i32>,
     #[sql_type = "Nullable<Integer>"]
-    last_purchase_date: Option<i32>,
+    pub last_purchase_date: Option<i32>,
     #[sql_type = "Integer"]
-    inventory: i32,
+    pub inventory: i32,
     #[sql_type = "Nullable<Integer>"]
-    last_purchase_price: Option<i32>,
+    pub last_purchase_price: Option<i32>,
 }

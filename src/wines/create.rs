@@ -98,7 +98,6 @@ mod test {
 
     #[test]
     fn insert_wine() {
-        todo!("Waiting on embedded migrations to work fully");
         let rocket = create_test_rocket();
         let media_dir = State::from(&rocket).unwrap();
         let connection = DbConn::get_one(&rocket).expect("database connection");
@@ -108,7 +107,7 @@ mod test {
                 description: None,
                 notes: None,
                 rating: Some(5),
-                inventory: 1,
+                inventory: 0,
                 why: None,
                 color_id: 1,
                 producer_id: 1,

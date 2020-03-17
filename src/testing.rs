@@ -1,4 +1,4 @@
-use crate::schema::{grapes, producers, regions, stores, wine_types};
+use crate::schema::{colors, grapes, producers, regions, wine_types};
 /// Integration tests
 use crate::{create_rocket, run_db_migrations, DbConn, MediaDir};
 
@@ -34,7 +34,6 @@ pub fn test_rocket_config() -> rocket::Rocket {
 }
 
 fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
-    todo!("Waiting on 'formatter error' fix to be backported to diesel 1.4.x");
     let rocket = run_db_migrations(rocket);
     if let Ok(rocket) = rocket {
         let connection = DbConn::get_one(&rocket).expect("database connection");
@@ -82,6 +81,14 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                     wine_types::id.eq(i as i32 + 1),
                     wine_types::name.eq(wine_type),
                 ))
+                .execute(&*connection)
+                .unwrap();
+        }
+
+        let mock_colors = vec!["Red", "White", "Rosé"];
+        for (i, color) in mock_colors.iter().enumerate() {
+            diesel::insert_into(colors::table)
+                .values((colors::id.eq(i as i32 + 1), colors::name.eq(color)))
                 .execute(&*connection)
                 .unwrap();
         }
