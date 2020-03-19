@@ -1,6 +1,3 @@
-extern crate typescript_definitions;
-extern crate vinoteca;
-
 use vinoteca::models::*;
 use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,

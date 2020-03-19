@@ -1,6 +1,3 @@
-extern crate serde_json;
-extern crate vinoteca;
-
 use std::env;
 use std::process;
 
