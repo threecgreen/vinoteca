@@ -72,7 +72,7 @@ impl From<ValidationErrors> for VinotecaError {
 
 impl Display for VinotecaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let fmt_arg = match &*self {
+        let fmt_arg = match self {
             Self::NotFound(msg) => format!("NotFound({})", msg),
             Self::Internal(msg) => format!("Internal({})", msg),
             Self::MissingConstraint(msg) => format!("MissingConstraint({})", msg),
@@ -84,7 +84,7 @@ impl Display for VinotecaError {
 
 impl Error for VinotecaError {
     fn description(&self) -> &str {
-        match *self {
+        match self {
             Self::NotFound(_) => "Expected to find something in the database that wasn't there",
             Self::Internal(_) => "Unexpected interal error",
             Self::MissingConstraint(_) => "Missing foreign key",
