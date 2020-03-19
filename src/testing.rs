@@ -9,16 +9,25 @@ use rocket::local::Client;
 use rocket::Rocket;
 use std::collections::HashMap;
 
+/// Create testing client for making requests to a test rocket instance
 pub fn create_client() -> Client {
     let rocket = create_rocket();
     Client::new(rocket).expect("Valid rocket instance")
 }
 
+/// Create a test rocket instance with an in-memory database and a managed
+/// `MediaDir`
 pub fn create_test_rocket() -> Rocket {
     test_rocket_config()
         .manage(MediaDir("/tmp".to_owned()))
         .attach(DbConn::fairing())
         .attach(AdHoc::on_attach("Setup test db", setup_test_db))
+}
+
+/// Create an in-memory database with some mock data
+pub fn create_test_db() -> DbConn {
+    let rocket = create_test_rocket();
+    DbConn::get_one(&rocket).expect("database connection")
 }
 
 pub fn test_rocket_config() -> rocket::Rocket {
@@ -47,7 +56,16 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .unwrap();
         }
 
-        for (i, grape) in vec!["Tempranillo"].iter().enumerate() {
+        let mock_grapes = vec![
+            "Cabernet Sauvignon",
+            "Tempranillo",
+            "Merlot",
+            "Pinot Noir",
+            "Riesling",
+            "Pinot Grigio",
+            "Garnacha",
+        ];
+        for (i, grape) in mock_grapes.iter().enumerate() {
             diesel::insert_into(grapes::table)
                 .values((grapes::id.eq(i as i32 + 1), grapes::name.eq(grape)))
                 .execute(&*connection)
