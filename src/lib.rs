@@ -8,14 +8,8 @@ extern crate log;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate rocket;
-extern crate serde;
-extern crate time;
-extern crate typescript_definitions;
-extern crate validator;
 #[macro_use]
 extern crate validator_derive;
-extern crate image;
-extern crate rocket_multipart_form_data;
 
 // Diesel modules
 pub mod models;

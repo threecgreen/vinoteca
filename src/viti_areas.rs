@@ -4,7 +4,6 @@ use crate::query_utils::IntoFirst;
 use crate::schema::{purchases, regions, viti_areas, wines};
 use crate::DbConn;
 
-use diesel;
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{Float, Integer, Nullable};

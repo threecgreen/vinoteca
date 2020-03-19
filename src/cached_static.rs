@@ -8,7 +8,6 @@ use std::io;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
-use time;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotModified<R>(pub R);

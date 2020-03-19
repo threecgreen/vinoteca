@@ -3,7 +3,6 @@ use crate::models::{Purchase, PurchaseForm};
 use crate::schema::{purchases, stores, wines};
 use crate::DbConn;
 
-use diesel;
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
 use validator::Validate;
