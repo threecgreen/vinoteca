@@ -61,6 +61,9 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.1.0</h5>
+            <p>Complete transition to single-page app</p>
+
             <h5>5.0.7</h5>
             <ul className="bullets">
                 <li>Add indication of when a form is being submitted</li>
