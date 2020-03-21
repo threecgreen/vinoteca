@@ -25,7 +25,7 @@ pub struct CachedFile(PathBuf, File);
 
 impl CachedFile {
     /// Attempts to open a file in read-only mode.
-    pub fn open<P: AsRef<Path>>(path: P) -> io::Result<CachedFile> {
+    pub fn open(path: impl AsRef<Path>) -> io::Result<CachedFile> {
         let file = File::open(path.as_ref())?;
         Ok(CachedFile(path.as_ref().to_path_buf(), file))
     }
@@ -108,14 +108,14 @@ pub struct CachedStaticFiles {
 impl CachedStaticFiles {
     const DEFAULT_RANK: isize = 10;
 
-    pub fn new<P: AsRef<Path>>(path: P, rank: isize) -> Self {
+    pub fn new(path: impl AsRef<Path>, rank: isize) -> Self {
         CachedStaticFiles {
             root: path.as_ref().into(),
             rank,
         }
     }
 
-    pub fn from<P: AsRef<Path>>(path: P) -> Self {
+    pub fn from(path: impl AsRef<Path>) -> Self {
         CachedStaticFiles::new(path, Self::DEFAULT_RANK)
     }
 

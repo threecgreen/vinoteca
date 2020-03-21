@@ -1,3 +1,5 @@
+/// Generates an API contract TypeScript type definition file,
+/// in web/lib/Restd.d.ts
 use vinoteca::models::*;
 use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
