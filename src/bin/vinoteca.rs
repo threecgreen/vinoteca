@@ -74,7 +74,7 @@ fn run(args: &[String]) {
 /// if we're not already on it.
 fn update(args: &[String]) {
     let should_force = !args.is_empty() && (args[0] == "-f" || args[0] == "--force");
-    let current_version = env!("CARGO_PKG_VERSION");
+    let current_version = versioning::Version::parse(env!("CARGO_PKG_VERSION")).expect("valid version");
     // Get latest release
     let curl = process::Command::new("curl")
         .args(&[
@@ -93,9 +93,21 @@ fn update(args: &[String]) {
         .expect("tag_name to be a string")
         // GitHub tags start with 'v'
         [1..];
-    if !should_force && version == current_version {
-        println!("{} is already the latest version", current_version);
-        return;
+    if !should_force {
+        // Verify the version on GitHub is newer
+        match versioning::Version::parse(version) {
+            Ok(v) if v <= current_version => {
+                println!("{} is already the latest version", current_version);
+                return;
+            },
+            // Version's newer, so continue
+            Ok(_) => {}
+            Err(e) => {
+                print_error(&format!("Error parsing version from GitHub: {}", e));
+                println!("Rerun update with -f to force an update");
+                process::exit(3);
+            }
+        }
     }
     let url = &map
         .get("assets")
@@ -136,6 +148,7 @@ fn update(args: &[String]) {
     }
 }
 
+// TODO: convert to returning result
 fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {
@@ -156,4 +169,86 @@ fn main() {
             process::exit(2);
         }
     };
+}
+
+mod versioning {
+    use std::cmp::{Eq, Ord, Ordering, PartialEq};
+    use std::fmt;
+    use std::str::FromStr;
+
+    /// Only supports semantic versioning
+    #[derive(Debug, Eq, PartialEq)]
+    pub struct Version(u16, u16, u16);
+
+    impl Version {
+        pub fn parse(version_str: &str) -> Result<Version, String> {
+            let version_strs = version_str.split(".").collect::<Vec<_>>();
+            if version_strs.len() != 3 {
+                return Err("Invalid length".to_owned())
+            }
+            let version = version_strs.iter().map(|s| u16::from_str(s)).filter_map(|r| r.ok()).collect::<Vec<_>>();
+            if version.len() != 3 {
+                return Err("Parsing error: not all are numbers".to_owned())
+            }
+            Ok(Version(version[0], version[1], version[2]))
+        }
+    }
+
+    impl Ord for Version {
+        fn cmp(&self, other: &Self) -> Ordering {
+            let major_ord = self.0.cmp(&other.0);
+            let minor_ord = self.1.cmp(&other.1);
+            if major_ord != Ordering::Equal {
+                major_ord
+            } else if minor_ord != Ordering::Equal {
+                minor_ord
+            } else {
+                self.2.cmp(&other.0)
+            }
+        }
+    }
+
+    impl PartialOrd for Version {
+        fn partial_cmp(&self, other: &Version) -> Option<Ordering> {
+            Some(self.cmp(other))
+        }
+    }
+
+    impl fmt::Display for Version {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}.{}.{}", self.0, self.1, self.2)
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn parse_good_str() {
+            let v = Version::parse("0.1.3").unwrap();
+            assert_eq!(v, Version(0, 1, 3));
+            let v = Version::parse("5.0.89").unwrap();
+            assert_eq!(v, Version(5, 0, 89));
+        }
+
+        #[test]
+        fn parse_bad_str() {
+            let e = Version::parse("5.a.7");
+            assert!(e.is_err());
+        }
+
+        #[test]
+        fn test_eq() {
+            assert_eq!(Version(2, 4, 6), Version(2, 4, 6));
+            assert_ne!(Version(2, 5, 6), Version(2, 4, 6));
+        }
+
+        #[test]
+        fn test_ord() {
+            assert!(Version(2, 4, 7) > Version(2, 3, 11));
+            assert!(Version(5, 0, 0) > Version(4, 99, 99));
+            assert!(Version(0, 1, 0) <= Version(1, 0, 1));
+        }
+    }
 }
