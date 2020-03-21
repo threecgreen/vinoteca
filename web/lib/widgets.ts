@@ -28,7 +28,7 @@ function activateNavbarTab(name: string): void {
     (document.getElementById(`${name}-nav`) as HTMLElement).classList.add("active");
 }
 
-function deactivateNavbarTab(name: string): void {
+export function deactivateNavbarTab(name: string): void {
     (document.getElementById(`${name}-nav`) as HTMLElement).classList.remove("active");
 }
 
@@ -37,12 +37,6 @@ export function navbar(activeNavTab?: string) {
     if (activeNavTab) {
         activateNavbarTab(activeNavTab);
     }
-    const sideNavElem = document.querySelector(".sidenav");
-    // tslint:disable-next-line no-unused-expression
-    new Sidenav(sideNavElem!);
-    const dropdownElem = document.querySelector(".dropdown-trigger");
-    // tslint:disable-next-line no-unused-expression
-    new Dropdown(dropdownElem!);
 }
 
 export function useNavBar(activeNavTab: string) {

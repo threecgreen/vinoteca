@@ -9,7 +9,7 @@ import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { getWines } from "../../lib/RestApi";
-import { setTitle, navbar } from "../../lib/widgets";
+import { setTitle, navbar, deactivateNavbarTab } from "../../lib/widgets";
 
 interface IState {
     wines: IWine[];
@@ -145,6 +145,10 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
         } catch (e) {
             this.logger.logError(`Failed to get wines: ${e.message}`);
         }
+    }
+
+    public componentWillUnmount() {
+        deactivateNavbarTab("wines");
     }
 
     private get filteredWines() {

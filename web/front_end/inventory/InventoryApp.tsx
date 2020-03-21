@@ -10,7 +10,7 @@ import Logger from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
 import { partUpdateWine } from "../../lib/RestApi";
 import { numToDate } from "../../lib/utils";
-import { setTitle, navbar } from "../../lib/widgets";
+import { setTitle, navbar, deactivateNavbarTab } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 
 interface IState {
@@ -64,6 +64,10 @@ export class InventoryApp extends React.Component<RouteComponentProps, IState> {
         setTitle("Inventory");
         navbar("inventory");
         this.updateInventory();
+    }
+
+    public componentWillUnmount() {
+        deactivateNavbarTab("inventory");
     }
 
     public async onInventoryChange(id: number, change: InventoryChange) {
