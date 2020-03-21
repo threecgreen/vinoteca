@@ -22,7 +22,7 @@ mod query_utils;
 // Rocket handlers //
 /////////////////////
 mod cached_static;
-mod templates;
+mod html;
 // Rest
 mod colors;
 mod grapes;
@@ -79,7 +79,7 @@ pub fn create_rocket() -> rocket::Rocket {
         // Run embedded database migrations on startup
         .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
         // TODO: persistent logger
-        .mount("/", routes![templates::home, templates::any_other])
+        .mount("/", routes![html::home, html::any_other])
         .mount(
             "/rest",
             routes![
