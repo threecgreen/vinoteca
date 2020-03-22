@@ -91,12 +91,11 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 wineGrapesToForm(editedGrapes, id),
             ]);
             const updatedWine = await updateWine(id, wineForm, editedWine.file);
-            // TODO: handle deleting all wine grapes
-            if (grapesForm.grapes.length > 0) {
-                const updateGrapes = await createWineGrapes(grapesForm);
-                dispatch({type: "setGrapes", grapes: updateGrapes});
-            }
+            // Always update wine grapes, even if there are none, because this
+            // is also how we handle deleting existing wine-grape relations
+            const updateGrapes = await createWineGrapes(grapesForm);
             dispatch({type: "setWine", wine: updatedWine});
+            dispatch({type: "setGrapes", grapes: updateGrapes});
             dispatch({type: "setMode", mode: {type: "display"}});
         } catch (e) {
             logger.logWarning(`Failed to update wine. ${e.message}`);

@@ -49,7 +49,6 @@ pub struct AssociatedGrape {
 pub struct WineGrapesForm {
     pub wine_id: i32,
     #[validate] // Nested validation
-    #[validate(length(min = 1))]
     #[validate(custom = "validate_total_percentage")]
     #[validate(custom = "validate_unique")]
     pub grapes: Vec<AssociatedGrape>,
@@ -104,30 +103,30 @@ pub fn post(
 
     connection.set_timeout(1_000)?;
     // Delete existing wine grapes
-    let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::id.eq(wine_id)))
+    let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
         .execute(&*connection);
     if let Err(e) = delete_result {
         return Err(VinotecaError::Internal(format!(
-            "Error deleting existing wine grapes for wine with id{}: {}",
+            "Error deleting existing wine grapes for wine with id {}: {}",
             wine_id, e
         )));
     }
 
-    diesel::insert_into(wine_grapes::table)
-        .values(&wine_grapes)
-        .execute(&*connection)?;
+    if wine_grapes.len() > 0 {
+        diesel::insert_into(wine_grapes::table)
+            .values(&wine_grapes)
+            .execute(&*connection)?;
+    }
     get(Some(wine_id), None, connection)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing::create_test_db;
+    use crate::testing::{create_test_db, create_test_rocket};
 
     #[test]
     fn post_many() {
-        // let rocket = create_test_rocket();
-        // let connection = DbConn::get_one(&rocket).expect("database connection");
         let connection = create_test_db();
         let form = WineGrapesForm {
             wine_id: 1,
@@ -248,5 +247,47 @@ mod tests {
         ];
         let result = validate_total_percentage(&associated_grapes);
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn post_empty_no_op() {
+        let connection = create_test_db();
+        let form = WineGrapesForm {
+            wine_id: 3,
+            grapes: Vec::new(),
+        };
+        let response = post(Json(form), connection);
+        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 0));
+    }
+
+    #[test]
+    fn post_empty_delete_existing() {
+        let rocket = create_test_rocket();
+        // Create initial wine grapes
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let form = WineGrapesForm {
+            wine_id: 4,
+            grapes: vec![
+                AssociatedGrape {
+                    grape_id: 1,
+                    percent: Some(45),
+                },
+                AssociatedGrape {
+                    grape_id: 2,
+                    percent: Some(55)
+                },
+            ],
+        };
+        let response = post(Json(form), connection);
+        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 2));
+        // Post empty wine grapes for same wine
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let form = WineGrapesForm {
+            wine_id: 4,
+            grapes: Vec::new(),
+        };
+        let response = post(Json(form), connection);
+        dbg!(&response);
+        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 0));
     }
 }
