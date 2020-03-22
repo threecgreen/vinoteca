@@ -98,7 +98,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             dispatch({type: "setGrapes", grapes: updateGrapes});
             dispatch({type: "setMode", mode: {type: "display"}});
         } catch (e) {
-            logger.logWarning(`Failed to update wine. ${e.message}`);
+            logger.logWarning(`Failed to update wine. ${e.message}`,
+                              {id, lineNumber: e.lineNumber, editedWine, editedGrapes});
         }
     }
 

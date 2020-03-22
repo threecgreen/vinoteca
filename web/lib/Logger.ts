@@ -15,7 +15,7 @@ interface ILogResult {
     success: boolean;
 }
 
-type LogTags = IDict<string | number | Date | undefined | null;
+type LogTags = IDict<string | number | Date | object | undefined | null>;
 
 export default class Logger {
     /**
@@ -74,7 +74,11 @@ export default class Logger {
         }
         const strTags: IDict<string> = {};
         Object.entries(tags).forEach(([k, v]) => {
-            strTags[k] = v?.toString() ?? "";
+            if (v instanceof Object) {
+                strTags[k] = JSON.stringify(v);
+            } else {
+                strTags[k] = v?.toString() ?? "";
+            }
         });
         try {
             const response: ILogResult = await postLog({
