@@ -112,7 +112,7 @@ pub fn post(
         )));
     }
 
-    if wine_grapes.len() > 0 {
+    if !wine_grapes.is_empty() {
         diesel::insert_into(wine_grapes::table)
             .values(&wine_grapes)
             .execute(&*connection)?;
@@ -257,7 +257,7 @@ mod tests {
             grapes: Vec::new(),
         };
         let response = post(Json(form), connection);
-        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 0));
+        assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
     }
 
     #[test]
@@ -288,6 +288,6 @@ mod tests {
         };
         let response = post(Json(form), connection);
         dbg!(&response);
-        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 0));
+        assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
     }
 }

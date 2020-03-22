@@ -183,7 +183,7 @@ mod versioning {
 
     impl Version {
         pub fn parse(version_str: &str) -> Result<Version, String> {
-            let version_strs = version_str.split(".").collect::<Vec<_>>();
+            let version_strs = version_str.split('.').collect::<Vec<_>>();
             if version_strs.len() != 3 {
                 return Err("Invalid length".to_owned());
             }
