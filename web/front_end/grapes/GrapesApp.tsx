@@ -67,4 +67,4 @@ export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
         </div>
     );
 }
-GrapesApp.displayName = GrapesApp.name;
+GrapesApp.displayName = "GrapesApp";

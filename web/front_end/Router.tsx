@@ -29,7 +29,7 @@ const NotFound: React.FC<RouteComponentProps<{}>> = () => {
         </div>
     );
 }
-NotFound.displayName = NotFound.name;
+NotFound.displayName = "NotFound";
 
 /**
  * For testing purposes
@@ -63,4 +63,4 @@ export const Router: React.FC<{}> = (_) => {
         </ErrorBoundary>
     );
 };
-Router.displayName = Router.name;
+Router.displayName = "Router";

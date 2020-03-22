@@ -55,7 +55,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
         </GreenCard>
     );
 }
-PurchasesByYearGraph.displayName = PurchasesByYearGraph.name;
+PurchasesByYearGraph.displayName = "PurchasesByYearGraph";
 
 export const PurchasesByYearTable: React.FC<{}> = (_) => {
     const logger = new Logger("PurchasesByYearTable");

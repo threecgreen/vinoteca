@@ -62,7 +62,13 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             name="changelog">Changelog</a></h4>
 
             <h5>5.1.0</h5>
-            <p>Complete transition to single-page app</p>
+            <ul className="bullets">
+                <li>Complete transition to single-page app</li>
+                <li>Fix filter by name and wine type in wines table</li>
+                <li>Fix bugs involving updating wine grapes</li>
+                <li>Improved version comparison when deciding whether to update</li>
+                <li>Fix client-side logger module names</li>
+            </ul>
 
             <h5>5.0.7</h5>
             <ul className="bullets">

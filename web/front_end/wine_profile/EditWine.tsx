@@ -59,4 +59,4 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
         </Modal>
     );
 }
-EditWine.displayName = EditWine.name;
+EditWine.displayName = "EditWine";

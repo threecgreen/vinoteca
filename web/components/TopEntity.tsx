@@ -109,4 +109,4 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
         <h6 className="bold">{ `Insufficent ${name}s.` }</h6>
     );
 }
-TopEntity.displayName = TopEntity.name;
+TopEntity.displayName = "TopEntity";

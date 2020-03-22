@@ -15,7 +15,7 @@ export const TopProducers: React.FC<{}> = (_) => {
         </RedCard>
     );
 }
-TopProducers.displayName = TopProducers.name;
+TopProducers.displayName = "TopProducers";
 
 export const TopRegions: React.FC<{}> = (_) => {
     return (
@@ -27,7 +27,7 @@ export const TopRegions: React.FC<{}> = (_) => {
         </YellowCard>
     );
 }
-TopRegions.displayName = TopRegions.name;
+TopRegions.displayName = "TopRegions";
 
 export const TopVitiAreas: React.FC<{}> = (_) => {
     return (
@@ -40,7 +40,7 @@ export const TopVitiAreas: React.FC<{}> = (_) => {
         </GreenCard>
     );
 }
-TopVitiAreas.displayName = TopVitiAreas.name;
+TopVitiAreas.displayName = "TopVitiAreas";
 
 const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
     return(
@@ -49,7 +49,7 @@ const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
         </td>
     );
 }
-NonLinkCell.displayName = NonLinkCell.name;
+NonLinkCell.displayName = "NonLinkCell";
 
 export const TopGrapes: React.FC<{}> = (_) => {
     return (

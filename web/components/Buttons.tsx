@@ -78,7 +78,7 @@ export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
         </Link>
     );
 }
-BtnLink.displayName = BtnLink.name;
+BtnLink.displayName = "BtnLink";
 
 interface ICancelOrConfirmProps {
     onConfirmClick: () => void;

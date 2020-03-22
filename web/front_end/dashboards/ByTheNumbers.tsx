@@ -68,4 +68,4 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
         </YellowCard>
     )
 }
-ByTheNumbers.displayName = ByTheNumbers.name;
+ByTheNumbers.displayName = "ByTheNumbers";

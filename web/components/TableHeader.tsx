@@ -112,4 +112,4 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
         </td>
     );
 }
-SelectFilterHeader.displayName = SelectFilterHeader.name;
+SelectFilterHeader.displayName = "SelectFilterHeader";

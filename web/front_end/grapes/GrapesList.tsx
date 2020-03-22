@@ -82,4 +82,4 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
         </table>
     );
 }
-GrapesList.displayName = GrapesList.name;
+GrapesList.displayName = "GrapesList";
