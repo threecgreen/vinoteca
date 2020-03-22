@@ -29,6 +29,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
 
         this.logger = new Logger("WinesApp");
 
+        // FIXME: search and filter by wine name AND wine type
         const filterTexts = this.deserializeFilters(window.localStorage.getItem(WinesApp.localStorageKey) ?? "")
         this.state = {
             wines: [],
