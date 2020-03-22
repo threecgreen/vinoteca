@@ -1,8 +1,7 @@
+use rocket::http::ContentType;
 use rocket::request::Request;
 use rocket::response::{self, Responder};
-use rocket::http::ContentType;
 use std::path::PathBuf;
-
 
 const INDEX_HTML: &str = include_str!("../templates/index.html");
 

@@ -274,7 +274,7 @@ mod tests {
                 },
                 AssociatedGrape {
                     grape_id: 2,
-                    percent: Some(55)
+                    percent: Some(55),
                 },
             ],
         };

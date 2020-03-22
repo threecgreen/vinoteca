@@ -74,7 +74,8 @@ fn run(args: &[String]) {
 /// if we're not already on it.
 fn update(args: &[String]) {
     let should_force = !args.is_empty() && (args[0] == "-f" || args[0] == "--force");
-    let current_version = versioning::Version::parse(env!("CARGO_PKG_VERSION")).expect("valid version");
+    let current_version =
+        versioning::Version::parse(env!("CARGO_PKG_VERSION")).expect("valid version");
     // Get latest release
     let curl = process::Command::new("curl")
         .args(&[
@@ -99,7 +100,7 @@ fn update(args: &[String]) {
             Ok(v) if v <= current_version => {
                 println!("{} is already the latest version", current_version);
                 return;
-            },
+            }
             // Version's newer, so continue
             Ok(_) => {}
             Err(e) => {
@@ -184,11 +185,15 @@ mod versioning {
         pub fn parse(version_str: &str) -> Result<Version, String> {
             let version_strs = version_str.split(".").collect::<Vec<_>>();
             if version_strs.len() != 3 {
-                return Err("Invalid length".to_owned())
+                return Err("Invalid length".to_owned());
             }
-            let version = version_strs.iter().map(|s| u16::from_str(s)).filter_map(|r| r.ok()).collect::<Vec<_>>();
+            let version = version_strs
+                .iter()
+                .map(|s| u16::from_str(s))
+                .filter_map(|r| r.ok())
+                .collect::<Vec<_>>();
             if version.len() != 3 {
-                return Err("Parsing error: not all are numbers".to_owned())
+                return Err("Parsing error: not all are numbers".to_owned());
             }
             Ok(Version(version[0], version[1], version[2]))
         }
