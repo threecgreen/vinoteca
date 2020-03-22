@@ -34,7 +34,7 @@ const remainingGrapePct = (grapes: IWineGrape[]): number => {
         if (sum <= 100) {
             return 100 - sum;
         } else {
-            new Logger(remainingGrapePct.name).logWarning("Total grape percentage is greater than 100%");
+            new Logger("remainingGrapePct").logWarning("Total grape percentage is greater than 100%");
             return 0;
         }
     }

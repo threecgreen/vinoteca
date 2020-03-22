@@ -31,7 +31,7 @@ interface IProps {
 export const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
-    const logger = new Logger(WineProfileApp.name);
+    const logger = new Logger("WineProfileApp");
 
     useTitle(state.wine ? getNameAndType(state.wine.name, state.wine.wineType) : "Wine profile");
 

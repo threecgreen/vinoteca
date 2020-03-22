@@ -18,7 +18,7 @@ import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
 import Logger from "../lib/Logger";
 
 const NotFound: React.FC<RouteComponentProps<{}>> = () => {
-    new Logger(NotFound.name, false, false).logWarning("Client requested url that doesn't exist")
+    new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>

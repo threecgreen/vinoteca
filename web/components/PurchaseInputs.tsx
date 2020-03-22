@@ -85,7 +85,7 @@ interface IProps {
 }
 
 export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dispatch}) => {
-    const logger = new Logger(PurchaseInputs.name);
+    const logger = new Logger("PurchaseInputs");
     const storeInputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     const onStoreChange: (store: string) => void = (store) => {

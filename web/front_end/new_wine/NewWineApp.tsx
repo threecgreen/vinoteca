@@ -23,7 +23,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
 
     const onSubmit = async () => {
         setIsSaving(true);
-        const logger = new Logger(NewWineApp.name);
+        const logger = new Logger("NewWineApp");
 
         let wineId;
         let purchaseId;

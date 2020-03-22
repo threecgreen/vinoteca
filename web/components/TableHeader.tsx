@@ -88,7 +88,7 @@ FilterHeader.displayName = "FilterHeader";
 
 export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
     const extraChoice = "Any";
-    const logger = new Logger(SelectFilterHeader.name);
+    const logger = new Logger("SelectFilterHeader");
 
     const onChange = (selection: string) => {
         if (selection === extraChoice) {

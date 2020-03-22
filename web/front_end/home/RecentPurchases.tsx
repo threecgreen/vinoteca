@@ -8,7 +8,7 @@ import Logger from "../../lib/Logger";
 import { IRecentPurchase } from "../../lib/Rest";
 
 export const RecentPurchases: React.FC<{}> = (_) => {
-    const logger = new Logger(RecentPurchases.name);
+    const logger = new Logger("RecentPurchases");
     const [hasLoaded, setHasLoaded] = useState<boolean>(false);
     const [purchases, setPurchases] = useState<IRecentPurchase[]>([]);
     useEffect(() => {

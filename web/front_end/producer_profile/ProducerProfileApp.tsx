@@ -49,7 +49,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
             region: undefined,
             wines: [],
         };
-        this.logger = new Logger(this.constructor.name, false);
+        this.logger = new Logger("ProducerProfileApp", false);
         this.onEditClick = this.onEditClick.bind(this);
         this.onProducerChange = this.onProducerChange.bind(this);
         this.onRegionChange = this.onRegionChange.bind(this);

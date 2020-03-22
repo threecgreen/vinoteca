@@ -50,7 +50,7 @@ export class SearchWinesApp extends React.Component<RouteComponentProps, ISearch
     constructor(props: {}) {
         super(props);
         this.state = SearchWinesApp.defaultState;
-        this.logger = new Logger(this.constructor.name),
+        this.logger = new Logger("SearchWinesApp"),
         this.querySearchResults = this.querySearchResults.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onResetClick = this.onResetClick.bind(this);

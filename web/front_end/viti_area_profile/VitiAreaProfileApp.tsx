@@ -40,7 +40,7 @@ export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IPro
             stats: undefined,
         }
 
-        this.logger = new Logger(this.constructor.name, true);
+        this.logger = new Logger("VitiAreaProfileApp", true);
         this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);

@@ -11,7 +11,7 @@ interface IProps extends IOnChange {
 }
 
 export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
-    const logger = new Logger(ProducerInput.name);
+    const logger = new Logger("ProducerInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {

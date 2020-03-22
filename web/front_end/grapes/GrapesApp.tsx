@@ -11,7 +11,7 @@ import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
 export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
-    const logger = new Logger(GrapesApp.name);
+    const logger = new Logger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
     useTitle("Grapes");

@@ -29,7 +29,7 @@ interface IProps<Entity> {
 export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity, minQuantity}: IProps<Entity>) {
     minQuantity = minQuantity ?? 5;
 
-    const logger = new Logger(TopEntity.name);
+    const logger = new Logger("TopEntity");
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
     React.useEffect(() => {

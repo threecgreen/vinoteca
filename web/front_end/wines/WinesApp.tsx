@@ -27,7 +27,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
     public constructor(props: {}) {
         super(props);
 
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new Logger("WinesApp");
 
         const filterTexts = this.deserializeFilters(window.localStorage.getItem(WinesApp.localStorageKey) ?? "")
         this.state = {

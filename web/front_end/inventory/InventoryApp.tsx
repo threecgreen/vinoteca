@@ -28,7 +28,7 @@ export class InventoryApp extends React.Component<RouteComponentProps, IState> {
             wines: [],
         };
 
-        this.logger = new Logger(this.constructor.name);
+        this.logger = new Logger("InventoryApp");
     }
 
     public render() {

@@ -13,7 +13,7 @@ interface IProps extends IOnChange {
 }
 
 export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) => {
-    const logger = new Logger(RegionInput.name);
+    const logger = new Logger("RegionInput");
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 

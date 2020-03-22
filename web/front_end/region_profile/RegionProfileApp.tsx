@@ -40,7 +40,7 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
             vitiAreas: [],
         }
 
-        this.logger = new Logger(this.constructor.name, true);
+        this.logger = new Logger("RegionProfileApp", true);
         this.onRegionChange = this.onRegionChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);

@@ -39,7 +39,7 @@ export const useColorsSelect = (logger: Logger, extraChoice?: string): [string[]
 }
 
 export const ColorInput: React.FC<IProps> = (props) => {
-    const logger = new Logger(ColorInput.name);
+    const logger = new Logger("ColorInput");
 
     const [selectionOptions, selectRef] = useColorsSelect(logger, props.extraChoice);
 

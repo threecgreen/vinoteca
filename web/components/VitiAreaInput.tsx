@@ -12,7 +12,7 @@ interface IProps extends IOnChange {
 }
 
 export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) => {
-    const logger = new Logger(VitiAreaInput.name);
+    const logger = new Logger("VitiAreaInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {

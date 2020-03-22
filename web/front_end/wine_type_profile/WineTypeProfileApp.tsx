@@ -38,7 +38,7 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
             wines: [],
         }
 
-        this.logger = new Logger(this.constructor.name, true);
+        this.logger = new Logger("WineTypeProfileApp", true);
         this.onWineTypeChange = this.onWineTypeChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
