@@ -1,4 +1,4 @@
-use crate::schema::{colors, grapes, producers, regions, wine_types};
+use crate::schema::{colors, grapes, producers, regions, wine_types, wines};
 /// Integration tests
 use crate::{create_rocket, run_db_migrations, DbConn, MediaDir};
 
@@ -110,6 +110,17 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .execute(&*connection)
                 .unwrap();
         }
+
+        diesel::insert_into(wines::table)
+            .values((
+                wines::id.eq(1),
+                wines::wine_type_id.eq(1),
+                wines::producer_id.eq(1),
+                wines::color_id.eq(2),
+                wines::inventory.eq(0),
+            ))
+            .execute(&*connection)
+            .unwrap();
 
         Ok(rocket)
     } else {

@@ -13,3 +13,44 @@ pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
         .map(|_| ())
         .map_err(VinotecaError::from)
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::error::RestResult;
+    use crate::models::Wine;
+    use crate::testing::create_test_rocket;
+    use crate::wines::get;
+
+    use rocket_contrib::json::Json;
+
+    fn get_by_id(id: i32, connection: DbConn) -> RestResult<Vec<Wine>> {
+        get(
+            Some(id),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            connection,
+        )
+    }
+
+    #[test]
+    fn delete_removes_wine() {
+        let rocket = create_test_rocket();
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let wines = get_by_id(1, connection);
+        assert!(matches!(wines, Ok(Json(wines)) if wines.len() == 1));
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let response = delete(1, connection);
+        assert!(response.is_ok());
+        let connection = DbConn::get_one(&rocket).expect("database connection");
+        let wines = get_by_id(1, connection);
+        assert!(matches!(wines, Ok(Json(wines)) if wines.is_empty()));
+    }
+}
