@@ -121,7 +121,7 @@ pub fn post(
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
     use crate::testing::{create_test_db, create_test_rocket};
 
