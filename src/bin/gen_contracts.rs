@@ -1,5 +1,6 @@
 /// Generates an API contract TypeScript type definition file,
 /// in web/lib/Restd.d.ts
+use vinoteca::logs::{LogForm, LogResponse};
 use vinoteca::models::*;
 use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
@@ -66,6 +67,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     )?;
     // Other models
     write_interface(&mut type_def_writer, InventoryWine::type_script_ify())?;
+    write_interface(&mut type_def_writer, LogForm::type_script_ify())?;
+    write_interface(&mut type_def_writer, LogResponse::type_script_ify())?;
     write_interface(
         &mut type_def_writer,
         MostCommonPurchaseDate::type_script_ify(),

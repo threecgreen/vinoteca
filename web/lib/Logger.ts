@@ -1,4 +1,5 @@
-import { post } from "./ApiHelper";
+import { postLog } from "./RestApi";
+import { IDict } from "./utils";
 import { toast } from "./widgets";
 
 /** Provides logging functionality for client-side JavaScript errors. */
@@ -13,6 +14,8 @@ enum LogLevel {
 interface ILogResult {
     success: boolean;
 }
+
+type LogTags = IDict<string | number | Date | undefined | null;
 
 export default class Logger {
     /**
@@ -31,53 +34,62 @@ export default class Logger {
      * log message will be displayed and the log will be sent back to the server
      * for posterity.
      */
-    public logCritical(message: string) {
+    public logCritical(message: string, tags: LogTags = {}) {
         const level = LogLevel.Critical;
         this.toast(level, message);
-        return this.log(level, message);
+        return this.log(level, message, tags);
     }
 
     /**
      * A toast with the log message will be displayed and the log will be sent
      * back to the server for posterity.
      */
-    public logError(message: string) {
+    public logError(message: string, tags: LogTags = {}) {
         const level = LogLevel.Error;
         this.toast(level, message);
-        return this.log(level, message);
+        return this.log(level, message, tags);
     }
 
     /**
      * A toast with the log message will be displayed and the log will be sent
      * back to the server for posterity.
      */
-    public logWarning(message: string) {
+    public logWarning(message: string, tags: LogTags = {}) {
         const level = LogLevel.Warning;
         this.toast(level, message);
-        return this.log(level, message);
+        return this.log(level, message, tags);
     }
 
-    public logInfo(message: string) {
-        return this.log(LogLevel.Info, message);
+    public logInfo(message: string, tags: LogTags = {}) {
+        return this.log(LogLevel.Info, message, tags);
     }
 
-    public logDebug(message: string) {
-        return this.log(LogLevel.Debug, message);
+    public logDebug(message: string, tags: LogTags = {}) {
+        return this.log(LogLevel.Debug, message, tags);
     }
 
-    private async log(level: LogLevel, message: string) {
+    private async log(level: LogLevel, message: string, tags: LogTags) {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        const response: ILogResult = await post("/rest/logs", {
-            level,
-            // @ts-ignore
-            message: message instanceof Object ? "" : message,
-            module: this.module,
-            url: window.location.pathname,
+        const strTags: IDict<string> = {};
+        Object.entries(tags).forEach(([k, v]) => {
+            strTags[k] = v?.toString() ?? "";
         });
-        if (!response.success) {
-            this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+        try {
+            const response: ILogResult = await postLog({
+                level,
+                // @ts-ignore
+                message: message instanceof Object ? "" : message,
+                module: this.module,
+                url: window.location.pathname,
+                tags: strTags,
+            });
+            if (!response.success) {
+                this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+            }
+        } catch (e) {
+            this.toast(LogLevel.Error, `Failed to send client-side logs to server: ${e.message}`);
         }
     }
 

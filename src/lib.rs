@@ -26,7 +26,7 @@ mod html;
 // Rest
 mod colors;
 mod grapes;
-mod logs;
+pub mod logs;
 mod producers;
 pub mod purchases;
 pub mod regions;

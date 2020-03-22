@@ -3,7 +3,8 @@ import Logger from "./Logger";
 import { IColor, IGrape, IGrapeForm, IMostCommonPurchaseDate, IProducer, IProducerForm, IPurchase,
          IPurchaseCount, IPurchaseForm, IRegion, IRegionForm, IStore, IStoreForm, ITopEntity,
          ITotalLiters, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineCount, IWineForm,
-         IWineGrape, IWineGrapesForm, IWinePatchForm, IWineType, IWineTypeForm } from "./Rest";
+         IWineGrape, IWineGrapesForm, IWinePatchForm, IWineType, IWineTypeForm, ILogForm,
+         ILogResponse } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -395,4 +396,9 @@ export async function updateWineType(wineType: IWineType): Promise<IWineType> {
 export async function getTopWineTypes(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
     return get("/rest/wine-types/top", nonNullParams);
+}
+
+/* LOGS */
+export async function postLog(logForm: ILogForm): Promise<ILogResponse> {
+    return post("/rest/logs", logForm);
 }
