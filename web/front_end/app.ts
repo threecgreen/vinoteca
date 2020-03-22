@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { render } from "react-dom";
-import { onLoad, onError } from "../lib/utils";
+import { onError, onLoad } from "../lib/utils";
 import { Footer } from "./Footer";
 import { Top } from "./Navbar";
 import { Router } from "./Router";

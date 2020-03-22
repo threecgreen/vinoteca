@@ -74,11 +74,7 @@ export default class Logger {
         }
         const strTags: IDict<string> = {};
         Object.entries(tags).forEach(([k, v]) => {
-            if (v instanceof Object) {
-                strTags[k] = JSON.stringify(v);
-            } else {
-                strTags[k] = v?.toString() ?? "";
-            }
+            strTags[k] = v instanceof Object ? JSON.stringify(v) : v ?.toString() ?? "";
         });
         try {
             const response: ILogResult = await postLog({

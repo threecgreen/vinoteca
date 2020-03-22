@@ -1,6 +1,6 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
-import { IRestModel } from "./RestTypes";
 import Logger from "./Logger";
+import { IRestModel } from "./RestTypes";
 
 /**
  * Key-value store where the key must be a string, but the value is of any type
@@ -166,7 +166,9 @@ export function onLoad(fun: () => void) {
     document.addEventListener("DOMContentLoaded", fun);
 }
 
-export function onError(event: Event | string, source?: string, line?: number, col?: number, error?: Error) {
+export function onError(
+    event: Event | string, source?: string, line?: number, col?: number, error?: Error,
+) {
     new Logger("window", false, false).logCritical(
         `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
         + ` event: ${event.toString()}`);
