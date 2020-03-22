@@ -4,7 +4,7 @@ import { Btn, BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
-import { WinesTable } from "../../components/WinesTable";
+import { WinesTable, WinesTableColumn, columnToVal } from "../../components/WinesTable";
 import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
@@ -13,8 +13,8 @@ import { setTitle, navbar, deactivateNavbarTab } from "../../lib/widgets";
 
 interface IState {
     wines: IWine[];
-    predicates: Map<keyof IWine, FilterExpr>;
-    filterTexts: Map<keyof IWine, string>;
+    predicates: Map<WinesTableColumn, FilterExpr>;
+    filterTexts: Map<WinesTableColumn, string>;
     hasLoaded: boolean;
     currentPage: number;
     winesPerPage: number;
@@ -29,7 +29,6 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
 
         this.logger = new Logger("WinesApp");
 
-        // FIXME: search and filter by wine name AND wine type
         const filterTexts = this.deserializeFilters(window.localStorage.getItem(WinesApp.localStorageKey) ?? "")
         this.state = {
             wines: [],
@@ -53,7 +52,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
         }
     }
 
-    private deserializeFilters(json: string): Map<keyof IWine, string> {
+    private deserializeFilters(json: string): Map<WinesTableColumn, string> {
         if (!json) {
             return new Map();
         }
@@ -73,8 +72,8 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
         }
     }
 
-    private parseAllFilters(filterTexts: Map<keyof IWine, string>): Map<keyof IWine, FilterExpr> {
-        const predicates = new Map<keyof IWine, FilterExpr>()
+    private parseAllFilters(filterTexts: Map<WinesTableColumn, string>): Map<WinesTableColumn, FilterExpr> {
+        const predicates = new Map<WinesTableColumn, FilterExpr>()
         for (const entry of filterTexts.entries()) {
             predicates.set(entry[0], FilterExpr.parse(entry[1]));
         }
@@ -156,16 +155,15 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
         // Reduce predicates
         const combinedPred = [...this.state.predicates.entries()]
             .reduceRight((prevVal, [column, filterExpr]) => {
-                return (wine) => prevVal(wine) && filterExpr.call(wine[column]!);
+                return (wine) => prevVal(wine) && filterExpr.call(columnToVal(column, wine)!);
             }, (_: IWine) => true);
         return this.state.wines.filter(combinedPred);
     }
 
-
-    private onFilterChange(columnName: keyof IWine, text: string) {
+    private onFilterChange(column: WinesTableColumn, text: string) {
         this.setState((prevState) => {
-            prevState.predicates.set(columnName, FilterExpr.parse(text));
-            prevState.filterTexts.set(columnName, text);
+            prevState.predicates.set(column, FilterExpr.parse(text));
+            prevState.filterTexts.set(column, text);
             return {
                 predicates: prevState.predicates,
                 filterTexts: prevState.filterTexts,

@@ -1,9 +1,10 @@
 import React from "react";
 import { IWine } from "../lib/Rest";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";
-import { FilterHeader, SortingState, TableHeader, SelectFilterHeader } from "./TableHeader";
+import { FilterHeader, SelectFilterHeader, SortingState, TableHeader } from "./TableHeader";
+import { getNameAndType } from "../lib/utils";
 
-enum SortingValue {
+export enum WinesTableColumn {
     Inventory,
     Color,
     NameAndType,
@@ -14,6 +15,40 @@ enum SortingValue {
     Rating
 };
 
+function getProp(wine: IWine, prop: keyof IWine | "nameAndType") {
+    if (prop === "nameAndType") {
+        return getNameAndType(wine.name, wine.wineType);
+    }
+    return wine[prop];
+}
+
+function columnToKeyOf(column: WinesTableColumn): keyof IWine | "nameAndType" {
+    switch (column) {
+        case WinesTableColumn.Inventory:
+            return "inventory";
+        case WinesTableColumn.Color:
+            return "color";
+        case WinesTableColumn.NameAndType:
+            return "nameAndType";
+        case WinesTableColumn.Producer:
+            return "producer";
+        case WinesTableColumn.Region:
+            return "region";
+        case WinesTableColumn.VitiArea:
+            return "vitiArea";
+        case WinesTableColumn.Vintage:
+            return "lastPurchaseVintage";
+        case WinesTableColumn.Rating:
+            return "rating";
+        default:
+            return "nameAndType";
+    }
+}
+
+export function columnToVal(column: WinesTableColumn, wine: IWine) {
+    return getProp(wine, columnToKeyOf(column));
+}
+
 export enum ColumnToExclude {
     Producer,
     Region,
@@ -22,14 +57,14 @@ export enum ColumnToExclude {
 
 type IProps = {
     wines: IWine[];
-    filterTexts?: Map<keyof IWine, string>;
-    onFilterChange?: (column: keyof IWine, text: string) => void;
+    filterTexts?: Map<WinesTableColumn, string>;
+    onFilterChange?: (column: WinesTableColumn, text: string) => void;
     excludeColumn?: ColumnToExclude;
 } & Partial<DefaultProps>
 
 interface IState {
     ascending: boolean;
-    sorting: SortingValue;
+    sorting: WinesTableColumn;
     colorSelection: string;
 }
 
@@ -47,7 +82,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
         super(props);
         this.state = {
             ascending: true,
-            sorting: SortingValue.NameAndType,
+            sorting: WinesTableColumn.NameAndType,
             colorSelection: "",
         };
     }
@@ -56,14 +91,14 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
         const filterHeader = this.props.filterTexts
             ? (
                 <tr key="filters">
-                    <FilterHeader { ...this.filterHeaderProps("inventory") } />
-                    <SelectFilterHeader { ...this.filterHeaderProps("color") } />
-                    <FilterHeader { ...this.filterHeaderProps("wineType") } />
-                    <FilterHeader { ...this.filterHeaderProps("producer") } />
-                    <FilterHeader { ...this.filterHeaderProps("region") } />
-                    <FilterHeader { ...this.filterHeaderProps("vitiArea") } />
-                    <FilterHeader { ...this.filterHeaderProps("lastPurchaseVintage") } />
-                    <FilterHeader { ...this.filterHeaderProps("rating") } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.Inventory) } />
+                    <SelectFilterHeader { ...this.filterHeaderProps(WinesTableColumn.Color) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.NameAndType) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.Producer) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.Region) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.VitiArea) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.Vintage) } />
+                    <FilterHeader { ...this.filterHeaderProps(WinesTableColumn.Rating) } />
                 </tr>
             ) : null;
         const exCol = this.props.excludeColumn;
@@ -71,31 +106,31 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             <table className="responsive highlight condensed">
                 <thead>
                     <tr key="headers">
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Inventory)} isNumCol >
+                        <TableHeader {...this.tableHeaderProps(WinesTableColumn.Inventory)} isNumCol >
                             Inventory
                         </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Color)}>
+                        <TableHeader {...this.tableHeaderProps(WinesTableColumn.Color)}>
                             Color
                         </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.NameAndType)}>
+                        <TableHeader {...this.tableHeaderProps(WinesTableColumn.NameAndType)}>
                             Name and Type
                         </TableHeader>
                         { exCol === ColumnToExclude.Producer
-                            || <TableHeader {...this.tableHeaderProps(SortingValue.Producer)}>
+                            || <TableHeader {...this.tableHeaderProps(WinesTableColumn.Producer)}>
                                 Producer
                             </TableHeader> }
                         { exCol === ColumnToExclude.Region
-                            || <TableHeader {...this.tableHeaderProps(SortingValue.Region)}>
+                            || <TableHeader {...this.tableHeaderProps(WinesTableColumn.Region)}>
                                 Region
                             </TableHeader> }
                         { exCol === ColumnToExclude.VitiArea
-                            || <TableHeader {...this.tableHeaderProps(SortingValue.VitiArea)}>
+                            || <TableHeader {...this.tableHeaderProps(WinesTableColumn.VitiArea)}>
                                 Viticultural Area
                             </TableHeader> }
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Vintage)} isNumCol>
+                        <TableHeader {...this.tableHeaderProps(WinesTableColumn.Vintage)} isNumCol>
                             Vintage
                         </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Rating)} isNumCol>
+                        <TableHeader {...this.tableHeaderProps(WinesTableColumn.Rating)} isNumCol>
                             Rating
                         </TableHeader>
                     </tr>
@@ -143,15 +178,15 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
     private get sortedWines() {
         const ascendingMultiplier = this.state.ascending ? 1 : -1;
         switch (this.state.sorting) {
-            case SortingValue.Inventory:
+            case WinesTableColumn.Inventory:
                 return this.props.wines.sort((w1, w2) =>
                     (w1.inventory - w2.inventory) * ascendingMultiplier
                 );
-            case SortingValue.Color:
+            case WinesTableColumn.Color:
                 return this.props.wines.sort((w1, w2) =>
                     w1.color.localeCompare(w2.color) * ascendingMultiplier
                 );
-            case SortingValue.NameAndType:
+            case WinesTableColumn.NameAndType:
                 return this.props.wines.sort((w1, w2) => {
                     // Sort by wineType then name
                     const wineTypeComparison = (w1.wineType ?? "").localeCompare(w2.wineType ?? "") * ascendingMultiplier;
@@ -169,24 +204,24 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
                     }
                     return wineTypeComparison;
                 })
-            case SortingValue.Producer:
+            case WinesTableColumn.Producer:
                 return this.props.wines.sort((w1, w2) =>
                     w1.producer.localeCompare(w2.producer) * ascendingMultiplier
                 );
-            case SortingValue.Region:
+            case WinesTableColumn.Region:
                 return this.props.wines.sort((w1, w2) =>
                     w1.region.localeCompare(w2.region) * ascendingMultiplier
                 );
-            case SortingValue.VitiArea:
+            case WinesTableColumn.VitiArea:
                 return this.props.wines.sort((w1, w2) =>
                     (w1.vitiArea || "").localeCompare(w2.vitiArea || "") * ascendingMultiplier
                 );
-            case SortingValue.Vintage:
+            case WinesTableColumn.Vintage:
                 // Sort NV first
                 return this.props.wines.sort((w1, w2) =>
                     (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000) * ascendingMultiplier
                 );
-            case SortingValue.Rating:
+            case WinesTableColumn.Rating:
                 return this.props.wines.sort((w1, w2) =>
                     (w1.rating ?? 0) - (w2.rating ?? 0) * ascendingMultiplier
                 );
@@ -195,7 +230,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
         }
     }
 
-    private onHeaderClick(e: React.MouseEvent, sortingVal: SortingValue) {
+    private onHeaderClick(e: React.MouseEvent, sortingVal: WinesTableColumn) {
         e.preventDefault();
         if (sortingVal === this.state.sorting) {
             this.setState((prevState) => ({ascending: !prevState.ascending}));
@@ -207,7 +242,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
         }
     }
 
-    private tableHeaderProps(sortingVal: SortingValue):
+    private tableHeaderProps(sortingVal: WinesTableColumn):
         {sortingState: SortingState, onClick: (e: React.MouseEvent) => void} {
 
         if (this.state.sorting === sortingVal) {
@@ -224,7 +259,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
     }
 
     // Constructs props for a filter header
-    private filterHeaderProps(columnName: keyof IWine):
+    private filterHeaderProps(columnName: WinesTableColumn):
         {onChange: (text: string) => void,
          text: string} {
 
