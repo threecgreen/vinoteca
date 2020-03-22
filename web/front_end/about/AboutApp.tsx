@@ -64,10 +64,15 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             <h5>5.1.0</h5>
             <ul className="bullets">
                 <li>Complete transition to single-page app</li>
-                <li>Fix filter by name and wine type in wines table</li>
-                <li>Fix bugs involving updating wine grapes</li>
+                <li>More detailed client-side logging</li>
                 <li>Improved version comparison when deciding whether to update</li>
-                <li>Fix client-side logger module names</li>
+                <li>Bug fixes:
+                    <ul className="bullets">
+                        <li>Fix filter by name and wine type in wines table</li>
+                        <li>Fix bugs involving updating wine grapes</li>
+                        <li>Fix client-side logger module names</li>
+                    </ul>
+                </li>
             </ul>
 
             <h5>5.0.7</h5>
