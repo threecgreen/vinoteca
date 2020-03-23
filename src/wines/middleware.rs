@@ -98,3 +98,26 @@ impl FromDataSimple for RawWineForm {
         Success(RawWineForm { wine_form, image })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[ignore]
+    #[test]
+    fn invalid_content_type() {
+
+    }
+
+    #[ignore]
+    #[test]
+    fn missing_wine_form() {
+
+    }
+
+    #[ignore]
+    #[test]
+    fn extra_text_fields() {
+
+    }
+}
