@@ -103,14 +103,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .unwrap();
         }
 
-        let mock_colors = vec!["Red", "White", "Rosé"];
-        for (i, color) in mock_colors.iter().enumerate() {
-            diesel::insert_into(colors::table)
-                .values((colors::id.eq(i as i32 + 1), colors::name.eq(color)))
-                .execute(&*connection)
-                .unwrap();
-        }
-
         diesel::insert_into(wines::table)
             .values((
                 wines::id.eq(1),
