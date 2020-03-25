@@ -27,7 +27,7 @@ script:
   - bash scripts/lint.sh
 
 before_deploy:
-  - bash scripts/deploy.sh
+  - bash scripts/before_deploy.sh
 
 deploy:
   provider: releases
