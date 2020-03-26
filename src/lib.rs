@@ -14,14 +14,16 @@ extern crate validator_derive;
 // Diesel modules
 pub mod models;
 mod schema;
-// Misc
+// Server internals
+mod auth;
+mod config;
+mod cached_static;
 mod error;
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;
 /////////////////////
 // Rocket handlers //
 /////////////////////
-mod cached_static;
 mod html;
 // Rest
 mod colors;

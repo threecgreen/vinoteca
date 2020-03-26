@@ -1,0 +1,27 @@
+use rocket::http::Status;
+use rocket::request::{self, FromRequest, Request};
+use rocket::Outcome;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Auth {
+    /// user id
+    pub id: i32,
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for Auth {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
+        let auth = request
+            .cookies()
+            .get_private("auth")
+            .and_then(|cookie| cookie.value().parse().ok())
+            .map(|id| Auth { id });
+        if let Some(auth) = auth {
+            Outcome::Success(auth)
+        } else {
+            Outcome::Failure((Status::Forbidden, ()))
+        }
+    }
+}

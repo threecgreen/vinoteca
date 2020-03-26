@@ -16,6 +16,7 @@ pub enum VinotecaError {
     // Foreign key
     MissingConstraint(String),
     BadRequest(String),
+    Forbidden(String),
 }
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
@@ -28,6 +29,7 @@ impl<'r> Responder<'r> for VinotecaError {
                 VinotecaError::Internal(_) => Status::InternalServerError,
                 VinotecaError::MissingConstraint(_) => Status::BadRequest,
                 VinotecaError::BadRequest(_) => Status::BadRequest,
+                VinotecaError::Forbidden(_) => Status::Forbidden,
             });
             res
         })
@@ -77,6 +79,7 @@ impl Display for VinotecaError {
             Self::Internal(msg) => format!("Internal({})", msg),
             Self::MissingConstraint(msg) => format!("MissingConstraint({})", msg),
             Self::BadRequest(msg) => format!("BadRequest({})", msg),
+            Self::Forbidden(msg) => format!("Forbidden({})", msg),
         };
         write!(f, "{}", fmt_arg)
     }
@@ -89,6 +92,7 @@ impl Error for VinotecaError {
             Self::Internal(_) => "Unexpected interal error",
             Self::MissingConstraint(_) => "Missing foreign key",
             Self::BadRequest(_) => "Invalid data received from the request",
+            Self::Forbidden(_) => "Forbidden; not authorized",
         }
     }
 

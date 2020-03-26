@@ -16,7 +16,6 @@ diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 image = "0.23.2"
 log = "0.4"
-rocket = { version = "0.4.4", default_features = false }
 rocket_cors = { version = "0.5.2", default_features = false }
 rocket_codegen = "0.4.4"
 rocket-multipart-form-data = "0.8.1"
@@ -25,6 +24,11 @@ serde_json = "1.0"
 time = "0.1.42"
 validator = "0.10"
 validator_derive = "0.10"
+
+[dependencies.rocket]
+version = "0.4.4"
+default_features = false
+features = ["private-cookies"]
 
 [dependencies.rocket_contrib]
 version = "0.4.4"

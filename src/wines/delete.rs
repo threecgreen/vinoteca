@@ -1,16 +1,26 @@
+use crate::auth::Auth;
 use crate::error::VinotecaError;
-use crate::schema::{wine_grapes, wines};
+use crate::schema::{users, wine_grapes, wines};
 use crate::DbConn;
 
 use diesel::prelude::*;
 
 #[delete("/wines/<id>")]
-pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(id))).execute(&*connection)?;
-    diesel::delete(wines::table.filter(wines::id.eq(id)))
-        .execute(&*connection)
-        .map(|_| ())
-        .map_err(VinotecaError::from)
+pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    // diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(id))).execute(&*connection)?;
+    let wine_id = wines::table.filter(wines::id.eq(id))
+        .filter(wines::user_id.eq(auth.id))
+        .select(wines::id)
+        .first::<i32>(&*connection);
+    if let Ok(wine_id) = wine_id {
+        diesel::delete(wines::table.filter(wines::id.eq(id)))
+            .execute(&*connection)
+            .map(|_| ())
+            .map_err(VinotecaError::from)
+    } else {
+        // Permission denied
+        Err(VinotecaError::Forbidden("Can't delete another user's wine".to_string()))
+    }
 }
 
 #[cfg(test)]
