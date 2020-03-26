@@ -1,15 +1,15 @@
 -- Insert colors
-INSERT OR IGNORE INTO colors (name)
-VALUES ('red');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('white');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('rosé');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('dessert');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('sparkling');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('port');
-INSERT OR IGNORE INTO colors (name)
-VALUES ('cider');
+INSERT INTO colors (name)
+VALUES ('red') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('white') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('rosé') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('dessert') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('sparkling') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('port') ON CONFLICT DO NOTHING;
+INSERT INTO colors (name)
+VALUES ('cider') ON CONFLICT DO NOTHING;
