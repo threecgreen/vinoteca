@@ -1,9 +1,8 @@
 use crate::error::{RestResult, VinotecaError};
 
 use diesel::result::Error;
-use diesel::Connection;
 use rocket::http::Status;
-use rocket_contrib::databases::diesel::SqliteConnection;
+use rocket_contrib::databases::diesel::PgConnection;
 use rocket_contrib::json::Json;
 
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
@@ -39,17 +38,7 @@ pub fn error_status(error: Error) -> Status {
 }
 
 #[database("vinoteca")]
-pub struct DbConn(SqliteConnection);
-
-impl DbConn {
-    /// SQLite has a global write lock. This hack ups the timeout to
-    /// `timeout_ms` so that queries hopefully never timeout due to locking.
-    /// This would be fixed by moving to a non-'lite' database.
-    pub fn set_timeout(&self, timeout_ms: u32) -> Result<(), VinotecaError> {
-        self.execute(&format!("PRAGMA busy_timeout = {};", timeout_ms))?;
-        Ok(())
-    }
-}
+pub struct DbConn(PgConnection);
 
 /// Used for reusing the `GET` request logic in `POST` and `PUT` methods to
 /// retrieved the created or modified entity. `GET` methods usually return a

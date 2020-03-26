@@ -42,7 +42,6 @@ pub fn post(wine_type_form: Json<WineTypeForm>, connection: DbConn) -> RestResul
     let wine_type_form = wine_type_form.into_inner();
     wine_type_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     diesel::insert_into(wine_types::table)
         .values(&wine_type_form)
         .execute(&*connection)
@@ -62,7 +61,6 @@ pub fn put(
     let wine_type_form = wine_type_form.into_inner();
     wine_type_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
         .set(wine_types::name.eq(wine_type_form.name))
         .execute(&*connection)

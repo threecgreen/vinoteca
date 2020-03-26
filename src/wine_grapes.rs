@@ -101,7 +101,6 @@ pub fn post(
     let wine_id = wine_grape_form.wine_id;
     let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
 
-    connection.set_timeout(1_000)?;
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
         .execute(&*connection);

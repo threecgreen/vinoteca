@@ -12,7 +12,6 @@ pub fn post(purchase_form: Json<PurchaseForm>, connection: DbConn) -> RestResult
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
         .execute(&*connection)
@@ -45,7 +44,6 @@ pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> Re
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form)
         .execute(&*connection)
@@ -72,7 +70,6 @@ pub fn put(id: i32, purchase_form: Json<PurchaseForm>, connection: DbConn) -> Re
 
 #[delete("/purchases/<id>")]
 pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    connection.set_timeout(1_000)?;
     diesel::delete(purchases::table.filter(purchases::id.eq(id)))
         .execute(&*connection)
         .map(|_| ())

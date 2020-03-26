@@ -38,7 +38,6 @@ pub fn patch(
     let wine_patch_form = wine_patch_form.into_inner();
     wine_patch_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wines::inventory.eq(wine_patch_form.inventory))
         .execute(&*connection)
@@ -56,7 +55,6 @@ pub fn put(
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
 
-    connection.set_timeout(1_000)?;
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wine_form)
         .execute(&*connection)
