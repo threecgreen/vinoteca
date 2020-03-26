@@ -25,7 +25,6 @@ pub fn get(
     }
     query
         .select((
-            wine_grapes::id,
             wine_grapes::percent,
             wine_grapes::grape_id,
             grapes::name,

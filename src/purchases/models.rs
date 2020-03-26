@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use diesel::sql_types::{Float, Integer, Nullable};
 use diesel::QueryableByName;
 use serde::Serialize;
@@ -8,12 +9,12 @@ use typescript_definitions::TypeScriptify;
 #[serde(rename_all = "camelCase")]
 pub struct RecentPurchase {
     pub id: i32,
-    pub price: Option<f32>,
-    pub quantity: Option<i32>,
+    pub price: Option<f64>,
+    pub quantity: i32,
     pub vintage: Option<i32>,
     pub memo: Option<String>,
     pub store: Option<String>,
-    pub date: Option<i32>,
+    pub date: Option<NaiveDate>,
     pub wine_id: i32,
     pub wine_name: Option<String>,
     pub producer_id: i32,

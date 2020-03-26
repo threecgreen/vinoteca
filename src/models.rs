@@ -1,5 +1,6 @@
 use super::schema::*;
 
+use chrono::NaiveDate;
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
@@ -57,14 +58,14 @@ pub struct ProducerForm<'a> {
 #[serde(rename_all = "camelCase")]
 pub struct Purchase {
     pub id: i32,
-    pub price: Option<f32>,
-    pub quantity: Option<i32>,
+    pub price: Option<f64>,
+    pub quantity: i32,
     pub vintage: Option<i32>,
     pub memo: Option<String>,
     pub store: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
-    pub date: Option<i32>,
+    pub date: Option<NaiveDate>,
 }
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
@@ -72,17 +73,18 @@ pub struct Purchase {
 #[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
     #[validate(range(min = 0.0))]
-    pub price: Option<f32>,
+    pub price: Option<f64>,
     #[validate(range(min = 1))]
-    pub quantity: Option<i32>,
+    pub quantity: i32,
     #[validate(range(min = 1900))]
     pub vintage: Option<i32>,
     #[validate(length(min = 1))]
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
-    #[validate(range(min = 19900101))]
-    pub date: Option<i32>,
+    // FIXME:
+    // #[validate(range(min = 19900101))]
+    pub date: Option<NaiveDate>,
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -181,7 +183,6 @@ pub struct WineForm {
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineGrape {
-    pub id: i32,
     pub percent: Option<i32>,
     pub grape_id: i32,
     pub grape: String,
