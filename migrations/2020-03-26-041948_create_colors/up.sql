@@ -1,4 +1,4 @@
 CREATE TABLE colors (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
+    name TEXT NOT NULL UNIQUE
 );
