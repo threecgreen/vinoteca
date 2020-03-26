@@ -23,7 +23,7 @@ table! {
 table! {
     purchases (id) {
         id -> Int4,
-        price -> Nullable<Numeric>,
+        price -> Nullable<Float8>,
         quantity -> Int4,
         vintage -> Nullable<Int4>,
         memo -> Nullable<Text>,

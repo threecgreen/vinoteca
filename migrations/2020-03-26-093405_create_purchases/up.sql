@@ -1,6 +1,6 @@
 CREATE TABLE purchases (
     id SERIAL PRIMARY KEY,
-    price NUMERIC,
+    price DOUBLE PRECISION CHECK(price >= 0.0),
     quantity INTEGER NOT NULL CHECK(quantity > 0),
     vintage INTEGER CHECK(vintage BETWEEN 1700 AND EXTRACT(YEAR FROM current_date)),
     memo TEXT,
