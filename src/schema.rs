@@ -1,89 +1,100 @@
 table! {
     colors (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
     }
 }
 
 table! {
     grapes (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
     }
 }
 
 table! {
     producers (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
-        region_id -> Integer,
+        region_id -> Int4,
     }
 }
 
 table! {
     purchases (id) {
-        id -> Integer,
-        price -> Nullable<Float>,
-        quantity -> Nullable<Integer>,
-        vintage -> Nullable<Integer>,
+        id -> Int4,
+        price -> Nullable<Numeric>,
+        quantity -> Int4,
+        vintage -> Nullable<Int4>,
         memo -> Nullable<Text>,
-        store_id -> Nullable<Integer>,
-        wine_id -> Integer,
-        date -> Nullable<Integer>,
+        store_id -> Nullable<Int4>,
+        wine_id -> Int4,
+        date -> Nullable<Date>,
     }
 }
 
 table! {
     regions (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
     }
 }
 
 table! {
     stores (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
+    }
+}
+
+table! {
+    users (id) {
+        id -> Int4,
+        email -> Text,
+        name -> Text,
+        image -> Nullable<Text>,
+        hash -> Text,
     }
 }
 
 table! {
     viti_areas (id) {
-        id -> Integer,
+        id -> Int4,
         name -> Text,
-        region_id -> Integer,
+        region_id -> Int4,
     }
 }
 
 table! {
-    wine_grapes (id) {
-        id -> Integer,
-        percent -> Nullable<Integer>,
-        grape_id -> Integer,
-        wine_id -> Integer,
-    }
-}
-
-table! {
-    wine_types (id) {
-        id -> Integer,
-        name -> Text,
+    wine_grapes (wine_id, grape_id) {
+        wine_id -> Int4,
+        grape_id -> Int4,
+        percent -> Nullable<Int4>,
     }
 }
 
 table! {
     wines (id) {
-        id -> Integer,
+        id -> Int4,
+        name -> Nullable<Text>,
         description -> Nullable<Text>,
         notes -> Nullable<Text>,
-        rating -> Nullable<Integer>,
-        inventory -> Integer,
         why -> Nullable<Text>,
-        color_id -> Integer,
-        producer_id -> Integer,
-        viti_area_id -> Nullable<Integer>,
-        name -> Nullable<Text>,
-        wine_type_id -> Integer,
+        inventory -> Int4,
+        rating -> Nullable<Int4>,
+        image -> Nullable<Text>,
+        color_id -> Int4,
+        wine_type_id -> Int4,
+        producer_id -> Int4,
+        viti_area_id -> Nullable<Int4>,
+        user_id -> Nullable<Int4>,
+    }
+}
+
+table! {
+    wine_types (id) {
+        id -> Int4,
+        name -> Text,
     }
 }
 
@@ -95,6 +106,7 @@ joinable!(wine_grapes -> grapes (grape_id));
 joinable!(wine_grapes -> wines (wine_id));
 joinable!(wines -> colors (color_id));
 joinable!(wines -> producers (producer_id));
+joinable!(wines -> users (user_id));
 joinable!(wines -> viti_areas (viti_area_id));
 joinable!(wines -> wine_types (wine_type_id));
 
@@ -105,8 +117,9 @@ allow_tables_to_appear_in_same_query!(
     purchases,
     regions,
     stores,
+    users,
     viti_areas,
     wine_grapes,
-    wine_types,
     wines,
+    wine_types,
 );
