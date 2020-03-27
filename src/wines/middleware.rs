@@ -101,8 +101,6 @@ impl FromDataSimple for RawWineForm {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-
     #[ignore]
     #[test]
     fn invalid_content_type() {}

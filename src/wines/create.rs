@@ -63,7 +63,6 @@ mod test {
     use crate::DbConn;
     use rocket::State;
 
-    #[ignore]
     #[test]
     fn insert_wine() {
         run_test!(|rocket, connection| {

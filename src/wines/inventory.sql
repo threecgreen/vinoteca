@@ -9,7 +9,7 @@ SELECT
     , r.id AS region_id
     , r.name AS region
     , p3.vintage AS last_purchase_vintage
-    , max(pu.date) AS last_purchase_date
+    , sub.last_purchase_date
     , w.inventory AS inventory
     , p3.price AS last_purchase_price
 FROM wines w
@@ -30,5 +30,5 @@ FROM wines w
         AND (p3.date = sub.last_purchase_date
             OR sub.last_purchase_date IS NULL)
 WHERE w.inventory > 0
-GROUP BY w.id
+    AND w.user_id = $1
 ORDER BY sub.last_purchase_date DESC;

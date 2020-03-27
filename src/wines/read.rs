@@ -121,8 +121,8 @@ pub fn get(
 
 #[get("/wines/inventory")]
 pub fn inventory(auth: Auth, connection: DbConn) -> RestResult<Vec<InventoryWine>> {
-    // FIXME: filter by user
     sql_query(include_str!("inventory.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<InventoryWine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
@@ -231,7 +231,6 @@ mod test {
     use crate::DbConn;
     use rocket::State;
 
-    #[ignore]
     #[test]
     fn wine_without_purchases_appears_in_inventory() {
         run_test!(|rocket, connection| {
