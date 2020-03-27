@@ -1,6 +1,7 @@
 use super::get;
 use super::image::handle_image;
 use super::models::{RawWineForm, WinePatchForm};
+use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::query_utils::IntoFirst;
@@ -12,6 +13,7 @@ use rocket::State;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
+// FIXME: switch to using postgres method for getting last inserted
 fn get_wine_by_id(id: i32, connection: DbConn) -> RestResult<Wine> {
     get(
         Some(id),
@@ -31,6 +33,7 @@ fn get_wine_by_id(id: i32, connection: DbConn) -> RestResult<Wine> {
 
 #[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
 pub fn patch(
+    auth: Auth,
     id: i32,
     wine_patch_form: Json<WinePatchForm>,
     connection: DbConn,
@@ -47,6 +50,7 @@ pub fn patch(
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
 pub fn put(
+    auth: Auth,
     id: i32,
     raw_wine_form: RawWineForm,
     connection: DbConn,
@@ -54,6 +58,11 @@ pub fn put(
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
+
+    let wine = wines::table.filter(wines::user_id.eq(auth.id)).filter(wines::id.eq(id)).first(&*connection);
+    if wine.is_err() {
+        return Err(VinotecaError::Forbidden("Can't edit another user's wine".to_string()));
+    }
 
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wine_form)

@@ -1,4 +1,5 @@
 use super::models::{InventoryWine, WineCount};
+use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
@@ -18,6 +19,7 @@ fn add_wildcards(query: &str) -> String {
 #[allow(clippy::too_many_arguments)]
 #[get("/wines?<id>&<producer_id>&<region_id>&<viti_area_id>&<wine_type_id>&<color>&<wine_type>&<producer>&<region>&<viti_area>")]
 pub fn get(
+    auth: Auth,
     // Exact match parameters
     id: Option<i32>,
     producer_id: Option<i32>,
@@ -39,6 +41,7 @@ pub fn get(
         .inner_join(wine_types::table)
         .left_join(purchases::table)
         .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(id) = id {
         query = query.filter(wines::id.eq(id));
@@ -117,7 +120,8 @@ pub fn get(
 }
 
 #[get("/wines/inventory")]
-pub fn inventory(connection: DbConn) -> RestResult<Vec<InventoryWine>> {
+pub fn inventory(auth: Auth, connection: DbConn) -> RestResult<Vec<InventoryWine>> {
+    // FIXME: filter by user
     sql_query(include_str!("inventory.sql"))
         .load::<InventoryWine>(&*connection)
         .map(Json)
@@ -130,6 +134,7 @@ fn wrap_in_wildcards(filter_str: &str) -> String {
 
 #[get("/wines/search?<color_like>&<wine_type_like>&<producer_like>&<region_like>&<viti_area_like>")]
 pub fn search(
+    auth: Auth,
     color_like: Option<String>,
     wine_type_like: Option<String>,
     producer_like: Option<String>,
@@ -143,6 +148,7 @@ pub fn search(
         .inner_join(wine_types::table)
         .left_join(purchases::table)
         .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(color_like) = color_like {
         query = query.filter(colors::name.like(wrap_in_wildcards(&color_like)));
@@ -205,8 +211,11 @@ pub fn search(
 }
 
 #[get("/wines/count")]
-pub fn varieties(connection: DbConn) -> Json<WineCount> {
-    let res = wines::table.select(count(wines::id)).first(&*connection);
+pub fn varieties(auth: Auth, connection: DbConn) -> Json<WineCount> {
+    let res = wines::table
+        .filter(wines::user_id.eq(auth.id))
+        .select(count(wines::id))
+        .first(&*connection);
     let total_liters = WineCount {
         count: res.unwrap_or(0),
     };

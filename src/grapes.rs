@@ -1,8 +1,9 @@
-use super::error::{RestResult, VinotecaError};
-use super::models::{generic, Grape, GrapeForm};
-use super::query_utils::IntoFirst;
-use super::schema::{grapes, purchases, wine_grapes, wines};
-use super::DbConn;
+use crate::auth::Auth;
+use crate::error::{RestResult, VinotecaError};
+use crate::models::{generic, Grape, GrapeForm};
+use crate::query_utils::IntoFirst;
+use crate::schema::{grapes, purchases, wine_grapes, wines};
+use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
@@ -11,10 +12,11 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/grapes?<id>&<name>")]
-pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Grape>> {
+pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Grape>> {
     let mut query = grapes::table
         // Left to include grapes with no wine
         .left_join(wine_grapes::table.inner_join(wines::table))
+        .filter(wines::user_id.eq(auth.id))
         .group_by((grapes::id, grapes::name))
         .into_boxed();
     if let Some(id) = id {
@@ -31,8 +33,9 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
 }
 
 #[get("/grapes/top?<limit>")]
-pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
+    // FIXME: filter by user
     top_table!(
         grapes::table
             .inner_join(wine_grapes::table.inner_join(wines::table.inner_join(purchases::table))),
@@ -44,7 +47,7 @@ pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::
 }
 
 #[post("/grapes", format = "json", data = "<grape_form>")]
-pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
+pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
     let grape_name = grape_form.name.to_owned();
@@ -53,7 +56,7 @@ pub fn post(grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape
         .values(grape_form)
         .execute(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get(None, Some(grape_name), connection)?.into_first("Newly-created grape"))
+        .and_then(|_| get(auth, None, Some(grape_name), connection)?.into_first("Newly-created grape"))
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]

@@ -3,7 +3,7 @@ use super::models::RawWineForm;
 use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
-use crate::schema::{colors, producers, purchases, regions, users, viti_areas, wine_types, wines};
+use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
 use crate::{DbConn, MediaDir};
 
 use diesel::dsl::sql;
@@ -28,13 +28,12 @@ pub fn post(
         .execute(&*connection)
         .and_then(|_| {
             wines::table
-                .inner_join(users::table)
                 .inner_join(producers::table.inner_join(regions::table))
                 .inner_join(colors::table)
                 .inner_join(wine_types::table)
                 .left_join(purchases::table)
                 .left_join(viti_areas::table)
-                .filter(users::id.eq(auth.id))
+                .filter(wines::user_id.eq(auth.id))
                 .group_by((
                     wines::id,
                     wines::description,
