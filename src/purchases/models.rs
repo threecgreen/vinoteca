@@ -1,5 +1,5 @@
 use chrono::NaiveDate;
-use diesel::sql_types::{Float, Integer, Nullable};
+use diesel::sql_types::{Float, Integer, Nullable, Text};
 use diesel::QueryableByName;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
@@ -53,6 +53,6 @@ pub struct PurchaseCount {
 #[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MostCommonPurchaseDate {
-    #[sql_type = "Nullable<Integer>"]
-    pub most_common_purchase_date: Option<i32>,
+    #[sql_type = "Nullable<Text>"]
+    pub most_common_purchase_date: Option<String>,
 }

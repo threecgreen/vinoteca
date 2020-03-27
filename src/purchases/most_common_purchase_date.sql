@@ -1,6 +1,8 @@
--- FIXME: use date functionality
-SELECT p.date % 10000 + 20000000 AS most_common_purchase_date
+SELECT to_char(p.date, 'Mon dd') AS most_common_purchase_date
 FROM purchases p
+INNER JOIN wines w
+    ON p.wine_id = w.id
 WHERE p.date IS NOT NULL
-GROUP BY p.date % 10000 + 20000000
+    AND w.user_id = $1
+GROUP BY to_char(p.date, 'Mon dd')
 ORDER BY sum(p.quantity) DESC;

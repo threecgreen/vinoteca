@@ -8,7 +8,7 @@ use crate::DbConn;
 use diesel::dsl::{sql, sum};
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::Float;
+use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
@@ -91,8 +91,8 @@ pub fn recent(
 
 #[get("/purchases/by-year")]
 pub fn by_year(auth: Auth, connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
-    // FIXME: user id param
     sql_query(include_str!("purchases_by_year.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<YearsPurchases>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
@@ -114,8 +114,8 @@ pub fn total_liters(auth: Auth, connection: DbConn) -> Json<TotalLiters> {
 
 #[get("/purchases/most-common-purchase-date")]
 pub fn most_common_purchase_date(auth: Auth, connection: DbConn) -> Json<MostCommonPurchaseDate> {
-    // FIXME: use id param
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<MostCommonPurchaseDate>(&*connection)
         .unwrap_or_else(|e| {
             warn!("Error getting most common purchase date: {}", e);
