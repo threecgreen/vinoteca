@@ -1,10 +1,10 @@
 import { delete_, get, IQueryParams, patch, post, postForm, put, putForm } from "./ApiHelper";
 import Logger from "./Logger";
-import { IColor, IGrape, IGrapeForm, ILogForm, ILogResponse, IMostCommonPurchaseDate, IProducer,
-         IProducerForm, IPurchase, IPurchaseCount, IPurchaseForm, IRegion, IRegionForm, IStore,
-         IStoreForm, ITopEntity, ITotalLiters, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine,
-         IWineCount, IWineForm, IWineGrape, IWineGrapesForm, IWinePatchForm, IWineType,
-         IWineTypeForm } from "./Rest";
+import { IColor, IGrape, IGrapeForm, ILogForm, ILoginForm, ILogResponse, IMostCommonPurchaseDate,
+         IProducer, IProducerForm, IPurchase, IPurchaseCount, IPurchaseForm, IRegion, IRegionForm,
+         IStore, IStoreForm, ITopEntity, ITotalLiters, IUser, IVitiArea, IVitiAreaForm,
+         IVitiAreaStats, IWine, IWineCount, IWineForm, IWineGrape, IWineGrapesForm, IWinePatchForm,
+         IWineType, IWineTypeForm, IUserForm} from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -237,6 +237,19 @@ export const getOrCreateStore = getOrCreate(getStores, createStore);
 
 export async function createStore(store: IStoreForm): Promise<IStore> {
     return post("/rest/stores", store);
+}
+
+/* USERS */
+export async function login(form: ILoginForm): Promise<IUser> {
+    return post("/rest/users/login", form);
+}
+
+export async function createUser(form: IUserForm): Promise<IUser> {
+    return post("/rest/users", form);
+}
+
+export async function getUser(): Promise<IUser> {
+    return get("/rest/users");
 }
 
 /* VITI AREAS */

@@ -2,7 +2,7 @@ import React from "react";
 import { Input } from "./Input";
 import { SpecialChars } from "./SpecialChars";
 
-interface IProps {
+interface ITextProps {
     name: string;
     value: string;
     enabled?: boolean;
@@ -16,7 +16,7 @@ interface IProps {
     inputRef?: React.MutableRefObject<HTMLInputElement>;
 }
 
-export const TextInput: React.FC<IProps> = (props) => {
+export const TextInput: React.FC<ITextProps> = (props) => {
     const [timestamp, _] = React.useState(new Date());
     const [isActive, setIsActive] = React.useState(false);
     const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -69,3 +69,62 @@ export const TextInput: React.FC<IProps> = (props) => {
     );
 }
 TextInput.displayName = "TextInput";
+
+interface ISimpleProps {
+    name: string;
+    value: string;
+    enabled?: boolean;
+    onChange: (val: string) => void;
+    className: string;
+    s?: number;
+    m?: number;
+    l?: number;
+}
+
+export const EmailInput: React.FC<ISimpleProps> = (props) => {
+    return (
+        <SimpleTextInput type="email"
+            {...props}
+            className={ `${props.className} validate`}
+        />
+    );
+}
+EmailInput.displayName = "EmailInput";
+
+export const PasswordInput: React.FC<ISimpleProps> = (props) => {
+    return (
+        <SimpleTextInput type="password"
+            {...props}
+            className={ `${props.className} validate`}
+        />
+    );
+}
+PasswordInput.displayName = "PasswordInput";
+
+interface IIntSimpleProps {
+    name: string;
+    value: string;
+    enabled?: boolean;
+    onChange: (val: string) => void;
+    className: string;
+    s?: number;
+    m?: number;
+    l?: number;
+    type: string;
+}
+
+const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => {
+    return (
+        <Input inputType={ props.type }
+            name={ props.name }
+            value={ props.value }
+            enabled={ props.enabled }
+            onChange={ props.onChange }
+            className={ props.className }
+            s={ props.s } m={ props.m } l={ props.l }
+        />
+    );
+}
+SimpleTextInput.displayName = "SimpleTextInput";
+
+

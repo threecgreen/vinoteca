@@ -28,7 +28,7 @@ pub fn get(auth: Auth, connection: DbConn) -> RestResult<User> {
         .map_err(VinotecaError::from)
 }
 
-#[post("/login", format = "json", data = "<form>")]
+#[post("/users/login", format = "json", data = "<form>")]
 pub fn login(form: Json<LoginForm>, cookies: Cookies, connection: DbConn) -> RestResult<User> {
     let form = form.into_inner();
     let user = users::table
@@ -66,6 +66,8 @@ pub fn create(form: Json<UserForm>, cookies: Cookies, connection: DbConn) -> Res
             get(Auth { id: user_id }, connection)
         })
 }
+
+// FIXME: logout endpoint
 
 fn add_auth_cookie(mut cookies: Cookies, user_id: i32) {
     let cookie = Cookie::new(COOKIE_NAME, user_id.to_string());

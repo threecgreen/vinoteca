@@ -2,6 +2,11 @@ import { Link } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 import { MaterialIcon } from "../components/MaterialIcon";
+import { EmailInput, PasswordInput, TextInput } from "../components/TextInput";
+import { Modal } from "../components/Modal";
+import { CancelOrConfirmBtns, Btn } from "../components/Buttons";
+import { login, createUser, getUser } from "../lib/RestApi";
+import { IUser } from "../lib/Rest";
 
 export const Top: React.FC<{}> = (_) => {
     return (
@@ -63,6 +68,23 @@ const MenuItems: React.FC<{id: string}> = ({id}) => {
         new Dropdown(dropdownTriggerRef.current);
     }, [dropdownTriggerRef]);
 
+    const [user, setUser] = React.useState<IUser>();
+    const [showLoginModal, setShowLoginModal] = React.useState(false);
+    const [showNewUserModal, setShowNewUserModal] = React.useState(false);
+
+    // Set user if already logged in.
+    React.useEffect(() => {
+        async function checkIfLoggedIn() {
+            try {
+                const user = await getUser();
+                setUser(user);
+            } catch {
+                // Nothing
+            }
+        }
+        checkIfLoggedIn();
+    }, []);
+
     return (
         <>
             <li id="new-wine-nav">
@@ -104,7 +126,98 @@ const MenuItems: React.FC<{id: string}> = ({id}) => {
                     Inventory
                 </Link>
             </li>
+            {/* Only show login/new user headers when no one is logged in */}
+            <li id="login-nav" >
+                <a onClick={ () => setShowLoginModal(true) }>
+                    {/* TODO: Display user name if already logged in */}
+                    <MaterialIcon className="left" iconName="account_box" />
+                    Login
+                </a>
+            </li>
+            { showLoginModal && <LoginForm onCancel={ () => setShowLoginModal(false) } onFinish={setUser} /> }
+            <li id="new-user-nav">
+                <a onClick={ () => setShowNewUserModal(true) }>
+                    {/* TODO: Display user name if already logged in */}
+                    <MaterialIcon className="left" iconName="account_box" />
+                    Create Account
+                </a>
+            </li>
+            { showNewUserModal && <NewUserForm onCancel={ () => setShowNewUserModal(false) } onFinish={setUser} /> }
         </>
     );
 }
 MenuItems.displayName = "MenuItems";
+
+interface IUserProps {
+    onFinish: (user: IUser) => void,
+    onCancel: () => void,
+}
+
+const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const onSubmit = async () => {
+        const user = await login({email, password});
+        onFinish(user);
+    }
+
+    return (
+        <Modal>
+            <form>
+                <EmailInput name="E-mail"
+                    className=""
+                    value={ email }
+                    onChange={ setEmail }
+                />
+                <PasswordInput name="Password"
+                    className=""
+                    value={ password }
+                    onChange={ setPassword }
+                />
+                <CancelOrConfirmBtns
+                    onConfirmClick={ onSubmit }
+                    onCancelClick={ onCancel }
+                />
+            </form>
+        </Modal>
+    );
+}
+LoginForm.displayName = "LoginForm";
+
+const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
+    const [email, setEmail] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    // TODO: image
+
+    const onSubmit = async () => {
+        const user = await createUser({email, name, password});
+        onFinish(user);
+    }
+
+    return (
+        <form>
+            <EmailInput name="E-mail"
+                className=""
+                value={ email }
+                onChange={ setEmail }
+            />
+            <TextInput name="Name"
+                className=""
+                value={ name }
+                onChange={ setName }
+            />
+            <PasswordInput name="Password"
+                className=""
+                value={ password }
+                onChange={ setPassword }
+            />
+            <CancelOrConfirmBtns
+                onConfirmClick={ onSubmit }
+                onCancelClick={ onCancel }
+            />
+        </form>
+    );
+}
+NewUserForm.displayName = "NewUserForm";
