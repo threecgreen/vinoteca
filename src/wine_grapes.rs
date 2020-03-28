@@ -20,8 +20,10 @@ pub fn get(
     grape_id: Option<i32>,
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
-    let mut query = wine_grapes::table.inner_join(grapes::table)
-        .filter(grapes::user_id.eq(auth.id)).into_boxed();
+    let mut query = wine_grapes::table
+        .inner_join(grapes::table)
+        .filter(grapes::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(wine_id) = wine_id {
         query = query.filter(wine_grapes::wine_id.eq(wine_id));
     }

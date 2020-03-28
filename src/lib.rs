@@ -16,8 +16,8 @@ pub mod models;
 mod schema;
 // Server internals
 mod auth;
-mod config;
 mod cached_static;
+mod config;
 mod error;
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;

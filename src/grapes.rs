@@ -12,7 +12,12 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/grapes?<id>&<name>")]
-pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Grape>> {
+pub fn get(
+    auth: Auth,
+    id: Option<i32>,
+    name: Option<String>,
+    connection: DbConn,
+) -> RestResult<Vec<Grape>> {
     let mut query = grapes::table
         // Left to include grapes with no wine
         .left_join(wine_grapes::table.inner_join(wines::table))
@@ -33,7 +38,11 @@ pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn
 }
 
 #[get("/grapes/top?<limit>")]
-pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
         grapes::table
@@ -57,15 +66,23 @@ pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> Rest
         .returning(grapes::id)
         .get_result(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|grape_id| get(auth, Some(grape_id), None, connection)?.into_first("Newly-created grape"))
+        .and_then(|grape_id| {
+            get(auth, Some(grape_id), None, connection)?.into_first("Newly-created grape")
+        })
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]
-pub fn put(auth: Auth, id: i32, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
+pub fn put(
+    auth: Auth,
+    id: i32,
+    grape_form: Json<GrapeForm>,
+    connection: DbConn,
+) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
 
-    grapes::table.filter(grapes::id.eq(id))
+    grapes::table
+        .filter(grapes::id.eq(id))
         .filter(grapes::user_id.eq(auth.id))
         .select(grapes::id)
         .first::<i32>(&*connection)?;

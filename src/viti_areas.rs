@@ -23,8 +23,10 @@ pub fn get(
     connection: DbConn,
 ) -> RestResult<Vec<VitiArea>> {
     // Inner join because viti areas must have a region id
-    let mut query = viti_areas::table.inner_join(regions::table)
-        .filter(viti_areas::user_id.eq(auth.id)).into_boxed();
+    let mut query = viti_areas::table
+        .inner_join(regions::table)
+        .filter(viti_areas::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(id) = id {
         query = query.filter(viti_areas::id.eq(id));
     }
@@ -88,10 +90,15 @@ pub fn stats(
 }
 
 #[get("/viti-areas/top?<limit>")]
-pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        viti_areas::table.inner_join(wines::table.inner_join(purchases::table))
+        viti_areas::table
+            .inner_join(wines::table.inner_join(purchases::table))
             .filter(viti_areas::user_id.eq(auth.id))
             .filter(wines::user_id.eq(auth.id)),
         viti_areas::id,
@@ -102,7 +109,11 @@ pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<V
 }
 
 #[post("/viti-areas", format = "json", data = "<viti_area_form>")]
-pub fn post(auth: Auth, viti_area_form: Json<VitiAreaForm>, connection: DbConn) -> RestResult<VitiArea> {
+pub fn post(
+    auth: Auth,
+    viti_area_form: Json<VitiAreaForm>,
+    connection: DbConn,
+) -> RestResult<VitiArea> {
     let viti_area_form = viti_area_form.into_inner();
     viti_area_form.validate()?;
 
@@ -112,15 +123,8 @@ pub fn post(auth: Auth, viti_area_form: Json<VitiAreaForm>, connection: DbConn) 
         .get_result(&*connection)
         .map_err(VinotecaError::from)
         .and_then(|viti_area_id| {
-            get(
-                auth,
-                Some(viti_area_id),
-                None,
-                None,
-                None,
-                connection,
-            )?
-            .into_first("Newly-created viti area")
+            get(auth, Some(viti_area_id), None, None, None, connection)?
+                .into_first("Newly-created viti area")
         })
 }
 
@@ -135,7 +139,8 @@ pub fn put(
     viti_area_form.validate()?;
 
     // Validate this is the authorized user's viti area
-    viti_areas::table.filter(viti_areas::id.eq(id))
+    viti_areas::table
+        .filter(viti_areas::id.eq(id))
         .filter(viti_areas::user_id.eq(auth.id))
         .select(viti_areas::id)
         .first::<i32>(&*connection)?;
@@ -144,5 +149,7 @@ pub fn put(
         .set(NewVitiArea::from((auth, viti_area_form)))
         .execute(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get(auth, Some(id), None, None, None, connection)?.into_first("Edited viti area"))
+        .and_then(|_| {
+            get(auth, Some(id), None, None, None, connection)?.into_first("Edited viti area")
+        })
 }

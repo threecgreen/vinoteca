@@ -85,7 +85,7 @@ impl<'a> FromDataSimple for RawWineForm<'a> {
         };
         // Verify only one image provided
         let image = match image_part {
-            Some(RawField::Single(raw)) => Some(raw.raw.clone()),
+            Some(RawField::Single(raw)) => Some(raw.raw),
             Some(RawField::Multiple(_raw)) => {
                 return Failure((
                     Status::BadRequest,
@@ -105,19 +105,13 @@ mod test {
 
     #[ignore]
     #[test]
-    fn invalid_content_type() {
-
-    }
+    fn invalid_content_type() {}
 
     #[ignore]
     #[test]
-    fn missing_wine_form() {
-
-    }
+    fn missing_wine_form() {}
 
     #[ignore]
     #[test]
-    fn extra_text_fields() {
-
-    }
+    fn extra_text_fields() {}
 }

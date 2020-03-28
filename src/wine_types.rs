@@ -12,8 +12,15 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/wine-types?<id>&<name>")]
-pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<WineType>> {
-    let mut query = wine_types::table.filter(wine_types::user_id.eq(auth.id)).into_boxed();
+pub fn get(
+    auth: Auth,
+    id: Option<i32>,
+    name: Option<String>,
+    connection: DbConn,
+) -> RestResult<Vec<WineType>> {
+    let mut query = wine_types::table
+        .filter(wine_types::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(id) = id {
         query = query.filter(wine_types::id.eq(id));
     }
@@ -28,10 +35,15 @@ pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn
 }
 
 #[get("/wine-types/top?<limit>")]
-pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        wine_types::table.inner_join(wines::table.inner_join(purchases::table))
+        wine_types::table
+            .inner_join(wines::table.inner_join(purchases::table))
             .filter(wines::user_id.eq(auth.id))
             .filter(wine_types::user_id.eq(auth.id)),
         wine_types::id,
@@ -42,7 +54,11 @@ pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<V
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
-pub fn post(auth: Auth, wine_type_form: Json<WineTypeForm>, connection: DbConn) -> RestResult<WineType> {
+pub fn post(
+    auth: Auth,
+    wine_type_form: Json<WineTypeForm>,
+    connection: DbConn,
+) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     wine_type_form.validate()?;
 
@@ -52,8 +68,7 @@ pub fn post(auth: Auth, wine_type_form: Json<WineTypeForm>, connection: DbConn) 
         .get_result(&*connection)
         .map_err(VinotecaError::from)
         .and_then(|wine_type_id| {
-            get(auth, Some(wine_type_id), None, connection)?
-                .into_first("Newly-created wine type")
+            get(auth, Some(wine_type_id), None, connection)?.into_first("Newly-created wine type")
         })
 }
 
@@ -68,7 +83,8 @@ pub fn put(
     wine_type_form.validate()?;
 
     // Validate is user's wine type
-    wine_types::table.filter(wine_types::id.eq(id))
+    wine_types::table
+        .filter(wine_types::id.eq(id))
         .filter(wine_types::user_id.eq(auth.id))
         .select(wine_types::id)
         .first::<i32>(&*connection)?;

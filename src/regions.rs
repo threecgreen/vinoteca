@@ -36,7 +36,11 @@ pub fn get(
 }
 
 #[get("/regions/top?<limit>")]
-pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
         regions::table

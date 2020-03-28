@@ -51,7 +51,11 @@ pub fn get(
 }
 
 #[get("/purchases/recent?<limit>")]
-pub fn recent(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<RecentPurchase>> {
+pub fn recent(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<RecentPurchase>> {
     let limit = limit.unwrap_or(10);
     purchases::table
         .inner_join(

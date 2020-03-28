@@ -3,7 +3,7 @@ use super::image::handle_image;
 use super::models::{RawWineForm, WinePatchForm};
 use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
-use crate::models::Wine;
+use crate::models::{NewWine, Wine};
 use crate::query_utils::IntoFirst;
 use crate::schema::wines;
 use crate::{DbConn, MediaDir};
@@ -13,9 +13,64 @@ use rocket::State;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
-// FIXME: switch to using postgres method for getting last inserted
-fn get_wine_by_id(id: i32, connection: DbConn) -> RestResult<Wine> {
+#[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
+pub fn patch(
+    auth: Auth,
+    id: i32,
+    wine_patch_form: Json<WinePatchForm>,
+    connection: DbConn,
+) -> RestResult<Wine> {
+    let wine_patch_form = wine_patch_form.into_inner();
+    wine_patch_form.validate()?;
+    validate_owns_wine(auth, id, connection)?;
+
+    diesel::update(wines::table.filter(wines::id.eq(id)))
+        .set(wines::inventory.eq(wine_patch_form.inventory))
+        .execute(&*connection)
+        .map_err(VinotecaError::from)
+        .and_then(|_| get_wine_by_id(auth, id, connection))
+}
+
+#[put("/wines/<id>", data = "<raw_wine_form>")]
+pub fn put(
+    auth: Auth,
+    id: i32,
+    raw_wine_form: RawWineForm,
+    connection: DbConn,
+    media_dir: State<MediaDir>,
+) -> RestResult<Wine> {
+    let wine_form = raw_wine_form.wine_form;
+    wine_form.validate()?;
+    validate_owns_wine(auth, id, connection)?;
+
+    let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
+        .set(NewWine::from((auth, wine_form)))
+        .execute(&*connection)
+        .map_err(VinotecaError::from)
+        .and_then(|_| get_wine_by_id(auth, id, connection));
+
+    if let Ok(wine) = &result {
+        if let Some(image) = raw_wine_form.image {
+            if let Err(e) = handle_image(wine, image, &media_dir.0) {
+                warn!("Error updating image for wine with id {}: {}", id, e);
+            }
+        }
+    }
+    result
+}
+
+fn validate_owns_wine(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    wines::table
+        .filter(wines::id.eq(id))
+        .filter(wines::user_id.eq(auth.id))
+        .select(wines::id)
+        .first::<i32>(&*connection)?;
+    Ok(())
+}
+
+fn get_wine_by_id(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
     get(
+        auth,
         Some(id),
         None,
         None,
@@ -29,53 +84,4 @@ fn get_wine_by_id(id: i32, connection: DbConn) -> RestResult<Wine> {
         connection,
     )?
     .into_first("Edited wine")
-}
-
-#[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
-pub fn patch(
-    auth: Auth,
-    id: i32,
-    wine_patch_form: Json<WinePatchForm>,
-    connection: DbConn,
-) -> RestResult<Wine> {
-    let wine_patch_form = wine_patch_form.into_inner();
-    wine_patch_form.validate()?;
-
-    diesel::update(wines::table.filter(wines::id.eq(id)))
-        .set(wines::inventory.eq(wine_patch_form.inventory))
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| get_wine_by_id(id, connection))
-}
-
-#[put("/wines/<id>", data = "<raw_wine_form>")]
-pub fn put(
-    auth: Auth,
-    id: i32,
-    raw_wine_form: RawWineForm,
-    connection: DbConn,
-    media_dir: State<MediaDir>,
-) -> RestResult<Wine> {
-    let wine_form = raw_wine_form.wine_form;
-    wine_form.validate()?;
-
-    let wine = wines::table.filter(wines::user_id.eq(auth.id)).filter(wines::id.eq(id)).first(&*connection);
-    if wine.is_err() {
-        return Err(VinotecaError::Forbidden("Can't edit another user's wine".to_string()));
-    }
-
-    let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
-        .set(wine_form)
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| get_wine_by_id(id, connection));
-
-    if let Ok(wine) = &result {
-        if let Some(image) = raw_wine_form.image {
-            if let Err(e) = handle_image(wine, image, &media_dir.0) {
-                warn!("Error updating image for wine with id {}: {}", id, e);
-            }
-        }
-    }
-    result
 }

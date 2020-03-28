@@ -7,21 +7,17 @@ use diesel::prelude::*;
 
 #[delete("/wines/<id>")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    // diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(id))).execute(&*connection)?;
+    // Validate is user's wine
     let wine_id = wines::table
         .filter(wines::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(&*connection);
-    if wine_id.is_ok() {
-        diesel::delete(wines::table.filter(wines::id.eq(id)))
-            .execute(&*connection)
-            .map(|_| ())
-            .map_err(VinotecaError::from)
-    } else {
-        // Permission denied
-        Err(VinotecaError::Forbidden("Can't delete another user's wine".to_string()))
-    }
+        .first::<i32>(&*connection)?;
+
+    diesel::delete(wines::table.filter(wines::id.eq(id)))
+        .execute(&*connection)
+        .map(|_| ())
+        .map_err(VinotecaError::from)
 }
 
 #[cfg(test)]

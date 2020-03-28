@@ -20,8 +20,10 @@ pub fn get(
     region_name: Option<String>,
     connection: DbConn,
 ) -> RestResult<Vec<Producer>> {
-    let mut query = producers::table.inner_join(regions::table)
-        .filter(producers::user_id.eq(auth.id)).into_boxed();
+    let mut query = producers::table
+        .inner_join(regions::table)
+        .filter(producers::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(id) = id {
         query = query.filter(producers::id.eq(id));
     }
@@ -44,10 +46,15 @@ pub fn get(
 }
 
 #[get("/producers/top?<limit>")]
-pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        producers::table.inner_join(wines::table.inner_join(purchases::table))
+        producers::table
+            .inner_join(wines::table.inner_join(purchases::table))
             .filter(producers::user_id.eq(auth.id)),
         producers::id,
         producers::name,
@@ -57,7 +64,11 @@ pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<V
 }
 
 #[post("/producers", format = "json", data = "<producer_form>")]
-pub fn post(auth: Auth, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
+pub fn post(
+    auth: Auth,
+    producer_form: Json<ProducerForm>,
+    connection: DbConn,
+) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
@@ -66,21 +77,19 @@ pub fn post(auth: Auth, producer_form: Json<ProducerForm>, connection: DbConn) -
         .returning(producers::id)
         .get_result::<i32>(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|producer_id | {
-            get(
-                auth,
-                Some(producer_id),
-                None,
-                None,
-                None,
-                connection,
-            )?
-            .into_first("Newly-created producer")
+        .and_then(|producer_id| {
+            get(auth, Some(producer_id), None, None, None, connection)?
+                .into_first("Newly-created producer")
         })
 }
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
-pub fn put(auth: Auth, id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
+pub fn put(
+    auth: Auth,
+    id: i32,
+    producer_form: Json<ProducerForm>,
+    connection: DbConn,
+) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
@@ -90,7 +99,9 @@ pub fn put(auth: Auth, id: i32, producer_form: Json<ProducerForm>, connection: D
         .set(NewProducer::from((auth, producer_form)))
         .execute(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get(auth, Some(id), None, None, None, connection)?.into_first("Edited producer"))
+        .and_then(|_| {
+            get(auth, Some(id), None, None, None, connection)?.into_first("Edited producer")
+        })
 }
 
 #[delete("/producers/<id>")]
@@ -104,7 +115,8 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaErr
 }
 
 fn authorize(auth: &Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    producers::table.filter(producers::id.eq(id))
+    producers::table
+        .filter(producers::id.eq(id))
         .filter(producers::user_id.eq(auth.id))
         .select(producers::id)
         .first::<i32>(&*connection)?;

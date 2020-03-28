@@ -10,8 +10,15 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/stores?<id>&<name>")]
-pub fn get(auth: Auth, id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Store>> {
-    let mut query = stores::table.filter(stores::user_id.eq(auth.id)).into_boxed();
+pub fn get(
+    auth: Auth,
+    id: Option<i32>,
+    name: Option<String>,
+    connection: DbConn,
+) -> RestResult<Vec<Store>> {
+    let mut query = stores::table
+        .filter(stores::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(id) = id {
         query = query.filter(stores::id.eq(id));
     }
@@ -36,7 +43,6 @@ pub fn post(auth: Auth, store_form: Json<StoreForm>, connection: DbConn) -> Rest
         .get_result(&*connection)
         .map_err(VinotecaError::from)
         .and_then(|store_id| {
-            get(auth, Some(store_id), None, connection)?
-                .into_first("Newly-created store")
+            get(auth, Some(store_id), None, connection)?.into_first("Newly-created store")
         })
 }
