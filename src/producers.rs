@@ -1,5 +1,6 @@
+use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{generic, Producer, ProducerForm};
+use crate::models::{generic, NewProducer, Producer, ProducerForm};
 use crate::query_utils::IntoFirst;
 use crate::schema::{producers, purchases, regions, wines};
 use crate::DbConn;
@@ -12,13 +13,15 @@ use validator::Validate;
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]
 pub fn get(
+    auth: Auth,
     id: Option<i32>,
     name: Option<String>,
     region_id: Option<i32>,
     region_name: Option<String>,
     connection: DbConn,
 ) -> RestResult<Vec<Producer>> {
-    let mut query = producers::table.inner_join(regions::table).into_boxed();
+    let mut query = producers::table.inner_join(regions::table)
+        .filter(producers::user_id.eq(auth.id)).into_boxed();
     if let Some(id) = id {
         query = query.filter(producers::id.eq(id));
     }
@@ -41,10 +44,11 @@ pub fn get(
 }
 
 #[get("/producers/top?<limit>")]
-pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
-        producers::table.inner_join(wines::table.inner_join(purchases::table)),
+        producers::table.inner_join(wines::table.inner_join(purchases::table))
+            .filter(producers::user_id.eq(auth.id)),
         producers::id,
         producers::name,
         limit,
@@ -53,18 +57,20 @@ pub fn top(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<generic::
 }
 
 #[post("/producers", format = "json", data = "<producer_form>")]
-pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
+pub fn post(auth: Auth, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
     diesel::insert_into(producers::table)
-        .values(&producer_form)
-        .execute(&*connection)
+        .values(NewProducer::from((auth.id, producer_form)))
+        .returning(producers::id)
+        .get_result::<i32>(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| {
+        .and_then(|producer_id | {
             get(
+                auth,
+                Some(producer_id),
                 None,
-                Some(producer_form.name.to_owned()),
                 None,
                 None,
                 connection,
@@ -74,21 +80,34 @@ pub fn post(producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult
 }
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
-pub fn put(id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
+pub fn put(auth: Auth, id: i32, producer_form: Json<ProducerForm>, connection: DbConn) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
+    authorize(&auth, id, connection)?;
+
     diesel::update(producers::table.filter(producers::id.eq(id)))
-        .set(producer_form)
+        .set(NewProducer::from((auth.id, producer_form)))
         .execute(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get(Some(id), None, None, None, connection)?.into_first("Edited producer"))
+        .and_then(|_| get(auth, Some(id), None, None, None, connection)?.into_first("Edited producer"))
 }
 
 #[delete("/producers/<id>")]
-pub fn delete(id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    authorize(&auth, id, connection)?;
+
     diesel::delete(producers::table.filter(producers::id.eq(id)))
         .execute(&*connection)
         .map(|_| ())
         .map_err(VinotecaError::from)
+}
+
+fn authorize(auth: &Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+    producers::table.filter(producers::id.eq(id))
+        .filter(producers::user_id.eq(auth.id))
+        .select(producers::id)
+        .first::<i32>(&*connection)?;
+
+    Ok(())
 }
