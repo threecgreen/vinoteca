@@ -33,6 +33,7 @@ mod producers;
 pub mod purchases;
 pub mod regions;
 mod stores;
+pub mod users;
 pub mod viti_areas;
 pub mod wine_grapes;
 mod wine_types;

@@ -165,6 +165,50 @@ impl<'a> From<(Auth, StoreForm<'a>)> for NewStore<'a> {
     }
 }
 
+#[derive(Queryable)]
+pub struct InternalUser {
+    pub id: i32,
+    pub email: String,
+    pub name: String,
+    pub image: Option<String>,
+    pub hash: String,
+}
+
+#[derive(Clone, Queryable, Serialize, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct User {
+    pub email: String,
+    pub name: String,
+    pub image: Option<String>,
+}
+
+impl From<InternalUser> for User {
+    fn from(internal: InternalUser) -> Self {
+        Self {
+            email: internal.email,
+            name: internal.name,
+            image: internal.image,
+        }
+    }
+}
+
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct UserForm<'a> {
+    pub email: &'a str,
+    pub name: &'a str,
+    pub password: &'a str,
+}
+
+#[derive(AsChangeset, Insertable, Debug)]
+#[table_name = "users"]
+pub struct NewUser<'a> {
+    pub email: &'a str,
+    pub name: &'a str,
+    pub image: Option<String>,
+    pub hash: String,
+}
+
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VitiArea {

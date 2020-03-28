@@ -11,6 +11,7 @@ default-run = "vinoteca"
 categories = ["web-programming"]
 
 [dependencies]
+bcrypt = "0.6.3"
 chrono = { version = "0.4.10", features = ["serde"] }
 diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"

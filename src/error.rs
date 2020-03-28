@@ -1,3 +1,4 @@
+use bcrypt::BcryptError;
 use image::ImageError;
 use rocket::http::Status;
 use rocket::request::Request;
@@ -33,6 +34,19 @@ impl<'r> Responder<'r> for VinotecaError {
             });
             res
         })
+    }
+}
+
+impl From<BcryptError> for VinotecaError {
+    fn from(bcrypt_error: BcryptError) -> Self {
+        let msg = "Error hashing password".to_owned();
+        match bcrypt_error {
+            BcryptError::InvalidPassword => VinotecaError::Forbidden("Bad password".to_owned()),
+            e => {
+                error!("Error performing password hash: {:?}", e);
+                VinotecaError::Internal(msg)
+            }
+        }
     }
 }
 

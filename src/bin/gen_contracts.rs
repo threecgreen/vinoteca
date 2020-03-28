@@ -5,6 +5,7 @@ use vinoteca::models::*;
 use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
 };
+use vinoteca::users::LoginForm;
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
@@ -50,6 +51,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, RegionForm::type_script_ify())?;
     write_interface(&mut type_def_writer, Store::type_script_ify())?;
     write_interface(&mut type_def_writer, StoreForm::type_script_ify())?;
+    write_interface(&mut type_def_writer, User::type_script_ify())?;
+    write_interface(&mut type_def_writer, UserForm::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiArea::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiAreaForm::type_script_ify())?;
     write_interface(&mut type_def_writer, Wine::type_script_ify())?;
@@ -69,6 +72,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, InventoryWine::type_script_ify())?;
     write_interface(&mut type_def_writer, LogForm::type_script_ify())?;
     write_interface(&mut type_def_writer, LogResponse::type_script_ify())?;
+    write_interface(&mut type_def_writer, LoginForm::type_script_ify())?;
     write_interface(
         &mut type_def_writer,
         MostCommonPurchaseDate::type_script_ify(),
