@@ -18,7 +18,7 @@ pub fn post(
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_relations(&auth, &purchase_form, &connection)?;
+    validate_relations(auth, &purchase_form, &connection)?;
 
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
@@ -40,8 +40,8 @@ pub fn put(
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_owns_wine(&auth, id, &connection)?;
-    validate_relations(&auth, &purchase_form, &connection)?;
+    validate_owns_wine(auth, id, &connection)?;
+    validate_relations(auth, &purchase_form, &connection)?;
 
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form)
@@ -52,7 +52,7 @@ pub fn put(
 
 #[delete("/purchases/<id>")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    validate_owns_wine(&auth, id, &connection)?;
+    validate_owns_wine(auth, id, &connection)?;
 
     diesel::delete(purchases::table.filter(purchases::id.eq(id)))
         .execute(&*connection)
@@ -61,7 +61,7 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaErr
 }
 
 fn validate_relations(
-    auth: &Auth,
+    auth: Auth,
     purchase_form: &PurchaseForm,
     connection: &DbConn,
 ) -> Result<(), VinotecaError> {
@@ -81,7 +81,7 @@ fn validate_relations(
 }
 
 /// Validate is user's purchase
-fn validate_owns_wine(auth: &Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
+fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
     purchases::table
         .inner_join(wines::table)
         .filter(purchases::id.eq(id))

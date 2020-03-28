@@ -59,7 +59,6 @@ pub fn top(
 pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
-    let grape_name = grape_form.name.to_owned();
 
     diesel::insert_into(grapes::table)
         .values(NewGrape::from((auth, grape_form)))
