@@ -31,7 +31,7 @@ pub fn patch(
         .and_then(|_| get_wine_by_id(auth, id, connection))
 }
 
-#[put("/wines/<id>", data = "<raw_wine_form>")]
+#[put("/wines/<id>", format = "json", data = "<raw_wine_form>")]
 pub fn put(
     auth: Auth,
     id: i32,

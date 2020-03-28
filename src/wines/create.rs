@@ -12,7 +12,7 @@ use diesel::prelude::*;
 use rocket::State;
 use validator::Validate;
 
-#[post("/wines", data = "<raw_wine_form>")]
+#[post("/wines", format = "json", data = "<raw_wine_form>")]
 pub fn post(
     auth: Auth,
     raw_wine_form: RawWineForm,
