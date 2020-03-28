@@ -1,6 +1,6 @@
 use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{generic, Grape, GrapeForm};
+use crate::models::{generic, Grape, NewGrape};
 use crate::query_utils::IntoFirst;
 use crate::schema::{grapes, purchases, wine_grapes, wines};
 use crate::DbConn;
@@ -47,7 +47,7 @@ pub fn top(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<V
 }
 
 #[post("/grapes", format = "json", data = "<grape_form>")]
-pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
+pub fn post(auth: Auth, grape_form: Json<NewGrape>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
     let grape_name = grape_form.name.to_owned();
@@ -60,7 +60,7 @@ pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> Rest
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]
-pub fn put(id: i32, grape_form: Json<GrapeForm>, connection: DbConn) -> RestResult<Grape> {
+pub fn put(id: i32, grape_form: Json<NewGrape>, connection: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();
     grape_form.validate()?;
 

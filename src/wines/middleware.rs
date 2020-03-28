@@ -9,7 +9,7 @@ use rocket_multipart_form_data::{
     mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
 };
 
-impl FromDataSimple for RawWineForm {
+impl<'a> FromDataSimple for RawWineForm<'a> {
     type Error = VinotecaError;
 
     fn from_data(request: &Request, data: Data) -> Outcome<Self, Self::Error> {

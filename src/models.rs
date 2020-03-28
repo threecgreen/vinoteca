@@ -29,12 +29,27 @@ pub struct Grape {
     pub wine_count: i32,
 }
 
-#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "grapes"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
+}
+
+#[derive(Insertable, Debug)]
+#[table_name = "grapes"]
+pub struct NewGrape<'a> {
+    pub name: &'a str,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, GrapeForm<'a>)> for NewGrape<'a> {
+    fn from((user_id, form): (i32, GrapeForm<'a>)) -> Self {
+        Self {
+            name: form.name,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -45,13 +60,30 @@ pub struct Producer {
     pub region_id: i32,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "producers"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ProducerForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
     pub region_id: i32,
+}
+
+#[derive(AsChangeset, Insertable, Debug)]
+#[table_name = "producers"]
+pub struct NewProducer<'a> {
+    pub name: &'a str,
+    pub region_id: i32,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, ProducerForm<'a>)> for NewProducer<'a> {
+    fn from((user_id, form): (i32, ProducerForm<'a>)) -> Self {
+        Self {
+            name: form.name,
+            region_id: form.region_id,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -109,12 +141,27 @@ pub struct Store {
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "stores"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct StoreForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
+}
+
+#[derive(Insertable, Debug)]
+#[table_name = "stores"]
+pub struct NewStore<'a> {
+    pub name: &'a str,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, StoreForm<'a>)> for NewStore<'a> {
+    fn from((user_id, form): (i32, StoreForm<'a>)) -> Self {
+        Self {
+            name: form.name,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -126,13 +173,30 @@ pub struct VitiArea {
     pub region: String,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "viti_areas"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VitiAreaForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
     pub region_id: i32,
+}
+
+#[derive(AsChangeset, Insertable, Debug)]
+#[table_name = "viti_areas"]
+pub struct NewVitiArea<'a> {
+    pub name: &'a str,
+    pub region_id: i32,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, VitiAreaForm<'a>)> for NewVitiArea<'a> {
+    fn from((user_id, form): (i32, VitiAreaForm<'a>)) -> Self {
+        Self {
+            name: form.name,
+            region_id: form.region_id,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -158,26 +222,59 @@ pub struct Wine {
     pub last_purchase_vintage: Option<i32>,
 }
 
-#[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "wines"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct WineForm {
+pub struct WineForm<'a> {
     #[validate(length(min = 1))]
-    pub description: Option<String>,
+    pub description: Option<&'a str>,
     #[validate(length(min = 1))]
-    pub notes: Option<String>,
+    pub notes: Option<&'a str>,
     #[validate(range(min = 0, max = 10))]
     pub rating: Option<i32>,
     #[validate(range(min = 0))]
     pub inventory: i32,
     #[validate(length(min = 1))]
-    pub why: Option<String>,
+    pub why: Option<&'a str>,
     pub color_id: i32,
     pub producer_id: i32,
     pub viti_area_id: Option<i32>,
     #[validate(length(min = 1))]
-    pub name: Option<String>,
+    pub name: Option<&'a str>,
     pub wine_type_id: i32,
+}
+
+#[derive(AsChangeset, Insertable, Debug)]
+#[table_name = "wines"]
+pub struct NewWine<'a> {
+    pub description: Option<&'a str>,
+    pub notes: Option<&'a str>,
+    pub rating: Option<i32>,
+    pub inventory: i32,
+    pub why: Option<&'a str>,
+    pub color_id: i32,
+    pub producer_id: i32,
+    pub viti_area_id: Option<i32>,
+    pub name: Option<&'a str>,
+    pub wine_type_id: i32,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, WineForm<'a>)> for NewWine<'a> {
+    fn from((user_id, form): (i32, WineForm<'a>)) -> Self {
+        Self {
+            description: form.description,
+            notes: form.notes,
+            rating: form.rating,
+            inventory: form.inventory,
+            why: form.why,
+            color_id: form.color_id,
+            producer_id: form.producer_id,
+            viti_area_id: form.viti_area_id,
+            name: form.name,
+            wine_type_id: form.wine_type_id,
+            user_id,
+        }
+    }
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -205,12 +302,27 @@ pub struct WineType {
     pub name: String,
 }
 
-#[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "wine_types"]
+#[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineTypeForm<'a> {
     #[validate(length(min = 1))]
     pub name: &'a str,
+}
+
+#[derive(Insertable, Debug)]
+#[table_name = "wine_types"]
+pub struct NewWineType<'a> {
+    pub name: &'a str,
+    pub user_id: i32,
+}
+
+impl<'a> From<(i32, WineTypeForm<'a>)> for NewWineType<'a> {
+    fn from((user_id, form): (i32, WineTypeForm<'a>)) -> Self {
+        Self {
+            name: form.name,
+            user_id,
+        }
+    }
 }
 
 pub mod generic {
