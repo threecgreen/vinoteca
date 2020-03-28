@@ -11,7 +11,7 @@ import { TextInput } from "./TextInput";
 
 export interface IPurchaseData {
     date: number | null;
-    quantity: number | null;
+    quantity: number;
     shouldAddToInventory: boolean | null;
     price: number | null;
     vintage: number | null;

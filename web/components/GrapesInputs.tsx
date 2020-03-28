@@ -44,24 +44,23 @@ const remainingGrapePct = (grapes: IWineGrape[]): number => {
 export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action) => {
     switch (action.type) {
         case "addGrape":
-            const maxId = maxBy(grapes, (grape) => grape.id)?.id ?? 0;
+            const maxId = maxBy(grapes, (grape) => grape.grapeId)?.grapeId ?? 0;
             const hasGrapePct = grapes.some((grape) => grape.percent !== null && grape.grape);
             const remPct = remainingGrapePct(grapes);
             const wineId = grapes.length > 0 ? grapes[grapes.length - 1].wineId : 0;
             // Need to create new array to assuage React diffing algo
             return [
                 ...grapes, {
-                id: maxId + 1,
                 percent: hasGrapePct ? remPct : null,
                 grape: "",
-                grapeId: 0,
+                grapeId: maxId + 1,
                 wineId,
             }];
         case "deleteGrape":
-            return grapes.filter((grape) => grape.id !== action.id);
+            return grapes.filter((grape) => grape.grapeId !== action.id);
         case "modifyGrape":
             return grapes.map((grape) => (
-                (grape.id === action.id)
+                (grape.grapeId === action.id)
                     ? {id: action.id, percent: action.percent, grape: action.grape, grapeId: grape.grapeId, wineId: grape.wineId}
                     : grape
             ));
@@ -97,9 +96,9 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
             <Col s={ 12 }>
                 <h6>Grape composition</h6>
             </Col>
-            { grapes.map((grape) => (
-                <GrapeInput key={ grape.id }
-                    id={ grape.id }
+            { grapes.map((grape, i) => (
+                <GrapeInput key={ grape.grapeId }
+                    id={ i }
                     completions={ completions }
                     grape={ grape.grape }
                     percent={ grape.percent }

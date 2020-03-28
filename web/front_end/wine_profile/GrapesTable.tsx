@@ -30,7 +30,7 @@ export const GrapesTable: React.FC<IProps> = ({grapes}) => {
             <TabPanel id={tabIdxer(0)}>
                 <Table columns={ ["Grape", {name: "Percentage", isNumCol: true}]}>
                     { grapes.map((grape) => (
-                        <tr key={ grape.id }>
+                        <tr key={ grape.grapeId }>
                             <TextCell text={ grape.grape } />
                             <NumCell num={ grape.percent }
                                 maxDecimals={ 0 }
