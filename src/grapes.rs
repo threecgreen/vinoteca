@@ -53,10 +53,11 @@ pub fn post(auth: Auth, grape_form: Json<GrapeForm>, connection: DbConn) -> Rest
     let grape_name = grape_form.name.to_owned();
 
     diesel::insert_into(grapes::table)
-        .values(NewGrape::from((auth.id, grape_form)))
-        .execute(&*connection)
+        .values(NewGrape::from((auth, grape_form)))
+        .returning(grapes::id)
+        .get_result(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get(auth, None, Some(grape_name), connection)?.into_first("Newly-created grape"))
+        .and_then(|grape_id| get(auth, Some(grape_id), None, connection)?.into_first("Newly-created grape"))
 }
 
 #[put("/grapes/<id>", format = "json", data = "<grape_form>")]

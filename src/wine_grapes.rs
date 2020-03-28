@@ -1,3 +1,4 @@
+use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
@@ -10,13 +11,17 @@ use std::collections::HashSet;
 use typescript_definitions::TypeScriptify;
 use validator::{Validate, ValidationError};
 
+// TODO: consolidate with wines
+
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub fn get(
+    auth: Auth,
     wine_id: Option<i32>,
     grape_id: Option<i32>,
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
-    let mut query = wine_grapes::table.inner_join(grapes::table).into_boxed();
+    let mut query = wine_grapes::table.inner_join(grapes::table)
+        .filter(grapes::user_id.eq(auth.id)).into_boxed();
     if let Some(wine_id) = wine_id {
         query = query.filter(wine_grapes::wine_id.eq(wine_id));
     }
@@ -92,6 +97,7 @@ fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
 
 #[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
 pub fn post(
+    auth: Auth,
     wine_grape_form: Json<WineGrapesForm>,
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
@@ -99,6 +105,8 @@ pub fn post(
     wine_grape_form.validate()?;
     let wine_id = wine_grape_form.wine_id;
     let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
+
+    // FIXME: validate grapes are the user's
 
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
@@ -115,7 +123,7 @@ pub fn post(
             .values(&wine_grapes)
             .execute(&*connection)?;
     }
-    get(Some(wine_id), None, connection)
+    get(auth, Some(wine_id), None, connection)
 }
 
 #[cfg(test)]

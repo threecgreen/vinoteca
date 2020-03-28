@@ -1,4 +1,5 @@
-use super::schema::*;
+use crate::auth::Auth;
+use crate::schema::*;
 
 use chrono::NaiveDate;
 use diesel::{Insertable, Queryable};
@@ -43,11 +44,11 @@ pub struct NewGrape<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, GrapeForm<'a>)> for NewGrape<'a> {
-    fn from((user_id, form): (i32, GrapeForm<'a>)) -> Self {
+impl<'a> From<(Auth, GrapeForm<'a>)> for NewGrape<'a> {
+    fn from((auth, form): (Auth, GrapeForm<'a>)) -> Self {
         Self {
             name: form.name,
-            user_id,
+            user_id: auth.id,
         }
     }
 }
@@ -76,12 +77,12 @@ pub struct NewProducer<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, ProducerForm<'a>)> for NewProducer<'a> {
-    fn from((user_id, form): (i32, ProducerForm<'a>)) -> Self {
+impl<'a> From<(Auth, ProducerForm<'a>)> for NewProducer<'a> {
+    fn from((auth, form): (Auth, ProducerForm<'a>)) -> Self {
         Self {
             name: form.name,
             region_id: form.region_id,
-            user_id,
+            user_id: auth.id,
         }
     }
 }
@@ -155,11 +156,11 @@ pub struct NewStore<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, StoreForm<'a>)> for NewStore<'a> {
-    fn from((user_id, form): (i32, StoreForm<'a>)) -> Self {
+impl<'a> From<(Auth, StoreForm<'a>)> for NewStore<'a> {
+    fn from((auth, form): (Auth, StoreForm<'a>)) -> Self {
         Self {
             name: form.name,
-            user_id,
+            user_id: auth.id,
         }
     }
 }
@@ -189,12 +190,12 @@ pub struct NewVitiArea<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, VitiAreaForm<'a>)> for NewVitiArea<'a> {
-    fn from((user_id, form): (i32, VitiAreaForm<'a>)) -> Self {
+impl<'a> From<(Auth, VitiAreaForm<'a>)> for NewVitiArea<'a> {
+    fn from((auth, form): (Auth, VitiAreaForm<'a>)) -> Self {
         Self {
             name: form.name,
             region_id: form.region_id,
-            user_id,
+            user_id: auth.id,
         }
     }
 }
@@ -259,8 +260,8 @@ pub struct NewWine<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, WineForm<'a>)> for NewWine<'a> {
-    fn from((user_id, form): (i32, WineForm<'a>)) -> Self {
+impl<'a> From<(Auth, WineForm<'a>)> for NewWine<'a> {
+    fn from((auth, form): (Auth, WineForm<'a>)) -> Self {
         Self {
             description: form.description,
             notes: form.notes,
@@ -272,7 +273,7 @@ impl<'a> From<(i32, WineForm<'a>)> for NewWine<'a> {
             viti_area_id: form.viti_area_id,
             name: form.name,
             wine_type_id: form.wine_type_id,
-            user_id,
+            user_id: auth.id,
         }
     }
 }
@@ -316,11 +317,11 @@ pub struct NewWineType<'a> {
     pub user_id: i32,
 }
 
-impl<'a> From<(i32, WineTypeForm<'a>)> for NewWineType<'a> {
-    fn from((user_id, form): (i32, WineTypeForm<'a>)) -> Self {
+impl<'a> From<(Auth, WineTypeForm<'a>)> for NewWineType<'a> {
+    fn from((auth, form): (Auth, WineTypeForm<'a>)) -> Self {
         Self {
             name: form.name,
-            user_id,
+            user_id: auth.id,
         }
     }
 }

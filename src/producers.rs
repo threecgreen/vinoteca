@@ -62,7 +62,7 @@ pub fn post(auth: Auth, producer_form: Json<ProducerForm>, connection: DbConn) -
     producer_form.validate()?;
 
     diesel::insert_into(producers::table)
-        .values(NewProducer::from((auth.id, producer_form)))
+        .values(NewProducer::from((auth, producer_form)))
         .returning(producers::id)
         .get_result::<i32>(&*connection)
         .map_err(VinotecaError::from)
@@ -87,7 +87,7 @@ pub fn put(auth: Auth, id: i32, producer_form: Json<ProducerForm>, connection: D
     authorize(&auth, id, connection)?;
 
     diesel::update(producers::table.filter(producers::id.eq(id)))
-        .set(NewProducer::from((auth.id, producer_form)))
+        .set(NewProducer::from((auth, producer_form)))
         .execute(&*connection)
         .map_err(VinotecaError::from)
         .and_then(|_| get(auth, Some(id), None, None, None, connection)?.into_first("Edited producer"))
