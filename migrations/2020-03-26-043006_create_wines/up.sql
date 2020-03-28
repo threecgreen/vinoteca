@@ -11,5 +11,5 @@ CREATE TABLE wines (
     wine_type_id INTEGER NOT NULL REFERENCES wine_types(id) ON DELETE RESTRICT,
     producer_id INTEGER NOT NULL REFERENCES producers(id) ON DELETE RESTRICT,
     viti_area_id INTEGER REFERENCES viti_areas(id) ON DELETE RESTRICT,
-    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );

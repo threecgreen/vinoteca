@@ -9,6 +9,7 @@ table! {
     grapes (id) {
         id -> Int4,
         name -> Text,
+        user_id -> Int4,
     }
 }
 
@@ -17,6 +18,7 @@ table! {
         id -> Int4,
         name -> Text,
         region_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -44,6 +46,7 @@ table! {
     stores (id) {
         id -> Int4,
         name -> Text,
+        user_id -> Int4,
     }
 }
 
@@ -62,6 +65,7 @@ table! {
         id -> Int4,
         name -> Text,
         region_id -> Int4,
+        user_id -> Int4,
     }
 }
 
@@ -87,7 +91,7 @@ table! {
         wine_type_id -> Int4,
         producer_id -> Int4,
         viti_area_id -> Nullable<Int4>,
-        user_id -> Nullable<Int4>,
+        user_id -> Int4,
     }
 }
 
@@ -95,15 +99,21 @@ table! {
     wine_types (id) {
         id -> Int4,
         name -> Text,
+        user_id -> Int4,
     }
 }
 
+joinable!(grapes -> users (user_id));
 joinable!(producers -> regions (region_id));
+joinable!(producers -> users (user_id));
 joinable!(purchases -> stores (store_id));
 joinable!(purchases -> wines (wine_id));
+joinable!(stores -> users (user_id));
 joinable!(viti_areas -> regions (region_id));
+joinable!(viti_areas -> users (user_id));
 joinable!(wine_grapes -> grapes (grape_id));
 joinable!(wine_grapes -> wines (wine_id));
+joinable!(wine_types -> users (user_id));
 joinable!(wines -> colors (color_id));
 joinable!(wines -> producers (producer_id));
 joinable!(wines -> users (user_id));
