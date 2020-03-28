@@ -9,7 +9,7 @@ use rocket_multipart_form_data::{
     mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
 };
 
-impl<'a> FromDataSimple for RawWineForm<'a> {
+impl FromDataSimple for RawWineForm {
     type Error = VinotecaError;
 
     fn from_data(request: &Request, data: Data) -> Outcome<Self, Self::Error> {
@@ -85,7 +85,7 @@ impl<'a> FromDataSimple for RawWineForm<'a> {
         };
         // Verify only one image provided
         let image = match image_part {
-            Some(RawField::Single(raw)) => Some(raw.raw),
+            Some(RawField::Single(raw)) => Some(raw.raw.clone()),
             Some(RawField::Multiple(_raw)) => {
                 return Failure((
                     Status::BadRequest,

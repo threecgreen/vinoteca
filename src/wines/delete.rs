@@ -8,7 +8,7 @@ use diesel::prelude::*;
 #[delete("/wines/<id>")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
     // Validate is user's wine
-    let wine_id = wines::table
+    wines::table
         .filter(wines::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)

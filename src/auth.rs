@@ -3,7 +3,8 @@ use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+// If more fields are added, remove `Copy`
+#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
 pub struct Auth {
     /// user id
     pub id: i32,

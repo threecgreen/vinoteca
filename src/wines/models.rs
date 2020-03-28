@@ -6,11 +6,11 @@ use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 use validator::Validate;
 
-pub struct RawWineForm<'a> {
+pub struct RawWineForm {
     /// raw submitted wine image
     pub image: Option<Vec<u8>>,
     /// JSON data for database
-    pub wine_form: WineForm<'a>,
+    pub wine_form: WineForm,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]

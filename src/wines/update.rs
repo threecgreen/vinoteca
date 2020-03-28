@@ -22,7 +22,7 @@ pub fn patch(
 ) -> RestResult<Wine> {
     let wine_patch_form = wine_patch_form.into_inner();
     wine_patch_form.validate()?;
-    validate_owns_wine(auth, id, connection)?;
+    validate_owns_wine(auth, id, &connection)?;
 
     diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(wines::inventory.eq(wine_patch_form.inventory))
@@ -41,7 +41,7 @@ pub fn put(
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     wine_form.validate()?;
-    validate_owns_wine(auth, id, connection)?;
+    validate_owns_wine(auth, id, &connection)?;
 
     let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(NewWine::from((auth, wine_form)))
@@ -59,12 +59,12 @@ pub fn put(
     result
 }
 
-fn validate_owns_wine(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
     wines::table
         .filter(wines::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(&*connection)?;
+        .first::<i32>(&**connection)?;
     Ok(())
 }
 

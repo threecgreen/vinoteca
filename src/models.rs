@@ -225,43 +225,43 @@ pub struct Wine {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct WineForm<'a> {
+pub struct WineForm {
     #[validate(length(min = 1))]
-    pub description: Option<&'a str>,
+    pub description: Option<String>,
     #[validate(length(min = 1))]
-    pub notes: Option<&'a str>,
+    pub notes: Option<String>,
     #[validate(range(min = 0, max = 10))]
     pub rating: Option<i32>,
     #[validate(range(min = 0))]
     pub inventory: i32,
     #[validate(length(min = 1))]
-    pub why: Option<&'a str>,
+    pub why: Option<String>,
     pub color_id: i32,
     pub producer_id: i32,
     pub viti_area_id: Option<i32>,
     #[validate(length(min = 1))]
-    pub name: Option<&'a str>,
+    pub name: Option<String>,
     pub wine_type_id: i32,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
 #[table_name = "wines"]
-pub struct NewWine<'a> {
-    pub description: Option<&'a str>,
-    pub notes: Option<&'a str>,
+pub struct NewWine {
+    pub description: Option<String>,
+    pub notes: Option<String>,
     pub rating: Option<i32>,
     pub inventory: i32,
-    pub why: Option<&'a str>,
+    pub why: Option<String>,
     pub color_id: i32,
     pub producer_id: i32,
     pub viti_area_id: Option<i32>,
-    pub name: Option<&'a str>,
+    pub name: Option<String>,
     pub wine_type_id: i32,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, WineForm<'a>)> for NewWine<'a> {
-    fn from((auth, form): (Auth, WineForm<'a>)) -> Self {
+impl From<(Auth, WineForm)> for NewWine {
+    fn from((auth, form): (Auth, WineForm)) -> Self {
         Self {
             description: form.description,
             notes: form.notes,

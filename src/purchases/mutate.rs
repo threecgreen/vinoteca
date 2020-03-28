@@ -18,7 +18,7 @@ pub fn post(
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_relations(&auth, &purchase_form, connection)?;
+    validate_relations(&auth, &purchase_form, &connection)?;
 
     diesel::insert_into(purchases::table)
         .values(&purchase_form)
@@ -40,8 +40,8 @@ pub fn put(
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_owns_wine(&auth, id, connection)?;
-    validate_relations(&auth, &purchase_form, connection)?;
+    validate_owns_wine(&auth, id, &connection)?;
+    validate_relations(&auth, &purchase_form, &connection)?;
 
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form)
@@ -52,7 +52,7 @@ pub fn put(
 
 #[delete("/purchases/<id>")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    validate_owns_wine(&auth, id, connection);
+    validate_owns_wine(&auth, id, &connection)?;
 
     diesel::delete(purchases::table.filter(purchases::id.eq(id)))
         .execute(&*connection)
@@ -63,30 +63,30 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaErr
 fn validate_relations(
     auth: &Auth,
     purchase_form: &PurchaseForm,
-    connection: DbConn,
+    connection: &DbConn,
 ) -> Result<(), VinotecaError> {
     // Validate wine is user's
     wines::table
         .filter(wines::id.eq(purchase_form.wine_id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(&*connection)?;
+        .first::<i32>(&**connection)?;
     // Validate store is user's
     stores::table
         .filter(stores::id.eq(purchase_form.wine_id))
         .filter(stores::user_id.eq(auth.id))
         .select(stores::id)
-        .first::<i32>(&*connection)?;
+        .first::<i32>(&**connection)?;
     Ok(())
 }
 
 /// Validate is user's purchase
-fn validate_owns_wine(auth: &Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
+fn validate_owns_wine(auth: &Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
     purchases::table
         .inner_join(wines::table)
         .filter(purchases::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
         .select(purchases::id)
-        .first::<i32>(&*connection)?;
+        .first::<i32>(&**connection)?;
     Ok(())
 }
