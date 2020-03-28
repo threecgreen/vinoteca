@@ -1,4 +1,5 @@
 use super::{MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases};
+use crate::auth::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Purchase;
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
@@ -12,6 +13,7 @@ use rocket_contrib::json::Json;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub fn get(
+    auth: Auth,
     id: Option<i32>,
     wine_id: Option<i32>,
     wine_name: Option<String>,
@@ -20,6 +22,7 @@ pub fn get(
     let mut query = purchases::table
         .left_join(stores::table)
         .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(id) = id {
         query = query.filter(purchases::id.eq(id));
@@ -48,7 +51,7 @@ pub fn get(
 }
 
 #[get("/purchases/recent?<limit>")]
-pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<RecentPurchase>> {
+pub fn recent(auth: Auth, limit: Option<usize>, connection: DbConn) -> RestResult<Vec<RecentPurchase>> {
     let limit = limit.unwrap_or(10);
     purchases::table
         .inner_join(
@@ -57,6 +60,7 @@ pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<Recent
                 .inner_join(wine_types::table),
         )
         .left_join(stores::table)
+        .filter(wines::user_id.eq(auth.id))
         .select((
             purchases::id,
             purchases::price,
@@ -82,7 +86,8 @@ pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<Recent
 }
 
 #[get("/purchases/by-year")]
-pub fn by_year(connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
+pub fn by_year(auth: Auth, connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
+    // FIXME: user id param
     sql_query(include_str!("purchases_by_year.sql"))
         .load::<YearsPurchases>(&*connection)
         .map(Json)
@@ -90,8 +95,10 @@ pub fn by_year(connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
 }
 
 #[get("/purchases/total-liters")]
-pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
+pub fn total_liters(auth: Auth, connection: DbConn) -> Json<TotalLiters> {
     let res = purchases::table
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
         .select(sum(sql::<Float>("quantity * 0.75")))
         .first(&*connection)
         .unwrap_or(Some(0.0));
@@ -102,7 +109,8 @@ pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
 }
 
 #[get("/purchases/most-common-purchase-date")]
-pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseDate> {
+pub fn most_common_purchase_date(auth: Auth, connection: DbConn) -> Json<MostCommonPurchaseDate> {
+    // FIXME: use id param
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
         .load::<MostCommonPurchaseDate>(&*connection)
         .unwrap_or_else(|e| {
@@ -116,10 +124,12 @@ pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseD
 }
 
 #[get("/purchases/count")]
-pub fn count(connection: DbConn) -> Json<PurchaseCount> {
-    let res: Result<Option<i64>, _> = purchases::table
+pub fn count(auth: Auth, connection: DbConn) -> Json<PurchaseCount> {
+    let res = purchases::table
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
         .select(sum(purchases::quantity))
-        .first(&*connection);
+        .first::<Option<i64>>(&*connection);
     let total_liters = PurchaseCount {
         count: res.unwrap_or(Some(0)).unwrap_or(0),
     };
