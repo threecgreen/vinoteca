@@ -5,7 +5,7 @@ use crate::schema::users;
 use crate::DbConn;
 
 use diesel::prelude::*;
-use rocket::http::{Cookie, Cookies};
+use rocket::http::{Cookie, Cookies, SameSite};
 use rocket_contrib::json::Json;
 use serde::Deserialize;
 use typescript_definitions::TypeScriptify;
@@ -67,10 +67,20 @@ pub fn create(form: Json<UserForm>, cookies: Cookies, connection: DbConn) -> Res
         })
 }
 
-// FIXME: logout endpoint
+#[post("/users/logout")]
+pub fn logout(mut cookies: Cookies) -> RestResult<()> {
+    cookies.remove_private(Cookie::named(COOKIE_NAME));
+
+    Ok(Json(()))
+}
 
 fn add_auth_cookie(mut cookies: Cookies, user_id: i32) {
-    let cookie = Cookie::new(COOKIE_NAME, user_id.to_string());
-    // Add private sets expiry to one week
+    let cookie = Cookie::build(COOKIE_NAME, user_id.to_string())
+        .path("/")
+        .same_site(SameSite::Strict)
+        .http_only(true)
+        .secure(true)
+        .expires(time::now() + time::Duration::days(5))
+        .finish();
     cookies.add_private(cookie);
 }

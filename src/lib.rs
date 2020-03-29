@@ -116,6 +116,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 users::create,
                 users::get,
                 users::login,
+                users::logout,
                 viti_areas::get,
                 viti_areas::put,
                 viti_areas::post,
