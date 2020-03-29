@@ -87,9 +87,8 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
         let wines = undefined;
         if (this.state.wines.length === 0) {
             wines = (
-                <>
-
-                    <h6 className="bold center-align">
+                <div className="center-align">
+                    <h6 className="bold">
                         You haven&rsquo;t entered any wines yet.
                     </h6>
                     <BtnLink classes={ ["green-bg"] }
@@ -97,7 +96,7 @@ export class WinesApp extends React.Component<RouteComponentProps, IState> {
                     >
                         Add a new wine
                     </BtnLink>
-                </>
+                </div>
             );
         } else {
             wines = (
