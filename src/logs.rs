@@ -17,24 +17,33 @@ pub struct LogResponse {
     success: bool,
 }
 
+/// Can only use string literals as fmt strings
+macro_rules! fmt_str {
+    () => {
+        "Client::{} @ '{}': {}. {:?}"
+    };
+}
+
 #[post("/logs", format = "json", data = "<log_form>")]
 pub fn post(log_form: Json<LogForm>) -> Json<LogResponse> {
     let log_form = log_form.into_inner();
+    // TODO: optionally include user in logs
+    // TODO: better handling of when tags are empty
     match &log_form.level as &str {
         "critical" | "error" => error!(
-            "Client {} @ {}: {}. {:?}",
+            fmt_str!(),
             log_form.module, log_form.url, log_form.message, log_form.tags
         ),
         "warning" => warn!(
-            "Client {} @ {}: {}. {:?}",
+            fmt_str!(),
             log_form.module, log_form.url, log_form.message, log_form.tags
         ),
         "info" => info!(
-            "Client {} @ {}: {}. {:?}",
+            fmt_str!(),
             log_form.module, log_form.url, log_form.message, log_form.tags
         ),
         _ => debug!(
-            "Client {} @ {}: {}. {:?}",
+            fmt_str!(),
             log_form.module, log_form.url, log_form.message, log_form.tags
         ),
     }
