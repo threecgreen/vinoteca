@@ -18,7 +18,7 @@ export function createCookie(name: string, value: string, days?: number) {
     document.cookie = name + "=" + value + expires + "; path=/";
 }
 
-export function readCookie(name: string): string {
+export function readCookie(name: string): string | null {
     const nameEQ = name + "=";
     for (let c of document.cookie.split(";")) {
         while (c.charAt(0) === " ") {
@@ -28,7 +28,7 @@ export function readCookie(name: string): string {
             return c.substr(nameEQ.length);
         }
     }
-    return "";
+    return null;
 }
 
 export function deleteCookie(name: string) {

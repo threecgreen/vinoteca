@@ -1,5 +1,6 @@
 import { Link } from "@reach/router";
 import React from "react";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { VERSION } from "../lib/constants";
 
 
@@ -7,7 +8,7 @@ export const Footer: React.FC<{}> = (_) => {
     const thisYear = new Date().getFullYear();
 
     return (
-        <>
+        <ErrorBoundary>
             <footer className="page-footer pink darken-4 footer-copyright">
                 <div className="container">
                     <div className="row">
@@ -72,7 +73,7 @@ export const Footer: React.FC<{}> = (_) => {
                     </div>
                 </div>
             </footer>
-        </>
+        </ErrorBoundary>
     );
 }
 Footer.displayName = "Footer";

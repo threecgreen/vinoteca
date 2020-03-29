@@ -45,7 +45,7 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
                     Liters of wine
                 </p>
                 <p>
-                    <span className="by-the-numbers">{ mostCommonPurchaseDate }</span>
+                    <span className="by-the-numbers">{ mostCommonPurchaseDate ?? "No" }</span>
                     Most common purchase date
                 </p>
                 <p>
