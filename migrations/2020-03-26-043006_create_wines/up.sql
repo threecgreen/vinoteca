@@ -4,7 +4,7 @@ CREATE TABLE wines (
     description TEXT,
     notes TEXT,
     why TEXT,
-    inventory INTEGER NOT NULL CHECK (inventory > 0),
+    inventory INTEGER NOT NULL CHECK (inventory >= 0),
     rating INTEGER CHECK (rating BETWEEN 0 AND 10),
     image TEXT,
     color_id INTEGER NOT NULL REFERENCES colors(id) ON DELETE RESTRICT,
