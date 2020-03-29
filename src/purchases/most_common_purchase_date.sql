@@ -5,4 +5,5 @@ INNER JOIN wines w
 WHERE p.date IS NOT NULL
     AND w.user_id = $1
 GROUP BY to_char(p.date, 'Mon dd')
-ORDER BY sum(p.quantity) DESC;
+ORDER BY sum(p.quantity) DESC
+LIMIT 1;

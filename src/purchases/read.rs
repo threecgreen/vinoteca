@@ -114,6 +114,13 @@ pub fn total_liters(auth: Auth, connection: DbConn) -> Json<TotalLiters> {
 
 #[get("/purchases/most-common-purchase-date")]
 pub fn most_common_purchase_date(auth: Auth, connection: DbConn) -> Json<MostCommonPurchaseDate> {
+    let count = purchases::table.inner_join(wines::table).filter(wines::user_id.eq(auth.id))
+        .count()
+        .first(&*connection);
+    if Ok(0) == count || count.is_err() {
+        return Json(MostCommonPurchaseDate{most_common_purchase_date: None});
+    }
+    // TODO: figure out why this panics when there aren't any purchases
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
         .bind::<Integer, _>(auth.id)
         .load::<MostCommonPurchaseDate>(&*connection)
