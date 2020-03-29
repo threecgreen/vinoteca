@@ -62,10 +62,6 @@ fn run(args: &[String]) {
             }
         }
     }
-    // Set working directory to home to solve config issue
-    #[cfg(not(debug_assertions))]
-    std::env::set_current_dir(std::env::var("HOME").expect("User's home directory"))
-        .expect("Current working directory to be set");
 
     vinoteca::create_rocket().launch();
 }
