@@ -17,7 +17,6 @@ diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 image = "0.23.2"
 log = "0.4"
-rocket_cors = { version = "0.5.2", default_features = false }
 rocket_codegen = "0.4.4"
 rocket-multipart-form-data = "0.8.1"
 serde = { version = "1.0", features = ["derive"] }

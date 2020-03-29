@@ -1,9 +1,8 @@
- * Need to enable TLS for HTTPS
-   * Add XSRF token
+ * Add CSRF token
    * Check for every request
  * Need app secret key for hashing passwords
- * JWT token stored as hardened cookie:
+ * Authorized user id token stored as private cookie (built in to Rocket):
    * HttpOnly
    * Secure
    * SameSite
- * Token revocation database table to facilitate logout feature
+ * Logout by removing cookie
