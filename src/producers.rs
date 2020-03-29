@@ -93,7 +93,7 @@ pub fn put(
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
-    validate_owns_producer(&auth, id, &connection)?;
+    validate_owns_producer(auth, id, &connection)?;
 
     diesel::update(producers::table.filter(producers::id.eq(id)))
         .set(NewProducer::from((auth, producer_form)))
@@ -106,7 +106,7 @@ pub fn put(
 
 #[delete("/producers/<id>")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    validate_owns_producer(&auth, id, &connection)?;
+    validate_owns_producer(auth, id, &connection)?;
 
     diesel::delete(producers::table.filter(producers::id.eq(id)))
         .execute(&*connection)
@@ -114,7 +114,7 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaErr
         .map_err(VinotecaError::from)
 }
 
-fn validate_owns_producer(auth: &Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
+fn validate_owns_producer(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
     producers::table
         .filter(producers::id.eq(id))
         .filter(producers::user_id.eq(auth.id))
