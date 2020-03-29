@@ -25,13 +25,13 @@ mod test {
     use super::*;
     use crate::error::RestResult;
     use crate::models::Wine;
-    use crate::testing::create_test_rocket;
     use crate::wines::get;
 
     use rocket_contrib::json::Json;
 
-    fn get_by_id(id: i32, connection: DbConn) -> RestResult<Vec<Wine>> {
+    fn get_by_id(auth: Auth, id: i32, connection: DbConn) -> RestResult<Vec<Wine>> {
         get(
+            auth,
             Some(id),
             None,
             None,
@@ -48,15 +48,16 @@ mod test {
 
     #[test]
     fn delete_removes_wine() {
-        let rocket = create_test_rocket();
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let wines = get_by_id(1, connection);
-        assert!(matches!(wines, Ok(Json(wines)) if wines.len() == 1));
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let response = delete(1, connection);
-        assert!(response.is_ok());
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let wines = get_by_id(1, connection);
-        assert!(matches!(wines, Ok(Json(wines)) if wines.is_empty()));
+        run_test!(|rocket, connection| {
+            let auth = Auth { id: 1 };
+            let wines = get_by_id(auth, 1, connection);
+            assert!(matches!(wines, Ok(Json(wines)) if wines.len() == 1));
+            let connection = DbConn::get_one(&rocket).expect("database connection");
+            let response = delete(auth, 1, connection);
+            assert!(response.is_ok());
+            let connection = DbConn::get_one(&rocket).expect("database connection");
+            let wines = get_by_id(auth, 1, connection);
+            assert!(matches!(wines, Ok(Json(wines)) if wines.is_empty()));
+        })
     }
 }

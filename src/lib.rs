@@ -11,6 +11,10 @@ extern crate rocket;
 #[macro_use]
 extern crate validator_derive;
 
+#[cfg(test)]
+#[macro_use]
+extern crate lazy_static;
+
 // Diesel modules
 pub mod models;
 mod schema;
@@ -21,6 +25,10 @@ mod config;
 mod error;
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;
+// Test helpers
+#[cfg(test)]
+#[macro_use]
+mod testing;
 /////////////////////
 // Rocket handlers //
 /////////////////////
@@ -38,9 +46,6 @@ pub mod viti_areas;
 pub mod wine_grapes;
 mod wine_types;
 pub mod wines;
-// Test helpers
-#[cfg(test)]
-mod testing;
 
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
@@ -70,10 +75,6 @@ pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
 }
 
 pub fn create_rocket() -> rocket::Rocket {
-    // Use in-memory database if testing
-    #[cfg(test)]
-    let mut rocket = testing::test_rocket_config();
-    #[cfg(not(test))]
     let mut rocket = rocket::ignite();
 
     rocket = rocket

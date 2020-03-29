@@ -39,3 +39,6 @@ features = ["json", "diesel_postgres_pool"]
 version = "0.1.10"
 # Enable export in release build
 features = ["export-typescript"]
+
+[dev-dependencies]
+lazy_static = "1.4.0"
