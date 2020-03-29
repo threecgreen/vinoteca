@@ -29,7 +29,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
     let content;
     if (!hasLoaded) {
         content = <PreloaderCirc />;
-    } else if (purchases) {
+    } else if (purchases.length > 0) {
         content = (
             <Table columns={ ["Date", "Store", "Name and Type", "Producer", "Region",
                               {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }

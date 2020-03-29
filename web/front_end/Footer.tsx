@@ -37,10 +37,10 @@ export const Footer: React.FC<{}> = (_) => {
                                 </li>
                             </ul>
                         </div>
-                        <div className="col l4 offset-s12 s12">
-                            <h5 className="white-text">API Views</h5>
+                        <div className="col l6 s12">
+                            <h5 className="white-text">List Views</h5>
                             <p className="grey-text text-lighten-4">
-                                Simple views for more direct access to the underlying data.
+                                Simple views for more direct access to your data.
                             </p>
                             <ul>
                                 <li>
