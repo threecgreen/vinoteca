@@ -46,3 +46,6 @@ Rocket.toml
 # Generated
 web/lib/Rest.d.ts
 web/lib/constants.ts
+
+# Migration
+**/migration_conf.json
