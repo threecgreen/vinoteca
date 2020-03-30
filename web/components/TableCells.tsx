@@ -1,7 +1,7 @@
+import { Link } from "@reach/router";
 import format from "date-fns/esm/format";
 import React from "react";
-import { capitalizeFirstLetter, EN_DASH, getNameAndType, numToDate } from "../lib/utils";
-import { Link } from "@reach/router";
+import { capitalizeFirstLetter, EN_DASH, getNameAndType } from "../lib/utils";
 
 interface ITextCellProps {
     default?: string;
@@ -62,11 +62,11 @@ export const YearCell: React.FC<{year: number | null}> = (props) => {
 YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
-    date: number | null;
+    date: string | null;
     format?: string;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
-    const dateStr = props.date ? format(numToDate(props.date), props.format ?? "MMM dd, yyyy") : EN_DASH;
+    const dateStr = props.date ? format(new Date(props.date), props.format ?? "MMM dd, yyyy") : EN_DASH;
     return (
         <td>{ dateStr }</td>
     );

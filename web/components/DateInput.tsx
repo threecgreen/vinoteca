@@ -1,13 +1,13 @@
 import format from "date-fns/esm/format";
 import { Datepicker } from "materialize-css";
 import React from "react";
+import { dateToStr } from "../lib/utils";
 import { Input } from "./Input";
-import { dateToNum, numToDate } from "../lib/utils";
 
 interface IProps {
-    date: number | null;
+    date: string | null;
     name: string;
-    onChange: (date: number | null) => void;
+    onChange: (date: string | null) => void;
 }
 
 export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
@@ -21,7 +21,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
                 if (datepicker.date) {
-                    onChange(dateToNum(datepicker.date));
+                    onChange(dateToStr(datepicker.date));
                 } else {
                     onChange(null);
                 }
@@ -30,7 +30,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
         });
     }, [inputRef]);
 
-    const dateString = date ? format(numToDate(date), "MMM dd, yyyy") : "";
+    const dateString = date ? format(new Date(date), "MMM dd, yyyy") : "";
     const isValueSet = date !== null;
 
     return (

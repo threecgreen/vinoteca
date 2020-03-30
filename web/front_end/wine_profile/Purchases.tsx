@@ -48,11 +48,18 @@ export const Purchases: React.FC<IProps> = ({purchases, onEditClick, onDeleteCli
         };
     }
 
+    const compareDates = (left: Date, right: Date): number => {
+        return left.getTime() - right.getTime();
+    }
+
     const sortedPurchases = () => {
         const ascendingMultiplier = ascending ? 1 : -1;
+        const defaultDate = new Date('1970-01-01');
         switch (sorting) {
             case SortingValue.Date:
-                return purchases.sort((p1, p2) => ((p1.date ?? 0) - (p2.date ?? 0)) * ascendingMultiplier);
+                return purchases.sort((p1, p2) =>
+                    compareDates(p1.date ? new Date(p1.date) : defaultDate,
+                                 p2.date ? new Date(p2.date) : defaultDate) * ascendingMultiplier);
             case SortingValue.Memo:
                 return purchases.sort((p1, p2) => ((p1.memo ?? "").localeCompare(p2.memo ?? "")) * ascendingMultiplier);
             case SortingValue.Price:

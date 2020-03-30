@@ -1,4 +1,6 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
+// tslint:disable-next-line
+import format from "date-fns/esm/format";
 import Logger from "./Logger";
 import { IRestModel } from "./RestTypes";
 
@@ -39,8 +41,8 @@ export function numToDate(num: number): Date {
     return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
 }
 
-export function dateToNum(date: Date): number {
-    return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
+export function dateToStr(date: Date): string {
+    return format(date, "yyyy-MM-dd");
 }
 
 export const EN_DASH: string = "–";

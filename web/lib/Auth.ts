@@ -7,4 +7,4 @@ export const getCurrentUser = async (): Promise<IUser | null> => {
     } catch {
         return null;
     }
-}
+};
