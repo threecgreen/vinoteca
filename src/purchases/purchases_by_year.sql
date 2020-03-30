@@ -1,5 +1,5 @@
 SELECT
-    extract(YEAR FROM p.date) AS year
+    cast(extract(YEAR FROM p.date) AS INTEGER) AS year
     , sum(coalesce(p.quantity, 1)) AS quantity
     , sum(p.price) AS total_price
     , avg(p.price) AS avg_price

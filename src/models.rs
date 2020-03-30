@@ -27,7 +27,7 @@ pub struct ColorForm<'a> {
 pub struct Grape {
     pub id: i32,
     pub name: String,
-    pub wine_count: i32,
+    pub wine_count: i64,
 }
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
@@ -98,6 +98,7 @@ pub struct Purchase {
     pub store: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
+    #[ts(ts_type = "string | null")]
     pub date: Option<NaiveDate>,
 }
 
@@ -117,6 +118,7 @@ pub struct PurchaseForm {
     pub wine_id: i32,
     // FIXME:
     // #[validate(range(min = 19900101))]
+    #[ts(ts_type = "string | null")]
     pub date: Option<NaiveDate>,
 }
 
@@ -378,8 +380,8 @@ pub mod generic {
     pub struct TopEntity {
         pub id: i32,
         pub name: String,
-        pub quantity: i32,
-        pub varieties: i32,
-        pub avg_price: f32,
+        pub quantity: i64,
+        pub varieties: i64,
+        pub avg_price: f64,
     }
 }

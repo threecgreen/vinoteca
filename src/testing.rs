@@ -59,6 +59,8 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
         // TODO: test with multiple users
         let connection = DbConn::get_one(&rocket).expect("database connection");
 
+        // TODO: truncate for faster deletes
+        // TODO: timing logs
         let user_id = 1;
         diesel::delete(wine_grapes::table)
             .execute(&*connection)

@@ -7,7 +7,7 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use diesel::sql_types::{Float, Integer, Nullable};
+use diesel::sql_types::{BigInt, Double, Nullable};
 use rocket_contrib::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
@@ -51,9 +51,9 @@ pub fn get(
 pub struct VitiAreaStats {
     id: i32,
     name: String,
-    total_wines: i32,
-    avg_price: Option<f32>,
-    avg_rating: Option<f32>,
+    total_wines: i64,
+    avg_price: Option<f64>,
+    avg_rating: Option<f64>,
 }
 
 #[get("/viti-areas/stats?<id>&<region_id>")]
@@ -68,9 +68,9 @@ pub fn stats(
             viti_areas::id,
             viti_areas::name,
             // literal until diesel has better aggregation support
-            sql::<Integer>("count(wines.id)"),
-            sql::<Nullable<Float>>("avg(purchases.price)"),
-            sql::<Nullable<Float>>("avg(wines.rating)"),
+            sql::<BigInt>("count(wines.id)"),
+            sql::<Nullable<Double>>("avg(purchases.price)"),
+            sql::<Nullable<Double>>("avg(wines.rating)"),
         ))
         .inner_join(regions::table)
         .inner_join(wines::table.inner_join(purchases::table))

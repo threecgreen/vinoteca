@@ -7,7 +7,6 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use diesel::sql_types::{Float, Integer};
 use rocket_contrib::json::Json;
 use validator::Validate;
 

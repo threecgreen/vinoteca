@@ -7,7 +7,7 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use diesel::sql_types::{Float, Integer};
+use diesel::sql_types::BigInt;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -31,7 +31,7 @@ pub fn get(
         query = query.filter(grapes::name.eq(name));
     }
     query
-        .select((grapes::id, grapes::name, sql::<Integer>("count(wines.id)")))
+        .select((grapes::id, grapes::name, sql::<BigInt>("count(wines.id)")))
         .load::<Grape>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
@@ -89,14 +89,6 @@ pub fn put(
     diesel::update(grapes::table.filter(grapes::id.eq(id)))
         .set(grapes::name.eq(grape_form.name))
         .execute(&*connection)
-        .and_then(|_| {
-            grapes::table
-                .inner_join(wine_grapes::table.inner_join(wines::table))
-                .filter(grapes::id.eq(id))
-                .group_by((grapes::id, grapes::name))
-                .select((grapes::id, grapes::name, sql::<Integer>("count(wines.id)")))
-                .first(&*connection)
-                .map(Json)
-        })
         .map_err(VinotecaError::from)
+        .and_then(|_| get(auth, Some(id), None, connection)?.into_first("Edited grape"))
 }

@@ -1,5 +1,6 @@
 /// Generates an API contract TypeScript type definition file,
 /// in web/lib/Restd.d.ts
+// TODO: move this to build.rs
 use vinoteca::logs::{LogForm, LogResponse};
 use vinoteca::models::*;
 use vinoteca::purchases::{

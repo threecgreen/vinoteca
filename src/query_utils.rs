@@ -8,23 +8,29 @@ use rocket_contrib::json::Json;
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
 macro_rules! top_table {
-    ($table: expr, $id: expr, $name: expr, $limit: expr, $connection: expr) => {
+    ($table: expr, $id: expr, $name: expr, $limit: expr, $connection: expr) => {{
+        use crate::error::VinotecaError;
+        use crate::models::generic;
+
+        use diesel::sql_types::{BigInt, Double};
+        use rocket_contrib::json::Json;
+
         $table
             .group_by(($id, $name))
             .select((
                 $id,
                 $name,
-                sql::<Integer>("sum(purchases.quantity)"),
+                sql::<BigInt>("sum(purchases.quantity)"),
                 // Should probably be distinct
-                sql::<Integer>("count(wines.id)"),
-                sql::<Float>("avg(purchases.price)"),
+                sql::<BigInt>("count(wines.id)"),
+                sql::<Double>("avg(purchases.price)"),
             ))
-            .order_by(sql::<Integer>("sum(purchases.quantity) DESC"))
+            .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
             .limit($limit as i64)
             .load::<generic::TopEntity>(&*$connection)
             .map(Json)
             .map_err(VinotecaError::from)
-    };
+    }};
 }
 
 pub fn error_status(error: Error) -> Status {
