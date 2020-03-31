@@ -1,5 +1,5 @@
 use super::read::get;
-use crate::auth::Auth;
+use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{Purchase, PurchaseForm};
 use crate::query_utils::IntoFirst;

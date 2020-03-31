@@ -1,5 +1,5 @@
 use super::models::{InventoryWine, WineCount};
-use crate::auth::Auth;
+use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};

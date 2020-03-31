@@ -1,4 +1,4 @@
-use crate::auth::Auth;
+use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, Grape, GrapeForm, NewGrape};
 use crate::query_utils::IntoFirst;

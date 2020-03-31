@@ -1,4 +1,4 @@
-use crate::auth::Auth;
+use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, NewWineType, WineType, WineTypeForm};
 use crate::query_utils::IntoFirst;

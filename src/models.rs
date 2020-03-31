@@ -1,4 +1,4 @@
-use crate::auth::Auth;
+use crate::users::Auth;
 use crate::schema::*;
 
 use chrono::NaiveDate;
@@ -197,8 +197,11 @@ impl From<InternalUser> for User {
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct UserForm<'a> {
+    #[validate(email)]
     pub email: &'a str,
+    #[validate(length(min = 2))]
     pub name: &'a str,
+    #[validate(length(min = 8))]
     pub password: &'a str,
 }
 
