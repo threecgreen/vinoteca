@@ -1,4 +1,4 @@
-use crate::schema::{grapes, producers, regions, users, wine_grapes, wine_types, wines};
+use crate::schema::{grapes, producers, users, wine_types, wines};
 /// Integration tests
 use crate::{run_db_migrations, DbConn, MediaDir};
 
@@ -6,6 +6,7 @@ use diesel::prelude::*;
 use rocket::config::{Config, Environment, Value};
 use rocket::fairing::AdHoc;
 use rocket::Rocket;
+use diesel::sql_query;
 use std::collections::HashMap;
 use std::env;
 use std::sync::Mutex;
@@ -59,13 +60,11 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
         // TODO: test with multiple users
         let connection = DbConn::get_one(&rocket).expect("database connection");
 
-        // TODO: truncate for faster deletes
         // TODO: timing logs
         let user_id = 1;
-        diesel::delete(wine_grapes::table)
-            .execute(&*connection)
-            .unwrap();
-        diesel::delete(users::table).execute(&*connection).unwrap();
+        // Truncate most tables
+        sql_query("TRUNCATE TABLE wines, purchases, grapes, wine_grapes, producers, viti_areas, users, wine_types CASCADE;")
+            .execute(&*connection).unwrap();
         diesel::insert_into(users::table)
             .values((
                 users::id.eq(user_id),
@@ -76,19 +75,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
             .execute(&*connection)
             .unwrap();
 
-        diesel::delete(regions::table)
-            .execute(&*connection)
-            .unwrap();
-        for (i, region) in vec!["California", "France", "New Zealand", "Spain"]
-            .iter()
-            .enumerate()
-        {
-            diesel::insert_into(regions::table)
-                .values((regions::id.eq(i as i32 + 1), regions::name.eq(region)))
-                .execute(&*connection)
-                .unwrap();
-        }
-
         let mock_grapes = vec![
             "Cabernet Sauvignon",
             "Tempranillo",
@@ -98,7 +84,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
             "Pinot Grigio",
             "Garnacha",
         ];
-        diesel::delete(grapes::table).execute(&*connection).unwrap();
         for (i, grape) in mock_grapes.iter().enumerate() {
             dbg!("grapes {}", grape);
             diesel::insert_into(grapes::table)
@@ -111,9 +96,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .unwrap();
         }
 
-        diesel::delete(producers::table)
-            .execute(&*connection)
-            .unwrap();
         for (i, producer) in vec!["Martineli", "Le Grand Noir", "Rodney Strong"]
             .iter()
             .enumerate()
@@ -129,9 +111,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .unwrap();
         }
 
-        diesel::delete(wine_types::table)
-            .execute(&*connection)
-            .unwrap();
         let mock_wine_types = vec![
             "Sauvignon Blanc",
             "Pinot Noir",
@@ -150,7 +129,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 .unwrap();
         }
 
-        diesel::delete(wines::table).execute(&*connection).unwrap();
         diesel::insert_into(wines::table)
             .values((
                 wines::id.eq(1),
