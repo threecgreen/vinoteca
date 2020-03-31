@@ -8,7 +8,7 @@ import { TextInput } from "../../components/TextInput";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { WineTypeInput } from "../../components/WineTypeInput";
 import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
-import { getColor, getOrCreateWineType, getOrCreateProducer, getOrCreateVitiArea, getOrCreateRegion } from "../../lib/RestApi";
+import { getColor, getOrCreateWineType, getOrCreateProducer, getOrCreateVitiArea, getRegion } from "../../lib/RestApi";
 
 export interface IWineData {
     color: string;
@@ -48,7 +48,7 @@ const getOrCreateVitiAreaForRegion = async (data: IWineData, regionId: number) =
 }
 
 const getProducerAndVitiArea = async (data: IWineData) => {
-    const region = await getOrCreateRegion({name: data.region}, {name: data.region});
+    const region = await getRegion({name: data.region});
     return Promise.all<IProducer, IVitiArea | null>([
         getOrCreateProducer({name: data.producer}, {name: data.producer, regionId: region.id}),
         getOrCreateVitiAreaForRegion(data, region.id),

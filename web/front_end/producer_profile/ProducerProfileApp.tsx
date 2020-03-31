@@ -9,7 +9,7 @@ import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
-import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
+import { deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
 import { setTitle } from "../../lib/widgets";
 import { Producer } from "./Producer";
 
@@ -168,7 +168,7 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
         if ((this.state.regionText && !this.state.region)
             || (this.state.region && this.state.regionText !== this.state.region.name)) {
 
-            // Try Get
+            // TODO: limit region to set values
             try {
                 const region = await getRegion({name: this.state.regionText});
                 this.setState({
@@ -178,13 +178,14 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
                 return [true, region.id];
             } catch (err) {
                 if (EmptyResultError.isInstance(err)) {
-                    // Create
-                    const region = await createRegion({ name: this.state.regionText})
-                    this.setState({
-                        region,
-                        regionText: region.name,
-                    });
-                    return [true, region.id];
+                    this.logger.logWarning("Invalid region while trying to edit producer",
+                                           {producer: this.state.producerText,
+                                            region: this.state.regionText});
+                } else {
+                    this.logger.logError("Error fetching region",
+                                         {errorMsg: err.message,
+                                          region: this.state.regionText,
+                                          producer: this.state.producerText});
                 }
                 throw err;
             }

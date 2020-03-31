@@ -1,17 +1,14 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { FloatingBtn } from "../../components/Buttons";
-import { FixedActionList } from "../../components/FixedActionList";
 import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IRegion, IVitiAreaStats, IWine } from "../../lib/Rest";
-import { getRegion, getVitiAreaStats, getWines, updateRegion } from "../../lib/RestApi";
+import { getRegion, getVitiAreaStats, getWines } from "../../lib/RestApi";
+import { setTitle } from "../../lib/widgets";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
-import { setTitle } from "../../lib/widgets";
 
 interface IState {
     isEditing: boolean;
@@ -41,10 +38,6 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
         }
 
         this.logger = new Logger("RegionProfileApp", true);
-        this.onRegionChange = this.onRegionChange.bind(this);
-        this.onEditClick = this.onEditClick.bind(this);
-        this.onConfirmClick = this.onConfirmClick.bind(this);
-        this.onCancelClick = this.onCancelClick.bind(this);
     }
 
     public async componentDidMount() {
@@ -77,26 +70,11 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
         }
         return (
             <div className="container">
-                <Region isEditing={ this.state.isEditing }
-                    region={ this.state.region }
-                    regionText={ this.state.regionText }
-                    onRegionChange={ this.onRegionChange }
-                    onConfirmClick={ this.onConfirmClick }
-                    onCancelClick={ this.onCancelClick }
-                />
+                <Region region={ this.state.region } />
                 <Row>
-                    <Col s={ 12 } l={ 9 }>
+                    <Col s={ 12 }>
                         <h5>Viticultural Areas</h5>
                         <RegionVitiAreasTable vitiAreas={ this.state.vitiAreas } />
-                    </Col>
-                    <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
-                        <FixedActionList>
-                            <FloatingBtn onClick={ this.onEditClick }
-                                classes={ ["yellow-bg"] }
-                            >
-                                <MaterialIcon iconName="edit" />
-                            </FloatingBtn>
-                        </FixedActionList>
                     </Col>
                 </Row>
                 <Row>
@@ -109,34 +87,5 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
                 </Row>
             </div>
         );
-    }
-
-    private onEditClick() {
-        this.setState({isEditing: true});
-    }
-
-    private onRegionChange(val: string) {
-        this.setState({
-            regionText: val,
-        });
-    }
-
-    private async onConfirmClick() {
-        try {
-            const region = await updateRegion({id: this.props.regionId!, name: this.state.regionText});
-            this.setState({
-                isEditing: false,
-                region: region,
-            })
-        } catch(err) {
-            this.logger.logWarning(`Failed to save changes to database: ${err}`);
-        }
-    }
-
-    private onCancelClick() {
-        this.setState((state) => ({
-            isEditing: false,
-            regionText: state.region ? state.region.name : "",
-        }));
     }
 }

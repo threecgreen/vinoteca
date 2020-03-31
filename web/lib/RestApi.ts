@@ -205,15 +205,6 @@ export async function getRegions({ id, name, producerName }: IGetRegionParams): 
 }
 
 export const getRegion = singleEntityGetter(getRegions);
-export const getOrCreateRegion = getOrCreate(getRegions, createRegion);
-
-export async function createRegion(region: IRegionForm): Promise<IRegion> {
-    return post("/rest/regions", region);
-}
-
-export async function updateRegion(region: IRegion): Promise<IRegion> {
-    return put(`/rest/regions/${region.id}`, region);
-}
 
 export async function getTopRegions(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
