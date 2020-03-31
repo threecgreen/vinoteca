@@ -1,8 +1,7 @@
-import { Link } from "@reach/router";
+import { Link, useLocation } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 import { CancelOrConfirmBtns } from "../components/Buttons";
-import { ErrorBoundary } from "../components/ErrorBoundary";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { Modal, ModalContent, ModalFooter } from "../components/Modal";
 import { EmailInput, PasswordInput, TextInput } from "../components/TextInput";
@@ -16,7 +15,7 @@ enum ModalState {
     NewUser,
 }
 
-export const Top: React.FC<{}> = (_) => {
+export const Navbar: React.FC<{}> = (_) => {
     const [user, setUser] = React.useState<IUser | null>(null);
     const [modalState, setModalState] = React.useState(ModalState.None);
 
@@ -37,9 +36,9 @@ export const Top: React.FC<{}> = (_) => {
     }
 
     return (
-        <ErrorBoundary>
-            <Navbar {...props} />
-            {/* <MobileNavbar {...props} /> */}
+        <>
+            <DesktopNavbar {...props} />
+            <MobileNavbar {...props} />
             { modalState === ModalState.Login &&
                 <LoginForm onCancel={ () => setModalState(ModalState.None) }
                     onFinish={ setUser }
@@ -48,7 +47,7 @@ export const Top: React.FC<{}> = (_) => {
                 <NewUserForm onCancel={ () => setModalState(ModalState.None) }
                     onFinish={ setUser }
                 /> }
-        </ErrorBoundary>
+        </>
     );
 }
 
@@ -58,34 +57,32 @@ interface INavProps {
     setModalState: (newState: ModalState) => void;
 }
 
-const Navbar: React.FC<INavProps> = (props) => {
+const DesktopNavbar: React.FC<INavProps> = (props) => {
     return (
-        <>
-            <nav>
-                <div className="nav-wrapper pink darken-4">
-                    <div className="container">
-                        <Link to="/" className="brand-logo">
-                            <img src="/static/img/wine-icon.png"
-                                id="logo-img"
-                                alt="vinoteca logo"
-                            />
-                            vinoteca
-                        </Link>
-                        <a href="#" data-target="mobile"
-                            className="sidenav-trigger left hide-on-large-and-up"
-                        >
-                            <MaterialIcon iconName="menu" />
-                        </a>
-                        <ul className="right hide-on-med-and-down">
-                            <MenuItems id="top-dropdown" {...props} />
-                        </ul>
-                    </div>
+        <nav>
+            <div className="nav-wrapper pink darken-4">
+                <div className="container">
+                    <Link to="/" className="brand-logo">
+                        <img src="/static/img/wine-icon.png"
+                            id="logo-img"
+                            alt="vinoteca logo"
+                        />
+                        vinoteca
+                    </Link>
+                    <a href="#" data-target="mobile"
+                        className="sidenav-trigger left hide-on-large-and-up"
+                    >
+                        <MaterialIcon iconName="menu" />
+                    </a>
+                    <ul className="right hide-on-med-and-down">
+                        <MenuItems id="top-dropdown" {...props} />
+                    </ul>
                 </div>
-            </nav>
-        </>
+            </div>
+        </nav>
     );
 }
-Navbar.displayName = "Navbar";
+DesktopNavbar.displayName = "DesktopNavbar";
 
 const MobileNavbar: React.FC<INavProps> = (props) => {
     const sideNavRef = React.useRef() as React.MutableRefObject<HTMLUListElement>;
@@ -102,6 +99,17 @@ const MobileNavbar: React.FC<INavProps> = (props) => {
 }
 MobileNavbar.displayName = "MobileNavbar";
 
+const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
+    const location = useLocation();
+    return (
+        <li className={ location.pathname === to ? "active" : "" }>
+            <Link to={ to }>
+                { props.children }
+            </Link>
+        </li>
+    );
+}
+
 const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}) => {
     if (user) {
         const dropdownTriggerRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
@@ -114,16 +122,12 @@ const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}
             <>
                 <li id="new-wine-nav">
                     <ul id={ id } className="dropdown-content">
-                        <li>
-                            <Link to="/wines/new">
-                                New Wine
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/wines/search">
-                                Purchased Again
-                            </Link>
-                        </li>
+                        <NavLink to="/wines/new">
+                            New Wine
+                        </NavLink>
+                        <NavLink to="/wines/search">
+                            Purchased Again
+                        </NavLink>
                     </ul>
                     <a href="#!" className="dropdown-trigger" data-target={ id }
                         ref={ dropdownTriggerRef }
@@ -133,35 +137,28 @@ const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}
                         <MaterialIcon className="right" iconName="arrow_drop_down" />
                     </a>
                 </li>
-                <li id="wines-nav">
-                    <Link to="/wines">
-                        <MaterialIcon className="left" iconName="reorder" />
-                        Wines
-                    </Link>
-                </li>
-                <li id="dashboards-nav">
-                    <Link to="/dashboards">
-                        <MaterialIcon className="left" iconName="dashboard" />
-                        Dashboards
-                    </Link>
-                </li>
-                <li id="inventory-nav">
-                    <Link to="/wines/inventory">
-                        <MaterialIcon className="left" iconName="view_comfy" />
-                        Inventory
-                    </Link>
-                </li>
+                <NavLink to="/wines">
+                    <MaterialIcon className="left" iconName="reorder" />
+                    Wines
+                </NavLink>
+                <NavLink to="/dashboards">
+                    <MaterialIcon className="left" iconName="dashboard" />
+                    Dashboards
+                </NavLink>
+                <NavLink to="/wines/inventory">
+                    <MaterialIcon className="left" iconName="view_comfy" />
+                    Inventory
+                </NavLink>
                 {/* TODO: create user profile page */}
-                <li id="profile-nav">
-                    <Link to="/profile">
-                        <MaterialIcon className="left" iconName="account_circle" />
-                        { user.name }
-                    </Link>
-                </li>
+                <NavLink to="/profile">
+                    <MaterialIcon className="left" iconName="account_circle" />
+                    { user.name }
+                </NavLink>
             </>
         );
     }
     // Only show login/new user headers when no one is logged in
+    // FIXME: set activate based on modalState
     return (
         <>
             <li id="new-user-nav">

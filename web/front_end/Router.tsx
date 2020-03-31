@@ -16,6 +16,9 @@ import { WinesApp } from "./wines/WinesApp";
 import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
 import Logger from "../lib/Logger";
+import { Footer } from "./Footer";
+import { Navbar } from "./Navbar";
+import { ProgressPlugin } from "webpack";
 
 const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
@@ -38,27 +41,41 @@ const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
     throw Error();
 }
 
+const App: React.FC<RouteComponentProps<{}>> = (props) => {
+    return (
+        <div id="site-content">
+            <Navbar />
+            <main>
+                { props.children }
+            </main>
+            <Footer />
+        </div>
+    );
+}
+
 export const Router: React.FC<{}> = (_) => {
     return (
         <ErrorBoundary>
             <ReachRouter>
-                <HomeApp path="/" />
-                <AboutApp path="/about" />
-                <DashboardApp path="dashboards" />
-                <GrapesApp path="grapes" />
+                <App path="/">
+                    <HomeApp path="/" />
+                    <AboutApp path="/about" />
+                    <DashboardApp path="dashboards" />
+                    <GrapesApp path="grapes" />
 
-                <WinesApp path="wines" />
-                <RouteById Component={ WineProfileApp } path="wines/:id" />
-                <InventoryApp path="wines/inventory" />
-                <NewWineApp path="wines/new" />
-                <SearchWinesApp path="wines/search" />
+                    <WinesApp path="wines" />
+                    <RouteById Component={ WineProfileApp } path="wines/:id" />
+                    <InventoryApp path="wines/inventory" />
+                    <NewWineApp path="wines/new" />
+                    <SearchWinesApp path="wines/search" />
 
-                <ProducerProfileApp path="/producers/:producerId" />
-                <RegionProfileApp path="/regions/:regionId" />
-                <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />
-                <WineTypeProfileApp path="/wine-types/:wineTypeId" />
-                <PleaseCrash path="/crash/please" />
-                <NotFound default />
+                    <ProducerProfileApp path="/producers/:producerId" />
+                    <RegionProfileApp path="/regions/:regionId" />
+                    <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />
+                    <WineTypeProfileApp path="/wine-types/:wineTypeId" />
+                    <PleaseCrash path="/crash/please" />
+                    <NotFound default />
+                </App>
             </ReachRouter>
         </ErrorBoundary>
     );

@@ -24,26 +24,26 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
     }
 }
 
-function activateNavbarTab(name: string): void {
-    (document.getElementById(`${name}-nav`) as HTMLElement).classList.add("active");
+function activateNavbarTab(_name: string): void {
+    // (document.getElementById(`${name}-nav`) as HTMLElement).classList.add("active");
 }
 
-export function deactivateNavbarTab(name: string): void {
-    (document.getElementById(`${name}-nav`) as HTMLElement).classList.remove("active");
+export function deactivateNavbarTab(_name: string): void {
+    // (document.getElementById(`${name}-nav`) as HTMLElement).classList.remove("active");
 }
 
 /** Enables navbar menus. Should be called on every page. */
-export function navbar(activeNavTab?: string) {
-    if (activeNavTab) {
-        activateNavbarTab(activeNavTab);
-    }
+export function navbar(_activeNavTab?: string) {
+    // if (activeNavTab) {
+    //     activateNavbarTab(activeNavTab);
+    // }
 }
 
-export function useNavBar(activeNavTab: string) {
-    React.useEffect(() => {
-        activateNavbarTab(activeNavTab);
-        return () => deactivateNavbarTab(activeNavTab);
-    }, [activeNavTab]);
+export function useNavBar(_activeNavTab: string) {
+    // React.useEffect(() => {
+    //     activateNavbarTab(activeNavTab);
+    //     return () => deactivateNavbarTab(activeNavTab);
+    // }, [activeNavTab]);
 }
 
 /** Simplifies displaying of toast messages to user */
