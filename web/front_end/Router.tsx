@@ -1,12 +1,17 @@
-import { Router as ReachRouter, RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
 import React from "react";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { RouteById } from "../components/RouteById";
+import { getCurrentUser } from "../lib/Auth";
+import Logger from "../lib/Logger";
+import { IUser } from "../lib/Rest";
 import { AboutApp } from "./about/AboutApp";
 import { DashboardApp } from "./dashboards/DashboardApp";
+import { Footer } from "./Footer";
 import { GrapesApp } from "./grapes/GrapesApp";
 import { HomeApp } from "./home/HomeApp";
 import { InventoryApp } from "./inventory/InventoryApp";
+import { Navbar } from "./Navbar";
 import { NewWineApp } from "./new_wine/NewWineApp";
 import { ProducerProfileApp } from "./producer_profile/ProducerProfileApp";
 import { RegionProfileApp } from "./region_profile/RegionProfileApp";
@@ -15,10 +20,6 @@ import { VitiAreaProfileApp } from "./viti_area_profile/VitiAreaProfileApp";
 import { WinesApp } from "./wines/WinesApp";
 import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
-import Logger from "../lib/Logger";
-import { Footer } from "./Footer";
-import { Navbar } from "./Navbar";
-import { ProgressPlugin } from "webpack";
 
 const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
@@ -42,9 +43,22 @@ const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
 }
 
 const App: React.FC<RouteComponentProps<{}>> = (props) => {
+    const [user, setUser] = React.useState<IUser | null>(null);
+    // Set user if already logged in.
+    React.useEffect(() => {
+        async function checkIfLoggedIn() {
+            // Will return `null` if there's any error
+            const user = await getCurrentUser();
+            setUser(user);
+        }
+        checkIfLoggedIn();
+    }, []);
+
     return (
         <div id="site-content">
-            <Navbar />
+            <Navbar user={ user }
+                setUser={ setUser }
+            />
             <main>
                 { props.children }
             </main>

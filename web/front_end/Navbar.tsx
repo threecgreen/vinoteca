@@ -5,7 +5,6 @@ import { CancelOrConfirmBtns } from "../components/Buttons";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { Modal, ModalContent, ModalFooter } from "../components/Modal";
 import { EmailInput, PasswordInput, TextInput } from "../components/TextInput";
-import { getCurrentUser } from "../lib/Auth";
 import { IUser } from "../lib/Rest";
 import { createUser, login } from "../lib/RestApi";
 
@@ -15,24 +14,23 @@ enum ModalState {
     NewUser,
 }
 
-export const Navbar: React.FC<{}> = (_) => {
-    const [user, setUser] = React.useState<IUser | null>(null);
-    const [modalState, setModalState] = React.useState(ModalState.None);
+interface IProps {
+    user: IUser | null;
+    setUser: (user: IUser) => void;
+}
 
-    // Set user if already logged in.
-    React.useEffect(() => {
-        async function checkIfLoggedIn() {
-            // Will return `null` if there's any error
-            const user = await getCurrentUser();
-            setUser(user);
-        }
-        checkIfLoggedIn();
-    }, []);
+export const Navbar: React.FC<IProps> = ({user, setUser}) => {
+    const [modalState, setModalState] = React.useState(ModalState.None);
 
     const props = {
         user,
         setUser,
         setModalState,
+    }
+
+    const setUserAndHideModal = (user: IUser) => {
+        setUser(user);
+        setModalState(ModalState.None)
     }
 
     return (
@@ -41,11 +39,11 @@ export const Navbar: React.FC<{}> = (_) => {
             <MobileNavbar {...props} />
             { modalState === ModalState.Login &&
                 <LoginForm onCancel={ () => setModalState(ModalState.None) }
-                    onFinish={ setUser }
+                    onFinish={ setUserAndHideModal }
                 /> }
             { modalState === ModalState.NewUser &&
                 <NewUserForm onCancel={ () => setModalState(ModalState.None) }
-                    onFinish={ setUser }
+                    onFinish={ setUserAndHideModal }
                 /> }
         </>
     );
@@ -102,7 +100,8 @@ MobileNavbar.displayName = "MobileNavbar";
 const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
     const location = useLocation();
     return (
-        <li className={ location.pathname === to ? "active" : "" }>
+        // Sidenav-close closes the sidenav on click
+        <li className={ location.pathname === to ? "active sidenav-close" : "sidenav-close" }>
             <Link to={ to }>
                 { props.children }
             </Link>
