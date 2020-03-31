@@ -4,7 +4,7 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../components/Buttons";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { MaterialIcon } from "../components/MaterialIcon";
-import { Modal } from "../components/Modal";
+import { Modal, ModalContent, ModalFooter } from "../components/Modal";
 import { EmailInput, PasswordInput, TextInput } from "../components/TextInput";
 import { getCurrentUser } from "../lib/Auth";
 import { IUser } from "../lib/Rest";
@@ -197,7 +197,7 @@ const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
 
     return (
         <Modal>
-            <form>
+            <ModalContent>
                 <EmailInput name="E-mail"
                     className=""
                     value={ email }
@@ -208,11 +208,13 @@ const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                     value={ password }
                     onChange={ setPassword }
                 />
+            </ModalContent>
+            <ModalFooter>
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
                 />
-            </form>
+            </ModalFooter>
         </Modal>
     );
 }
@@ -231,7 +233,7 @@ const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
 
     return (
         <Modal>
-            <form>
+            <ModalContent>
                 <EmailInput name="E-mail"
                     className=""
                     value={ email }
@@ -247,11 +249,13 @@ const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                     value={ password }
                     onChange={ setPassword }
                 />
+            </ModalContent>
+            <ModalFooter>
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
                 />
-            </form>
+            </ModalFooter>
         </Modal>
     );
 }

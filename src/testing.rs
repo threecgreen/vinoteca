@@ -48,6 +48,7 @@ fn test_rocket_config() -> rocket::Rocket {
     );
     databases.insert("vinoteca", Value::from(database_config));
     let config = Config::build(Environment::Development)
+        .workers(1)
         .extra("databases", databases)
         .finalize()
         .unwrap();
