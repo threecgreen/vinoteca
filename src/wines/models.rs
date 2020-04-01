@@ -1,7 +1,7 @@
 use crate::models::WineForm;
 
 use chrono::NaiveDate;
-use diesel::sql_types::{Date, Integer, Nullable, Text};
+use diesel::sql_types::{Date, Double, Integer, Nullable, Text};
 use diesel::QueryableByName;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
@@ -56,6 +56,6 @@ pub struct InventoryWine {
     pub last_purchase_date: Option<NaiveDate>,
     #[sql_type = "Integer"]
     pub inventory: i32,
-    #[sql_type = "Nullable<Integer>"]
-    pub last_purchase_price: Option<i32>,
+    #[sql_type = "Nullable<Double>"]
+    pub last_purchase_price: Option<f64>,
 }
