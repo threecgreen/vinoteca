@@ -41,8 +41,25 @@ NotFound.displayName = "NotFound";
 const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
     throw Error();
 }
+interface IProps {
+    user: IUser | null;
+    setUser: (user: IUser) => void;
+}
+const App: React.FC<RouteComponentProps<IProps>> = ({user, setUser, ...props}) => {
+    return (
+        <div id="site-content">
+            <Navbar user={ user! }
+                setUser={ setUser! }
+            />
+            <main>
+                { props.children }
+            </main>
+            <Footer />
+        </div>
+    );
+}
 
-const App: React.FC<RouteComponentProps<{}>> = (props) => {
+export const Router: React.FC<{}> = (_props) => {
     const [user, setUser] = React.useState<IUser | null>(null);
     // Set user if already logged in.
     React.useEffect(() => {
@@ -55,24 +72,16 @@ const App: React.FC<RouteComponentProps<{}>> = (props) => {
     }, []);
 
     return (
-        <div id="site-content">
-            <Navbar user={ user }
-                setUser={ setUser }
-            />
-            <main>
-                { props.children }
-            </main>
-            <Footer />
-        </div>
-    );
-}
-
-export const Router: React.FC<{}> = (_) => {
-    return (
         <ErrorBoundary>
             <ReachRouter>
-                <App path="/">
-                    <HomeApp path="/" />
+                <App path="/"
+                    user={ user }
+                    setUser={ setUser }
+                >
+                    <HomeApp path="/"
+                        user={ user }
+                        setUser={ setUser }
+                    />
                     <AboutApp path="/about" />
                     <DashboardApp path="dashboards" />
                     <GrapesApp path="grapes" />

@@ -1,0 +1,87 @@
+import React from "react";
+import { IUser } from "../lib/Rest";
+import { login, createUser } from "../lib/RestApi";
+import { Modal } from "./Modal";
+import { ModalContent, ModalFooter } from "./Modal";
+import { EmailInput, PasswordInput, TextInput } from "./TextInput";
+import { CancelOrConfirmBtns } from "./Buttons";
+
+interface IUserProps {
+    onFinish: (user: IUser) => void,
+    onCancel: () => void,
+}
+
+export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const onSubmit = async () => {
+        const user = await login({email, password});
+        onFinish(user);
+    }
+
+    return (
+        <Modal>
+            <ModalContent>
+                <EmailInput name="E-mail"
+                    className=""
+                    value={ email }
+                    onChange={ setEmail }
+                />
+                <PasswordInput name="Password"
+                    className=""
+                    value={ password }
+                    onChange={ setPassword }
+                />
+            </ModalContent>
+            <ModalFooter>
+                <CancelOrConfirmBtns
+                    onConfirmClick={ onSubmit }
+                    onCancelClick={ onCancel }
+                />
+            </ModalFooter>
+        </Modal>
+    );
+}
+LoginForm.displayName = "LoginForm";
+
+export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
+    const [email, setEmail] = React.useState("");
+    const [name, setName] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    // TODO: image
+
+    const onSubmit = async () => {
+        const user = await createUser({email, name, password});
+        onFinish(user);
+    }
+
+    return (
+        <Modal>
+            <ModalContent>
+                <EmailInput name="E-mail"
+                    className=""
+                    value={ email }
+                    onChange={ setEmail }
+                />
+                <TextInput name="Name"
+                    className=""
+                    value={ name }
+                    onChange={ setName }
+                />
+                <PasswordInput name="Password"
+                    className=""
+                    value={ password }
+                    onChange={ setPassword }
+                />
+            </ModalContent>
+            <ModalFooter>
+                <CancelOrConfirmBtns
+                    onConfirmClick={ onSubmit }
+                    onCancelClick={ onCancel }
+                />
+            </ModalFooter>
+        </Modal>
+    );
+}
+NewUserForm.displayName = "NewUserForm";
