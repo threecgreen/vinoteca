@@ -11,7 +11,7 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import Logger from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
 import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
-import { getNameAndType, imageExists } from "../../lib/utils";
+import { getNameAndType } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
@@ -44,10 +44,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         const purchases = await getPurchases({wineId: id});
         dispatch({type: "setPurchases", purchases});
     }
-    const fetchHasImage = async () => {
-        const hasImage = await imageExists(`/media/${id}.png`);
-        dispatch({type: "setHasImage", hasImage});
-    }
     const fetchGrapes = async () => {
         const grapes = await getWineGrapes({wineId: id});
         dispatch({type: "setGrapes", grapes});
@@ -58,7 +54,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             Promise.all([
                 fetchWine(),
                 fetchPurchases(),
-                fetchHasImage(),
                 fetchGrapes(),
             ]);
         }
@@ -185,7 +180,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     );
 
     const renderWineDetails = () => {
-        if (state.hasImage && state.grapes.length) {
+        if (state.wine?.image && state.grapes.length) {
             return (
                 <>
                     <Col s={ 12 } l={ 4 }>
@@ -200,7 +195,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 </>
             );
         }
-        if (state.hasImage) {
+        if (state.wine?.image) {
             return (
                 <>
                     <Col s={ 12 } l={ 6 }>
@@ -241,7 +236,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 return (
                     <EditWine wine={ state.wine }
                         grapes={ state.grapes }
-                        hasImage={ state.hasImage }
+                        hasImage={ state?.wine.image ? true : false }
                         onSubmit={ onSubmitWineEdit }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />

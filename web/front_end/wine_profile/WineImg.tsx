@@ -8,8 +8,8 @@ export const WineImg: React.FC<IProps> = ({id}) => {
     return (
         <div className="card" id="wine-image">
             <div className="card-image">
-                <img src={ `/media/${ id }.png` }
-                    alt="Wine Image"
+                <img src={ `/media/${ id }/image` }
+                    alt="Wine image"
                     className="responsive-img"
                 />
             </div>
