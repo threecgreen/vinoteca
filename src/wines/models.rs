@@ -14,6 +14,8 @@ pub struct RawWineForm {
     pub wine_form: WineForm,
 }
 
+pub struct RawImage(pub Vec<u8>);
+
 #[derive(Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WineCount {

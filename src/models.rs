@@ -270,6 +270,7 @@ pub struct Wine {
     pub wine_type_id: i32,
     pub wine_type: String,
     pub last_purchase_vintage: Option<i32>,
+    pub image: Option<String>,
 }
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]

@@ -12,7 +12,7 @@ use diesel::prelude::*;
 use rocket::State;
 use validator::Validate;
 
-#[post("/wines", format = "json", data = "<raw_wine_form>")]
+#[post("/wines", data = "<raw_wine_form>")]
 pub fn post(
     auth: Auth,
     raw_wine_form: RawWineForm,
@@ -20,13 +20,22 @@ pub fn post(
     media_dir: State<MediaDir>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
+    let image = raw_wine_form.image;
     wine_form.validate()?;
 
-    let result: RestResult<Wine> = diesel::insert_into(wines::table)
+    diesel::insert_into(wines::table)
         .values(NewWine::from((auth, wine_form)))
         .returning(wines::id)
         .get_result(&*connection)
         .map_err(VinotecaError::from)
+        .map(|wine_id| {
+            if let Some(image) = image {
+                if let Err(e) = handle_image(wine_id, image, &media_dir.0, &connection) {
+                    warn!("Error adding image for new wine with id {}: {}", wine_id, e);
+                };
+            }
+            wine_id
+        })
         .and_then(|wine_id| {
             get(
                 auth,
@@ -43,16 +52,7 @@ pub fn post(
                 connection,
             )?
             .into_first("Newly-created wine")
-        });
-
-    if let Ok(wine) = &result {
-        if let Some(image) = raw_wine_form.image {
-            if let Err(e) = handle_image(wine, image, &media_dir.0) {
-                warn!("Error adding image for new wine with id {}: {}", wine.id, e);
-            };
-        }
-    }
-    result
+        })
 }
 
 #[cfg(test)]

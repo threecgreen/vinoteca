@@ -130,6 +130,9 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::inventory,
                 wines::search,
                 wines::varieties,
+                wines::image::get,
+                wines::image::post,
+                wines::image::delete,
                 wine_grapes::get,
                 wine_grapes::post,
                 wine_types::get,
@@ -151,5 +154,4 @@ pub fn create_rocket() -> rocket::Rocket {
     rocket
         .manage(MediaDir(media_dir.clone()))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
-        .mount("/media", CachedStaticFiles::from(media_dir).rank(1))
 }

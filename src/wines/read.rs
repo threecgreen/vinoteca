@@ -113,6 +113,7 @@ pub fn get(
             wines::wine_type_id,
             wine_types::name,
             sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            wines::image,
         ))
         .load::<Wine>(&*connection)
         .map(Json)
@@ -204,6 +205,7 @@ pub fn search(
             wines::wine_type_id,
             wine_types::name,
             sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            wines::image,
         ))
         .load::<Wine>(&*connection)
         .map(Json)

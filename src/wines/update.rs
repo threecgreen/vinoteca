@@ -31,7 +31,7 @@ pub fn patch(
         .and_then(|_| get_wine_by_id(auth, id, connection))
 }
 
-#[put("/wines/<id>", format = "json", data = "<raw_wine_form>")]
+#[put("/wines/<id>", data = "<raw_wine_form>")]
 pub fn put(
     auth: Auth,
     id: i32,
@@ -40,26 +40,25 @@ pub fn put(
     media_dir: State<MediaDir>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
+    let image = raw_wine_form.image;
     wine_form.validate()?;
     validate_owns_wine(auth, id, &connection)?;
 
-    let result: RestResult<Wine> = diesel::update(wines::table.filter(wines::id.eq(id)))
+    diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(NewWine::from((auth, wine_form)))
         .execute(&*connection)
         .map_err(VinotecaError::from)
-        .and_then(|_| get_wine_by_id(auth, id, connection));
-
-    if let Ok(wine) = &result {
-        if let Some(image) = raw_wine_form.image {
-            if let Err(e) = handle_image(wine, image, &media_dir.0) {
-                warn!("Error updating image for wine with id {}: {}", id, e);
+        .map(|_| {
+            if let Some(image) = image {
+                if let Err(e) = handle_image(id, image, &media_dir.0, &connection) {
+                    warn!("Error updating image for wine with id {}: {}", id, e);
+                }
             }
-        }
-    }
-    result
+        })
+        .and_then(|_| get_wine_by_id(auth, id, connection))
 }
 
-fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
+pub fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
     wines::table
         .filter(wines::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
