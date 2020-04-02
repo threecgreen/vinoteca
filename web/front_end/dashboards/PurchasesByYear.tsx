@@ -5,7 +5,7 @@ import { get } from "../../lib/ApiHelper";
 import { PreloaderCirc } from "../../components/Preloader";
 import { LineChart } from "../../components/Chart";
 import { IYearsPurchases } from "../../lib/Rest";
-import { Table } from "../../components/Table";
+import { SimpleTable } from "../../components/Table";
 import { YearCell, NumCell, PriceCell } from "../../components/TableCells";
 
 const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
@@ -66,7 +66,7 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
         content = <PreloaderCirc />;
     } else if (yearsPurchases.length > 0) {
         content = (
-            <Table columns={["Year",
+            <SimpleTable columns={["Year",
                              {name: "Bottles", isNumCol: true},
                              {name: "Total Spent", isNumCol: true},
                              {name: "Avg Price", isNumCol: true} ]}
@@ -79,7 +79,7 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
                         <PriceCell price={ year.avgPrice } />
                     </tr>
                 )}
-            </Table>
+            </SimpleTable>
         );
     } else {
         content = <h6 className="bold">No purchases</h6>;

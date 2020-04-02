@@ -2,7 +2,7 @@ import React from "react";
 import Logger from "../lib/Logger";
 import { BarChart } from "./Chart";
 import { PreloaderCirc } from "./Preloader";
-import { Table } from "./Table";
+import { SimpleTable } from "./Table";
 import { NumCell, PriceCell } from "./TableCells";
 import { indexFactory, Tab, TabColor, TabPanel, Tabs } from "./Tabs";
 import { nameToId } from "../lib/utils";
@@ -71,7 +71,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                     </Tab>
                 </Tabs>
                 <TabPanel id={tabIdxer(0)}>
-                    <Table columns={[name, { name: "Purchases", isNumCol: true },
+                    <SimpleTable columns={[name, { name: "Purchases", isNumCol: true },
                         { name: "Varieties", isNumCol: true }, { name: "Price", isNumCol: true }]}
                         condensed={false}
                     >
@@ -85,7 +85,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                                 <PriceCell price={entity.avgPrice} />
                             </tr>
                         )}
-                    </Table>
+                    </SimpleTable>
                 </TabPanel>
                 <TabPanel id={tabIdxer(1)}>
                     <BarChart height={canvasHeight}

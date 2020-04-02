@@ -17,7 +17,7 @@ interface IProps extends IChildrenProp {
     condensed?: boolean;
 }
 
-export const Table: React.FC<IProps> = (props) => {
+export const SimpleTable: React.FC<IProps> = (props) => {
     const condensed = props.condensed ?? true;
     return (
         <div className="table-wrapper">
@@ -44,4 +44,4 @@ export const Table: React.FC<IProps> = (props) => {
         </div>
     );
 };
-Table.displayName = "Table";
+SimpleTable.displayName = "Table";

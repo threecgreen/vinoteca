@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table } from "../../components/Table";
+import { SimpleTable } from "../../components/Table";
 import { NumCell, PriceCell, VitiAreaCell } from "../../components/TableCells";
 import { IVitiAreaStats } from "../../lib/Rest";
 
@@ -9,7 +9,7 @@ interface IRegionWineTableProps {
 
 export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps> = (props) => {
     return (
-        <Table
+        <SimpleTable
             columns={ ([
                 "Name",
                 { name: "Wines", isNumCol: true },
@@ -31,7 +31,7 @@ export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps
                     </tr>
                 );
             }) }
-        </Table>
+        </SimpleTable>
     );
 }
 RegionVitiAreasTable.displayName = "RegionVitiAreasTable"

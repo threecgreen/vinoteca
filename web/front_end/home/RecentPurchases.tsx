@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GreenCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
-import { Table } from "../../components/Table";
+import { SimpleTable } from "../../components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell, WineTypeCell } from "../../components/TableCells";
 import { get } from "../../lib/ApiHelper";
 import Logger from "../../lib/Logger";
@@ -31,7 +31,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
         content = <PreloaderCirc />;
     } else if (purchases.length > 0) {
         content = (
-            <Table columns={ ["Date", "Store", "Name and Type", "Producer", "Region",
+            <SimpleTable columns={ ["Date", "Store", "Name and Type", "Producer", "Region",
                               {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
                 condensed={ false }
             >
@@ -57,7 +57,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                         </tr>
                     );
                 }) }
-            </Table>
+            </SimpleTable>
         );
     } else {
         content = <h6 className="bold">No purchases yet</h6>;
