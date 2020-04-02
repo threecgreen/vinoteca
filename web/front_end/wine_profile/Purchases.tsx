@@ -1,10 +1,11 @@
 import React from "react";
-import { IPurchase } from "../../lib/Rest";
-import { SortingState, TableHeader } from "../../components/TableHeader";
-import { DateCell, NumCell, PriceCell, YearCell, TextCell } from "../../components/TableCells";
-import { Row, Col } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
 import { Btn } from "../../components/Buttons";
+import { Col, Row } from "../../components/Grid";
+import { MaterialIcon } from "../../components/MaterialIcon";
+import { Table } from "../../components/Table";
+import { DateCell, NumCell, PriceCell, TextCell, YearCell } from "../../components/TableCells";
+import { SortingState, TableHeader } from "../../components/TableHeader";
+import { IPurchase } from "../../lib/Rest";
 
 enum SortingValue {
     Date,
@@ -78,69 +79,67 @@ export const Purchases: React.FC<IProps> = ({purchases, onEditClick, onDeleteCli
 
     if (purchases) {
         return (
-            <>
-                <table className="responsive highlight">
-                    <thead>
-                        <tr>
-                            <TableHeader sortingState={ SortingState.NotSorted }
-                                onClick={ () => null }
-                            >
-                                Modify
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Date)}>
-                                Date
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Quantity)}
-                                isNumCol
-                            >
-                                Quantity
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Price)}
-                                isNumCol
-                            >
-                                Price
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Vintage)}
-                                isNumCol
-                            >
-                                Vintage
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Store)}>
-                                Store
-                            </TableHeader>
-                            <TableHeader {...tableHeaderProps(SortingValue.Memo)}>
-                                Memo
-                            </TableHeader>
+            <Table condensed={ false }>
+                <thead>
+                    <tr>
+                        <TableHeader sortingState={ SortingState.NotSorted }
+                            onClick={ () => null }
+                        >
+                            Modify
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Date)}>
+                            Date
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Quantity)}
+                            isNumCol
+                        >
+                            Quantity
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Price)}
+                            isNumCol
+                        >
+                            Price
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Vintage)}
+                            isNumCol
+                        >
+                            Vintage
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Store)}>
+                            Store
+                        </TableHeader>
+                        <TableHeader {...tableHeaderProps(SortingValue.Memo)}>
+                            Memo
+                        </TableHeader>
+                    </tr>
+                </thead>
+                <tbody>
+                    { sortedPurchases().map((purchase) => (
+                        <tr key={ purchase.id }>
+                            <td>
+                                <Btn classes={ ["btn-small", "yellow-bg"] }
+                                    onClick={ () => onEditClick(purchase.id) }
+                                >
+                                    <MaterialIcon iconName="edit" />
+                                </Btn>
+                                <Btn classes={ ["btn-small", "red-bg"] }
+                                    onClick={ () => onDeleteClick(purchase.id) }
+                                >
+                                    <MaterialIcon iconName="delete" />
+                                </Btn>
+                            </td>
+                            <DateCell date={ purchase.date } />
+                            <NumCell num={ purchase.quantity }
+                                maxDecimals={ 0 }
+                            />
+                            <PriceCell price={ purchase.price } />
+                            <YearCell year={ purchase.vintage } />
+                            <TextCell text={ purchase.store } />
+                            <TextCell text={ purchase.memo } />
                         </tr>
-                    </thead>
-                    <tbody>
-                        { sortedPurchases().map((purchase) => (
-                            <tr key={ purchase.id }>
-                                <td>
-                                    <Btn classes={ ["btn-small", "yellow-bg"] }
-                                        onClick={ () => onEditClick(purchase.id) }
-                                    >
-                                        <MaterialIcon iconName="edit" />
-                                    </Btn>
-                                    <Btn classes={ ["btn-small", "red-bg"] }
-                                        onClick={ () => onDeleteClick(purchase.id) }
-                                    >
-                                        <MaterialIcon iconName="delete" />
-                                    </Btn>
-                                </td>
-                                <DateCell date={ purchase.date } />
-                                <NumCell num={ purchase.quantity }
-                                    maxDecimals={ 0 }
-                                />
-                                <PriceCell price={ purchase.price } />
-                                <YearCell year={ purchase.vintage } />
-                                <TextCell text={ purchase.store } />
-                                <TextCell text={ purchase.memo } />
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </>
+                    ))}
+                </tbody>
+            </Table>
         );
     }
     return (

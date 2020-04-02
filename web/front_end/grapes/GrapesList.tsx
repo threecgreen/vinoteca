@@ -1,4 +1,5 @@
 import React from "react";
+import { Table } from "../../components/Table";
 import { SortingState, TableHeader } from "../../components/TableHeader";
 import { IGrape } from "../../lib/Rest";
 import { GrapesListItem } from "./GrapesListItem";
@@ -51,7 +52,7 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
     }
 
     return (
-        <table className="responsive highlight condensed">
+        <Table condensed>
             <thead>
                 <tr key="headers">
                     <TableHeader sortingState={ sortingStateForHeader(SortingValue.Name) }
@@ -79,7 +80,7 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
                     );
                 })}
             </tbody>
-        </table>
+        </Table>
     );
 }
 GrapesList.displayName = "GrapesList";

@@ -1,6 +1,7 @@
-import * as React from "react";
+import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { Table } from "../../components/Table";
 import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
 import { IInventoryWine } from "../../lib/Rest";
@@ -42,7 +43,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
 
     public render() {
         return (
-            <table className="responsive highlight condensed">
+            <Table condensed>
                 <thead>
                     <tr>
                         <th>Modify</th>
@@ -117,7 +118,7 @@ export class InventoryTable extends React.Component<IProps, IState> {
                         );
                     })}
                 </tbody>
-            </table>
+            </Table>
         );
     }
 
