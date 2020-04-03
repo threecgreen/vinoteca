@@ -14,7 +14,7 @@ interface IProducerProps {
     regionText: string;
     region?: IRegion
     onRegionChange: (text: string) => void;
-    onConfirmClick: () => void;
+    onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
 }
 

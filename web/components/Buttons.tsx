@@ -81,7 +81,7 @@ export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
 BtnLink.displayName = "BtnLink";
 
 interface ICancelOrConfirmProps {
-    onConfirmClick: () => void;
+    onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
 }
 
@@ -89,9 +89,9 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
     ({onConfirmClick, onCancelClick}) => {
     const [isSaving, setIsSaving] = React.useState(false);
 
-    const submit = () => {
+    const submit = async () => {
         setIsSaving(true);
-        onConfirmClick();
+        await onConfirmClick();
         setIsSaving(false);
     }
 

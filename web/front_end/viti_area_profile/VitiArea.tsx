@@ -9,7 +9,7 @@ interface IProps {
     vitiAreaText: string;
     vitiArea: IVitiArea;
     onVitiAreaChange: (val: string) => void;
-    onConfirmClick: () => void;
+    onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
 }
 

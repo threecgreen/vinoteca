@@ -8,7 +8,7 @@ import { IGrapeForm } from "../../lib/Rest";
 interface IProps {
     name: string;
     onCancelClick: () => void;
-    onSaveClick: (form: IGrapeForm) => void;
+    onSaveClick: (form: IGrapeForm) => Promise<void>;
 }
 
 export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) => {

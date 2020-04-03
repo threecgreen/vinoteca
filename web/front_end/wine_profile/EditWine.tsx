@@ -1,17 +1,16 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
 import { IWine, IWineGrape } from "../../lib/Rest";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
-import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
-import { PreloaderCirc } from "../../components/Preloader";
 
 interface IProps {
     wine: IWine;
     grapes: IWineGrape[];
     hasImage: boolean;
-    onSubmit: (wine: IWineData, grapes: IWineGrape[]) => void;
+    onSubmit: (wine: IWineData, grapes: IWineGrape[]) => Promise<void>;
     onCancel: () => void;
 }
 
@@ -29,12 +28,13 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
     });
     const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
 
-    const checkFileAndSubmit = () => {
+    const checkFileAndSubmit = async () => {
         if (mutableWine.file && mutableWine.file.name === `${wine.id}.png`) {
             // Don't submit mock file
             onSubmit({...mutableWine, file: null}, mutableGrapes);
+        } else {
+            onSubmit(mutableWine, mutableGrapes);
         }
-        onSubmit(mutableWine, mutableGrapes);
     }
 
     return (

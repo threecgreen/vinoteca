@@ -9,7 +9,7 @@ interface IProps {
     title: string;
     purchase: IPurchase;
     displayInventoryBtn: boolean;
-    onSubmit: (purchase: IPurchaseData) => void;
+    onSubmit: (purchase: IPurchaseData) => Promise<void>;
     onCancel: () => void;
 }
 
