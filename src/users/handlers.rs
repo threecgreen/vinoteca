@@ -16,7 +16,7 @@ use validator::Validate;
 pub fn get(auth: Auth, connection: DbConn) -> RestResult<User> {
     users::table
         .filter(users::id.eq(auth.id))
-        .select((users::email, users::name, users::image))
+        .select((users::email, users::name, users::image, users::created_at, users::last_login))
         .first(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)

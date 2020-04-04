@@ -57,6 +57,8 @@ table! {
         name -> Text,
         image -> Nullable<Text>,
         hash -> Text,
+        created_at -> Timestamptz,
+        last_login -> Timestamptz,
     }
 }
 

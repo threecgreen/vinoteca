@@ -1,7 +1,7 @@
 use crate::users::Auth;
 use crate::schema::*;
 
-use chrono::NaiveDate;
+use chrono::{DateTime, NaiveDate, Utc};
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
@@ -174,6 +174,8 @@ pub struct InternalUser {
     pub name: String,
     pub image: Option<String>,
     pub hash: String,
+    pub created_at: DateTime<Utc>,
+    pub last_login: DateTime<Utc>,
 }
 
 #[derive(Clone, Queryable, Serialize, TypeScriptify, Debug)]
@@ -182,6 +184,10 @@ pub struct User {
     pub email: String,
     pub name: String,
     pub image: Option<String>,
+    #[ts(ts_type = "string")]
+    pub created_at: DateTime<Utc>,
+    #[ts(ts_type = "string")]
+    pub last_login: DateTime<Utc>,
 }
 
 impl From<InternalUser> for User {
@@ -190,6 +196,8 @@ impl From<InternalUser> for User {
             email: internal.email,
             name: internal.name,
             image: internal.image,
+            created_at: internal.created_at,
+            last_login: internal.last_login,
         }
     }
 }
