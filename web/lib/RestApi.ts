@@ -4,7 +4,7 @@ import { IColor, IGrape, IGrapeForm, ILogForm, ILoginForm, ILogResponse, IMostCo
          IProducer, IProducerForm, IPurchase, IPurchaseCount, IPurchaseForm, IRegion, IRegionForm,
          IStore, IStoreForm, ITopEntity, ITotalLiters, IUser, IUserForm, IVitiArea, IVitiAreaForm,
          IVitiAreaStats, IWine, IWineCount, IWineForm, IWineGrape, IWineGrapesForm, IWinePatchForm,
-         IWineType, IWineTypeForm } from "./Rest";
+         IWineType, IWineTypeForm, IChangePasswordForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
@@ -231,6 +231,10 @@ export async function createStore(store: IStoreForm): Promise<IStore> {
 }
 
 /* USERS */
+export async function getUser(): Promise<IUser> {
+    return get("/rest/users");
+}
+
 export async function login(form: ILoginForm): Promise<IUser> {
     return post("/rest/users/login", form);
 }
@@ -239,8 +243,12 @@ export async function createUser(form: IUserForm): Promise<IUser> {
     return post("/rest/users", form);
 }
 
-export async function getUser(): Promise<IUser> {
-    return get("/rest/users");
+export async function changePassword(form: IChangePasswordForm): Promise<void> {
+    return post("/rest/users/password", form);
+}
+
+export async function logout(): Promise<void> {
+    return post("/rest/users/logout", {});
 }
 
 /* VITI AREAS */
