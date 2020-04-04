@@ -1,9 +1,10 @@
-import { Link, useLocation } from "@reach/router";
+import { Link, useLocation, redirectTo } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { IUser } from "../lib/Rest";
 import { LoginForm } from "../components/AccountModals";
+import { logout } from "../lib/RestApi";
 
 enum ModalState {
     None,
@@ -12,7 +13,7 @@ enum ModalState {
 
 interface IProps {
     user: IUser | null;
-    setUser: (user: IUser) => void;
+    setUser: (user: IUser | null) => void;
 }
 
 export const Navbar: React.FC<IProps> = ({user, setUser}) => {
@@ -43,7 +44,7 @@ export const Navbar: React.FC<IProps> = ({user, setUser}) => {
 
 interface INavProps {
     user: IUser | null;
-    setUser: (user: IUser) => void;
+    setUser: (user: IUser | null) => void;
     setModalState: (newState: ModalState) => void;
 }
 
@@ -101,18 +102,30 @@ const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
     );
 }
 
-const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}) => {
+const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setUser, setModalState}) => {
     if (user) {
-        const dropdownTriggerRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
+        const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
+        const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
         React.useEffect(() => {
             // tslint:disable-next-line no-unused-expression
-            new Dropdown(dropdownTriggerRef.current);
-        }, [dropdownTriggerRef]);
+            new Dropdown(addDropdownRef.current);
+        }, [addDropdownRef]);
+        React.useEffect(() => {
+            // tslint:disable-next-line no-unused-expression
+            new Dropdown(userDropdownRef.current);
+        }, [userDropdownRef]);
+
+        const onLogout = async (e: React.MouseEvent) => {
+            e.preventDefault();
+            await logout();
+            setUser(null);
+            redirectTo("/");
+        }
 
         return (
             <>
-                <li id="new-wine-nav">
-                    <ul id={ id } className="dropdown-content">
+                <li>
+                    <ul id={ `${id}-add` } className="dropdown-content">
                         <NavLink to="/wines/new">
                             New Wine
                         </NavLink>
@@ -120,8 +133,8 @@ const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}
                             Purchased Again
                         </NavLink>
                     </ul>
-                    <a href="#!" className="dropdown-trigger" data-target={ id }
-                        ref={ dropdownTriggerRef }
+                    <a href="#!" className="dropdown-trigger" data-target={ `${id}-add` }
+                        ref={ addDropdownRef }
                     >
                         <MaterialIcon className="left" iconName="add_circle" />
                         Add
@@ -140,11 +153,25 @@ const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setModalState}
                     <MaterialIcon className="left" iconName="view_comfy" />
                     Inventory
                 </NavLink>
-                {/* TODO: create user profile page */}
-                <NavLink to="/profile">
-                    <MaterialIcon className="left" iconName="account_circle" />
-                    { user.name }
-                </NavLink>
+                <li>
+                    <ul id={ `${id}-user` } className="dropdown-content">
+                        <NavLink to="/profile">
+                            Profile
+                        </NavLink>
+                        <li className="sidenav-close">
+                            <a href="#!" onClick={ onLogout }>
+                                Log out
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="#!" className="dropdown-trigger" data-target={ `${id}-user` }
+                        ref={ userDropdownRef }
+                    >
+                        <MaterialIcon className="left" iconName="account_circle" />
+                        { user.name }
+                        <MaterialIcon className="right" iconName="arrow_drop_down" />
+                    </a>
+                </li>
             </>
         );
     }

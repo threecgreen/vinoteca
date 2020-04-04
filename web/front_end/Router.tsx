@@ -20,6 +20,7 @@ import { VitiAreaProfileApp } from "./viti_area_profile/VitiAreaProfileApp";
 import { WinesApp } from "./wines/WinesApp";
 import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
+import { UserProfileApp } from "./user_profile/UserProfileApp";
 
 const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
@@ -43,7 +44,7 @@ const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
 }
 interface IProps {
     user: IUser | null;
-    setUser: (user: IUser) => void;
+    setUser: (user: IUser | null) => void;
 }
 const App: React.FC<RouteComponentProps<IProps>> = ({user, setUser, ...props}) => {
     return (
@@ -94,8 +95,10 @@ export const Router: React.FC<{}> = (_props) => {
 
                     <ProducerProfileApp path="/producers/:producerId" />
                     <RegionProfileApp path="/regions/:regionId" />
+                    <UserProfileApp path="/profile" user={ user } />
                     <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />
                     <WineTypeProfileApp path="/wine-types/:wineTypeId" />
+
                     <PleaseCrash path="/crash/please" />
                     <NotFound default />
                 </App>
