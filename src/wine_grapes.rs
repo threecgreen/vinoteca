@@ -272,12 +272,11 @@ mod test {
         })
     }
 
-    #[ignore]
     #[test]
     fn post_empty_delete_existing() {
         run_test!(|rocket, connection| {
             let form = WineGrapesForm {
-                wine_id: 4,
+                wine_id: 1,
                 grapes: vec![
                     AssociatedGrape {
                         grape_id: 1,
@@ -294,7 +293,7 @@ mod test {
             // Post empty wine grapes for same wine
             let connection = DbConn::get_one(&rocket).expect("database connection");
             let form = WineGrapesForm {
-                wine_id: 4,
+                wine_id: 1,
                 grapes: Vec::new(),
             };
             let response = post(Auth { id: 1 }, Json(form), connection);
