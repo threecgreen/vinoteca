@@ -99,7 +99,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                 </TabPanel>
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
-                        data={topEntities.map((ent) => ({ label: ent.name, value: ent.avgPrice }))}
+                        data={topEntities.map((ent) => ({ label: ent.name, value: Number.parseFloat(ent.avgPrice.toFixed(2)) }))}
                     />
                 </TabPanel>
             </>
