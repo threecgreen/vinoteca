@@ -29,7 +29,7 @@ export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) =
     }, [inputRef, regionText]);
 
     return (
-        <TextInput name="Viti Area"
+        <TextInput name="Viticultural Area"
             className="autocomplete"
             inputRef={ inputRef }
             s={ 8 } l={ 4 }
