@@ -1,6 +1,9 @@
 import React from "react";
 import { Input } from "./Input";
-import { SpecialChars } from "./SpecialChars";
+import { SpecialCharPicker, insertCharAt } from "./SpecialChars";
+import { MaterialIcon } from "./MaterialIcon";
+import { Btn } from "./Buttons";
+import { Col } from "./Grid";
 
 interface ITextProps {
     name: string;
@@ -17,23 +20,25 @@ interface ITextProps {
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
+    const [timeoutId, setTimeoutId] = React.useState<number>();
     const [timestamp, _] = React.useState(new Date());
     const [isActive, setIsActive] = React.useState(false);
     const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const [showPicker, setShowPicker] = React.useState(false);
 
     const onSpecialCharClick = (char: string) => {
+        clearTimeout(timeoutId);
         setIsActive(true);
         const position = inputRef.current?.selectionStart ?? NaN;
-        props.onChange(SpecialChars.insertCharAt(props.value, char, position))
+        props.onChange(insertCharAt(props.value, char, position))
         setTimeout(() => inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     };
 
     const onBlur = () => {
-        const now = new Date();
-        // @ts-ignore
-        if (now - timestamp > 100) {
+        setTimeoutId(setTimeout(() => {
             setIsActive(false);
-        }
+            setShowPicker(false);
+        }));
         props.onBlur?.();
     };
 
@@ -43,29 +48,45 @@ export const TextInput: React.FC<ITextProps> = (props) => {
     }
 
     const onFocus = () => {
+        clearTimeout(timeoutId);
         setIsActive(true);
         props.onFocus?.();
     }
 
+
+    const onShowPicker = () => {
+        clearTimeout(timeoutId);
+        setShowPicker(!showPicker);
+    }
+
     return (
-        <>
-            <Input inputType="text"
-                name={ props.name }
-                value={ props.value }
-                enabled={ props.enabled }
-                onChange={ (val) => onChange(val) }
-                onBlur={ onBlur }
-                onFocus={ onFocus }
-                className={ props.className }
-                s={ props.s } m={ props.m } l={ props.l }
-                inputRef={ inputRef }
-            />
-            <SpecialChars
-                classes={ ["inline-block"] }
+        <div onFocus={ (_) => onFocus() }
+            onBlur={ (_) => onBlur() }
+        >
+            <Col s={ props.s } m={ props.m} l={ props.l } classes={ ["flex"] }>
+                <Input inputType="text"
+                    name={ props.name }
+                    value={ props.value }
+                    enabled={ props.enabled }
+                    onChange={ (val) => onChange(val) }
+                    // onBlur={ onBlur }
+                    // onFocus={ onFocus }
+                    className=""
+                    inputFieldClassName={ `${props.className} flex-grow` }
+                    // s={ props.s } m={ props.m } l={ props.l }
+                    inputRef={ inputRef }
+                />
+                { isActive && <Btn onClick={ onShowPicker }
+                    noRbtn={ true }
+                    classes={ ["green-bg", "overlap", "btn-small", showPicker ? "active" : ""] }
+                >
+                    ñ
+                </Btn> }
+            </Col>
+            { showPicker && <SpecialCharPicker
                 onClick={ (c) => onSpecialCharClick(c) }
-                display={ isActive }
-            />
-        </>
+            /> }
+         </div>
     );
 }
 TextInput.displayName = "TextInput";

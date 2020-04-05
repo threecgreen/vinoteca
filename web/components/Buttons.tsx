@@ -42,18 +42,20 @@ FloatingBtn.defaultProps = { onMouseDown: (_) => undefined };
 interface IBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
     disabled?: boolean;
+    noRbtn?: boolean
 }
 
 export const Btn: React.FC<IBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
     const disabled = props.disabled ?? false;
+    const noRbtn = props.noRbtn ?? false;
     const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         props.onClick();
     }
 
     return (
-        <button className={ `rbtn waves-effect waves-light btn ${classes}` }
+        <button className={ `${noRbtn ? "" : "rbtn"} waves-effect waves-light btn ${classes}` }
             onClick={ onClick }
             disabled={ disabled }
         >

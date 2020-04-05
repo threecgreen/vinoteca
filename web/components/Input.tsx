@@ -22,6 +22,7 @@ export interface IInputProps<T extends IInputValue> {
     s?: number;
     m?: number;
     l?: number;
+    inputFieldClassName?: string;
 }
 
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
@@ -35,7 +36,9 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
     public render() {
         const id = nameToId(this.props.name);
         return (
-            <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }>
+            <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }
+                classes={ [this.props.inputFieldClassName ?? ""] }
+            >
                 <input id={ id }
                     name={ id }
                     className={ this.props.className }
