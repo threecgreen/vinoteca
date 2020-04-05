@@ -1,10 +1,10 @@
 import { delete_, get, IQueryParams, patch, post, postForm, put, putForm } from "./ApiHelper";
 import Logger from "./Logger";
-import { IColor, IGrape, IGrapeForm, ILogForm, ILoginForm, ILogResponse, IMostCommonPurchaseDate,
-         IProducer, IProducerForm, IPurchase, IPurchaseCount, IPurchaseForm, IRegion, IRegionForm,
-         IStore, IStoreForm, ITopEntity, ITotalLiters, IUser, IUserForm, IVitiArea, IVitiAreaForm,
-         IVitiAreaStats, IWine, IWineCount, IWineForm, IWineGrape, IWineGrapesForm, IWinePatchForm,
-         IWineType, IWineTypeForm, IChangePasswordForm } from "./Rest";
+import { IChangePasswordForm, IColor, IGrape, IGrapeForm, ILogForm, ILoginForm, ILogResponse,
+         IMostCommonPurchaseDate, IProducer, IProducerForm, IPurchase, IPurchaseCount,
+         IPurchaseForm, IRegion, IStore, IStoreForm, ITopEntity, ITotalLiters, IUser,
+         IUserForm, IVitiArea, IVitiAreaForm, IVitiAreaStats, IWine, IWineCount, IWineForm,
+         IWineGrape, IWineGrapesForm, IWinePatchForm, IWineType, IWineTypeForm } from "./Rest";
 import { IRestModel } from "./RestTypes";
 import { IDict } from "./utils";
 
