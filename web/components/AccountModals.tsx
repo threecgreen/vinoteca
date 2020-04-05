@@ -1,10 +1,9 @@
 import React from "react";
 import { IUser } from "../lib/Rest";
-import { login, createUser } from "../lib/RestApi";
-import { Modal } from "./Modal";
-import { ModalContent, ModalFooter } from "./Modal";
-import { EmailInput, PasswordInput, TextInput } from "./TextInput";
+import { createUser, login } from "../lib/RestApi";
 import { CancelOrConfirmBtns } from "./Buttons";
+import { Modal, ModalContent, ModalFooter } from "./Modal";
+import { EmailInput, PasswordInput, TextInput } from "./TextInput";
 
 interface IUserProps {
     onFinish: (user: IUser) => void,
@@ -20,9 +19,16 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
         onFinish(user);
     }
 
+    const onKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit();
+        }
+    }
+
     return (
         <Modal>
-            <ModalContent>
+            <ModalContent onKeyDown={ onKeyDown }>
                 <EmailInput name="E-mail"
                     className=""
                     value={ email }

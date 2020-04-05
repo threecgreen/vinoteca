@@ -24,8 +24,8 @@ export const Modal: React.FC<IModalProps> = ({children}) => {
 }
 Modal.displayName = "Modal";
 
-export const ModalContent: React.FC<IChildrenProp> = ({children}) => (
-    <section className="modal-content">
+export const ModalContent: React.FC<IChildrenProp & any> = ({children, ...props}) => (
+    <section className="modal-content" {...props}>
         { children }
     </section>
 )

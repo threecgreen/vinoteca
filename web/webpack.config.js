@@ -41,14 +41,15 @@ module.exports = (env, argv) => {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: !isProd,
+                                includePaths: [__dirname + "node_modules/materialize-css"]
                             }
                         },
                     ],
                 },
                 // Don't load moment.js because we don't use the date functionality
                 {
-                    test: __dirname + '/node_modules/moment/moment.js',
-                    use: 'null-loader',
+                    test: __dirname + "/node_modules/moment/moment.js",
+                    use: "null-loader",
                 },
             ],
         },

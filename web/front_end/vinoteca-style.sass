@@ -1,12 +1,12 @@
 /* Color variables */
-$black: rgba(0,0,0,0.87)
-$pink: rgb(233, 30, 99)
+$white: rgb(240, 240, 240)
+$black: rgba(0, 0, 0, 0.87)
 $wine-red: rgb(135, 14, 79)
 $wine-green: rgb(139, 195, 74)
 $golden-yellow: rgb(251, 192, 45)
 $light-gray: rgb(200, 200, 200)
 
-/** Colored background classes */
+/* Colored background classes */
 .green-bg
   background-color: $wine-green
 .green-bg:focus
@@ -16,13 +16,13 @@ $light-gray: rgb(200, 200, 200)
 .green-bg:hover
   background-color: lighten($wine-green, 10)
 .yellow-bg
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:focus
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:visited
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:hover
-  background-color: lighten($golden-yellow, 10)
+  background-color: lighten($golden-yellow, 10) !important
 .red-bg
   background-color: lighten($wine-red, 5) !important
 .red-bg:focus
@@ -32,14 +32,20 @@ $light-gray: rgb(200, 200, 200)
 .red-bg:hover
   background-color: lighten($wine-red, 15)
 .light-gray-bg
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:focus
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:visited
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:hover
-  background-color: lighten($light-gray, 7)
+  background-color: lighten($light-gray, 7) !important
 
+@import "~materialize-css/sass/components/_color-variables.scss"
+$primary-color: $wine-red !default
+$secondary-color: $wine-green !default
+@import "~materialize-css/sass/materialize.scss"
+
+// Sticky footer
 #site-content
   display: flex
   min-height: 100vh
@@ -126,16 +132,6 @@ td
 
 table.highlight tbody tr:hover
   background-color: rgba(245, 245, 245, 0.5)
-
-/* rows hidden by filtering (needed for child rows) */
-.tablesorter .filtered
-  display: none
-
-/* ajax error row */
-.tablesorter .tablesorter-errorRow td
-  text-align: center
-  cursor: pointer
-  background-color: #e6bf99
 
 ul.bullets
   padding-left: 30px
@@ -356,27 +352,13 @@ td.inventory-plus-minus
 
 // Special chars
 aside.special-char-picker
-  background: #fff
+  @extend .z-depth-1
+  background: $white
   display: flex
-  flex-direction: column
+  flex-direction: row
   flex-wrap: wrap
   height: 250px
-  width: 260px
-  border: 1px solid #efefef
-  box-sizing: border-box
+  width: 280px
   position: relative
   align-content: center
-  // top: 10px
-  z-index: 2
   padding: 15px
-  box-shadow: 0 5px 10px #efefef
-  // margin-bottom: 30px
-  // margin-left: 0!important
-
-
-// aside.special-char-picker button {
-//     border: none;
-//     cursor: pointer;
-//     outline: none;
-//     background: none;
-// }
