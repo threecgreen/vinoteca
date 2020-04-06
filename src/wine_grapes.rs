@@ -105,10 +105,10 @@ pub fn post(
 ) -> RestResult<Vec<WineGrape>> {
     let wine_grape_form = wine_grape_form.into_inner();
     wine_grape_form.validate()?;
+    validate_user_owns_grapes(auth.id, &wine_grape_form.grapes, &connection)?;
+
     let wine_id = wine_grape_form.wine_id;
     let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
-
-    // FIXME: validate grapes are the user's
 
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
@@ -126,6 +126,23 @@ pub fn post(
             .execute(&*connection)?;
     }
     get(auth, Some(wine_id), None, connection)
+}
+
+fn validate_user_owns_grapes(
+    user_id: i32,
+    wine_grapes: &Vec<AssociatedGrape>,
+    connection: &DbConn
+) -> Result<(), VinotecaError> {
+    let valid_grape_count = grapes::table
+        .filter(grapes::user_id.eq(user_id))
+        .filter(grapes::id.eq_any(wine_grapes.iter().map(|wg| wg.grape_id).collect::<Vec<i32>>()))
+        .count()
+        .get_result::<i64>(&**connection)?;
+    if valid_grape_count as usize == wine_grapes.len() {
+        Ok(())
+    } else {
+        Err(VinotecaError::BadRequest("One or more of the grapes are invalid".to_owned()))
+    }
 }
 
 #[cfg(test)]
