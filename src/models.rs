@@ -116,8 +116,6 @@ pub struct PurchaseForm {
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
-    // FIXME:
-    // #[validate(range(min = 19900101))]
     #[ts(ts_type = "string | null")]
     pub date: Option<NaiveDate>,
 }
