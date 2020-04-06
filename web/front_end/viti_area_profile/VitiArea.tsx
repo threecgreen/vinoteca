@@ -1,5 +1,6 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { VitiAreaInput } from "../../components/VitiAreaInput";
 import { IVitiArea, IVitiAreaStats } from "../../lib/Rest";
@@ -48,20 +49,20 @@ export class VitiArea extends React.Component<IProps, IState> {
 
     private renderEdit(): JSX.Element {
         return (
-            <React.Fragment>
+            <>
                 <Col s={ 10 }>
                     <h3 className="bold">Edit Viticultural Area</h3>
-                    <form autoComplete="off">
+                    <Form>
                         <VitiAreaInput value={ this.props.vitiAreaText }
                             onChange={ this.props.onVitiAreaChange }
                         />
-                    </form>
+                    </Form>
                 </Col>
                 <CancelOrConfirmBtns
                     onConfirmClick={ this.props.onConfirmClick }
                     onCancelClick={ this.props.onCancelClick }
                 />
-            </React.Fragment>
+            </>
         );
     }
 }

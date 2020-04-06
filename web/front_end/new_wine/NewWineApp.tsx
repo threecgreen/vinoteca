@@ -1,16 +1,18 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn, BtnLink } from "../../components/Buttons";
-import { CSRFToken } from "../../components/CSRFToken";
+import { Form } from "../../components/Form";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { PreloaderCirc } from "../../components/Preloader";
-import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
+import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer,
+         PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { createPurchase, createWine, createWineGrapes, deleteWine, deletePurchase } from "../../lib/RestApi";
-import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
+import { createPurchase, createWine, createWineGrapes, deletePurchase,
+         deleteWine } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
+import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
 export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
@@ -27,7 +29,9 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
         let wineId;
         let purchaseId;
         try {
-            const wineForm = await wineDataToForm(wineState, purchaseState.shouldAddToInventory ? purchaseState.quantity ?? 0 : 0);
+            const wineForm = await wineDataToForm(wineState, purchaseState.shouldAddToInventory
+                ? purchaseState.quantity ?? 0
+                : 0);
             const wine = await createWine(wineForm, wineState.file);
             wineId = wine.id;
             await Promise.all([
@@ -62,11 +66,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     return (
         <div className="container">
             <h3 className="page-title">Enter new wine information</h3>
-            <form action="" className="col s12"
-                // FIXME: standardize with other forms
-                style={{ marginBottom: "20px" }}
-            >
-                <CSRFToken />
+            <Form>
                 <Row s={ 12 }>
                     <PurchaseInputs displayInventoryBtn
                         data={ purchaseState }
@@ -92,7 +92,7 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                     Cancel
                 </BtnLink>
                 { isSaving && <PreloaderCirc className="hor-margin" /> }
-            </form>
+            </Form>
         </div>
     );
 }

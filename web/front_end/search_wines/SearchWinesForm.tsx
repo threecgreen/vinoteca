@@ -1,5 +1,6 @@
 import React from "react";
 import { ColorInput } from "../../components/ColorInput";
+import { Form } from "../../components/Form";
 import { Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
@@ -18,7 +19,7 @@ interface IProps {
 
 export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
     return (
-        <form autoComplete="off">
+        <Form>
             <Row>
                 <ColorInput selection={ props.colorSelection }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Color, v) }
@@ -39,7 +40,7 @@ export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
                     regionText={ props.regionText }
                 />
             </Row>
-        </form>
+        </Form>
     );
 };
 SearchWinesForm.displayName = "SearchWinesForm";

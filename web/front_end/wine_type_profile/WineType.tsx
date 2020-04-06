@@ -1,5 +1,6 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { WineTypeInput } from "../../components/WineTypeInput";
 import { IRestModel } from "../../lib/RestTypes";
@@ -26,11 +27,11 @@ export const WineType: React.FC<IProps> = (props) => {
         <>
             <Col s={ 10 }>
                 <h3 className="bold">Edit Wine Type</h3>
-                <form autoComplete="off">
+                <Form>
                     <WineTypeInput value={ props.wineTypeText }
                         onChange={ props.onWineTypeChange }
                     />
-                </form>
+                </Form>
             </Col>
             <CancelOrConfirmBtns
                 onConfirmClick={ props.onConfirmClick }

@@ -1,10 +1,11 @@
+import { Link } from "@reach/router";
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/ProducerInput";
 import { RegionInput } from "../../components/RegionInput";
 import { IProducer, IRegion } from "../../lib/Rest";
-import { Link } from "@reach/router";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -61,24 +62,24 @@ export class Producer extends React.Component<IProducerProps> {
 
     private renderEdit(): JSX.Element {
         return (
-            <React.Fragment>
+            <>
                 <Col s={ 12 }>
                     <h3 className="bold">{ `Edit Producer ${this.props.producer.name}` }</h3>
-                    <form autoComplete="off">
+                    <Form>
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
                         />
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
                         />
-                    </form>
+                    </Form>
                 </Col>
                 <CancelOrConfirmBtns
                     onConfirmClick={ this.props.onConfirmClick }
                     onCancelClick={ this.props.onCancelClick }
                 />
-            </React.Fragment>
-        )
+            </>
+        );
     }
 
     private onRegionTextChange(val: string) {
