@@ -1,8 +1,8 @@
 use super::{MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases};
-use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Purchase;
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::dsl::{sql, sum};

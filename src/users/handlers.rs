@@ -16,7 +16,13 @@ use validator::Validate;
 pub fn get(auth: Auth, connection: DbConn) -> RestResult<User> {
     users::table
         .filter(users::id.eq(auth.id))
-        .select((users::email, users::name, users::image, users::created_at, users::last_login))
+        .select((
+            users::email,
+            users::name,
+            users::image,
+            users::created_at,
+            users::last_login,
+        ))
         .first(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
@@ -62,7 +68,12 @@ pub fn create(form: Json<UserForm>, mut cookies: Cookies, connection: DbConn) ->
 }
 
 #[post("/users/password", format = "json", data = "<form>")]
-pub fn change_password(auth: Auth, form: Json<ChangePasswordForm>, mut cookies: Cookies, connection: DbConn) -> RestResult<()> {
+pub fn change_password(
+    auth: Auth,
+    form: Json<ChangePasswordForm>,
+    mut cookies: Cookies,
+    connection: DbConn,
+) -> RestResult<()> {
     let form = form.into_inner();
     form.validate()?;
     let user = users::table

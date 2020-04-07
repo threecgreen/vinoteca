@@ -1,6 +1,6 @@
-use crate::users::Auth;
 use crate::error::VinotecaError;
 use crate::schema::wines;
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;

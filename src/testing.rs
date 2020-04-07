@@ -3,10 +3,10 @@ use crate::schema::{grapes, producers, users, wine_types, wines};
 use crate::{run_db_migrations, DbConn, MediaDir};
 
 use diesel::prelude::*;
+use diesel::sql_query;
 use rocket::config::{Config, Environment, Value};
 use rocket::fairing::AdHoc;
 use rocket::Rocket;
-use diesel::sql_query;
 use std::collections::HashMap;
 use std::env;
 use std::sync::Mutex;

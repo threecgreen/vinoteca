@@ -1,7 +1,7 @@
-use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
@@ -131,17 +131,26 @@ pub fn post(
 fn validate_user_owns_grapes(
     user_id: i32,
     wine_grapes: &Vec<AssociatedGrape>,
-    connection: &DbConn
+    connection: &DbConn,
 ) -> Result<(), VinotecaError> {
     let valid_grape_count = grapes::table
         .filter(grapes::user_id.eq(user_id))
-        .filter(grapes::id.eq_any(wine_grapes.iter().map(|wg| wg.grape_id).collect::<Vec<i32>>()))
+        .filter(
+            grapes::id.eq_any(
+                wine_grapes
+                    .iter()
+                    .map(|wg| wg.grape_id)
+                    .collect::<Vec<i32>>(),
+            ),
+        )
         .count()
         .get_result::<i64>(&**connection)?;
     if valid_grape_count as usize == wine_grapes.len() {
         Ok(())
     } else {
-        Err(VinotecaError::BadRequest("One or more of the grapes are invalid".to_owned()))
+        Err(VinotecaError::BadRequest(
+            "One or more of the grapes are invalid".to_owned(),
+        ))
     }
 }
 

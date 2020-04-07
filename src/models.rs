@@ -1,5 +1,5 @@
-use crate::users::Auth;
 use crate::schema::*;
+use crate::users::Auth;
 
 use chrono::{DateTime, NaiveDate, Utc};
 use diesel::{Insertable, Queryable};

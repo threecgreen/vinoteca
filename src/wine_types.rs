@@ -1,8 +1,8 @@
-use crate::users::Auth;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, NewWineType, WineType, WineTypeForm};
 use crate::query_utils::IntoFirst;
 use crate::schema::{purchases, wine_types, wines};
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::dsl::sql;
