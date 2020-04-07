@@ -130,7 +130,7 @@ pub fn post(
 
 fn validate_user_owns_grapes(
     user_id: i32,
-    wine_grapes: &Vec<AssociatedGrape>,
+    wine_grapes: &[AssociatedGrape],
     connection: &DbConn,
 ) -> Result<(), VinotecaError> {
     let valid_grape_count = grapes::table
