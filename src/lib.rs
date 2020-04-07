@@ -20,7 +20,10 @@ pub mod models;
 mod schema;
 // Server internals
 mod cached_static;
+mod config;
 mod error;
+mod media;
+
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;
 // Test helpers
@@ -50,9 +53,6 @@ use query_utils::DbConn;
 
 use rocket::fairing::AdHoc;
 use rocket::Rocket;
-
-/// Keep media dir as global variable for use when saving new images
-pub struct MediaDir(String);
 
 #[macro_use]
 extern crate diesel_migrations;
@@ -146,12 +146,7 @@ pub fn create_rocket() -> rocket::Rocket {
         .get_str("static_dir")
         .unwrap_or("web/static")
         .to_string();
-    let media_dir = rocket
-        .config()
-        .get_str("media_dir")
-        .unwrap_or("media")
-        .to_string();
     rocket
-        .manage(MediaDir(media_dir.clone()))
+        .manage(config::Config::from_env())
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
 }
