@@ -5,6 +5,7 @@ use crate::models::{InternalUser, NewUser, User, UserForm};
 use crate::schema::users;
 use crate::DbConn;
 
+use chrono::Utc;
 use diesel::prelude::*;
 use rocket::http::{Cookie, Cookies, SameSite};
 use rocket_contrib::json::Json;
@@ -38,6 +39,11 @@ pub fn login(form: Json<LoginForm>, mut cookies: Cookies, connection: DbConn) ->
     if !valid {
         return Err(VinotecaError::Forbidden("Bad password".to_string()));
     }
+    diesel::update(users::table)
+        .filter(users::id.eq(user.id))
+        .set(users::last_login.eq(Utc::now()))
+        .execute(&*connection)?;
+
     add_auth_cookie(&mut cookies, user.id);
 
     Ok(Json(User::from(user)))
