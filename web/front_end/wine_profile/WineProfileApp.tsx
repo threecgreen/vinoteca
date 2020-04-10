@@ -179,6 +179,8 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         />
     );
 
+    const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
+    const renderWineImg = () => <WineImg path={ state.wine?.image! } />;
     const renderWineDetails = () => {
         if (state.wine?.image && state.grapes.length) {
             return (
@@ -225,9 +227,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             </Col>
         );
     }
-
-    const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
-    const renderWineImg = () => <WineImg id={ id } />;
 
     // Displays relevant modal for editing/deleting
     const renderModal = () => {
