@@ -1,5 +1,4 @@
 use bcrypt::BcryptError;
-use image::ImageError;
 use rocket::http::Status;
 use rocket::request::Request;
 use rocket::response::{self, Responder};
@@ -71,13 +70,6 @@ impl From<std::io::Error> for VinotecaError {
     fn from(io_error: std::io::Error) -> Self {
         warn!("IOError: {:#?}", io_error);
         VinotecaError::Internal(format!("{}", io_error))
-    }
-}
-
-impl From<ImageError> for VinotecaError {
-    fn from(img_error: ImageError) -> Self {
-        warn!("Error reading or writing image: {:#?}", img_error);
-        VinotecaError::Internal(format!("{}", img_error))
     }
 }
 
