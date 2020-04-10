@@ -233,10 +233,12 @@ mod test {
     use crate::DbConn;
     use rocket::State;
 
+    #[ignore]
     #[test]
     fn wine_without_purchases_appears_in_inventory() {
         run_test!(|rocket, connection| {
             let auth = Auth { id: 1 };
+            // TODO: mock out
             let media_dir = State::from(&rocket).unwrap();
             let form = RawWineForm {
                 image: None,

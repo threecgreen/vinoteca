@@ -1,6 +1,6 @@
 use crate::schema::{grapes, producers, users, wine_types, wines};
 /// Integration tests
-use crate::{run_db_migrations, DbConn, MediaDir};
+use crate::{run_db_migrations, DbConn};
 
 use diesel::prelude::*;
 use diesel::sql_query;
@@ -34,7 +34,6 @@ macro_rules! run_test {
 /// `MediaDir`
 pub fn create_test_rocket() -> Rocket {
     test_rocket_config()
-        .manage(MediaDir("/tmp".to_owned()))
         .attach(DbConn::fairing())
         .attach(AdHoc::on_attach("Setup test db", setup_test_db))
 }

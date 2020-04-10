@@ -64,9 +64,11 @@ mod test {
     use crate::DbConn;
     use rocket::State;
 
+    #[ignore]
     #[test]
     fn insert_wine() {
         run_test!(|rocket, connection| {
+            // TODO: mock out
             let media_dir = State::from(&rocket).unwrap();
             let form = RawWineForm {
                 image: None,
