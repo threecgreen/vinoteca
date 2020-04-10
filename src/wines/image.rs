@@ -39,7 +39,7 @@ pub fn handle_image(
             code,
             String::from_utf8(data)
         );
-        return Err(VinotecaError::Internal(format!("Error saving image")));
+        return Err(VinotecaError::Internal("Error saving image".to_owned()));
     }
 
     diesel::update(wines::table)
