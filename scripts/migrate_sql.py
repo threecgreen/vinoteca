@@ -2,17 +2,23 @@
 database."""
 import asyncio
 import asyncpg
+import aiofile
+import aiobotocore
 import aiosqlite
 import json
+import uuid
 
 from datetime import date
-from typing import Dict
+from os import path
+from typing import Dict, Union
+
+WINE_DIR = "wine_images"
 
 def get_sqlite_connection():
     return aiosqlite.connect(SQLITE_PATH)
 
 def get_postgres_connection():
-    return asyncpg.connect(POSTGRES_CONN_STR)
+    return asyncpg.connect(POSTGRES_CONN_STR, ssl=True)
 
 # Insert grapes, stores, wine_types
 async def insert_simple_table(name: str) -> Dict[int, int]:
@@ -51,6 +57,24 @@ async def insert_regions_relation(regions_map: Dict[int, int], relation_name: st
                 old_ids_to_new[row[0]] = new_id[0]
     return old_ids_to_new
 
+async def upload_wine_image(old_id: int) -> Union[str, None]:
+    local_path = path.join(MEDIA_DIR, f"{old_id}.png")
+    if path.exists(local_path):
+        name = uuid.uuid4()
+        file_path = path.join(WINE_DIR, str(name))
+        async with aiofile.AIOFile(local_path, 'rb') as image_file:
+            data = await image_file.read()
+        session = aiobotocore.get_session()
+        async with session.create_client('s3', region_name='us-east-2',
+                                         aws_access_key_id=AWS_ACCESS_KEY,
+                                         aws_secret_access_key=AWS_SECRET_KEY) as client:
+            resp = await client.put_object(Bucket='vinoteca',
+                                           Key=file_path,
+                                           Body=data,
+                                           ContentType='image/png')
+            print(f"Response: {resp}")
+        return file_path
+
 # Insert wines
 async def insert_wines(wine_types_map: Dict[int, int], producers_map: Dict[int, int], viti_areas_map: Dict[int, int]) -> Dict[int, int]:
     old_ids_to_new = {}
@@ -62,14 +86,15 @@ async def insert_wines(wine_types_map: Dict[int, int], producers_map: Dict[int, 
             FROM wines;""") as cursor:
 
             async for row in cursor:
+                image_file = await upload_wine_image(row[0])
                 new_id = await pg_db.fetchrow("""
                     INSERT INTO wines (name, description, notes, why, inventory,
-                        rating, color_id, wine_type_id, producer_id, viti_area_id, user_id)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                        rating, color_id, wine_type_id, producer_id, viti_area_id, user_id, image)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
                     RETURNING wines.id;""",
                     row[1], row[2], row[3], row[4], row[5], row[6], row[7],
                     wine_types_map[row[8]], producers_map[row[9]],
-                    viti_areas_map[row[10]] if row[10] else None, USER_ID)
+                    viti_areas_map[row[10]] if row[10] else None, USER_ID, image_file)
                 old_ids_to_new[row[0]] = new_id[0]
     return old_ids_to_new
 
@@ -114,10 +139,13 @@ async def main():
 
 if __name__ == "__main__":
     with open("migration_conf.json") as fin:
-        config = json.loads(fin)
+        config = json.load(fin)
     USER_ID = config["user_id"]
     POSTGRES_CONN_STR = config["postgres_connection_str"]
     SQLITE_PATH = config["sqlite_path"]
+    MEDIA_DIR = config["media_dir"]
+    AWS_ACCESS_KEY = config["aws_access_key"]
+    AWS_SECRET_KEY = config["aws_secret_key"]
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
