@@ -1,4 +1,5 @@
-use super::models::{RawImage, RawWineForm};
+use super::image::Image;
+use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
 
@@ -26,7 +27,6 @@ impl FromDataSimple for RawWineForm {
             .push(MultipartFormDataField::text("wine_form").content_type(Some(mime::STAR_STAR)));
 
         // Check if content type is correct
-        // info!("Content type: {:?}", request.content_type());
         let content_type = match request.content_type() {
             Some(content_type) => content_type,
             _ => {
@@ -40,7 +40,7 @@ impl FromDataSimple for RawWineForm {
         };
 
         // Parse form
-        let multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
@@ -51,7 +51,7 @@ impl FromDataSimple for RawWineForm {
             }
         };
         // Check for wine_form field
-        let wine_form_json = match multipart_form.texts.get("wine_form") {
+        let wine_form_json = match multipart_form.texts.remove("wine_form") {
             Some(wine_form_json) => wine_form_json,
             _ => {
                 return Failure((
@@ -61,7 +61,7 @@ impl FromDataSimple for RawWineForm {
             }
         };
         // Check for image field
-        let image_part: Option<&RawField> = multipart_form.raw.get("image");
+        let image_part: Option<RawField> = multipart_form.raw.remove("image");
         // Verify only one text field
         let wine_form = match wine_form_json {
             TextField::Single(text) => match serde_json::from_str::<WineForm>(&text.text) {
@@ -85,7 +85,15 @@ impl FromDataSimple for RawWineForm {
         };
         // Verify only one image provided
         let image = match image_part {
-            Some(RawField::Single(raw)) => Some(raw.raw.clone()),
+            Some(RawField::Single(raw)) => {
+                Some(Image {
+                    data: raw.raw,
+                    // TODO: determine if default is good
+                    mime_type: raw
+                        .content_type
+                        .unwrap_or_else(|| "image/png".parse().expect("PNG mime")),
+                })
+            }
             Some(RawField::Multiple(_raw)) => {
                 return Failure((
                     Status::BadRequest,
@@ -99,7 +107,7 @@ impl FromDataSimple for RawWineForm {
     }
 }
 
-impl FromDataSimple for RawImage {
+impl FromDataSimple for Image {
     type Error = VinotecaError;
 
     fn from_data(request: &Request, data: Data) -> Outcome<Self, Self::Error> {
@@ -112,7 +120,6 @@ impl FromDataSimple for RawImage {
         );
 
         // Check if content type is correct
-        // info!("Content type: {:?}", request.content_type());
         let content_type = match request.content_type() {
             Some(content_type) => content_type,
             _ => {
@@ -126,7 +133,7 @@ impl FromDataSimple for RawImage {
         };
 
         // Parse form
-        let multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
@@ -136,8 +143,8 @@ impl FromDataSimple for RawImage {
                 ));
             }
         };
-        // Check for image field
-        let raw_field = match multipart_form.raw.get("image") {
+        // Check for image field. `remove()` get owned `RawField`
+        let raw_field = match multipart_form.raw.remove("image") {
             Some(field) => field,
             _ => {
                 return Failure((
@@ -147,16 +154,20 @@ impl FromDataSimple for RawImage {
             }
         };
         // Verify only one image provided
-        let image = match raw_field {
-            RawField::Single(raw) => raw.raw.clone(),
-            RawField::Multiple(_raw) => {
-                return Failure((
-                    Status::BadRequest,
-                    VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
-                ))
+        match raw_field {
+            RawField::Single(raw) => {
+                Success(Image {
+                    data: raw.raw,
+                    // TODO: determine if default is good
+                    mime_type: raw
+                        .content_type
+                        .unwrap_or_else(|| "image/png".parse().expect("PNG mime")),
+                })
             }
-        };
-
-        Success(RawImage(image))
+            RawField::Multiple(_raw) => Failure((
+                Status::BadRequest,
+                VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
+            )),
+        }
     }
 }

@@ -1,12 +1,13 @@
 use super::get;
 use super::image::handle_image;
 use super::models::{RawWineForm, WinePatchForm};
+use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
 use crate::query_utils::IntoFirst;
 use crate::schema::wines;
 use crate::users::Auth;
-use crate::{DbConn, MediaDir};
+use crate::DbConn;
 
 use diesel::prelude::*;
 use rocket::State;
@@ -37,7 +38,7 @@ pub fn put(
     id: i32,
     raw_wine_form: RawWineForm,
     connection: DbConn,
-    media_dir: State<MediaDir>,
+    config: State<Config>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
@@ -50,7 +51,7 @@ pub fn put(
         .map_err(VinotecaError::from)
         .map(|_| {
             if let Some(image) = image {
-                if let Err(e) = handle_image(id, image, &media_dir.0, &connection) {
+                if let Err(e) = handle_image(id, image, &config.s3_bucket, &connection) {
                     warn!("Error updating image for wine with id {}: {}", id, e);
                 }
             }

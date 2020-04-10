@@ -1,3 +1,4 @@
+use super::image::Image;
 use crate::models::WineForm;
 
 use chrono::NaiveDate;
@@ -9,12 +10,10 @@ use validator::Validate;
 
 pub struct RawWineForm {
     /// raw submitted wine image
-    pub image: Option<Vec<u8>>,
+    pub image: Option<Image>,
     /// JSON data for database
     pub wine_form: WineForm,
 }
-
-pub struct RawImage(pub Vec<u8>);
 
 #[derive(Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]

@@ -4,6 +4,7 @@ use rocket::http::Status;
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket_contrib::json::Json;
+use s3::S3Error;
 use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
@@ -83,6 +84,13 @@ impl From<ImageError> for VinotecaError {
 impl From<ValidationErrors> for VinotecaError {
     fn from(val_errors: ValidationErrors) -> Self {
         VinotecaError::BadRequest(format!("{}", val_errors))
+    }
+}
+
+impl From<S3Error> for VinotecaError {
+    fn from(s3_error: S3Error) -> Self {
+        warn!("Error saving file to s3: {:?}", s3_error);
+        VinotecaError::Internal("Error handling file".to_owned())
     }
 }
 

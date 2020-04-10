@@ -1,19 +1,20 @@
-use crate::error::VinotecaError;
-
 use awscreds::Credentials;
-use awsregion::Region;
-use std::env;
+use s3::bucket::Bucket;
+
+static BUCKET_NAME: &str = "vinoteca";
 
 pub struct Config {
-    pub aws_creds: Credentials,
-    pub aws_region: Region,
+    pub s3_bucket: Bucket,
 }
 
 impl Config {
-    pub fn from_env() -> Result<Config, VinotecaError> {
-        Ok(Config {
-            aws_creds: Credentials::from_env()?,
-            aws_region: env::var("AWS_REGION").is_ok(),
-        })
+    pub fn new(aws_access_key: String, aws_secret_key: String) -> Config {
+        let creds =
+            Credentials::new_blocking(Some(aws_access_key), Some(aws_secret_key), None, None)
+                .expect("Valid credentials");
+        Config {
+            s3_bucket: Bucket::new(BUCKET_NAME, "us-east-2".parse().expect("AWS region"), creds)
+                .expect("AWS bucket"),
+        }
     }
 }

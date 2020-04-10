@@ -130,7 +130,6 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::inventory,
                 wines::search,
                 wines::varieties,
-                wines::image::get,
                 wines::image::post,
                 wines::image::delete,
                 wine_grapes::get,
@@ -145,8 +144,18 @@ pub fn create_rocket() -> rocket::Rocket {
         .config()
         .get_str("static_dir")
         .unwrap_or("web/static")
-        .to_string();
+        .to_owned();
+    let aws_access_key = rocket
+        .config()
+        .get_str("aws_access_key")
+        .expect("AWS access key")
+        .to_owned();
+    let aws_secret_key = rocket
+        .config()
+        .get_str("aws_secret_key")
+        .expect("AWS secret key")
+        .to_owned();
     rocket
-        .manage(config::Config::from_env())
+        .manage(config::Config::new(aws_access_key, aws_secret_key))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
 }
