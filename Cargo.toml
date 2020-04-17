@@ -15,7 +15,7 @@ categories = ["web-programming"]
 aws-creds = "0.20.0"
 aws-region = "0.20.0"
 # Password encryption
-bcrypt = "0.6.3"
+bcrypt = "0.7.0"
 # Datetime functionality
 chrono = { version = "0.4.10", features = ["serde"] }
 # basic ORM
