@@ -38,10 +38,10 @@ function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryPara
 }
 
 function singleEntityGetter<Params, Resp>(
+    objName: string,
     listGetter: (params: Params) => Promise<Resp[]>,
 ): (params: Params) => Promise<Resp> {
     // Shave off 'get'
-    const objName = listGetter.name.substr(3);
     return async (params: Params) => {
         const results = await listGetter(params);
         if (results.length > 1) {
@@ -89,7 +89,7 @@ export async function getColors({ id, name }: IGetColorParams): Promise<IColor[]
     return colors;
 }
 
-export const getColor = singleEntityGetter(getColors);
+export const getColor = singleEntityGetter("color", getColors);
 
 export async function getTopColors(): Promise<ITopEntity[]> {
     return get("/rest/colors/top");
@@ -106,7 +106,7 @@ export async function getGrapes({ id, name }: IGetGrapesParams): Promise<IGrape[
     return get("/rest/grapes", nonNullParams);
 }
 
-export const getGrape = singleEntityGetter(getGrapes);
+export const getGrape = singleEntityGetter("grape", getGrapes);
 export const getOrCreateGrape = getOrCreate(getGrapes, createGrape);
 
 export async function createGrape(grape: IGrapeForm): Promise<IGrape> {
@@ -136,7 +136,7 @@ export async function getProducers({id, name, regionId}: IGetProducersParams): P
     return producers;
 }
 
-export const getProducer = singleEntityGetter(getProducers);
+export const getProducer = singleEntityGetter("producer", getProducers);
 export const getOrCreateProducer = getOrCreate(getProducers, createProducer);
 
 export async function createProducer(producer: IProducerForm): Promise<IProducer> {
@@ -204,7 +204,7 @@ export async function getRegions({ id, name, producerName }: IGetRegionParams): 
     return regions;
 }
 
-export const getRegion = singleEntityGetter(getRegions);
+export const getRegion = singleEntityGetter("region", getRegions);
 
 export async function getTopRegions(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
@@ -223,7 +223,7 @@ export async function getStores({id, name}: IGetStoreParams): Promise<IStore[]> 
     return stores;
 }
 
-export const getStore = singleEntityGetter(getStores);
+export const getStore = singleEntityGetter("store", getStores);
 export const getOrCreateStore = getOrCreate(getStores, createStore);
 
 export async function createStore(store: IStoreForm): Promise<IStore> {
@@ -266,7 +266,7 @@ export async function getVitiAreas(
     return vitiAreas;
 }
 
-export const getVitiArea = singleEntityGetter(getVitiAreas);
+export const getVitiArea = singleEntityGetter("viticultural area", getVitiAreas);
 export const getOrCreateVitiArea = getOrCreate(getVitiAreas, createVitiArea);
 
 export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {
@@ -314,7 +314,7 @@ export async function getWines(
     return wines;
 }
 
-export const getWine = singleEntityGetter(getWines);
+export const getWine = singleEntityGetter("wine", getWines);
 
 const createWineHttpForm = (wine: IWineForm, file: File | null) => {
     const form = new FormData();
@@ -394,7 +394,7 @@ export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<I
     return wineTypes;
 }
 
-export const getWineType = singleEntityGetter(getWineTypes);
+export const getWineType = singleEntityGetter("wine type", getWineTypes);
 export const getOrCreateWineType = getOrCreate(getWineTypes, createWineType);
 
 export async function createWineType(wineType: IWineTypeForm): Promise<IWineType> {
