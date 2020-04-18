@@ -98,11 +98,10 @@ interface IMenuItemsProps extends INavProps {
 const MenuItems: React.FC<IMenuItemsProps> = (props) => {
     const user = useUser();
 
-    if (user) {
-        <UserMenuItems {...props} />
-    }
     return (
-        <NoUserMenuItems {...props} />
+        user
+        ? <UserMenuItems {...props} />
+        : <NoUserMenuItems {...props} />
     );
 }
 MenuItems.displayName = "MenuItems";
