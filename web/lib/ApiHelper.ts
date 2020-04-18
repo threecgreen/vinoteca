@@ -31,13 +31,13 @@ type VinotecaError =
     | {"BadRequest": string};
 
 function isVinotecaError(obj: object): obj is VinotecaError {
-    if (obj) {
+    if (obj && obj instanceof Object) {
         const keys = Object.keys(obj);
         return keys.length === 1
             && ["NotFound", "Internal", "MissingConstraint", "BadRequest"]
                 .find((i) => i === keys[0]) !== undefined;
     }
-    return true;
+    return false;
 }
 
 async function checkResponse(response: Response): Promise<any> {
