@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
@@ -10,7 +9,7 @@ import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
-export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
+export const GrapesApp: React.FC<{}> = (_) => {
     const logger = new Logger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 

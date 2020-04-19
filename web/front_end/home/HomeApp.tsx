@@ -1,22 +1,20 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
+import { NewUserForm } from "../../components/AccountModals";
 import { Btn, BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
-import { IUser } from "../../lib/Rest";
+import { useSetUser, useUser } from "../../components/UserContext";
 import { useTitle } from "../../lib/widgets";
 import { RecentPurchases } from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
-import { NewUserForm } from "../../components/AccountModals";
 
-interface IProps {
-    user: IUser | null;
-    setUser: (user: IUser) => void;
-}
-
-export const HomeApp: React.FC<RouteComponentProps<IProps>> = ({ user, setUser }) => {
+export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
+
+    const user = useUser();
+    const setUser = useSetUser();
 
     const [showNewUserModal, setShowNewUserModal] = React.useState(false);
 

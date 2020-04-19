@@ -1,10 +1,9 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn, BtnLink } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
-import { WinesTable, WinesTableColumn, columnToVal } from "../../components/WinesTable";
+import { columnToVal, WinesTable, WinesTableColumn } from "../../components/WinesTable";
 import FilterExpr from "../../lib/FilterExpr";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
@@ -20,7 +19,7 @@ interface IState {
     winesPerPage: number;
 }
 
-export class WinesApp extends React.Component<RouteComponentProps, IState> {
+export class WinesApp extends React.Component<{}, IState> {
     private readonly logger: Logger;
     private static localStorageKey: string = "WinesAppPredicates";
 

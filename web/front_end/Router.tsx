@@ -1,9 +1,9 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
 import React from "react";
-import { NotFound, RouteById } from "../components/CommonRoutes";
+import { AuthenticatedRoute, NotFound, RouteById } from "../components/CommonRoutes";
 import { ErrorBoundary } from "../components/ErrorBoundary";
-import { getCurrentUser } from "../lib/Auth";
-import { IUser } from "../lib/Rest";
+import { IChildrenProp } from "../components/IProps";
+import { UserProvider } from "../components/UserContext";
 import { AboutApp } from "./about/AboutApp";
 import { DashboardApp } from "./dashboards/DashboardApp";
 import { Footer } from "./Footer";
@@ -21,19 +21,12 @@ import { WinesApp } from "./wines/WinesApp";
 import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
 
-interface IProps {
-    user: IUser | null;
-    setUser: (user: IUser | null) => void;
-}
-
-const App: React.FC<RouteComponentProps<IProps>> = ({user, setUser, ...props}) => {
+const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
         <div id="site-content">
-            <Navbar user={ user! }
-                setUser={ setUser! }
-            />
+            <Navbar />
             <main>
-                { props.children }
+                { children }
             </main>
             <Footer />
         </div>
@@ -41,48 +34,33 @@ const App: React.FC<RouteComponentProps<IProps>> = ({user, setUser, ...props}) =
 }
 
 export const Router: React.FC<{}> = (_props) => {
-    const [user, setUser] = React.useState<IUser | null>(null);
-    // Set user if already logged in.
-    React.useEffect(() => {
-        async function checkIfLoggedIn() {
-            // Will return `null` if there's any error
-            const user = await getCurrentUser();
-            setUser(user);
-        }
-        checkIfLoggedIn();
-    }, []);
-
     return (
         <ErrorBoundary>
-            <ReachRouter>
-                <App path="/"
-                    user={ user }
-                    setUser={ setUser }
-                >
-                    <HomeApp path="/"
-                        user={ user }
-                        setUser={ setUser }
-                    />
-                    <AboutApp path="/about" />
-                    <DashboardApp path="dashboards" />
-                    <GrapesApp path="grapes" />
+            <UserProvider>
+                <ReachRouter>
+                    <App path="/">
+                        <HomeApp path="/" />
+                        <AboutApp path="/about" />
+                        <AuthenticatedRoute Component={ DashboardApp } path="dashboards" />
+                        <AuthenticatedRoute Component={ GrapesApp } path="grapes" />
 
-                    <WinesApp path="wines" />
-                    <RouteById Component={ WineProfileApp } path="wines/:id" />
-                    <InventoryApp path="wines/inventory" />
-                    <NewWineApp path="wines/new" />
-                    <SearchWinesApp path="wines/search" />
+                        <AuthenticatedRoute Component={ WinesApp } path="wines" />
+                        <RouteById Component={ WineProfileApp } path="wines/:id" />
+                        <AuthenticatedRoute Component={ InventoryApp } path="wines/inventory" />
+                        <AuthenticatedRoute Component={ NewWineApp } path="wines/new" />
+                        <AuthenticatedRoute Component={ SearchWinesApp } path="wines/search" />
 
-                    <ProducerProfileApp path="/producers/:producerId" />
-                    <RegionProfileApp path="/regions/:regionId" />
-                    <UserProfileApp path="/profile" user={ user } />
-                    <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />
-                    <WineTypeProfileApp path="/wine-types/:wineTypeId" />
+                        <AuthenticatedRoute Component={ ProducerProfileApp } path="producers/:producerId" />
+                        <AuthenticatedRoute Component={ RegionProfileApp } path="regions/:regionId" />
+                        <AuthenticatedRoute Component={ UserProfileApp } path="profile" />
+                        <AuthenticatedRoute Component={ VitiAreaProfileApp } path="viti-areas/:vitiAreaId" />
+                        <AuthenticatedRoute Component={ WineTypeProfileApp } path="wine-types/:wineTypeId" />
 
-                    <PleaseCrash path="/crash/please" />
-                    <NotFound default />
-                </App>
-            </ReachRouter>
+                        <PleaseCrash path="/crash/please" />
+                        <NotFound default />
+                    </App>
+                </ReachRouter>
+            </UserProvider>
         </ErrorBoundary>
     );
 };

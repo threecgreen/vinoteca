@@ -1,9 +1,10 @@
-import { Link, useLocation, redirectTo } from "@reach/router";
+import { Link, redirectTo, useLocation } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
-import { MaterialIcon } from "../components/MaterialIcon";
-import { IUser } from "../lib/Rest";
 import { LoginForm } from "../components/AccountModals";
+import { MaterialIcon } from "../components/MaterialIcon";
+import { useSetUser, useUser } from "../components/UserContext";
+import { IUser } from "../lib/Rest";
 import { logout } from "../lib/RestApi";
 
 enum ModalState {
@@ -11,19 +12,9 @@ enum ModalState {
     Login,
 }
 
-interface IProps {
-    user: IUser | null;
-    setUser: (user: IUser | null) => void;
-}
-
-export const Navbar: React.FC<IProps> = ({user, setUser}) => {
+export const Navbar: React.FC<{}> = () => {
     const [modalState, setModalState] = React.useState(ModalState.None);
-
-    const props = {
-        user,
-        setUser,
-        setModalState,
-    }
+    const setUser = useSetUser();
 
     const setUserAndHideModal = (user: IUser) => {
         setUser(user);
@@ -32,8 +23,8 @@ export const Navbar: React.FC<IProps> = ({user, setUser}) => {
 
     return (
         <>
-            <DesktopNavbar {...props} />
-            <MobileNavbar {...props} />
+            <DesktopNavbar setModalState={ setModalState } />
+            <MobileNavbar setModalState={ setModalState } />
             { modalState === ModalState.Login &&
                 <LoginForm onCancel={ () => setModalState(ModalState.None) }
                     onFinish={ setUserAndHideModal }
@@ -43,12 +34,10 @@ export const Navbar: React.FC<IProps> = ({user, setUser}) => {
 }
 
 interface INavProps {
-    user: IUser | null;
-    setUser: (user: IUser | null) => void;
     setModalState: (newState: ModalState) => void;
 }
 
-const DesktopNavbar: React.FC<INavProps> = (props) => {
+const DesktopNavbar: React.FC<INavProps> = ({setModalState}) => {
     return (
         <nav>
             <div className="nav-wrapper pink darken-4">
@@ -66,7 +55,7 @@ const DesktopNavbar: React.FC<INavProps> = (props) => {
                         <MaterialIcon iconName="menu" />
                     </a>
                     <ul className="right hide-on-med-and-down">
-                        <MenuItems id="top-dropdown" {...props} />
+                        <MenuItems id="top-dropdown" setModalState={ setModalState } />
                     </ul>
                 </div>
             </div>
@@ -102,7 +91,10 @@ const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
     );
 }
 
-const MenuItems: React.FC<{id: string} & INavProps> = ({id, user, setUser, setModalState}) => {
+const MenuItems: React.FC<{id: string} & INavProps> = ({id, setModalState}) => {
+    const user = useUser();
+    const setUser = useSetUser();
+
     if (user) {
         const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
         const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;

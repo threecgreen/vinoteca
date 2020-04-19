@@ -1,8 +1,9 @@
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, redirectTo } from "@reach/router";
 import React from "react";
 import Logger from "../lib/Logger";
 import { IUser } from "../lib/Rest";
 import { LoginForm } from "./AccountModals";
+import { useUser, useSetUser } from "./UserContext";
 
 interface IRouteByIdProps {
     id: string;
@@ -24,18 +25,28 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, C
 interface IAuthenticatedRouteProps {
     user: IUser | null,
     setUser: (user: IUser | null) => void,
-    Component: React.FC,
+    Component: React.FC | React.Component,
 }
 
-export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRouteProps>> = ({user, setUser, Component, ...props}) => {
+export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRouteProps>> = ({Component, ...props}) => {
+    if (!Component) {
+        throw new Error("Unexpected undefined or null Component");
+    }
+
+    const user = useUser();
+    const setUser = useSetUser();
     if (user) {
         const RealComponent = Component!;
         return <RealComponent { ...props } />;
     }
+    // TODO: better support for creating an account as well
     return (
-        <LoginForm />
+        <LoginForm onFinish={ setUser! }
+            onCancel={ () => redirectTo("/") }
+        />
     );
 }
+AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
 export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
