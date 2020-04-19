@@ -32,12 +32,17 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
     if (!Component) {
         throw new Error("Unexpected undefined or null Component");
     }
+    const [creationTime, _] = React.useState(new Date().getTime());
 
     const user = useUser();
     const setUser = useSetUser();
     if (user) {
         const RealComponent = Component!;
         return <RealComponent { ...props } />;
+    }
+    // Wait 500ms before showing login screen
+    if (new Date().getTime() - creationTime < 500)  {
+        return null;
     }
     // TODO: better support for creating an account as well
     return (
