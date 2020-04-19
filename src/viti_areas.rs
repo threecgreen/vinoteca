@@ -69,8 +69,8 @@ pub fn stats(
             viti_areas::name,
             // literal until diesel has better aggregation support
             sql::<BigInt>("count(wines.id)"),
-            sql::<Nullable<Double>>("avg(purchases.price)"),
-            sql::<Nullable<Double>>("avg(wines.rating)"),
+            sql::<Nullable<Double>>("cast(avg(purchases.price) AS DOUBLE PRECISION)"),
+            sql::<Nullable<Double>>("cast(avg(wines.rating) AS DOUBLE PRECISION)"),
         ))
         .inner_join(regions::table)
         .inner_join(wines::table.inner_join(purchases::table))
