@@ -49,7 +49,7 @@ export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): P
 }
 
 type Action =
-    | { type: "setDate", date: number }
+    | { type: "setDate", date: number | null }
     | { type: "setQuantity", quantity: number }
     | { type: "setShouldAddToInventory", shouldAddToInventory: boolean }
     | { type: "setPrice", price: number }

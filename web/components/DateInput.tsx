@@ -7,7 +7,7 @@ import { dateToNum, numToDate } from "../lib/utils";
 interface IProps {
     date: number | null;
     name: string;
-    onChange: (date: number) => void;
+    onChange: (date: number | null) => void;
 }
 
 export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
@@ -16,13 +16,14 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
     React.useEffect(() => {
         const datepicker = new Datepicker(inputRef.current, {
             autoClose: false,
-            defaultDate: new Date(),
             maxDate: new Date(),
             showClearBtn: true,
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
                 if (datepicker.date) {
                     onChange(dateToNum(datepicker.date));
+                } else {
+                    onChange(null);
                 }
             },
             yearRange: 15,

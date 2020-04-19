@@ -61,6 +61,15 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             // @ts-ignore
             name="changelog">Changelog</a></h4>
 
+            <h5>5.1.2</h5>
+            <p>Fix nullable date input</p>
+
+            <h5>5.1.1</h5>
+            <ul className="bullets">
+                <li>Color migration</li>
+                <li>Add tests</li>
+            </ul>
+
             <h5>5.1.0</h5>
             <ul className="bullets">
                 <li>Complete transition to single-page app</li>
