@@ -51,11 +51,15 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     // FetchInitialState
     React.useEffect(() => {
         async function fetchData() {
-            Promise.all([
-                fetchWine(),
-                fetchPurchases(),
-                fetchGrapes(),
-            ]);
+            try {
+                Promise.all([
+                    fetchWine(),
+                    fetchPurchases(),
+                    fetchGrapes(),
+                ]);
+            } catch (e) {
+                logger.logWarning(`Failed to load wine: ${e.message}`, {id});
+            }
         }
 
         fetchData();

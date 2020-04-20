@@ -1,10 +1,11 @@
+import { redirectTo } from "@reach/router";
 import format from "date-fns/esm/format";
-import { RouteComponentProps, redirectTo } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
-import { IUser } from "../../lib/Rest";
+import { useUser } from "../../components/UserContext";
 
-export const UserProfileApp: React.FC<RouteComponentProps<{user: IUser | null}>> = ({user}) => {
+export const UserProfileApp: React.FC<{}> = (_) => {
+    const user = useUser();
     if (!user) {
         redirectTo("/");
         return null;

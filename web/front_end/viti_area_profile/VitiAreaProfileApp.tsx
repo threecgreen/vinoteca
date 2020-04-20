@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -9,9 +8,9 @@ import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/Rest";
 import { getVitiArea, getVitiAreaStats, getWines, updateVitiArea } from "../../lib/RestApi";
+import { setTitle } from "../../lib/widgets";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
-import { setTitle } from "../../lib/widgets";
 
 interface IState {
     isEditing: boolean;
@@ -27,7 +26,7 @@ interface IProps {
     vitiAreaId: number;
 }
 
-export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
+export class VitiAreaProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {
@@ -48,12 +47,16 @@ export class VitiAreaProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        await Promise.all([
-            this.getAndSetVitiArea(),
-            this.getAndSetWines(),
-            this.getAndSetStats(),
-        ]);
         setTitle(this.state.vitiArea?.name ?? "Viticultural area profile");
+        try {
+            await Promise.all([
+                this.getAndSetVitiArea(),
+                this.getAndSetWines(),
+                this.getAndSetStats(),
+            ]);
+        } catch (e) {
+            this.logger.logWarning(`Failed to log viticultural area: ${e.message}`, {id: this.props.vitiAreaId});
+        }
     }
 
     private async getAndSetVitiArea() {

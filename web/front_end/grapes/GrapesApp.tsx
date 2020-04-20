@@ -17,8 +17,14 @@ export const GrapesApp: React.FC<{}> = (_) => {
 
     React.useEffect(() => {
         async function fetchGrapes() {
-            const grapes: IGrape[] = await getGrapes({});
-            dispatch({type: "setGrapes", grapes});
+            try {
+                const grapes: IGrape[] = await getGrapes({});
+                dispatch({type: "setGrapes", grapes});
+            } catch (e) {
+                logger.logWarning(`Failed to load grapes: ${e.message}`);
+            } finally {
+                dispatch({type: "hasLoaded"});
+            }
         }
 
         fetchGrapes();
@@ -39,7 +45,7 @@ export const GrapesApp: React.FC<{}> = (_) => {
         }
     }
 
-    if (state.grapes.length === 0) {
+    if (!state.hasLoaded) {
         return <Preloader />;
     }
     let editComponent = null;

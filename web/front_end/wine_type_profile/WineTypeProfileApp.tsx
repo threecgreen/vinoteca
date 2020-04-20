@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -10,8 +9,8 @@ import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { getWines, getWineType, updateWineType } from "../../lib/RestApi";
 import { IRestModel } from "../../lib/RestTypes";
-import { WineType } from "./WineType";
 import { setTitle } from "../../lib/widgets";
+import { WineType } from "./WineType";
 
 interface IState {
     isEditing: boolean;
@@ -26,7 +25,7 @@ interface IProps {
     wineTypeId: number;
 }
 
-export class WineTypeProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
+export class WineTypeProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {
@@ -46,11 +45,15 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        await Promise.all([
-            this.getAndSetWineTypes(),
-            this.getAndSetWines(),
-        ]);
         setTitle(this.state.wineType?.name ?? "Wine type profile");
+        try {
+            await Promise.all([
+                this.getAndSetWineTypes(),
+                this.getAndSetWines(),
+            ]);
+        } catch (e) {
+            this.logger.logWarning(`Failed to load wine type: ${e.message}`, {id: this.props.wineTypeId});
+        }
     }
 
     private async getAndSetWineTypes() {

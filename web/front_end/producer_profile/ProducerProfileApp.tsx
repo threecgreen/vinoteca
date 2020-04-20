@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -35,7 +35,7 @@ interface IProducerProfileAppProps {
     producerId: number;
 }
 
-export class ProducerProfileApp extends React.Component<RouteComponentProps<IProducerProfileAppProps>, IProducerProfileAppState> {
+export class ProducerProfileApp extends React.Component<IProducerProfileAppProps, IProducerProfileAppState> {
     private logger: Logger;
 
     constructor(props: IProducerProfileAppProps) {
@@ -60,12 +60,16 @@ export class ProducerProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        const [_, wines] = await Promise.all([
-            this.getCurrentProducerData(),
-            getWines({producerId: this.props.producerId}),
-        ]);
         setTitle(this.state.producer?.name ?? "Producer profile");
-        this.setState({wines: wines});
+        try {
+            const [_, wines] = await Promise.all([
+                this.getCurrentProducerData(),
+                getWines({producerId: this.props.producerId}),
+            ]);
+            this.setState({wines: wines});
+        } catch (e) {
+            this.logger.logWarning(`Failed to load producer: ${e.message}`, {id: this.props.producerId});
+        }
     }
 
     public render() {

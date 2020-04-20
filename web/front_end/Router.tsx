@@ -46,15 +46,38 @@ export const Router: React.FC<{}> = (_props) => {
 
                         <AuthenticatedRoute Component={ WinesApp } path="wines" />
                         <RouteById Component={ WineProfileApp } path="wines/:id" />
-                        <AuthenticatedRoute Component={ InventoryApp } path="wines/inventory" />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ InventoryApp }
+                            path="wines/inventory"
+                        />
                         <AuthenticatedRoute Component={ NewWineApp } path="wines/new" />
-                        <AuthenticatedRoute Component={ SearchWinesApp } path="wines/search" />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ SearchWinesApp } path="wines/search"
+                        />
 
-                        <AuthenticatedRoute Component={ ProducerProfileApp } path="producers/:producerId" />
-                        <AuthenticatedRoute Component={ RegionProfileApp } path="regions/:regionId" />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ ProducerProfileApp }
+                            path="producers/:producerId"
+                        />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ RegionProfileApp }
+                            path="regions/:regionId"
+                        />
                         <AuthenticatedRoute Component={ UserProfileApp } path="profile" />
-                        <AuthenticatedRoute Component={ VitiAreaProfileApp } path="viti-areas/:vitiAreaId" />
-                        <AuthenticatedRoute Component={ WineTypeProfileApp } path="wine-types/:wineTypeId" />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ VitiAreaProfileApp }
+                            path="viti-areas/:vitiAreaId"
+                        />
+                        <AuthenticatedRoute
+                            // @ts-ignore
+                            Component={ WineTypeProfileApp }
+                            path="wine-types/:wineTypeId"
+                        />
 
                         <PleaseCrash path="/crash/please" />
                         <NotFound default />

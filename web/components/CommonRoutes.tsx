@@ -38,6 +38,7 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
     const setUser = useSetUser();
     if (user) {
         const RealComponent = Component!;
+        // @ts-ignore
         return <RealComponent { ...props } />;
     }
     // Wait 500ms before showing login screen

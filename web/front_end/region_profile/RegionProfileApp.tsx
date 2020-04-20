@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
@@ -24,7 +23,7 @@ interface IProps {
     regionId: number;
 }
 
-export class RegionProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
+export class RegionProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {
@@ -41,12 +40,16 @@ export class RegionProfileApp extends React.Component<RouteComponentProps<IProps
     }
 
     public async componentDidMount() {
-        await Promise.all([
-            this.getAndSetRegion(),
-            this.getAndSetWines(),
-            this.getAndSetVitiAreaStats(),
-        ]);
         setTitle(this.state.region?.name ?? "Region profile");
+        try {
+            await Promise.all([
+                this.getAndSetRegion(),
+                this.getAndSetWines(),
+                this.getAndSetVitiAreaStats(),
+            ]);
+        } catch (e) {
+            this.logger.logWarning(`Failed to load region: ${e.message}`, {id: this.props.regionId});
+        }
     }
 
     private async getAndSetRegion() {
