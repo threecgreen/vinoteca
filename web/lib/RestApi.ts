@@ -55,10 +55,10 @@ function singleEntityGetter<Params, Resp>(
 }
 
 function getOrCreate<ReqParams, Resp, Form>(
+    objName: string,
     listGetter: (params: ReqParams) => Promise<Resp[]>,
     creator: (form: Form) => Promise<Resp>,
 ): (params: ReqParams, form: Form) => Promise<Resp> {
-    const objName = listGetter.name.substr(3);
     return async (params, form) => {
         const results = await listGetter(params);
         if (results.length === 0) {
@@ -107,7 +107,7 @@ export async function getGrapes({ id, name }: IGetGrapesParams): Promise<IGrape[
 }
 
 export const getGrape = singleEntityGetter("grape", getGrapes);
-export const getOrCreateGrape = getOrCreate(getGrapes, createGrape);
+export const getOrCreateGrape = getOrCreate("grape", getGrapes, createGrape);
 
 export async function createGrape(grape: IGrapeForm): Promise<IGrape> {
     return post("/rest/grapes", grape);
@@ -137,7 +137,7 @@ export async function getProducers({id, name, regionId}: IGetProducersParams): P
 }
 
 export const getProducer = singleEntityGetter("producer", getProducers);
-export const getOrCreateProducer = getOrCreate(getProducers, createProducer);
+export const getOrCreateProducer = getOrCreate("producer", getProducers, createProducer);
 
 export async function createProducer(producer: IProducerForm): Promise<IProducer> {
     return post("/rest/producers", producer);
@@ -224,7 +224,7 @@ export async function getStores({id, name}: IGetStoreParams): Promise<IStore[]> 
 }
 
 export const getStore = singleEntityGetter("store", getStores);
-export const getOrCreateStore = getOrCreate(getStores, createStore);
+export const getOrCreateStore = getOrCreate("store", getStores, createStore);
 
 export async function createStore(store: IStoreForm): Promise<IStore> {
     return post("/rest/stores", store);
@@ -267,7 +267,7 @@ export async function getVitiAreas(
 }
 
 export const getVitiArea = singleEntityGetter("viticultural area", getVitiAreas);
-export const getOrCreateVitiArea = getOrCreate(getVitiAreas, createVitiArea);
+export const getOrCreateVitiArea = getOrCreate("viticultural area", getVitiAreas, createVitiArea);
 
 export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {
     return post("/rest/viti-areas", vitiArea);
@@ -395,7 +395,7 @@ export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<I
 }
 
 export const getWineType = singleEntityGetter("wine type", getWineTypes);
-export const getOrCreateWineType = getOrCreate(getWineTypes, createWineType);
+export const getOrCreateWineType = getOrCreate("wine type", getWineTypes, createWineType);
 
 export async function createWineType(wineType: IWineTypeForm): Promise<IWineType> {
     return post("/rest/wine-types", wineType);
