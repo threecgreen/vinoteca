@@ -59,7 +59,10 @@ impl<I> IntoFirst<I> for Json<Vec<I>> {
     fn into_first(self, not_found_msg: &str) -> RestResult<I> {
         match self.get(0) {
             Some(_) => Ok(Json(self.into_inner().remove(0))),
-            None => Err(VinotecaError::NotFound(not_found_msg.to_owned())),
+            None => {
+                warn!("{}", not_found_msg);
+                Err(VinotecaError::NotFound(not_found_msg.to_owned()))
+            }
         }
     }
 }
