@@ -1,4 +1,5 @@
 import format from "date-fns/esm/format";
+import parse from "date-fns/esm/parse";
 import { Datepicker } from "materialize-css";
 import React from "react";
 import { dateToStr } from "../lib/utils";
@@ -30,7 +31,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
         });
     }, [inputRef]);
 
-    const dateString = date ? format(new Date(date), "MMM dd, yyyy") : "";
+    const dateString = date ? format(parse(date, "yyyy-MM-dd", new Date()), "MMM dd, yyyy") : "";
     const isValueSet = date !== null;
 
     return (
