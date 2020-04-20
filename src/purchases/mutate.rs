@@ -70,21 +70,36 @@ fn validate_relations(
         .filter(wines::id.eq(purchase_form.wine_id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(&**connection)?;
+        .first::<i32>(&**connection)
+        .map_err(|e| {
+            warn!("User tried to create purchase with invalid or another user's wine. wine_id: {}, user_id: {}, error: {:?}", purchase_form.wine_id, auth.id, e);
+            // Not forbidden to prevent leaking info to user
+            VinotecaError::BadRequest("Wine not found for purchase".to_owned())
+        })?;
     // Validate store is user's
-    stores::table
-        .filter(stores::id.eq(purchase_form.wine_id))
-        .filter(stores::user_id.eq(auth.id))
-        .select(stores::id)
-        .first::<i32>(&**connection)?;
+    if let Some(store_id) = purchase_form.store_id {
+        stores::table
+            .filter(stores::id.eq(store_id))
+            .filter(stores::user_id.eq(auth.id))
+            .select(stores::id)
+            .first::<i32>(&**connection)
+            .map_err(|e| {
+                warn!("User tried to create purchase with invalid or another user's store. wine_id: {}, user_id: {}, store_id: {}, error: {:?}", purchase_form.wine_id, auth.id, store_id, e);
+                VinotecaError::BadRequest("Store not found for purchase".to_owned())
+            })?;
+    }
     Ok(())
 }
 
 /// Validate is user's purchase
-fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
+fn validate_owns_wine(
+    auth: Auth,
+    purchase_id: i32,
+    connection: &DbConn,
+) -> Result<(), VinotecaError> {
     purchases::table
         .inner_join(wines::table)
-        .filter(purchases::id.eq(id))
+        .filter(purchases::id.eq(purchase_id))
         .filter(wines::user_id.eq(auth.id))
         .select(purchases::id)
         .first::<i32>(&**connection)?;

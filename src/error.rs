@@ -89,11 +89,11 @@ impl From<S3Error> for VinotecaError {
 impl Display for VinotecaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let fmt_arg = match self {
-            Self::NotFound(msg) => format!("NotFound({})", msg),
-            Self::Internal(msg) => format!("Internal({})", msg),
-            Self::MissingConstraint(msg) => format!("MissingConstraint({})", msg),
-            Self::BadRequest(msg) => format!("BadRequest({})", msg),
-            Self::Forbidden(msg) => format!("Forbidden({})", msg),
+            Self::NotFound(msg) => format!("Error not found: {}", msg),
+            Self::Internal(msg) => format!("Internal error: {}", msg),
+            Self::MissingConstraint(msg) => format!("Error missing constraint: {}", msg),
+            Self::BadRequest(msg) => format!("Error bad request: {}", msg),
+            Self::Forbidden(msg) => format!("Error forbidden: {}", msg),
         };
         write!(f, "{}", fmt_arg)
     }
