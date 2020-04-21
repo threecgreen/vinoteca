@@ -21,7 +21,7 @@ pub fn get(
     let mut query = grapes::table
         // Left to include grapes with no wine
         .left_join(wine_grapes::table.inner_join(wines::table))
-        .filter(wines::user_id.eq(auth.id))
+        .filter(grapes::user_id.eq(auth.id))
         .group_by((grapes::id, grapes::name))
         .into_boxed();
     if let Some(id) = id {
