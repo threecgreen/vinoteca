@@ -50,11 +50,11 @@ export class InventoryTable extends React.Component<IProps, IState> {
                         <TableHeader {...this.tableHeaderProps(SortingValue.Inventory)} isNumCol >
                             Inventory
                         </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Color)}>
-                            Color
-                        </TableHeader>
                         <TableHeader {...this.tableHeaderProps(SortingValue.NameAndType)}>
                             Name and Type
+                        </TableHeader>
+                        <TableHeader {...this.tableHeaderProps(SortingValue.Color)}>
+                            Color
                         </TableHeader>
                         <TableHeader {...this.tableHeaderProps(SortingValue.Producer)}>
                             Producer
@@ -100,11 +100,11 @@ export class InventoryTable extends React.Component<IProps, IState> {
                                 <NumCell num={ wine.inventory }
                                     maxDecimals={ 0 }
                                 />
-                                <ColorCell color={ wine.color } />
                                 <NameAndTypeCell id={ wine.id }
                                     name={ wine.name }
                                     wineType={wine.wineType}
                                 />
+                                <ColorCell color={ wine.color } />
                                 <ProducerCell id={ wine.producerId }
                                     name={ wine.producer }
                                 />

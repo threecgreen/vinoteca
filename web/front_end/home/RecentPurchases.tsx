@@ -31,8 +31,8 @@ export const RecentPurchases: React.FC<{}> = (_) => {
         content = <PreloaderCirc />;
     } else if (purchases.length > 0) {
         content = (
-            <SimpleTable columns={ ["Date", "Store", "Name and Type", "Producer", "Region",
-                              {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
+            <SimpleTable columns={ ["Date", "Name and Type", "Producer", "Region", "Store",
+                                    {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
                 condensed={ false }
             >
                 { purchases.map((purchase) => {
@@ -41,7 +41,6 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                             <DateCell date={ purchase.date }
                                 format="MMM dd"
                             />
-                            <TextCell text={ purchase.store } />
                             <NameAndTypeCell id={ purchase.wineId }
                                 name={ purchase.wineName }
                                 wineType={ purchase.wineType }
@@ -52,6 +51,7 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                             <RegionCell id={ purchase.regionId }
                                 name={ purchase.region }
                             />
+                            <TextCell text={ purchase.store } />
                             <PriceCell price={ purchase.price } />
                             <NumCell num={ purchase.quantity } />
                         </tr>
