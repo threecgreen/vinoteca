@@ -1,10 +1,10 @@
 import { FormSelect } from "materialize-css";
 import React from "react";
-import Logger from "../lib/Logger";
-import { IColor } from "../lib/Rest";
-import { getColors } from "../lib/RestApi";
-import { IOnChange } from "./IProps";
-import { SelectInput } from "./SelectInput";
+import Logger from "../../lib/Logger";
+import { IColor } from "../../lib/Rest";
+import { getColors } from "../../lib/RestApi";
+import { SelectInput } from "../inputs/SelectInput";
+import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
     s: number;

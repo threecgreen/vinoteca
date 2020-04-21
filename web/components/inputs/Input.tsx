@@ -1,7 +1,7 @@
 import M from "materialize-css";
 import React from "react";
-import { nameToId } from "../lib/utils";
-import { InputField } from "./Grid";
+import { nameToId } from "../../lib/utils";
+import { InputField } from "../Grid";
 
 type IInputValue = string | number | string[];
 

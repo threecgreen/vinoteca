@@ -1,14 +1,14 @@
 import React from "react";
-import { ColorInput } from "../../components/ColorInput";
-import { FileInput } from "../../components/FileInput";
-import { ProducerInput } from "../../components/ProducerInput";
-import { RatingInput } from "../../components/RatingInput";
-import { RegionInput } from "../../components/RegionInput";
-import { TextInput } from "../../components/TextInput";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
-import { WineTypeInput } from "../../components/WineTypeInput";
+import { FileInput } from "../../components/inputs/FileInput";
+import { TextInput } from "../../components/inputs/TextInput";
+import { ColorInput } from "../../components/model_inputs/ColorInput";
+import { ProducerInput } from "../../components/model_inputs/ProducerInput";
+import { RatingInput } from "../../components/model_inputs/RatingInput";
+import { RegionInput } from "../../components/model_inputs/RegionInput";
+import { VitiAreaInput } from "../../components/model_inputs/VitiAreaInput";
+import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
 import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
-import { getColor, getOrCreateWineType, getOrCreateProducer, getOrCreateVitiArea, getRegion } from "../../lib/RestApi";
+import { getColor, getOrCreateProducer, getOrCreateVitiArea, getOrCreateWineType, getRegion } from "../../lib/RestApi";
 
 export interface IWineData {
     color: string;

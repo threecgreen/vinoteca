@@ -2,15 +2,13 @@ import { navigate, RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn, BtnLink } from "../../components/Buttons";
 import { Form } from "../../components/Form";
-import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
+import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
-import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer,
-         PurchaseInputs } from "../../components/PurchaseInputs";
 import Logger from "../../lib/Logger";
-import { createPurchase, createWine, createWineGrapes, deletePurchase,
-         deleteWine } from "../../lib/RestApi";
+import { createPurchase, createWine, createWineGrapes, deletePurchase, deleteWine } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 

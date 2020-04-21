@@ -1,11 +1,11 @@
 import React from "react";
-import { ColorInput } from "../../components/ColorInput";
 import { Form } from "../../components/Form";
 import { Row } from "../../components/Grid";
-import { ProducerInput } from "../../components/ProducerInput";
-import { RegionInput } from "../../components/RegionInput";
-import { VitiAreaInput } from "../../components/VitiAreaInput";
-import { WineTypeInput } from "../../components/WineTypeInput";
+import { ColorInput } from "../../components/model_inputs/ColorInput";
+import { ProducerInput } from "../../components/model_inputs/ProducerInput";
+import { RegionInput } from "../../components/model_inputs/RegionInput";
+import { VitiAreaInput } from "../../components/model_inputs/VitiAreaInput";
+import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
 import { SearchWinesInput } from "./SearchWinesApp";
 
 interface IProps {

@@ -1,10 +1,10 @@
 import React from "react";
-import Logger from "../lib/Logger";
-import { IProducer } from "../lib/Rest";
-import { getProducers, toDict } from "../lib/RestApi";
-import { autocomplete } from "../lib/widgets";
-import { IOnChange } from "./IProps";
-import { TextInput } from "./TextInput";
+import Logger from "../../lib/Logger";
+import { IProducer } from "../../lib/Rest";
+import { getProducers, toDict } from "../../lib/RestApi";
+import { autocomplete } from "../../lib/widgets";
+import { TextInput } from "../inputs/TextInput";
+import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
     value: string;

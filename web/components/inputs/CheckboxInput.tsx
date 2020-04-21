@@ -1,6 +1,6 @@
 import React from "react";
-import { nameToId } from "../lib/utils";
-import { Col, IGridProps } from "./Grid";
+import { nameToId } from "../../lib/utils";
+import { Col, IGridProps } from "../Grid";
 
 interface IProps extends IGridProps {
     name: string;

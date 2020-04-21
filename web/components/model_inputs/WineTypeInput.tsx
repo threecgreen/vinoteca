@@ -1,9 +1,9 @@
 import React from "react";
-import { IWineType } from "../lib/Rest";
-import { getWineTypes, toDict } from "../lib/RestApi";
-import { autocomplete } from "../lib/widgets";
-import { IOnChange } from "./IProps";
-import { TextInput } from "./TextInput";
+import { IWineType } from "../../lib/Rest";
+import { getWineTypes, toDict } from "../../lib/RestApi";
+import { autocomplete } from "../../lib/widgets";
+import { TextInput } from "../inputs/TextInput";
+import { IOnChange } from "../IProps";
 
 interface IWineTypeInputProps extends IOnChange {
     value: string;

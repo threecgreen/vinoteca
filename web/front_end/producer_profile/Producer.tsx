@@ -3,8 +3,8 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
-import { ProducerInput } from "../../components/ProducerInput";
-import { RegionInput } from "../../components/RegionInput";
+import { ProducerInput } from "../../components/model_inputs/ProducerInput";
+import { RegionInput } from "../../components/model_inputs/RegionInput";
 import { IProducer, IRegion } from "../../lib/Rest";
 
 interface IProducerProps {

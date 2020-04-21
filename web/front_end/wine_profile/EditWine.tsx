@@ -1,8 +1,8 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
-import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
 import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
+import { grapeReducer, GrapesInputs } from "../../components/model_inputs/GrapesInputs";
 import { IWine, IWineGrape } from "../../lib/Rest";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
 

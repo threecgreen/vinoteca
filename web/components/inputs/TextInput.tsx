@@ -1,9 +1,8 @@
 import React from "react";
+import { Btn } from "../Buttons";
+import { Col } from "../Grid";
+import { insertCharAt, SpecialCharPicker } from "../SpecialChars";
 import { Input } from "./Input";
-import { SpecialCharPicker, insertCharAt } from "./SpecialChars";
-import { MaterialIcon } from "./MaterialIcon";
-import { Btn } from "./Buttons";
-import { Col } from "./Grid";
 
 interface ITextProps {
     name: string;

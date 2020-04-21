@@ -1,6 +1,6 @@
 import React from "react";
-import { capitalizeFirstLetter, nameToId } from "../lib/utils";
-import { InputField } from "./Grid";
+import { capitalizeFirstLetter, nameToId } from "../../lib/utils";
+import { InputField } from "../Grid";
 
 interface IProps {
     name: string;

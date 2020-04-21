@@ -1,7 +1,7 @@
 import { Range } from "materialize-css";
 import React from "react";
-import { CheckboxInput } from "./CheckboxInput";
-import { Col } from "./Grid";
+import { Col } from "../Grid";
+import { CheckboxInput } from "../inputs/CheckboxInput";
 
 interface IProps {
     isChecked: boolean;

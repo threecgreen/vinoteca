@@ -2,7 +2,7 @@ import format from "date-fns/esm/format";
 import parse from "date-fns/esm/parse";
 import { Datepicker } from "materialize-css";
 import React from "react";
-import { dateToStr } from "../lib/utils";
+import { dateToStr } from "../../lib/utils";
 import { Input } from "./Input";
 
 interface IProps {

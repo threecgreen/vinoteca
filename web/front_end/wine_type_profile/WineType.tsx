@@ -2,7 +2,7 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
-import { WineTypeInput } from "../../components/WineTypeInput";
+import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
 import { IRestModel } from "../../lib/RestTypes";
 
 interface IProps {

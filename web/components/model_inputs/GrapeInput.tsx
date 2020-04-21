@@ -1,11 +1,11 @@
 import React from "react";
-import { IDict } from "../lib/utils";
-import { autocomplete } from "../lib/widgets";
-import { FloatingBtn } from "./Buttons";
-import { Col, InputField } from "./Grid";
-import { MaterialIcon } from "./MaterialIcon";
-import { NumberInput } from "./NumberInput";
-import { TextInput } from "./TextInput";
+import { IDict } from "../../lib/utils";
+import { autocomplete } from "../../lib/widgets";
+import { FloatingBtn } from "../Buttons";
+import { Col, InputField } from "../Grid";
+import { NumberInput } from "../inputs/NumberInput";
+import { TextInput } from "../inputs/TextInput";
+import { MaterialIcon } from "../MaterialIcon";
 
 interface IProps {
     id: number;

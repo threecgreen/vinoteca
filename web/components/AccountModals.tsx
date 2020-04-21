@@ -2,8 +2,8 @@ import React from "react";
 import { IUser } from "../lib/Rest";
 import { createUser, login } from "../lib/RestApi";
 import { CancelOrConfirmBtns } from "./Buttons";
+import { EmailInput, PasswordInput, TextInput } from "./inputs/TextInput";
 import { Modal, ModalContent, ModalFooter } from "./Modal";
-import { EmailInput, PasswordInput, TextInput } from "./TextInput";
 
 interface IUserProps {
     onFinish: (user: IUser) => void,

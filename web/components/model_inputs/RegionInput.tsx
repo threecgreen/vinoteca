@@ -1,11 +1,11 @@
 import React from "react";
-import Logger from "../lib/Logger";
-import { IRegion } from "../lib/Rest";
-import { EmptyResultError, getRegions, toDict } from "../lib/RestApi";
-import { autocomplete } from "../lib/widgets";
-import { IOnChange } from "./IProps";
-import { TextInput } from "./TextInput";
-import { IDict } from "../lib/utils";
+import Logger from "../../lib/Logger";
+import { IRegion } from "../../lib/Rest";
+import { EmptyResultError, getRegions } from "../../lib/RestApi";
+import { IDict } from "../../lib/utils";
+import { autocomplete } from "../../lib/widgets";
+import { TextInput } from "../inputs/TextInput";
+import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
     value: string;

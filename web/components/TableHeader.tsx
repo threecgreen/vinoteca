@@ -1,8 +1,8 @@
 import React from "react";
 import Logger from "../lib/Logger";
-import { useColorsSelect } from "./ColorInput";
+import { SelectInput } from "./inputs/SelectInput";
 import { MaterialIcon } from "./MaterialIcon";
-import { SelectInput } from "./SelectInput";
+import { useColorsSelect } from "./model_inputs/ColorInput";
 
 export enum SortingState {
     NotSorted,
