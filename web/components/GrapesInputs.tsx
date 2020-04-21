@@ -1,5 +1,5 @@
 import React from "react";
-import Logger from "../lib/Logger";
+import Logger, { useLogger } from "../lib/Logger";
 import { IWineGrape, IWineGrapesForm } from "../lib/Rest";
 import { getGrapes, getOrCreateGrape, toDict } from "../lib/RestApi";
 import { IDict, maxBy, sumBy } from "../lib/utils";
@@ -81,11 +81,16 @@ interface IProps {
 
 export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
     const [completions, setCompletions] = React.useState<IDict<string | null>>({});
+    const logger = useLogger("GrapesInputs");
 
     React.useEffect(() => {
         async function fetchGrapes() {
-            const completions = await getGrapes({});
-            setCompletions(toDict(completions));
+            try {
+                const completions = await getGrapes({});
+                setCompletions(toDict(completions));
+            } catch (e) {
+                logger.logWarning(`Failed to fetch grape autocompletions: ${e}`);
+            }
         }
 
         fetchGrapes();
@@ -96,9 +101,9 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
             <Col s={ 12 }>
                 <h6>Grape composition</h6>
             </Col>
-            { grapes.map((grape, i) => (
+            { grapes.map((grape) => (
                 <GrapeInput key={ grape.grapeId }
-                    id={ i }
+                    id={ grape.grapeId }
                     completions={ completions }
                     grape={ grape.grape }
                     percent={ grape.percent }
