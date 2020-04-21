@@ -130,6 +130,7 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
     return (
         <>
             <ColorInput selection={ data.color }
+                s={ 12 } m={ 4 } l={ 2 }
                 onChange={ (color) => dispatch({type: "setColor", color}) }
                 extraChoice="Select a color"
             />

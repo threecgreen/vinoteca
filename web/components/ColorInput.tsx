@@ -7,6 +7,9 @@ import { IOnChange } from "./IProps";
 import { SelectInput } from "./SelectInput";
 
 interface IProps extends IOnChange {
+    s: number;
+    m: number;
+    l: number;
     selection: string;
     extraChoice?: string;
 }
@@ -45,7 +48,6 @@ export const ColorInput: React.FC<IProps> = (props) => {
 
     return (
         <SelectInput name="Color"
-            s={ 4 } l={ 2 }
             selectRef={ selectRef }
             options={ selectionOptions }
             onChange={ (v) => props?.onChange(v) }

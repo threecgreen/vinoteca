@@ -23,7 +23,7 @@ export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
     return (
         <TextInput name="Wine Type"
             className="autocomplete"
-            s={ 8 } l={ 4 }
+            s={ 12 } m={ 8 } l={ 4 }
             value={ props.value }
             inputRef={ inputRef }
             onFocus={ props.onFocus }

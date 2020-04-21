@@ -1,5 +1,5 @@
 import React from "react";
-import Logger from "../lib/Logger";
+import Logger, { useLogger } from "../lib/Logger";
 import { IPurchaseForm, IStore } from "../lib/Rest";
 import { getOrCreateStore, getStores, toDict } from "../lib/RestApi";
 import { dateToStr, defaultVintageYear } from "../lib/utils";
@@ -85,7 +85,7 @@ interface IProps {
 }
 
 export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dispatch}) => {
-    const logger = new Logger("PurchaseInputs");
+    const logger = useLogger("PurchaseInputs");
     const storeInputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     const onStoreChange: (store: string) => void = (store) => {
@@ -147,14 +147,14 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
                 className="autocomplete"
                 value={ data.store }
                 onChange={ onStoreChange }
-                s={ 6 } l={ 3 }
+                s={ 12 } m={ 6 } l={ 3 }
                 inputRef={ storeInputRef }
             />
             <TextInput name="Memo"
                 className=""
                 value={ data.memo }
                 onChange={ (memo) => dispatch({type: "setMemo", memo}) }
-                s={ 6 } l={ 3 }
+                s={ 12 } m={ 6 } l={ 3 }
             />
         </>
     );

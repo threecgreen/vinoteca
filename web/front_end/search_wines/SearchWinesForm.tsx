@@ -22,6 +22,7 @@ export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
         <Form>
             <Row>
                 <ColorInput selection={ props.colorSelection }
+                    s={ 12 } m={ 4 } l={ 2 }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Color, v) }
                     extraChoice="Any"
                 />
