@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IGrape, IGrapeForm } from "../../lib/Rest";
 import { getGrapes, updateGrape } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
@@ -10,7 +10,7 @@ import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
 export const GrapesApp: React.FC<{}> = (_) => {
-    const logger = new Logger("GrapesApp");
+    const logger = useLogger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
     useTitle("Grapes");

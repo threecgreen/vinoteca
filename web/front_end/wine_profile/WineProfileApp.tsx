@@ -6,9 +6,9 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
-import { Preloader } from "../../components/Preloader";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/model_inputs/PurchaseInputs";
-import Logger from "../../lib/Logger";
+import { Preloader } from "../../components/Preloader";
+import { useLogger } from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
 import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
 import { getNameAndType } from "../../lib/utils";
@@ -31,7 +31,7 @@ interface IProps {
 export const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
-    const logger = new Logger("WineProfileApp");
+    const logger = useLogger("WineProfileApp");
 
     useTitle(state.wine ? getNameAndType(state.wine.name, state.wine.wineType) : "Wine profile");
 

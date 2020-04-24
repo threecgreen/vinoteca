@@ -7,12 +7,13 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { createPurchase, createWine, createWineGrapes, deletePurchase, deleteWine } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
 export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
+    const logger = useLogger("NewWineApp");
     const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
     const [wineState, wineDispatch] = React.useReducer(wineInputReducer, initWineInputData());
     const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
@@ -22,7 +23,6 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
 
     const onSubmit = async () => {
         setIsSaving(true);
-        const logger = new Logger("NewWineApp");
 
         let wineId;
         let purchaseId;

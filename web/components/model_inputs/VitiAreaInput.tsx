@@ -1,5 +1,5 @@
 import React from "react";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IVitiArea } from "../../lib/Rest";
 import { getVitiAreas, toDict } from "../../lib/RestApi";
 import { autocomplete } from "../../lib/widgets";
@@ -12,7 +12,7 @@ interface IProps extends IOnChange {
 }
 
 export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) => {
-    const logger = new Logger("VitiAreaInput");
+    const logger = useLogger("VitiAreaInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {

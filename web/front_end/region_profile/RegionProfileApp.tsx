@@ -36,7 +36,7 @@ export class RegionProfileApp extends React.Component<IProps, IState> {
             vitiAreas: [],
         }
 
-        this.logger = new Logger("RegionProfileApp", true);
+        this.logger = new Logger("RegionProfileApp");
     }
 
     public async componentDidMount() {

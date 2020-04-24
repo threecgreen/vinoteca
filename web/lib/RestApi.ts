@@ -69,7 +69,6 @@ function getOrCreate<ReqParams, Resp, Form>(
             return results[0];
         }
         const message = `Received more than one ${objName} result when one was expected`;
-        new Logger("RestApi").logError(message);
         throw Error(message);
     };
 }
