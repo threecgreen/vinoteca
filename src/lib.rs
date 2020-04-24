@@ -81,7 +81,7 @@ pub fn create_rocket() -> rocket::Rocket {
         // Run embedded database migrations on startup
         .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
         // TODO: persistent logger
-        .mount("/", routes![html::home, html::any_other])
+        .mount("/", routes![html::home, html::any_other, html::robots])
         .mount(
             "/rest",
             routes![
