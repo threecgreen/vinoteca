@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { GreenCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
-import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell, WineTypeCell } from "../../components/TableCells";
+import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
 import { get } from "../../lib/ApiHelper";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IRecentPurchase } from "../../lib/Rest";
 
 export const RecentPurchases: React.FC<{}> = (_) => {
-    const logger = new Logger("RecentPurchases");
+    const logger = useLogger("RecentPurchases");
     const [hasLoaded, setHasLoaded] = useState<boolean>(false);
     const [purchases, setPurchases] = useState<IRecentPurchase[]>([]);
     useEffect(() => {

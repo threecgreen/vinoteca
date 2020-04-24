@@ -1,9 +1,9 @@
-import { RouteComponentProps, redirectTo } from "@reach/router";
+import { redirectTo, RouteComponentProps } from "@reach/router";
 import React from "react";
-import Logger from "../lib/Logger";
+import { useLogger } from "../lib/Logger";
 import { IUser } from "../lib/Rest";
 import { LoginForm } from "./AccountModals";
-import { useUser, useSetUser } from "./UserContext";
+import { useSetUser, useUser } from "./UserContext";
 
 interface IRouteByIdProps {
     id: string;
@@ -55,7 +55,8 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
 AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
 export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
-    new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
+    const logger = useLogger("NotFound");
+    logger.logWarning("Client requested url that doesn't exist")
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>

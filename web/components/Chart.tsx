@@ -1,6 +1,6 @@
-import React from "react";
 import Chart from "chart.js";
-import Logger from "../lib/Logger";
+import React from "react";
+import { useLogger } from "../lib/Logger";
 
 export interface IChartInput {
     label: string;
@@ -205,7 +205,7 @@ interface ILineChartProps {
 }
 
 export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
-    const logger = new Logger("LineChart");
+    const logger = useLogger("LineChart");
 
     const chartLabels = splitData(data[0])[0];
     if (data.length !== seriesLabels.length) {

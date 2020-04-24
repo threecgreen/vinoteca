@@ -32,7 +32,7 @@ export function restModelsToNameDict(objects: IRestModel[]): IDict<null> {
 export function numToDate(num: number): Date {
     const strNum = `${num}`;
     if (strNum.length !== 8) {
-        console.warn(`Invalid date number '${strNum}'`);
+        throw Error(`Invalid date number '${strNum}'`);
     }
     const year = strNum.substr(0, 4);
     const month = strNum.substr(4, 2);
@@ -171,7 +171,7 @@ export function onLoad(fun: () => void) {
 export function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
 ) {
-    new Logger("window", false, false).logCritical(
+    new Logger("window").logCritical(
         `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
         + ` event: ${event.toString()}`);
 }

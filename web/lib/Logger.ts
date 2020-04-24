@@ -1,7 +1,7 @@
+import React from "react";
 import { postLog } from "./RestApi";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
-import React from "react";
 
 /** Provides logging functionality for client-side JavaScript errors. */
 enum LogLevel {
@@ -104,4 +104,4 @@ export default class Logger {
 export const useLogger = (module: string, toConsole = false, shouldToast = false) => {
     const [logger, _] = React.useState(new Logger(module, toConsole, shouldToast));
     return logger;
-}
+};

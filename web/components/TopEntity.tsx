@@ -1,11 +1,11 @@
 import React from "react";
-import Logger from "../lib/Logger";
+import { useLogger } from "../lib/Logger";
+import { nameToId } from "../lib/utils";
 import { BarChart } from "./Chart";
 import { PreloaderCirc } from "./Preloader";
 import { SimpleTable } from "./Table";
 import { NumCell, PriceCell } from "./TableCells";
 import { indexFactory, Tab, TabColor, TabPanel, Tabs } from "./Tabs";
-import { nameToId } from "../lib/utils";
 
 interface IEntity {
     id: number;
@@ -29,7 +29,7 @@ interface IProps<Entity> {
 export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity, minQuantity}: IProps<Entity>) {
     minQuantity = minQuantity ?? 5;
 
-    const logger = new Logger("TopEntity");
+    const logger = useLogger("TopEntity");
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
     React.useEffect(() => {

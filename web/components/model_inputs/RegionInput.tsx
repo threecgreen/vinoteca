@@ -1,5 +1,5 @@
 import React from "react";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IRegion } from "../../lib/Rest";
 import { EmptyResultError, getRegions } from "../../lib/RestApi";
 import { IDict } from "../../lib/utils";
@@ -13,7 +13,7 @@ interface IProps extends IOnChange {
 }
 
 export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) => {
-    const logger = new Logger("RegionInput");
+    const logger = useLogger("RegionInput");
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 

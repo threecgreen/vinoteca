@@ -37,7 +37,7 @@ export class WineTypeProfileApp extends React.Component<IProps, IState> {
             wines: [],
         }
 
-        this.logger = new Logger("WineTypeProfileApp", true);
+        this.logger = new Logger("WineTypeProfileApp");
         this.onWineTypeChange = this.onWineTypeChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);

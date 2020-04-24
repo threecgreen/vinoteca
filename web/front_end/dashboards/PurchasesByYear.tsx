@@ -1,12 +1,12 @@
 import React from "react";
 import { GreenCard, RedCard } from "../../components/Cards";
-import Logger from "../../lib/Logger";
-import { get } from "../../lib/ApiHelper";
-import { PreloaderCirc } from "../../components/Preloader";
 import { LineChart } from "../../components/Chart";
-import { IYearsPurchases } from "../../lib/Rest";
+import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
-import { YearCell, NumCell, PriceCell } from "../../components/TableCells";
+import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
+import { get } from "../../lib/ApiHelper";
+import Logger, { useLogger } from "../../lib/Logger";
+import { IYearsPurchases } from "../../lib/Rest";
 
 const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
@@ -30,7 +30,7 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
 }
 
 export const PurchasesByYearGraph: React.FC<{}> = (_) => {
-    const logger = new Logger("PurchasesByYearGraph");
+    const logger = useLogger("PurchasesByYearGraph");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 
     let content;
@@ -58,7 +58,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
 PurchasesByYearGraph.displayName = "PurchasesByYearGraph";
 
 export const PurchasesByYearTable: React.FC<{}> = (_) => {
-    const logger = new Logger("PurchasesByYearTable");
+    const logger = useLogger("PurchasesByYearTable");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 
     let content;

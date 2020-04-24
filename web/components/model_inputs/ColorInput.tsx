@@ -1,6 +1,6 @@
 import { FormSelect } from "materialize-css";
 import React from "react";
-import Logger from "../../lib/Logger";
+import Logger, { useLogger } from "../../lib/Logger";
 import { IColor } from "../../lib/Rest";
 import { getColors } from "../../lib/RestApi";
 import { SelectInput } from "../inputs/SelectInput";
@@ -42,7 +42,7 @@ export const useColorsSelect = (logger: Logger, extraChoice?: string): [string[]
 }
 
 export const ColorInput: React.FC<IProps> = (props) => {
-    const logger = new Logger("ColorInput");
+    const logger = useLogger("ColorInput");
 
     const [selectionOptions, selectRef] = useColorsSelect(logger, props.extraChoice);
 

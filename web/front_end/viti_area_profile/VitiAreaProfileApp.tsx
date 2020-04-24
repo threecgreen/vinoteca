@@ -39,7 +39,7 @@ export class VitiAreaProfileApp extends React.Component<IProps, IState> {
             stats: undefined,
         }
 
-        this.logger = new Logger("VitiAreaProfileApp", true);
+        this.logger = new Logger("VitiAreaProfileApp");
         this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);

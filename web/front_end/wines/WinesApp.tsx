@@ -5,7 +5,7 @@ import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import { columnToVal, WinesTable, WinesTableColumn } from "../../components/WinesTable";
 import FilterExpr from "../../lib/FilterExpr";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
 import { getWines } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
@@ -28,19 +28,14 @@ type Action =
     | { type: "setCurrentPage", currentPage: number };
 
 const deserializeFilters = (json: string): Map<WinesTableColumn, string> => {
-    const logger = new Logger("WinesApp");
+    const logger = useLogger("WinesApp");
     if (!json) {
         return new Map();
     }
     logger.logDebug(`Deserializing JSON: ${json}`);
-    const predicates = new Map();
     try {
-        const arr: Array<[string, string]> = JSON.parse(json);
-        arr.forEach((item) => {
-            const [key, text] = item;
-            predicates.set(key, text);
-        });
-        return predicates;
+        const arr: Array<[WinesTableColumn, string]> = JSON.parse(json);
+        return new Map(arr);
     } catch (err) {
         window.localStorage.removeItem(LOCAL_STORAGE_KEY);
         logger.logWarning(`Failed reading filters cookie with error: ${err}`);
@@ -88,7 +83,7 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
 }
 
 export const WinesApp: React.FC<{}> = (_) => {
-    const logger = new Logger("WinesApp");
+    const logger = useLogger("WinesApp");
     useTitle("Wines");
 
     const [state, dispatch] = React.useReducer(reducer, initState())

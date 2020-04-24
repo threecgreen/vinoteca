@@ -1,5 +1,5 @@
 import React from "react";
-import Logger from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { IProducer } from "../../lib/Rest";
 import { getProducers, toDict } from "../../lib/RestApi";
 import { autocomplete } from "../../lib/widgets";
@@ -11,7 +11,7 @@ interface IProps extends IOnChange {
 }
 
 export const ProducerInput: React.FC<IProps> = ({value, onChange}) => {
-    const logger = new Logger("ProducerInput");
+    const logger = useLogger("ProducerInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
