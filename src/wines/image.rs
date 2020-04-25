@@ -9,7 +9,7 @@ use diesel::prelude::*;
 use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_multipart_form_data::mime::Mime;
-use std::io::Cursor;
+use std::io::{BufReader, Cursor};
 use uuid::Uuid;
 
 pub struct Image {
@@ -91,10 +91,23 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
 fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {
     match (mime_type.type_(), mime_type.subtype()) {
         (mime::IMAGE, mime::JPEG) => {
-            let mut reader = std::io::BufReader::new(raw.as_slice());
+            warn!("Trying to extract EXIF data from JPEG");
+            let mut reader = BufReader::new(raw.as_slice());
             exif::get_exif_attr_from_jpeg(&mut reader)
+                .map_err(|e| {
+                    warn!("Failed to extract exif attr from JPEG: {:?}", e);
+                    e
+                })
                 .ok()
-                .and_then(|exif_attr| exif::Reader::new().read_raw(exif_attr).ok())
+                .and_then(|exif_attr| {
+                    exif::Reader::new()
+                        .read_raw(exif_attr)
+                        .map_err(|e| {
+                            warn!("Failed to read exif attr from JPEG: {:?}", e);
+                            e
+                        })
+                        .ok()
+                })
         }
         // Try reading with other types of image files, even though should only work with TIFF
         (mime::IMAGE, _) => match exif::Reader::new().read_raw(raw) {
@@ -129,14 +142,19 @@ fn handle_exif(
                     6 => decoded_image.rotate90(),
                     7 => decoded_image.flipv().rotate270(),
                     8 => decoded_image.rotate270(),
-                    _ => decoded_image,
+                    _ => {
+                        warn!("Other orientation value: {:?}", orientation);
+                        decoded_image
+                    }
                 },
                 Some(orientation),
             )
         } else {
+            warn!("Orientation field had no value");
             (decoded_image, orientation)
         }
     } else {
+        warn!("No orientation field found");
         (decoded_image, None)
     }
 }
