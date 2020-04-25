@@ -9,33 +9,23 @@ import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs"
 interface IProps {
     wine: IWine;
     grapes: IWineGrape[];
-    hasImage: boolean;
     onSubmit: (wine: IWineData, grapes: IWineGrape[]) => Promise<void>;
     onCancel: () => void;
 }
 
-export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, onCancel}) => {
+export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) => {
     const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,
         name: wine.name ?? "",
         description: wine.description ?? "",
         rating: wine.rating ?? 5,
         isRatingEnabled: wine.rating !== null,
-        file: hasImage ? new File([], `${wine.id}.png`) : null,
+        file: wine.image ? new File([], wine.image) : null,
         notes: wine.notes ?? "",
         vitiArea: wine.vitiArea ?? "",
         why: wine.why ?? "",
     });
     const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
-
-    const checkFileAndSubmit = async () => {
-        if (mutableWine.file && mutableWine.file.name === `${wine.id}.png`) {
-            // Don't submit mock file
-            onSubmit({...mutableWine, file: null}, mutableGrapes);
-        } else {
-            onSubmit(mutableWine, mutableGrapes);
-        }
-    }
 
     return (
         <Modal>
@@ -52,7 +42,7 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ checkFileAndSubmit }
+                    onConfirmClick={ () => onSubmit(mutableWine, mutableGrapes) }
                     onCancelClick={ onCancel }
                 />
             </ModalFooter>

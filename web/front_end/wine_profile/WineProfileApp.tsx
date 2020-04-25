@@ -10,8 +10,8 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import { Preloader } from "../../components/Preloader";
 import { useLogger } from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
-import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine } from "../../lib/RestApi";
-import { getNameAndType } from "../../lib/utils";
+import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, deleteWineImage, uploadWineImage } from "../../lib/RestApi";
+import { getNameAndType, hasChanged, arrayHasChanged } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
@@ -83,22 +83,51 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     }
 
+    const onUpdateFile = async (editedFile: File | null) => {
+        if (state.wine?.image && editedFile === null) {
+            deleteWineImage(id);
+        } else if (editedFile && state.wine?.image !== editedFile?.name) {
+            uploadWineImage(id, editedFile);
+        }
+    }
+
+    const onUpdateWine = async (editedWine: IWineData) => {
+        if (hasChanged(editedWine, state.wine, ["file"])) {
+            try {
+                const wineForm = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
+                const updatedWine = await updateWine(id, wineForm, null);
+                dispatch({type: "setWine", wine: updatedWine});
+            } catch (e) {
+                logger.logWarning(`Failed to update wine. ${e.message}`,
+                                  {editedWine, id});
+            }
+        }
+    }
+
+    const onUpdateGrapes = async (editedGrapes: IWineGrape[]) => {
+        if (arrayHasChanged(editedGrapes, state.grapes)) {
+            try {
+                const grapesForm = await wineGrapesToForm(editedGrapes, id);
+                // Always update wine grapes, even if there are none, because this
+                // is also how we handle deleting existing wine-grape relations
+                const updatedGrapes = await createWineGrapes(grapesForm);
+                dispatch({type: "setGrapes", grapes: updatedGrapes})
+            } catch (e) {
+                logger.logWarning(`Failed to update wine grapes. ${e.message}`,
+                                  {editedGrapes, id});
+            }
+        }
+    }
+
     const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
         try {
-            const [wineForm, grapesForm] = await Promise.all([
-                wineDataToForm(editedWine, state.wine?.inventory ?? 0),
-                wineGrapesToForm(editedGrapes, id),
+            await Promise.all([
+                onUpdateWine(editedWine),
+                onUpdateFile(editedWine.file),
+                onUpdateGrapes(editedGrapes),
             ]);
-            const updatedWine = await updateWine(id, wineForm, editedWine.file);
-            // Always update wine grapes, even if there are none, because this
-            // is also how we handle deleting existing wine-grape relations
-            const updateGrapes = await createWineGrapes(grapesForm);
-            dispatch({type: "setWine", wine: updatedWine});
-            dispatch({type: "setGrapes", grapes: updateGrapes});
-            dispatch({type: "setMode", mode: {type: "display"}});
-        } catch (e) {
-            logger.logWarning(`Failed to update wine. ${e.message}`,
-                              {id, lineNumber: e.lineNumber, editedWine, editedGrapes});
+            logger.logInfo("Successfully updated wine", {id});
+        } catch {
         }
     }
 
@@ -239,7 +268,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 return (
                     <EditWine wine={ state.wine }
                         grapes={ state.grapes }
-                        hasImage={ state?.wine.image ? true : false }
                         onSubmit={ onSubmitWineEdit }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />

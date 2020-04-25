@@ -364,6 +364,16 @@ export async function getWineVarieties(): Promise<IWineCount> {
     return get("/rest/wines/count");
 }
 
+export async function uploadWineImage(id: number, image: File): Promise<void> {
+    const form = new FormData();
+    form.append("image", image);
+    return postForm(`/rest/wines/${id}/image`, form);
+}
+
+export async function deleteWineImage(id: number): Promise<void> {
+    return delete_(`/rest/wines/${id}/image`);
+}
+
 /* WINE GRAPES */
 interface IGetWineGrapesParams {
     wineId?: number;

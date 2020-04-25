@@ -130,6 +130,31 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
+export function hasChanged(newObj: any, source: any, exclude: string[] = []): boolean {
+    const keysToExclude = new Set(exclude);
+    for (const k of Object.keys(newObj)) {
+        if (keysToExclude.has(k)) {
+            continue;
+        }
+        if (newObj[k] !== source[k]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export function arrayHasChanged(newArr: any[], source: any[], exclude: string[] = []): boolean {
+    if (newArr.length !== source.length) {
+        return true;
+    }
+    for (let i = 0; i < newArr.length; ++i) {
+        if (hasChanged(newArr[i], source[i], exclude)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 interface IRangeArgs {
     start?: number;
     stop?: number;
