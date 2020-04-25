@@ -21,7 +21,8 @@ chrono = { version = "0.4.10", features = ["serde"] }
 # basic ORM
 diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
-# FIXME: remove with AWS?
+# Image handling
+image = "0.23.2"
 log = "0.4"
 rocket_codegen = "0.4.4"
 rocket-multipart-form-data = "0.8.1"

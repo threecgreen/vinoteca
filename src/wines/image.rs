@@ -9,6 +9,7 @@ use diesel::prelude::*;
 use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_multipart_form_data::mime::Mime;
+use std::io::Cursor;
 use uuid::Uuid;
 
 pub struct Image {
@@ -17,6 +18,8 @@ pub struct Image {
 }
 
 static WINE_DIR: &str = "wine_images";
+// TODO: downsize image if necessary
+static MAX_SIZE: usize = 1280 * 958;
 
 /// Auth must be handled before this function is called
 pub fn handle_image(
@@ -25,14 +28,21 @@ pub fn handle_image(
     s3_bucket: &s3::bucket::Bucket,
     connection: &DbConn,
 ) -> Result<(), VinotecaError> {
-    // let img = image::io::Reader::new(Cursor::new(raw_img))
-    //     .with_guessed_format()?
-    //     .decode()?;
-    // let file_name = format!("{}.png", wine_id);
-    // img.save(format!("{}/{}", media_dir, file_name))?;
+    let img = image::io::Reader::new(Cursor::new(&image.data[..]))
+        .with_guessed_format()?
+        .decode()?;
+    let mut reformatted_image = Vec::new();
+    let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
+    img.write_to(&mut reformatted_image_writer, image::ImageOutputFormat::Png)
+        .map_err(|e| {
+            warn!(
+                "Failed to reformat image: {:?}. MimeType: {:?}",
+                e, image.mime_type
+            );
+            VinotecaError::Internal("Failed to reformat image".to_owned())
+        })?;
     let path = format!("{}/{}", WINE_DIR, Uuid::new_v4());
-    let (data, code) =
-        s3_bucket.put_object_blocking(&path, &image.data, &image.mime_type.type_().to_string())?;
+    let (data, code) = s3_bucket.put_object_blocking(&path, &reformatted_image, "image/png")?;
     if code > 304 {
         warn!(
             "Error saving image. Code: {}, Data: {:?}",
