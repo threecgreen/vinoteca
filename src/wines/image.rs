@@ -59,20 +59,29 @@ pub fn post(
 ) -> RestResult<()> {
     validate_owns_wine(auth, id, &connection)?;
 
+    let existing_image_path = wines::table
+        .filter(wines::id.eq(id))
+        .select(wines::image)
+        .first::<Option<String>>(&*connection)?;
+
     handle_image(id, image, &config.s3_bucket, &connection)?;
+    if let Some(existing_image_path) = existing_image_path {
+        // Delete old image after we upload the new one
+        delete_image(&config, &existing_image_path)?;
+    }
     Ok(Json(()))
 }
 
 #[delete("/wines/<id>/image")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
-    let file_name = wines::table
+    let file_path = wines::table
         .filter(wines::user_id.eq(auth.id))
         .filter(wines::id.eq(id))
         .select(wines::image)
         .first::<Option<String>>(&*connection)?;
 
-    match file_name {
-        Some(file_name) => {
+    match file_path {
+        Some(file_path) => {
             // Delete from database first, because it's better to have an orphan
             // file than have the database think there's a file when we've
             // already deleted it.
@@ -80,11 +89,24 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
                 .filter(wines::id.eq(id))
                 .set(wines::image.eq::<Option<String>>(None))
                 .execute(&*connection)?;
-            // fs::remove_file(format!("{}/{}", media_dir.0, file_name))?;
-            config.s3_bucket.delete_object_blocking(file_name)?;
+            delete_image(&config, &file_path)?;
             Ok(Json(()))
         }
         None => Ok(Json(())),
+    }
+}
+
+fn delete_image(config: &State<Config>, path: &str) -> Result<(), VinotecaError> {
+    let (data, code) = config.s3_bucket.delete_object_blocking(path)?;
+    if code > 304 {
+        warn!(
+            "Error deleting existing image. Code: {}, AWSResponseData: {:?}",
+            code,
+            String::from_utf8(data)
+        );
+        Err(VinotecaError::Internal("Error deleting existing image".to_owned()))
+    } else {
+        Ok(())
     }
 }
 
