@@ -88,17 +88,30 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
     }
 }
 
+fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {
+    match (mime_type.type_(), mime_type.subtype()) {
+        (mime::IMAGE, mime::JPEG) => {
+            let mut reader = std::io::BufReader::new(raw.as_slice());
+            exif::get_exif_attr_from_jpeg(&mut reader)
+                .ok()
+                .and_then(|exif_attr| exif::Reader::new().read_raw(exif_attr).ok())
+        }
+        // Try reading with other types of image files, even though should only work with TIFF
+        (mime::IMAGE, _) => match exif::Reader::new().read_raw(raw) {
+            Ok(exif) => Some(exif),
+            Err(e) => {
+                warn!("Error creating exif reader: {:?}", e);
+                None
+            }
+        },
+        _ => None,
+    }
+}
+
 fn handle_exif(
     decoded_image: image::DynamicImage,
-    raw: Vec<u8>,
+    exif: exif::Exif,
 ) -> (image::DynamicImage, Option<u16>) {
-    let exif = match exif::Reader::new().read_raw(raw) {
-        Ok(exif) => exif,
-        Err(e) => {
-            warn!("Error creating exif reader: {:?}", e);
-            return (decoded_image, None);
-        }
-    };
     let orientation_field = exif.get_field(exif::Tag::Orientation, exif::In::PRIMARY);
     if let Some(orientation_field) = orientation_field {
         let orientation = match &orientation_field.value {
@@ -132,8 +145,16 @@ fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
     let decoded_image = image::io::Reader::new(Cursor::new(image.data.as_slice()))
         .with_guessed_format()?
         .decode()?;
-    let mime_type = image.mime_type.clone();
-    let (decoded_image, orientation) = handle_exif(decoded_image, image.data);
+    // Unpack to avoid clone
+    let Image {
+        mime_type,
+        data: raw,
+    } = image;
+    let (decoded_image, orientation) = if let Some(exif) = get_exif(&mime_type, raw) {
+        handle_exif(decoded_image, exif)
+    } else {
+        (decoded_image, None)
+    };
     let mut reformatted_image = Vec::new();
     let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
     // TODO: downsize image if necessary

@@ -25,6 +25,7 @@ diesel_migrations = "1.4.0"
 image = "0.23.2"
 kamadak-exif = "0.5.1"
 log = "0.4"
+mime = "0.3.16"
 rocket_codegen = "0.4.4"
 rocket-multipart-form-data = "0.8.1"
 # AWS S3 access

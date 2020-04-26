@@ -161,7 +161,7 @@ impl FromDataSimple for Image {
                     // TODO: determine if default is good
                     mime_type: raw
                         .content_type
-                        .unwrap_or_else(|| "image/png".parse().expect("PNG mime")),
+                        .unwrap_or_else(|| "image/jpeg".parse().expect("JPEG mime")),
                 })
             }
             RawField::Multiple(_raw) => Failure((
