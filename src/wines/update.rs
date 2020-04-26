@@ -45,6 +45,7 @@ pub fn put(
     wine_form.validate()?;
     validate_owns_wine(auth, id, &connection)?;
 
+    // TODO: editing an image should be handled separately
     diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(NewWine::from((auth, wine_form)))
         .execute(&*connection)
