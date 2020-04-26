@@ -94,6 +94,13 @@ impl From<S3Error> for VinotecaError {
     }
 }
 
+impl From<exif::Error> for VinotecaError {
+    fn from(exif_error: exif::Error) -> Self {
+        warn!("Error reading exif data: {:?}", exif_error);
+        VinotecaError::Internal("Error handling image metadata".to_owned())
+    }
+}
+
 impl Display for VinotecaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let fmt_arg = match self {

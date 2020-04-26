@@ -18,7 +18,6 @@ pub struct Image {
 }
 
 static WINE_DIR: &str = "wine_images";
-// TODO: downsize image if necessary
 static MAX_SIZE: usize = 1280 * 958;
 
 /// Auth must be handled before this function is called
@@ -28,24 +27,14 @@ pub fn handle_image(
     s3_bucket: &s3::bucket::Bucket,
     connection: &DbConn,
 ) -> Result<(), VinotecaError> {
-    let img = image::io::Reader::new(Cursor::new(&image.data[..]))
-        .with_guessed_format()?
-        .decode()?;
-    let mut reformatted_image = Vec::new();
-    let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
-    img.write_to(&mut reformatted_image_writer, image::ImageOutputFormat::Png)
-        .map_err(|e| {
-            warn!(
-                "Failed to reformat image: {:?}. MimeType: {:?}",
-                e, image.mime_type
-            );
-            VinotecaError::Internal("Failed to reformat image".to_owned())
-        })?;
+    // Read in image and fix orientation based on EXIF data
+    let image = reformat_image(image)?;
+    // AWS
     let path = format!("{}/{}", WINE_DIR, Uuid::new_v4());
-    let (data, code) = s3_bucket.put_object_blocking(&path, &reformatted_image, "image/png")?;
+    let (data, code) = s3_bucket.put_object_blocking(&path, &image, "image/jpeg")?;
     if code > 304 {
         warn!(
-            "Error saving image. Code: {}, Data: {:?}",
+            "Error saving image. Code: {}, AWSResponseData: {:?}",
             code,
             String::from_utf8(data)
         );
@@ -97,4 +86,68 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
         }
         None => Ok(Json(())),
     }
+}
+
+fn handle_exif(
+    decoded_image: image::DynamicImage,
+    raw: Vec<u8>,
+) -> (image::DynamicImage, Option<u16>) {
+    let exif = match exif::Reader::new().read_raw(raw) {
+        Ok(exif) => exif,
+        Err(e) => {
+            warn!("Error creating exif reader: {:?}", e);
+            return (decoded_image, None);
+        }
+    };
+    let orientation_field = exif.get_field(exif::Tag::Orientation, exif::In::PRIMARY);
+    if let Some(orientation_field) = orientation_field {
+        let orientation = match &orientation_field.value {
+            exif::Value::Short(v) => v.get(0).map(|n| n.to_owned()),
+            exif::Value::Byte(v) => v.get(0).map(|n| n.to_owned() as u16),
+            _ => None,
+        };
+        if let Some(orientation) = orientation {
+            (
+                match orientation {
+                    2 => decoded_image.fliph(),
+                    3 => decoded_image.rotate180(),
+                    4 => decoded_image.flipv(),
+                    5 => decoded_image.flipv().rotate90(),
+                    6 => decoded_image.rotate90(),
+                    7 => decoded_image.flipv().rotate270(),
+                    8 => decoded_image.rotate270(),
+                    _ => decoded_image,
+                },
+                Some(orientation),
+            )
+        } else {
+            (decoded_image, orientation)
+        }
+    } else {
+        (decoded_image, None)
+    }
+}
+
+fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
+    let decoded_image = image::io::Reader::new(Cursor::new(image.data.as_slice()))
+        .with_guessed_format()?
+        .decode()?;
+    let mime_type = image.mime_type.clone();
+    let (decoded_image, orientation) = handle_exif(decoded_image, image.data);
+    let mut reformatted_image = Vec::new();
+    let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
+    // TODO: downsize image if necessary
+    decoded_image
+        .write_to(
+            &mut reformatted_image_writer,
+            image::ImageOutputFormat::Jpeg(100),
+        )
+        .map_err(|e| {
+            warn!(
+                "Failed to reformat image: {:?}. MimeType: {:?}, Orientation: {:?}",
+                e, mime_type, orientation
+            );
+            VinotecaError::Internal("Failed to reformat image".to_owned())
+        })?;
+    Ok(reformatted_image)
 }
