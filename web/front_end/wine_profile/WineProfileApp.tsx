@@ -101,19 +101,23 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
             }
         }
+        logger.logInfo('Finished onUpdateFile');
     }
 
     const onUpdateWine = async (editedWine: IWineData) => {
-        if (hasChanged(editedWine, state.wine, ["file"])) {
+        if (hasChanged({...editedWine, rating: editedWine.isRatingEnabled ? editedWine : null},
+                       state.wine, ["file"])) {
+            logger.logInfo("Wine changed; saving to server", {editedWine, wine: state.wine, id});
             try {
                 const wineForm = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
                 const updatedWine = await updateWine(id, wineForm, null);
                 dispatch({type: "setWine", wine: updatedWine});
             } catch (e) {
-                logger.logWarning(`Failed to update wine. ${e.message}`,
-                                  {editedWine, id});
+                logger.logError(`Failed to update wine. ${e.message}`,
+                                {editedWine, id});
             }
         }
+        logger.logInfo('Finished onUpdateWine');
     }
 
     const onUpdateGrapes = async (editedGrapes: IWineGrape[]) => {
@@ -129,6 +133,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                                   {editedGrapes, id});
             }
         }
+        logger.logInfo('Finished onUpdateGrapes');
     }
 
     const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
@@ -139,7 +144,9 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 onUpdateGrapes(editedGrapes),
             ]);
             logger.logInfo("Successfully updated wine", {id});
-        } catch {
+            dispatch({type: "setMode", mode: {type: "display"}});
+        } catch (e) {
+            logger.logError(`Error in updating wine and grapes: ${e.message}`, {id});
         }
     }
 
@@ -165,7 +172,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                     }
                     return purchase;
                 })});
-                dispatch({type: "setMode", mode: {"type": "display"}});
+                dispatch({type: "setMode", mode: {type: "display"}});
             } else {
                 logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
             }

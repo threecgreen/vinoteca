@@ -55,7 +55,7 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
 AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
 export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
-    const logger = useLogger("NotFound");
+    const logger = useLogger("NotFound", false, false);
     logger.logWarning("Client requested url that doesn't exist")
     return (
         <div className="container" style={ {maxWidth: "750px"} }>

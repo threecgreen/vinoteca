@@ -1,7 +1,7 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 // tslint:disable-next-line
 import format from "date-fns/esm/format";
-import Logger from "./Logger";
+import Logger, { useLogger } from "./Logger";
 import { IRestModel } from "./RestTypes";
 
 /**
@@ -137,6 +137,11 @@ export function hasChanged(newObj: any, source: any, exclude: string[] = []): bo
             continue;
         }
         if (newObj[k] !== source[k]) {
+            // If both falsey, ignore differences
+            if (!newObj[k] && !source[k]) {
+                continue;
+            }
+            useLogger("hasChanged", false, false).logWarning(`Key that changed`, {key: k});
             return true;
         }
     }
@@ -196,7 +201,7 @@ export function onLoad(fun: () => void) {
 export function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
 ) {
-    new Logger("window").logCritical(
+    new Logger("window", false, false).logCritical(
         `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
         + ` event: ${event.toString()}`);
 }
