@@ -28,7 +28,7 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
     const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
 
     return (
-        <Modal>
+        <Modal onClose={ onCancel }>
             <ModalContent>
                 <Row>
                     <h4>Edit wine</h4>

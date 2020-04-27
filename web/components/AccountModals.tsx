@@ -27,7 +27,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     }
 
     return (
-        <Modal>
+        <Modal onClose={ onCancel }>
             <ModalContent onKeyDown={ onKeyDown }>
                 <EmailInput name="E-mail"
                     className=""
@@ -63,7 +63,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     }
 
     return (
-        <Modal>
+        <Modal onClose={ onCancel }>
             <ModalContent>
                 <EmailInput name="E-mail"
                     className=""
