@@ -115,7 +115,7 @@ fn delete_image(config: &State<Config>, path: &str) -> Result<(), VinotecaError>
 fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {
     match (mime_type.type_(), mime_type.subtype()) {
         (mime::IMAGE, mime::JPEG) => {
-            warn!("Trying to extract EXIF data from JPEG");
+            info!("Trying to extract EXIF data from JPEG");
             let mut reader = BufReader::new(raw.as_slice());
             exif::get_exif_attr_from_jpeg(&mut reader)
                 .map_err(|e| {
@@ -137,7 +137,7 @@ fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {
         (mime::IMAGE, _) => match exif::Reader::new().read_raw(raw) {
             Ok(exif) => Some(exif),
             Err(e) => {
-                warn!("Error creating exif reader: {:?}", e);
+                error!("Error creating exif reader: {:?}", e);
                 None
             }
         },
@@ -159,6 +159,7 @@ fn handle_exif(
         if let Some(orientation) = orientation {
             (
                 match orientation {
+                    1 => decoded_image,
                     2 => decoded_image.fliph(),
                     3 => decoded_image.rotate180(),
                     4 => decoded_image.flipv(),
@@ -167,7 +168,7 @@ fn handle_exif(
                     7 => decoded_image.flipv().rotate270(),
                     8 => decoded_image.rotate270(),
                     _ => {
-                        warn!("Other orientation value: {:?}", orientation);
+                        warn!("Unexpected orientation value: {:?}", orientation);
                         decoded_image
                     }
                 },
