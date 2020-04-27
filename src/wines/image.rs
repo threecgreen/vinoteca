@@ -26,7 +26,7 @@ pub fn handle_image(
     image: Image,
     s3_bucket: &s3::bucket::Bucket,
     connection: &DbConn,
-) -> Result<(), VinotecaError> {
+) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
     // AWS
@@ -43,10 +43,10 @@ pub fn handle_image(
 
     diesel::update(wines::table)
         .filter(wines::id.eq(wine_id))
-        .set(wines::image.eq(path))
+        .set(wines::image.eq(&path))
         .execute(&**connection)?;
 
-    Ok(())
+    Ok(path)
 }
 
 #[post("/wines/<id>/image", data = "<image>")]
@@ -56,7 +56,7 @@ pub fn post(
     image: Image,
     connection: DbConn,
     config: State<Config>,
-) -> RestResult<()> {
+) -> RestResult<String> {
     validate_owns_wine(auth, id, &connection)?;
 
     let existing_image_path = wines::table
@@ -64,12 +64,12 @@ pub fn post(
         .select(wines::image)
         .first::<Option<String>>(&*connection)?;
 
-    handle_image(id, image, &config.s3_bucket, &connection)?;
+    let path = handle_image(id, image, &config.s3_bucket, &connection)?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
         delete_image(&config, &existing_image_path)?;
     }
-    Ok(Json(()))
+    Ok(Json(path))
 }
 
 #[delete("/wines/<id>/image")]

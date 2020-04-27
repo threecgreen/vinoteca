@@ -364,7 +364,7 @@ export async function getWineVarieties(): Promise<IWineCount> {
     return get("/rest/wines/count");
 }
 
-export async function uploadWineImage(id: number, image: File): Promise<void> {
+export async function uploadWineImage(id: number, image: File): Promise<string> {
     const form = new FormData();
     form.append("image", image);
     return postForm(`/rest/wines/${id}/image`, form);

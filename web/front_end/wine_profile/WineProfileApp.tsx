@@ -85,9 +85,21 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     const onUpdateFile = async (editedFile: File | null) => {
         if (state.wine?.image && editedFile === null) {
-            deleteWineImage(id);
+            try {
+                await deleteWineImage(id);
+                // Potential race condition
+                dispatch({type: "setWine", wine: {...state.wine!, image: null}});
+            } catch (e) {
+                logger.logWarning(`Failed to delete wine image: ${e.message}`, {id});
+            }
         } else if (editedFile && state.wine?.image !== editedFile?.name) {
-            uploadWineImage(id, editedFile);
+            try {
+                const image_path = await uploadWineImage(id, editedFile);
+                // Potential race condition
+                dispatch({type: "setWine", wine: {...state.wine!, image: image_path}});
+            } catch (e) {
+                logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
+            }
         }
     }
 
