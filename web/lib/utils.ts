@@ -1,7 +1,7 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 // tslint:disable-next-line
 import format from "date-fns/esm/format";
-import Logger, { useLogger } from "./Logger";
+import Logger from "./Logger";
 import { IRestModel } from "./RestTypes";
 
 /**
@@ -141,7 +141,7 @@ export function hasChanged(newObj: any, source: any, exclude: string[] = []): bo
             if (!newObj[k] && !source[k]) {
                 continue;
             }
-            useLogger("hasChanged", false, false).logWarning(`Key that changed`, {key: k});
+            (new Logger("hasChanged", false, false)).logWarning(`Key that changed`, {key: k});
             return true;
         }
     }

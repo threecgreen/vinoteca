@@ -30,8 +30,9 @@ pub fn handle_image(
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
     // AWS
-    let path = format!("{}/{}", WINE_DIR, Uuid::new_v4());
-    let (data, code) = s3_bucket.put_object_blocking(&path, &image, "image/jpeg")?;
+    let path = Uuid::new_v4().to_string();
+    let (data, code) =
+        s3_bucket.put_object_blocking(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg")?;
     if code > 304 {
         warn!(
             "Error saving image. Code: {}, AWSResponseData: {:?}",

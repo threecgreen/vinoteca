@@ -59,7 +59,7 @@ fn fmt_tags(auth: Option<Auth>, mut tags: serde_json::Value) -> String {
             tags_map.insert("user_id".to_owned(), serde_json::json!(auth.id));
         }
         if tags_map.is_empty() {
-            return "".to_owned()
+            return "".to_owned();
         }
     }
     if tags.is_object() {

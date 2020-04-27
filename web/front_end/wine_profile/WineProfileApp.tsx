@@ -78,7 +78,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 const wine = await updateWine(id, copy, null);
                 dispatch({type: "setWine", wine});
             } catch (e) {
-                logger.logWarning(`Failed to change inventory. ${e.message}`);
+                logger.logWarning(`Failed to change inventory. ${e.message}`, {id});
             }
         }
     }
@@ -93,6 +93,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning(`Failed to delete wine image: ${e.message}`, {id});
             }
         } else if (editedFile && state.wine?.image !== editedFile?.name) {
+            logger.logInfo(`Updating wine image`, {id, oldImage: state.wine?.image, newImage: editedFile?.name})
             try {
                 const image_path = await uploadWineImage(id, editedFile);
                 // Potential race condition
@@ -101,11 +102,10 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
             }
         }
-        logger.logInfo('Finished onUpdateFile');
     }
 
     const onUpdateWine = async (editedWine: IWineData) => {
-        if (hasChanged({...editedWine, rating: editedWine.isRatingEnabled ? editedWine : null},
+        if (hasChanged({...editedWine, rating: editedWine.isRatingEnabled ? editedWine.rating : null} as IWineData,
                        state.wine, ["file"])) {
             logger.logInfo("Wine changed; saving to server", {editedWine, wine: state.wine, id});
             try {
@@ -117,7 +117,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                                 {editedWine, id});
             }
         }
-        logger.logInfo('Finished onUpdateWine');
     }
 
     const onUpdateGrapes = async (editedGrapes: IWineGrape[]) => {
@@ -133,7 +132,6 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                                   {editedGrapes, id});
             }
         }
-        logger.logInfo('Finished onUpdateGrapes');
     }
 
     const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
@@ -162,24 +160,26 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onSubmitPurchaseEdit = async (purchase: IPurchaseData) => {
         // @ts-ignore
         const purchaseId = state.mode.id;
-        try {
-            const form = await purchaseDataToForm(purchase, id);
-            if (form) {
-                const updatedPurchase = await updatePurchase(purchaseId, form);
-                dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
-                    if (purchase.id === purchaseId) {
-                        return updatedPurchase;
-                    }
-                    return purchase;
-                })});
-                dispatch({type: "setMode", mode: {type: "display"}});
-            } else {
-                logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
+        if (hasChanged(purchase, state.purchases.find((p) => p.id === purchaseId),
+                       ["shouldAddToInventory"])) {
+            try {
+                const form = await purchaseDataToForm(purchase, id);
+                if (form) {
+                    const updatedPurchase = await updatePurchase(purchaseId, form);
+                    dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
+                        if (purchase.id === purchaseId) {
+                            return updatedPurchase;
+                        }
+                        return purchase;
+                    })});
+                } else {
+                    logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
+                }
+            } catch (err) {
+                logger.logWarning(`Failed to update purchase: ${err.message}`, {wineId: id, purchaseId});
             }
-        } catch (err) {
-            logger.logWarning(`Failed to update purchase: ${err.message}`);
-            dispatch({type: "setMode", mode: {"type": "display"}});
         }
+        dispatch({type: "setMode", mode: {type: "display"}});
     }
 
     const onDeletePurchase = async (purchaseId: number) => {
@@ -187,13 +187,14 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
             await deletePurchase(purchaseId);
             dispatch({type: "setPurchases", purchases: state.purchases.filter((p) => p.id !== purchaseId)});
         } catch (e) {
-            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`);
+            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`,
+                              {wineId: id, purchaseId});
         } finally {
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
     }
 
-    const onSubmitAddPurchase = async (purchase: IPurchaseData) => {
+    const onSubmitNewPurchase = async (purchase: IPurchaseData) => {
         try {
             const form = await purchaseDataToForm(purchase, id);
             if (form) {
@@ -210,7 +211,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning("Not submitting new purchase form. Form is invalid");
             }
         } catch (err) {
-            logger.logWarning(`Failed to create new purchase: ${err.message}`);
+            logger.logWarning(`Failed to create new purchase: ${err.message}`, {wineId: id});
             dispatch({type: "setMode", mode: {"type": "display"}});
         }
     }
@@ -341,7 +342,7 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
                     displayInventoryBtn
                     purchase={ newPurchase }
                     onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                    onSubmit={ onSubmitAddPurchase }
+                    onSubmit={ onSubmitNewPurchase }
                 />
             );
         } else {
