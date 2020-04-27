@@ -2,7 +2,6 @@ use crate::users::Auth;
 
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use typescript_definitions::TypeScriptify;
 
 #[derive(Debug, Deserialize, TypeScriptify)]
@@ -11,7 +10,8 @@ pub struct LogForm {
     pub module: String,
     pub message: String,
     pub url: String,
-    pub tags: HashMap<String, String>,
+    #[ts(ts_type = "object")]
+    pub tags: serde_json::Value,
 }
 
 #[derive(Debug, Serialize, TypeScriptify)]
@@ -51,13 +51,20 @@ pub fn post(auth: Option<Auth>, log_form: Json<LogForm>) -> Json<LogResponse> {
     Json(LogResponse { success: true })
 }
 
-fn fmt_tags(auth: Option<Auth>, mut tags: HashMap<String, String>) -> String {
-    if let Some(auth) = auth {
-        tags.insert("user_id".to_owned(), auth.id.to_string());
+fn fmt_tags(auth: Option<Auth>, mut tags: serde_json::Value) -> String {
+    // The contract defines that tags should be an object, but we also handle
+    // other JSON values for the sake of robustness.
+    if let serde_json::Value::Object(tags_map) = &mut tags {
+        if let Some(auth) = auth {
+            tags_map.insert("user_id".to_owned(), serde_json::json!(auth.id));
+        }
+        if tags_map.is_empty() {
+            return "".to_owned()
+        }
     }
-    if tags.is_empty() {
-        "".to_owned()
+    if tags.is_object() {
+        format!("{}", tags)
     } else {
-        format!("{:?}", tags)
+        format!("tags: {}", tags)
     }
 }

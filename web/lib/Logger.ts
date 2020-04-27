@@ -73,10 +73,6 @@ export default class Logger {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        const strTags: IDict<string> = {};
-        Object.entries(tags).forEach(([k, v]) => {
-            strTags[k] = v instanceof Object ? JSON.stringify(v) : v ?.toString() ?? "";
-        });
         try {
             const response: ILogResult = await postLog({
                 level,
@@ -84,7 +80,7 @@ export default class Logger {
                 message: message instanceof Object ? "" : message,
                 module: this.module,
                 url: window.location.pathname,
-                tags: strTags,
+                tags,
             });
             if (!response.success) {
                 this.toast(LogLevel.Error, "Failed to send client-side logs to server.");

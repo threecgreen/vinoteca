@@ -104,7 +104,9 @@ fn delete_image(config: &State<Config>, path: &str) -> Result<(), VinotecaError>
             code,
             String::from_utf8(data)
         );
-        Err(VinotecaError::Internal("Error deleting existing image".to_owned()))
+        Err(VinotecaError::Internal(
+            "Error deleting existing image".to_owned(),
+        ))
     } else {
         Ok(())
     }
