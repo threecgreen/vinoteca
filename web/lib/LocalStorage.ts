@@ -13,7 +13,7 @@ export function useLocalStorage<V>(key: string, initValue: V,
                 return posthook(val);
             } catch (err) {
                 window.localStorage.removeItem(key);
-                logger.logWarning(`Failed local storage with error: ${err}`);
+                logger.logWarning(`Failed to read local storage with error: ${err}`);
                 return initValue;
             }
         }
@@ -27,7 +27,7 @@ export function useLocalStorage<V>(key: string, initValue: V,
             const serializedValue = JSON.stringify(prehook(value));
             window.localStorage.setItem(key, serializedValue);
         } catch (err) {
-            logger.logWarning(`Failed to update local storage with error: ${err}`);
+            logger.logWarning(`Failed to update local storage with error: ${err.message}`);
             window.localStorage.removeItem(key);
         }
     };
@@ -35,8 +35,48 @@ export function useLocalStorage<V>(key: string, initValue: V,
     return [storedValue, setAndStoreValue];
 }
 
-export function useLocalStorageReducer<S, A>(key: string, reducer: React.Reducer<S, A>,
-                                             initializer: () => S) {
+export function useLocalStorageReducer<S, A>(
+    key: string, reducer: React.Reducer<S, A>,
+    initializer: () => S,
+    exclude: Array<keyof S> = [],
+): [S, React.Dispatch<A>, () => void] {
+
     const logger = useLogger(`useLocalStorageReducer<${key}>`);
-    const [state, dispatch] =  React.useReducer(reducer, [], initializer);
+
+    const reduceAndStore: React.Reducer<S, A> = (state, action) => {
+        const newState = reducer(state, action);
+        try {
+            let stateToSerialize: S;
+            if (exclude.length > 0) {
+                stateToSerialize = {...newState};
+                exclude.forEach((field) => {
+                    delete stateToSerialize[field];
+                });
+            } else {
+                stateToSerialize = newState;
+            }
+            const serializedValue = JSON.stringify(newState);
+            window.localStorage.setItem(key, serializedValue);
+        } catch (err) {
+            logger.logWarning(`Failed to update local storage with error: ${err.message}`);
+            window.localStorage.removeItem(key);
+        }
+        return newState;
+    };
+
+    const [state, dispatch] = React.useReducer(reduceAndStore, [], () => {
+        const json = window.localStorage.getItem(key);
+        if (json) {
+            try {
+                return JSON.parse(json);
+            } catch (err) {
+                window.localStorage.removeItem(key);
+                logger.logWarning(`Failed to read local storage with error: ${err}`);
+            }
+        }
+        return initializer();
+    });
+
+    const clearStorage = () => window.localStorage.removeItem(key);
+    return [state, dispatch, clearStorage];
 }

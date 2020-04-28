@@ -27,6 +27,7 @@ type Action =
     | { type: "deleteGrape", id: number }
     | { type: "modifyGrape", id: number, grape: string, percent: number | null }
     | { type: "setWineId", wineId: number }
+    | { type: "reset" };
 
 const remainingGrapePct = (grapes: IWineGrape[]): number => {
     if (grapes.length > 0) {
@@ -69,6 +70,8 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
                 ...grape,
                 wineId: action.wineId,
             }));
+        case "reset":
+            return [];
         default:
             return grapes;
     }

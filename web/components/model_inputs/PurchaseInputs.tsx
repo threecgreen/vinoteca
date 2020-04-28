@@ -55,7 +55,8 @@ type Action =
     | { type: "setPrice", price: number }
     | { type: "setVintage", vintage: number }
     | { type: "setStore", store: string }
-    | { type: "setMemo", memo: string };
+    | { type: "setMemo", memo: string }
+    | { type: "reset" };
 
 export const purchaseInputReducer: React.Reducer<IPurchaseData, Action> = (state, action) => {
     switch (action.type) {
@@ -73,6 +74,8 @@ export const purchaseInputReducer: React.Reducer<IPurchaseData, Action> = (state
             return { ...state, store: action.store };
         case "setMemo":
             return { ...state, memo: action.memo };
+        case "reset":
+            return initPurchaseInputData();
         default:
             return state;
     }

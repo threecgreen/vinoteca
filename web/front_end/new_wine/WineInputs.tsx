@@ -87,7 +87,8 @@ type Action =
     | {type: "setVitiArea", vitiArea: string}
     | {type: "setDescription", description: string}
     | {type: "setNotes", notes: string}
-    | {type: "setFile", file: File | null};
+    | {type: "setFile", file: File | null}
+    | {type: "reset" };
 
 export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action) => {
     switch (action.type) {
@@ -115,6 +116,8 @@ export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action
             return { ...state, notes: action.notes };
         case "setFile":
             return { ...state, file: action.file };
+        case "reset":
+            return initWineInputData();
         default:
             return state;
     }

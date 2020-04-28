@@ -7,6 +7,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
+import { useLocalStorageReducer } from "../../lib/LocalStorage";
 import { useLogger } from "../../lib/Logger";
 import { createPurchase, createWine, createWineGrapes, deletePurchase, deleteWine } from "../../lib/RestApi";
 import { useTitle } from "../../lib/widgets";
@@ -14,9 +15,9 @@ import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from 
 
 export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const logger = useLogger("NewWineApp");
-    const [purchaseState, purchaseDispatch] = React.useReducer(purchaseInputReducer, initPurchaseInputData());
-    const [wineState, wineDispatch] = React.useReducer(wineInputReducer, initWineInputData());
-    const [grapes, grapesDispatch] = React.useReducer(grapeReducer, []);
+    const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer("NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData);
+    const [wineState, wineDispatch, clearWineStorage] = useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData, ["file"]);
+    const [grapes, grapesDispatch, clearGrapesStorage] = useLocalStorageReducer("NewWineApp-Grapes", grapeReducer, () => []);
     const [isSaving, setIsSaving] = React.useState(false);
 
     useTitle("New wine");
@@ -47,6 +48,10 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                     }
                 }
             ].map((f) => f()));
+
+            clearPurchaseStorage();
+            clearWineStorage();
+            clearGrapesStorage();
             navigate(`/wines/${wine.id}`);
         } catch (err) {
             logger.logError(`Error creating new wine: ${err.message}`);
@@ -61,9 +66,20 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
         }
     }
 
+    const onReset = () => {
+        purchaseDispatch({type: "reset"});
+        wineDispatch({type: "reset"});
+        grapesDispatch({type: "reset"});
+    }
+
     return (
         <div className="container">
             <h3 className="page-title">Enter new wine information</h3>
+            <Btn classes={ ["yellow-bg"] }
+                onClick={ onReset }
+            >
+                Reset form
+            </Btn>
             <Form>
                 <Row s={ 12 }>
                     <PurchaseInputs displayInventoryBtn
