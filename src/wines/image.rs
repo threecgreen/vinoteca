@@ -6,6 +6,7 @@ use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
+use image::GenericImageView;
 use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_multipart_form_data::mime::Mime;
@@ -18,7 +19,7 @@ pub struct Image {
 }
 
 static WINE_DIR: &str = "wine_images";
-static MAX_SIZE: usize = 1280 * 958;
+static MAX_IMAGE_DIM: u32 = 1280;
 
 /// Auth must be handled before this function is called
 pub fn handle_image(
@@ -160,7 +161,7 @@ fn handle_exif(
         if let Some(orientation) = orientation {
             (
                 match orientation {
-                    1 => decoded_image,
+                    1 => decoded_image, // This is the normal orientation so no need to log
                     2 => decoded_image.fliph(),
                     3 => decoded_image.rotate180(),
                     4 => decoded_image.flipv(),
@@ -194,14 +195,25 @@ fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
         mime_type,
         data: raw,
     } = image;
-    let (decoded_image, orientation) = if let Some(exif) = get_exif(&mime_type, raw) {
+    let (mut decoded_image, orientation) = if let Some(exif) = get_exif(&mime_type, raw) {
         handle_exif(decoded_image, exif)
     } else {
         (decoded_image, None)
     };
     let mut reformatted_image = Vec::new();
     let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
-    // TODO: downsize image if necessary
+    if decoded_image.dimensions().0 > MAX_IMAGE_DIM || decoded_image.dimensions().1 > MAX_IMAGE_DIM
+    {
+        info!(
+            "Downsizing large image with dimesions: {:?}",
+            decoded_image.dimensions()
+        );
+        decoded_image = decoded_image.resize(
+            MAX_IMAGE_DIM,
+            MAX_IMAGE_DIM,
+            image::imageops::FilterType::Lanczos3,
+        );
+    }
     decoded_image
         .write_to(
             &mut reformatted_image_writer,
