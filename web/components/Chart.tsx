@@ -1,12 +1,14 @@
 import Chart from "chart.js";
 import React from "react";
 import { useLogger } from "../lib/Logger";
+import { useViewport } from "./ViewportContext";
 
 export interface IChartInput {
     label: string;
     value: number;
 }
 
+const MOBILE_CUTOFF = 500;
 const FONT_FAMILY = "'Roboto', sans-serif";
 
 const COLORS = new Map<string, string>([
@@ -116,8 +118,12 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
         const pie = new Chart(canvasRef.current, config);
     }, [canvasRef, config]);
 
+    const {width} = useViewport();
+
     return (
-        <canvas height="100px" ref={canvasRef} />
+        <div className="canvas-container">
+            <canvas height={ width > MOBILE_CUTOFF ? "100px" : "175px" } ref={ canvasRef } />
+        </div>
     );
 }
 PieChart.displayName = "PieChart";
@@ -203,7 +209,6 @@ interface ILineChartProps {
     data: IChartInput[][];
     seriesLabels: string[];
 }
-
 export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     const logger = useLogger("LineChart");
 
@@ -226,6 +231,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
                     top: 15,
                 },
             },
+            maintainAspectRatio: false,
             responsive: true,
             scales: {
                 xAxes: [{
@@ -286,13 +292,16 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     }
 
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
+    const {width} = useViewport();
 
     React.useEffect(() => {
         const line = new Chart(canvasRef.current, config);
     }, [canvasRef, config]);
 
     return (
-        <canvas ref={canvasRef} />
+        <div className="canvas-container">
+            <canvas ref={canvasRef} height={ width > MOBILE_CUTOFF ? "150px" : "300px" } />
+        </div>
     );
 }
 LineChart.displayName = "LineChart";

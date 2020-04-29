@@ -20,6 +20,7 @@ import { VitiAreaProfileApp } from "./viti_area_profile/VitiAreaProfileApp";
 import { WinesApp } from "./wines/WinesApp";
 import { WineProfileApp } from "./wine_profile/WineProfileApp";
 import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
+import { ViewportProvider } from "../components/ViewportContext";
 
 const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
@@ -33,10 +34,10 @@ const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     );
 }
 
-export const Router: React.FC<{}> = (_props) => {
-    return (
-        <ErrorBoundary>
-            <UserProvider>
+export const Router: React.FC<{}> = (_props) => (
+    <ErrorBoundary>
+        <UserProvider>
+            <ViewportProvider>
                 <ReachRouter>
                     <App path="/">
                         <HomeApp path="/" />
@@ -83,10 +84,10 @@ export const Router: React.FC<{}> = (_props) => {
                         <NotFound default />
                     </App>
                 </ReachRouter>
-            </UserProvider>
-        </ErrorBoundary>
-    );
-};
+            </ViewportProvider>
+        </UserProvider>
+    </ErrorBoundary>
+);
 Router.displayName = "Router";
 
 /**
