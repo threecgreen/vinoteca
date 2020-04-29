@@ -43,8 +43,8 @@ export function useLocalStorageReducer<S, A>(
 
     const logger = useLogger(`useLocalStorageReducer<${key}>`);
 
-    const reduceAndStore: React.Reducer<S, A> = (state, action) => {
-        const newState = reducer(state, action);
+    const reduceAndStore: React.Reducer<S, A> = (prevState, action) => {
+        const newState = reducer(prevState, action);
         try {
             let stateToSerialize: S;
             if (exclude.length > 0) {
