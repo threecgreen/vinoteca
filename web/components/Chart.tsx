@@ -292,7 +292,6 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     }
 
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
-    const {width} = useViewport();
 
     React.useEffect(() => {
         const line = new Chart(canvasRef.current, config);
@@ -300,7 +299,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
 
     return (
         <div className="canvas-container">
-            <canvas ref={canvasRef} height={ width > MOBILE_CUTOFF ? "150px" : "300px" } />
+            <canvas ref={canvasRef} height={ 300 } />
         </div>
     );
 }
