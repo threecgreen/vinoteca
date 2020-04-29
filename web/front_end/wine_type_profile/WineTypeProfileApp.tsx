@@ -25,7 +25,7 @@ interface IProps {
     wineTypeId: number;
 }
 
-export class WineTypeProfileApp extends React.Component<IProps, IState> {
+export default class WineTypeProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {

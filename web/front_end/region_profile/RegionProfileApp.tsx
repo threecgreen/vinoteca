@@ -23,7 +23,7 @@ interface IProps {
     regionId: number;
 }
 
-export class RegionProfileApp extends React.Component<IProps, IState> {
+export default class RegionProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {

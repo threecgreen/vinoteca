@@ -1,26 +1,15 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import React from "react";
+import React, { Suspense } from "react";
 import { AuthenticatedRoute, NotFound, RouteById } from "../components/CommonRoutes";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { IChildrenProp } from "../components/IProps";
+import { Preloader } from "../components/Preloader";
 import { UserProvider } from "../components/UserContext";
-import { AboutApp } from "./about/AboutApp";
-import { DashboardApp } from "./dashboards/DashboardApp";
-import { Footer } from "./Footer";
-import { GrapesApp } from "./grapes/GrapesApp";
-import { HomeApp } from "./home/HomeApp";
-import { InventoryApp } from "./inventory/InventoryApp";
-import { Navbar } from "./Navbar";
-import { NewWineApp } from "./new_wine/NewWineApp";
-import { ProducerProfileApp } from "./producer_profile/ProducerProfileApp";
-import { RegionProfileApp } from "./region_profile/RegionProfileApp";
-import { SearchWinesApp } from "./search_wines/SearchWinesApp";
-import { UserProfileApp } from "./user_profile/UserProfileApp";
-import { VitiAreaProfileApp } from "./viti_area_profile/VitiAreaProfileApp";
-import { WinesApp } from "./wines/WinesApp";
-import { WineProfileApp } from "./wine_profile/WineProfileApp";
-import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
 import { ViewportProvider } from "../components/ViewportContext";
+import { AboutApp } from "./about/AboutApp";
+import { Footer } from "./Footer";
+import { HomeApp } from "./home/HomeApp";
+import { Navbar } from "./Navbar";
 
 const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
@@ -38,52 +27,32 @@ export const Router: React.FC<{}> = (_props) => (
     <ErrorBoundary>
         <UserProvider>
             <ViewportProvider>
-                <ReachRouter>
-                    <App path="/">
-                        <HomeApp path="/" />
-                        <AboutApp path="/about" />
-                        <AuthenticatedRoute Component={ DashboardApp } path="dashboards" />
-                        <AuthenticatedRoute Component={ GrapesApp } path="grapes" />
+                <Suspense fallback={ <Preloader /> }>
+                    <ReachRouter>
+                        <App path="/">
+                            <HomeApp path="/" />
+                            <AboutApp path="/about" />
+                            <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
+                            <AuthenticatedRoute componentName="Grapes" path="grapes" />
 
-                        <AuthenticatedRoute Component={ WinesApp } path="wines" />
-                        <RouteById Component={ WineProfileApp } path="wines/:id" />
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ InventoryApp }
-                            path="wines/inventory"
-                        />
-                        <AuthenticatedRoute Component={ NewWineApp } path="wines/new" />
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ SearchWinesApp } path="wines/search"
-                        />
+                            <AuthenticatedRoute componentName="Wines" path="wines" />
+                            <RouteById componentName="WineProfile" path="wines/:id" />
+                            <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
+                            <AuthenticatedRoute componentName="NewWine" path="wines/new" />
+                            <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
 
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ ProducerProfileApp }
-                            path="producers/:producerId"
-                        />
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ RegionProfileApp }
-                            path="regions/:regionId"
-                        />
-                        <AuthenticatedRoute Component={ UserProfileApp } path="profile" />
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ VitiAreaProfileApp }
-                            path="viti-areas/:vitiAreaId"
-                        />
-                        <AuthenticatedRoute
-                            // @ts-ignore
-                            Component={ WineTypeProfileApp }
-                            path="wine-types/:wineTypeId"
-                        />
+                            <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
+                            <AuthenticatedRoute componentName="RegionProfile" path="regions/:regionId"
+                            />
+                            <AuthenticatedRoute componentName="UserProfile" path="profile" />
+                            <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
+                            <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />
 
-                        <PleaseCrash path="/crash/please" />
-                        <NotFound default />
-                    </App>
-                </ReachRouter>
+                            <PleaseCrash path="/crash/please" />
+                            <NotFound default />
+                        </App>
+                    </ReachRouter>
+                </Suspense>
             </ViewportProvider>
         </UserProvider>
     </ErrorBoundary>

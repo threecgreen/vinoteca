@@ -4,7 +4,7 @@ import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { useUser } from "../../components/UserContext";
 
-export const UserProfileApp: React.FC<{}> = (_) => {
+const UserProfileApp: React.FC<{}> = (_) => {
     const user = useUser();
     if (!user) {
         redirectTo("/");
@@ -24,3 +24,4 @@ export const UserProfileApp: React.FC<{}> = (_) => {
     );
 }
 UserProfileApp.displayName = "UserProfileApp";
+export default UserProfileApp;

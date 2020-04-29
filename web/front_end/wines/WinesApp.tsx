@@ -82,7 +82,7 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
     }
 }
 
-export const WinesApp: React.FC<{}> = (_) => {
+const WinesApp: React.FC<{}> = (_) => {
     const logger = useLogger("WinesApp");
     useTitle("Wines");
 
@@ -174,3 +174,4 @@ export const WinesApp: React.FC<{}> = (_) => {
     );
 }
 WinesApp.displayName = "WinesApp";
+export default WinesApp;

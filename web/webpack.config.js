@@ -55,6 +55,8 @@ module.exports = (env, argv) => {
         },
         optimization: {
             splitChunks: {
+        // //         chunks: "all",
+        //         minChunks: 2,
                 cacheGroups: {
                     vendors: {
                         name: "vendors",
@@ -69,6 +71,9 @@ module.exports = (env, argv) => {
         },
         output: {
             filename: "[name].bundle.js",
+            // How dynamic chunks will be named
+            chunkFilename: "[name].bundle.js",
+            publicPath: "/static/",
             path: outputPath,
         },
         plugins: [

@@ -34,7 +34,7 @@ interface ISearchWinesAppState {
     lastActiveTextInput?: SearchWinesTextInput;
 }
 
-export class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
+export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     private static defaultState: Readonly<ISearchWinesAppState> = {
             colorSelection: "",
             wineTypeText: "",

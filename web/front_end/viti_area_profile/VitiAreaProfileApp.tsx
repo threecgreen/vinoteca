@@ -26,7 +26,7 @@ interface IProps {
     vitiAreaId: number;
 }
 
-export class VitiAreaProfileApp extends React.Component<IProps, IState> {
+export default class VitiAreaProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {

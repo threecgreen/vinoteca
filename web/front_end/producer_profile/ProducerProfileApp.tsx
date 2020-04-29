@@ -35,7 +35,7 @@ interface IProducerProfileAppProps {
     producerId: number;
 }
 
-export class ProducerProfileApp extends React.Component<IProducerProfileAppProps, IProducerProfileAppState> {
+export default class ProducerProfileApp extends React.Component<IProducerProfileAppProps, IProducerProfileAppState> {
     private logger: Logger;
 
     constructor(props: IProducerProfileAppProps) {

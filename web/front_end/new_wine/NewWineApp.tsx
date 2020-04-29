@@ -13,7 +13,7 @@ import { createPurchase, createWine, createWineGrapes, deletePurchase, deleteWin
 import { useTitle } from "../../lib/widgets";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
-export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
+const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const logger = useLogger("NewWineApp");
     const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer("NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData);
     const [wineState, wineDispatch, clearWineStorage] = useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData, ["file"]);
@@ -111,3 +111,4 @@ export const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     );
 }
 NewWineApp.displayName = "NewWineApp";
+export default NewWineApp;

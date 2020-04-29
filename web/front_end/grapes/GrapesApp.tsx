@@ -9,7 +9,7 @@ import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
-export const GrapesApp: React.FC<{}> = (_) => {
+const GrapesApp: React.FC<{}> = (_) => {
     const logger = useLogger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
@@ -73,3 +73,4 @@ export const GrapesApp: React.FC<{}> = (_) => {
     );
 }
 GrapesApp.displayName = "GrapesApp";
+export default GrapesApp;

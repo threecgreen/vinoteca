@@ -28,7 +28,7 @@ interface IProps {
     id: number;
 }
 
-export const WineProfileApp: React.FC<IProps> = ({id}) => {
+const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = useLogger("WineProfileApp");
@@ -401,3 +401,4 @@ export const WineProfileApp: React.FC<IProps> = ({id}) => {
     );
 }
 WineProfileApp.displayName = "WineProfileApp";
+export default WineProfileApp;

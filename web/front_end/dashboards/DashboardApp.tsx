@@ -5,7 +5,7 @@ import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYearGraph, PurchasesByYearTable } from "./PurchasesByYear";
 import { TopColors, TopGrapes, TopProducers, TopRegions, TopVitiAreas } from "./Top";
 
-export const DashboardApp: React.FC<{}> = (_) => {
+const DashboardApp: React.FC<{}> = (_) => {
     useTitle("Dashboards");
 
     return (
@@ -37,3 +37,4 @@ export const DashboardApp: React.FC<{}> = (_) => {
     );
 }
 DashboardApp.displayName = "DashboardApp";
+export default DashboardApp;
