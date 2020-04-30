@@ -1,6 +1,6 @@
 import { nonNulls, singleEntityGetter } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
-import { IWine, IWineCount, IWineForm, IWinePatchForm, IInventoryWine } from "./Rest";
+import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
 
 interface IGetWinesParams {
     id?: number;

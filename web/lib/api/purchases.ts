@@ -1,6 +1,7 @@
 import { nonNulls } from "./common";
 import { delete_, get, post, put } from "./requests";
-import { IMostCommonPurchaseDate, IPurchase, IPurchaseCount, IPurchaseForm, ITotalLiters, IYearsPurchases, IRecentPurchase } from "./Rest";
+import { IMostCommonPurchaseDate, IPurchase, IPurchaseCount, IPurchaseForm, IRecentPurchase,
+         ITotalLiters, IYearsPurchases } from "./Rest";
 
 interface IGetPurchasesParams {
     wineId?: number;

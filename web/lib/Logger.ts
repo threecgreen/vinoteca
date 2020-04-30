@@ -87,9 +87,9 @@ export default class Logger {
  * Logging hook for posting client-side logs to the server.
  *
  * @param module the name of the module from which the log messages originate.
-* @param toConsole whether to also print messages to the console
-* @param shouldToast whether to display a toast message
-*/
+ * @param toConsole whether to also print messages to the console
+ * @param shouldToast whether to display a toast message
+ */
 export const useLogger = (module: string, toConsole = false, shouldToast = false) => {
     const [logger, _] = React.useState(new Logger(module, toConsole, shouldToast));
     return logger;
