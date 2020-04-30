@@ -24,7 +24,7 @@
         "date-fns": "^2.11.1",
         "materialize-css": "^1.0.0",
         "mini-css-extract-plugin": "^0.6.0",
-        "node-sass": "^4.13.1",
+        "node-sass": "^4.14.0",
         "postcss-loader": "^3.0.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
@@ -49,6 +49,6 @@
     "devDependencies": {
         "null-loader": "^3.0.0",
         "tslint": "^5.20.1",
-        "webpack-bundle-analyzer": "^3.6.1"
+        "webpack-bundle-analyzer": "^3.7.0"
     }
 }
