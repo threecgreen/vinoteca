@@ -1,5 +1,5 @@
 import React from "react";
-import { postLog } from "./RestApi";
+import { postLog } from "./rest_api";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
 
@@ -20,8 +20,7 @@ type LogTags = IDict<string | number | Date | object | undefined | null>;
 
 export default class Logger {
     /**
-     * Logging class for client-side errors that will be posted to the server
-     * for logging to the same file as all other vinoteca logs.
+     * Logging class for client-side errors that will be posted to the server.
      *
      * @param module the name of the module from which the log messages originate.
      * @param toConsole whether to also print messages to the console
@@ -30,31 +29,18 @@ export default class Logger {
     constructor(private module: string, private toConsole = false, private shouldToast = true) {
     }
 
-    /**
-     * Meant for irrecoverable or truly exceptional errors. A toast with the
-     * log message will be displayed and the log will be sent back to the server
-     * for posterity.
-     */
     public logCritical(message: string, tags: LogTags = {}) {
         const level = LogLevel.Critical;
         this.toast(level, message);
         return this.log(level, message, tags);
     }
 
-    /**
-     * A toast with the log message will be displayed and the log will be sent
-     * back to the server for posterity.
-     */
     public logError(message: string, tags: LogTags = {}) {
         const level = LogLevel.Error;
         this.toast(level, message);
         return this.log(level, message, tags);
     }
 
-    /**
-     * A toast with the log message will be displayed and the log will be sent
-     * back to the server for posterity.
-     */
     public logWarning(message: string, tags: LogTags = {}) {
         const level = LogLevel.Warning;
         this.toast(level, message);
@@ -97,6 +83,13 @@ export default class Logger {
     }
 }
 
+/**
+ * Logging hook for posting client-side logs to the server.
+ *
+ * @param module the name of the module from which the log messages originate.
+* @param toConsole whether to also print messages to the console
+* @param shouldToast whether to display a toast message
+*/
 export const useLogger = (module: string, toConsole = false, shouldToast = false) => {
     const [logger, _] = React.useState(new Logger(module, toConsole, shouldToast));
     return logger;

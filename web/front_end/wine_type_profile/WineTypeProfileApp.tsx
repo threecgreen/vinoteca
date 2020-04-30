@@ -7,7 +7,7 @@ import { Preloader } from "../../components/Preloader";
 import { WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
-import { getWines, getWineType, updateWineType } from "../../lib/RestApi";
+import { getWines, getWineType, updateWineType } from "../../lib/rest_api";
 import { IRestModel } from "../../lib/RestTypes";
 import { setTitle } from "../../lib/widgets";
 import { WineType } from "./WineType";

@@ -4,7 +4,7 @@ import { LineChart } from "../../components/Chart";
 import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
-import { get } from "../../lib/ApiHelper";
+import { get } from "../../lib/api_helper";
 import Logger, { useLogger } from "../../lib/Logger";
 import { IYearsPurchases } from "../../lib/Rest";
 

@@ -5,7 +5,7 @@ import { LoginForm } from "../components/AccountModals";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { useSetUser, useUser } from "../components/UserContext";
 import { IUser } from "../lib/Rest";
-import { logout } from "../lib/RestApi";
+import { logout } from "../lib/rest_api";
 
 enum ModalState {
     None,

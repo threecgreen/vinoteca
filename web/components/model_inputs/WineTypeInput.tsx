@@ -1,6 +1,6 @@
 import React from "react";
 import { IWineType } from "../../lib/Rest";
-import { getWineTypes, toDict } from "../../lib/RestApi";
+import { getWineTypes, toDict } from "../../lib/rest_api";
 import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";

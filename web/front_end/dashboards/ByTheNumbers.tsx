@@ -1,7 +1,7 @@
 import React from "react";
 import { YellowCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
-import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters, getWineVarieties } from "../../lib/RestApi";
+import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters, getWineVarieties } from "../../lib/rest_api";
 
 export const ByTheNumbers: React.FC<{}> = (_) => {
     const [totalLiters, setTotalLiters] = React.useState(0);

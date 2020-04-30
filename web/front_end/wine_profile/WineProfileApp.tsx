@@ -10,7 +10,7 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import { Preloader } from "../../components/Preloader";
 import { useLogger } from "../../lib/Logger";
 import { IPurchase, IWineGrape } from "../../lib/Rest";
-import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, deleteWineImage, uploadWineImage } from "../../lib/RestApi";
+import { createPurchase, createWineGrapes, deletePurchase, deleteWine, getPurchases, getWine, getWineGrapes, updatePurchase, updateWine, deleteWineImage, uploadWineImage } from "../../lib/rest_api";
 import { getNameAndType, hasChanged, arrayHasChanged } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange } from "../inventory/InventoryTable";

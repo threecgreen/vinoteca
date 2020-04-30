@@ -1,5 +1,5 @@
 import React from "react";
-import { getCurrentUser } from "../lib/Auth";
+import { getCurrentUser } from "../lib/auth";
 import { IUser } from "../lib/Rest";
 import { IChildrenProp } from "./IProps";
 

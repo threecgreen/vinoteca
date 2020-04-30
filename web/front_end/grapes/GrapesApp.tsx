@@ -3,7 +3,7 @@ import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
 import { useLogger } from "../../lib/Logger";
 import { IGrape, IGrapeForm } from "../../lib/Rest";
-import { getGrapes, updateGrape } from "../../lib/RestApi";
+import { getGrapes, updateGrape } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";

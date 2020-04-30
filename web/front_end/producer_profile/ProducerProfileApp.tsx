@@ -9,7 +9,7 @@ import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IProducer, IRegion, IWine } from "../../lib/Rest";
-import { deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
+import { deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/rest_api";
 import { setTitle } from "../../lib/widgets";
 import { Producer } from "./Producer";
 

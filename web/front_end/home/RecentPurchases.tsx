@@ -3,7 +3,7 @@ import { GreenCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
-import { get } from "../../lib/ApiHelper";
+import { get } from "../../lib/api_helper";
 import { useLogger } from "../../lib/Logger";
 import { IRecentPurchase } from "../../lib/Rest";
 

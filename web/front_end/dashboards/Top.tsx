@@ -2,7 +2,7 @@ import React from "react";
 import { RedCard, YellowCard, GreenCard } from "../../components/Cards";
 import { ProducerCell, RegionCell, VitiAreaCell } from "../../components/TableCells";
 import { TopEntity } from "../../components/TopEntity";
-import { getTopColors, getTopGrapes, getTopProducers, getTopRegions, getTopVitiAreas } from "../../lib/RestApi";
+import { getTopColors, getTopGrapes, getTopProducers, getTopRegions, getTopVitiAreas } from "../../lib/rest_api";
 import { capitalizeFirstLetter } from "../../lib/utils";
 
 export const TopProducers: React.FC<{}> = (_) => {

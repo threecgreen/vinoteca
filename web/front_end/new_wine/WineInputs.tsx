@@ -8,7 +8,7 @@ import { RegionInput } from "../../components/model_inputs/RegionInput";
 import { VitiAreaInput } from "../../components/model_inputs/VitiAreaInput";
 import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
 import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
-import { getColor, getOrCreateProducer, getOrCreateVitiArea, getOrCreateWineType, getRegion } from "../../lib/RestApi";
+import { getColor, getOrCreateProducer, getOrCreateVitiArea, getOrCreateWineType, getRegion } from "../../lib/rest_api";
 
 export interface IWineData {
     color: string;

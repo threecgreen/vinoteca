@@ -1,7 +1,7 @@
 import React from "react";
 import { useLogger } from "../../lib/Logger";
 import { IProducer } from "../../lib/Rest";
-import { getProducers, toDict } from "../../lib/RestApi";
+import { getProducers, toDict } from "../../lib/rest_api";
 import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";

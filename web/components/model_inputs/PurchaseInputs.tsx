@@ -1,7 +1,7 @@
 import React from "react";
 import { useLogger } from "../../lib/Logger";
 import { IPurchaseForm, IStore } from "../../lib/Rest";
-import { getOrCreateStore, getStores, toDict } from "../../lib/RestApi";
+import { getOrCreateStore, getStores, toDict } from "../../lib/rest_api";
 import { defaultVintageYear } from "../../lib/utils";
 import { autocomplete } from "../../lib/widgets";
 import { CheckboxInput } from "../inputs/CheckboxInput";

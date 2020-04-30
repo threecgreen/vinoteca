@@ -4,7 +4,7 @@ import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
 import { IRegion, IVitiAreaStats, IWine } from "../../lib/Rest";
-import { getRegion, getVitiAreaStats, getWines } from "../../lib/RestApi";
+import { getRegion, getVitiAreaStats, getWines } from "../../lib/rest_api";
 import { setTitle } from "../../lib/widgets";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";

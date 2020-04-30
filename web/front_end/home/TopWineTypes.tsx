@@ -2,7 +2,7 @@ import React from "react";
 import { RedCard } from "../../components/Cards";
 import { WineTypeCell } from "../../components/TableCells";
 import { TopEntity } from "../../components/TopEntity";
-import { getTopWineTypes } from "../../lib/RestApi";
+import { getTopWineTypes } from "../../lib/rest_api";
 
 export const TopWineTypes: React.FC<{}> = (_) => {
     return (

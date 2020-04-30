@@ -3,14 +3,14 @@ import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import { get } from "../../lib/ApiHelper";
-import { download, generateCSV } from "../../lib/CSV";
+import { get } from "../../lib/api_helper";
+import { download, generateCSV } from "../../lib/csv";
+import { dateToStr } from "../../lib/date";
 import { useLogger } from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
-import { partUpdateWine } from "../../lib/RestApi";
+import { partUpdateWine } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
-import { dateToStr } from "../../lib/date";
 
 const InventoryApp: React.FC<{}> = (_) => {
     const logger = useLogger("InventoryApp");

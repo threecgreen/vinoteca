@@ -3,7 +3,7 @@ import { Btn } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
 import Logger from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
-import { searchWines } from "../../lib/RestApi";
+import { searchWines } from "../../lib/rest_api";
 import { setTitle } from "../../lib/widgets";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";

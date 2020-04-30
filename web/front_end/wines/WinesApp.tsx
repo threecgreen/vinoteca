@@ -7,7 +7,7 @@ import { columnToVal, WinesTable, WinesTableColumn } from "../../components/Wine
 import FilterExpr from "../../lib/FilterExpr";
 import { useLogger } from "../../lib/Logger";
 import { IWine } from "../../lib/Rest";
-import { getWines } from "../../lib/RestApi";
+import { getWines } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
