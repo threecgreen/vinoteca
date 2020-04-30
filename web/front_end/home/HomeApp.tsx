@@ -1,14 +1,14 @@
 import { RouteComponentProps } from "@reach/router";
-import React from "react";
+import React, { Suspense } from "react";
 import { NewUserForm } from "../../components/AccountModals";
 import { Btn, BtnLink } from "../../components/Buttons";
+import { AsyncComponent } from "../../components/CommonRoutes";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
+import { Preloader } from "../../components/Preloader";
 import { useSetUser, useUser } from "../../components/UserContext";
 import { useTitle } from "../../lib/widgets";
-import { RecentPurchases } from "./RecentPurchases";
-import { TopWineTypes } from "./TopWineTypes";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
@@ -19,14 +19,9 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     const [showNewUserModal, setShowNewUserModal] = React.useState(false);
 
     const homeDashboards = user ? (
-            <Row>
-                <Col s={12} xl={7}>
-                    <RecentPurchases />
-                </Col>
-                <Col s={12} xl={5}>
-                    <TopWineTypes />
-                </Col>
-            </Row>
+            <Suspense fallback={ <Preloader /> }>
+                <AsyncComponent componentName="HomeDashboard" />
+            </Suspense>
         ) : null;
 
     const button = user ? (

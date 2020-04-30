@@ -8,9 +8,9 @@ import { download, generateCSV } from "../../lib/CSV";
 import { useLogger } from "../../lib/Logger";
 import { IInventoryWine } from "../../lib/Rest";
 import { partUpdateWine } from "../../lib/RestApi";
-import { numToDate } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
+import { dateToStr } from "../../lib/date";
 
 const InventoryApp: React.FC<{}> = (_) => {
     const logger = useLogger("InventoryApp");
@@ -60,7 +60,7 @@ const InventoryApp: React.FC<{}> = (_) => {
                  generateCSV(wines, [
                      "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
                      "lastPurchaseDate", "lastPurchasePrice"
-                 ], {"lastPurchasedDate": (date: number) => format(numToDate(date), 'yyyy-MM-dd')}));
+                 ], {"lastPurchasedDate": dateToStr}));
     };
 
     if (!hasLoaded) {

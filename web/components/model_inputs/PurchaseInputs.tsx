@@ -2,12 +2,13 @@ import React from "react";
 import { useLogger } from "../../lib/Logger";
 import { IPurchaseForm, IStore } from "../../lib/Rest";
 import { getOrCreateStore, getStores, toDict } from "../../lib/RestApi";
-import { dateToStr, defaultVintageYear } from "../../lib/utils";
+import { defaultVintageYear } from "../../lib/utils";
 import { autocomplete } from "../../lib/widgets";
 import { CheckboxInput } from "../inputs/CheckboxInput";
 import { DateInput } from "../inputs/DateInput";
 import { NumberInput } from "../inputs/NumberInput";
 import { TextInput } from "../inputs/TextInput";
+import { dateToStr } from "../../lib/date";
 
 export interface IPurchaseData {
     date: string | null;

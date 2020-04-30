@@ -7,7 +7,7 @@ import { get } from "../../lib/ApiHelper";
 import { useLogger } from "../../lib/Logger";
 import { IRecentPurchase } from "../../lib/Rest";
 
-export const RecentPurchases: React.FC<{}> = (_) => {
+const RecentPurchases: React.FC<{}> = (_) => {
     const logger = useLogger("RecentPurchases");
     const [hasLoaded, setHasLoaded] = useState<boolean>(false);
     const [purchases, setPurchases] = useState<IRecentPurchase[]>([]);
@@ -69,3 +69,4 @@ export const RecentPurchases: React.FC<{}> = (_) => {
     );
 }
 RecentPurchases.displayName = "RecentPurchases";
+export default RecentPurchases;

@@ -55,19 +55,16 @@ module.exports = (env, argv) => {
         },
         optimization: {
             splitChunks: {
-        // //         chunks: "all",
-        //         minChunks: 2,
-                cacheGroups: {
-                    vendors: {
-                        name: "vendors",
-                        test: /[\\/]node_modules[\\/]/,
-                        chunks: "initial",
-                    },
-                },
+                chunks: "all",
+                minChunks: 2,
+        //         cacheGroups: {
+        //             vendors: {
+        //                 name: "vendors",
+        //                 test: /[\\/]node_modules[\\/]/,
+        //                 chunks: "initial",
+        //             },
+        //         },
             },
-        },
-        performance: {
-            hints: false
         },
         output: {
             filename: "[name].bundle.js",

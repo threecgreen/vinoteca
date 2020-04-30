@@ -1,6 +1,4 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
-// tslint:disable-next-line
-import format from "date-fns/esm/format";
 import Logger from "./Logger";
 import { IRestModel } from "./RestTypes";
 
@@ -23,26 +21,6 @@ export function restModelsToNameDict(objects: IRestModel[]): IDict<null> {
         dict[obj.name] = null;
     });
     return dict;
-}
-
-/**
- * Converts an 8-digit number of format 'yyyymmdd' to a Date object.
- * @param num a date number of format 'yyyymmdd'
- */
-export function numToDate(num: number): Date {
-    const strNum = `${num}`;
-    if (strNum.length !== 8) {
-        throw Error(`Invalid date number '${strNum}'`);
-    }
-    const year = strNum.substr(0, 4);
-    const month = strNum.substr(4, 2);
-    const day = strNum.substr(6, 2);
-    // JS months are 0-based
-    return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
-}
-
-export function dateToStr(date: Date): string {
-    return format(date, "yyyy-MM-dd");
 }
 
 export const EN_DASH: string = "–";

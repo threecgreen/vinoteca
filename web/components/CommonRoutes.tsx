@@ -72,6 +72,7 @@ AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "../front_end/dashboards/DashboardApp"));
 const Grapes = lazy(() => import(/* webpackChunkName: "grapes" */ "../front_end/grapes/GrapesApp"));
+const HomeDashboard = lazy(() => import(/* webpackChunkName: "home_dashboard" */ "../front_end/home/HomeDashboard"));
 const Inventory = lazy(() => import(/* webpackChunkName: "inventory" */ "../front_end/inventory/InventoryApp"));
 const NewWine = lazy(() => import(/* webpackChunkName: "new_wine" */ "../front_end/new_wine/NewWineApp"));
 const ProducerProfile = lazy(() => import(/* webpackChunkName: "producer_profile" */ "../front_end/producer_profile/ProducerProfileApp"));
@@ -79,13 +80,14 @@ const RegionProfile = lazy(() => import(/* webpackChunkName: "region_profile" */
 const SearchWines = lazy(() => import(/* webpackChunkName: "search_wines" */ "../front_end/search_wines/SearchWinesApp"));
 const UserProfile = lazy(() => import(/* webpackChunkName: "user_profile" */ "../front_end/user_profile/UserProfileApp"));
 const VitiAreaProfile = lazy(() => import(/* webpackChunkName: "viti_area_profile" */ "../front_end/viti_area_profile/VitiAreaProfileApp"));
-const WineProfile = lazy(() => import(/* webpackChunkName: "wine_type_profile" */ "../front_end/wine_profile/WineProfileApp"));
+const WineProfile = lazy(() => import(/* webpackChunkName: "wine_profile" */ "../front_end/wine_profile/WineProfileApp"));
 const Wines = lazy(() => import(/* webpackChunkName: "wines" */ "../front_end/wines/WinesApp"));
 const WineTypeProfile = lazy(() => import(/* webpackChunkName: "wine_type_profile" */ "../front_end/wine_type_profile/WineTypeProfileApp"));
 
 const Components = {
     Dashboard,
     Grapes,
+    HomeDashboard,
     Inventory,
     NewWine,
     ProducerProfile,
