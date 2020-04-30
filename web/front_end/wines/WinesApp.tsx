@@ -4,10 +4,10 @@ import { Col, Row } from "../../components/Grid";
 import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import { columnToVal, WinesTable, WinesTableColumn } from "../../components/WinesTable";
+import { IWine } from "../../lib/api/Rest";
+import { getWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
 import { useLogger } from "../../lib/Logger";
-import { IWine } from "../../lib/Rest";
-import { getWines } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";

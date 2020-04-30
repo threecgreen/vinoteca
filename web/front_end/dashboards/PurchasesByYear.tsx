@@ -4,9 +4,9 @@ import { LineChart } from "../../components/Chart";
 import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
-import { get } from "../../lib/api_helper";
+import { getPurchasesByYear } from "../../lib/api/purchases";
+import { IYearsPurchases } from "../../lib/api/Rest";
 import Logger, { useLogger } from "../../lib/Logger";
-import { IYearsPurchases } from "../../lib/Rest";
 
 const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
@@ -14,7 +14,7 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     React.useEffect(() => {
         async function fetchYearsPurchases() {
             try {
-                const yearsPurchases = await get<IYearsPurchases[]>("/rest/purchases/by-year");
+                const yearsPurchases = await getPurchasesByYear();
                 setYearsPurchases(yearsPurchases);
             } catch (e) {
                 logger.logError(`Error fetching purchases by year: ${e.message}`);

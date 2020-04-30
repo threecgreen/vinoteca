@@ -1,8 +1,12 @@
 import React from "react";
-import { RedCard, YellowCard, GreenCard } from "../../components/Cards";
+import { GreenCard, RedCard, YellowCard } from "../../components/Cards";
 import { ProducerCell, RegionCell, VitiAreaCell } from "../../components/TableCells";
 import { TopEntity } from "../../components/TopEntity";
-import { getTopColors, getTopGrapes, getTopProducers, getTopRegions, getTopVitiAreas } from "../../lib/rest_api";
+import { getTopColors } from "../../lib/api/colors";
+import { getTopGrapes } from "../../lib/api/grapes";
+import { getTopProducers } from "../../lib/api/producers";
+import { getTopRegions } from "../../lib/api/regions";
+import { getTopVitiAreas } from "../../lib/api/viti_areas";
 import { capitalizeFirstLetter } from "../../lib/utils";
 
 export const TopProducers: React.FC<{}> = (_) => {

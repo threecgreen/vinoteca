@@ -1,7 +1,7 @@
 import React from "react";
 import { SearchWinesResult } from "./SearchWinesResult";
 import { Preloader } from "../../components/Preloader";
-import { IWine } from "../../lib/Rest";
+import { IWine } from "../../lib/api/Rest";
 import { SimpleTable } from "../../components/Table";
 
 interface ISearchWinesResultsProps {

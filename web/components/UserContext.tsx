@@ -1,6 +1,6 @@
 import React from "react";
-import { getCurrentUser } from "../lib/auth";
-import { IUser } from "../lib/Rest";
+import { getCurrentUser } from "../lib/api/auth";
+import { IUser } from "../lib/api/Rest";
 import { IChildrenProp } from "./IProps";
 
 const UserContext = React.createContext<IUser | null>(null);

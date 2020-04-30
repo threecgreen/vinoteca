@@ -3,12 +3,12 @@ import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
-import { IRestModel } from "../../lib/RestTypes";
+import { IWineType } from "../../lib/api/Rest";
 
 interface IProps {
     isEditing: boolean;
     wineTypeText: string;
-    wineType: IRestModel;
+    wineType: IWineType;
     onWineTypeChange: (val: string) => void;
     onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;

@@ -3,7 +3,7 @@ import { PieChart } from "../../components/Chart";
 import { SimpleTable } from "../../components/Table";
 import { NumCell, TextCell } from "../../components/TableCells";
 import { indexFactory, Tab, TabColor, TabPanel, Tabs } from "../../components/Tabs";
-import { IWineGrape } from "../../lib/Rest";
+import { IWineGrape } from "../../lib/api/Rest";
 
 interface IProps {
     grapes: IWineGrape[];

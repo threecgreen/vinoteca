@@ -1,7 +1,8 @@
 import React from "react";
+import { toDict } from "../../lib/api/common";
+import { IVitiArea } from "../../lib/api/Rest";
+import { getVitiAreas } from "../../lib/api/viti_areas";
 import { useLogger } from "../../lib/Logger";
-import { IVitiArea } from "../../lib/Rest";
-import { getVitiAreas, toDict } from "../../lib/rest_api";
 import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";

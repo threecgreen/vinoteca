@@ -1,4 +1,4 @@
-import { IDict, isEmpty } from "./utils";
+import { IDict, isEmpty } from "../utils";
 
 const HEADERS = {
     "Content-Type": "application/json",

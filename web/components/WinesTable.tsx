@@ -1,5 +1,5 @@
 import React from "react";
-import { IWine } from "../lib/Rest";
+import { IWine } from "../lib/api/Rest";
 import { getNameAndType } from "../lib/utils";
 import { Table } from "./Table";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";

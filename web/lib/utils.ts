@@ -1,6 +1,5 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 import Logger from "./Logger";
-import { IRestModel } from "./RestTypes";
 
 /**
  * Key-value store where the key must be a string, but the value is of any type
@@ -8,19 +7,6 @@ import { IRestModel } from "./RestTypes";
  */
 export interface IDict<T> {
     [key: string]: T;
-}
-
-/**
- * Converts the objects to a single object of names to null for use with materialize
- * autocomplete.
- * @param objects An array of REST models
- */
-export function restModelsToNameDict(objects: IRestModel[]): IDict<null> {
-    const dict: IDict<null> = {};
-    objects.map((obj) => {
-        dict[obj.name] = null;
-    });
-    return dict;
 }
 
 export const EN_DASH: string = "–";

@@ -1,5 +1,5 @@
 import React from "react";
-import { postLog } from "./rest_api";
+import { postLog } from "./api/logs";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
 

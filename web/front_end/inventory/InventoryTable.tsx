@@ -4,7 +4,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Table } from "../../components/Table";
 import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
-import { IInventoryWine } from "../../lib/Rest";
+import { IInventoryWine } from "../../lib/api/Rest";
 
 export enum InventoryChange {
     Increase,

@@ -7,8 +7,12 @@ import { RatingInput } from "../../components/model_inputs/RatingInput";
 import { RegionInput } from "../../components/model_inputs/RegionInput";
 import { VitiAreaInput } from "../../components/model_inputs/VitiAreaInput";
 import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
-import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/Rest";
-import { getColor, getOrCreateProducer, getOrCreateVitiArea, getOrCreateWineType, getRegion } from "../../lib/rest_api";
+import { getColor } from "../../lib/api/colors";
+import { getOrCreateProducer } from "../../lib/api/producers";
+import { getRegion } from "../../lib/api/regions";
+import { IColor, IProducer, IVitiArea, IWineForm, IWineType } from "../../lib/api/Rest";
+import { getOrCreateVitiArea } from "../../lib/api/viti_areas";
+import { getOrCreateWineType } from "../../lib/api/wine_types";
 
 export interface IWineData {
     color: string;

@@ -1,8 +1,8 @@
 import { FormSelect } from "materialize-css";
 import React from "react";
 import Logger, { useLogger } from "../../lib/Logger";
-import { IColor } from "../../lib/Rest";
-import { getColors } from "../../lib/rest_api";
+import { IColor } from "../../lib/api/Rest";
+import { getColors } from "../../lib/api/colors";
 import { SelectInput } from "../inputs/SelectInput";
 import { IOnChange } from "../IProps";
 

@@ -4,8 +4,8 @@ import React from "react";
 import { LoginForm } from "../components/AccountModals";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { useSetUser, useUser } from "../components/UserContext";
-import { IUser } from "../lib/Rest";
-import { logout } from "../lib/rest_api";
+import { logout } from "../lib/api/auth";
+import { IUser } from "../lib/api/Rest";
 
 enum ModalState {
     None,

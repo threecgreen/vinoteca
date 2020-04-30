@@ -1,6 +1,6 @@
 import React from "react";
-import { IUser } from "../lib/Rest";
-import { createUser, login } from "../lib/rest_api";
+import { createUser, login } from "../lib/api/auth";
+import { IUser } from "../lib/api/Rest";
 import { CancelOrConfirmBtns } from "./Buttons";
 import { EmailInput, PasswordInput, TextInput } from "./inputs/TextInput";
 import { Modal, ModalContent, ModalFooter } from "./Modal";

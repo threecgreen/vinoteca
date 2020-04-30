@@ -5,7 +5,7 @@ import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { ProducerInput } from "../../components/model_inputs/ProducerInput";
 import { RegionInput } from "../../components/model_inputs/RegionInput";
-import { IProducer, IRegion } from "../../lib/Rest";
+import { IProducer, IRegion } from "../../lib/api/Rest";
 
 interface IProducerProps {
     isEditing: boolean;

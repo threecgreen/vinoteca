@@ -1,5 +1,5 @@
 import React from "react";
-import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
+import { IPurchase, IWine, IWineGrape } from "../../lib/api/Rest";
 
 export interface IState {
     mode: Mode;

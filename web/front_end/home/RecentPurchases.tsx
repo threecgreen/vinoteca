@@ -3,9 +3,9 @@ import { GreenCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
-import { get } from "../../lib/api_helper";
+import { getRecentPurchases } from "../../lib/api/purchases";
+import { IRecentPurchase } from "../../lib/api/Rest";
 import { useLogger } from "../../lib/Logger";
-import { IRecentPurchase } from "../../lib/Rest";
 
 const RecentPurchases: React.FC<{}> = (_) => {
     const logger = useLogger("RecentPurchases");
@@ -14,7 +14,7 @@ const RecentPurchases: React.FC<{}> = (_) => {
     useEffect(() => {
         async function fetchPurchases() {
             try {
-                const purchases = await get<IRecentPurchase[]>("/rest/purchases/recent");
+                const purchases = await getRecentPurchases();
                 setPurchases(purchases);
             } catch (e) {
                 logger.logError(`Error fetching recent purchases: ${e.message}`);

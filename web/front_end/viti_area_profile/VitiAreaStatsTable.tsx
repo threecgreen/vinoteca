@@ -1,5 +1,5 @@
-import * as React from "react"
-import { IVitiAreaStats } from "../../lib/Rest";
+import React from "react"
+import { IVitiAreaStats } from "../../lib/api/Rest";
 import { SimpleTable } from "../../components/Table";
 import { NumCell } from "../../components/TableCells";
 

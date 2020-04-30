@@ -5,7 +5,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Table } from "../../components/Table";
 import { DateCell, NumCell, PriceCell, TextCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
-import { IPurchase } from "../../lib/Rest";
+import { IPurchase } from "../../lib/api/Rest";
 
 enum SortingValue {
     Date,

@@ -1,7 +1,8 @@
 import React from "react";
+import { EmptyResultError } from "../../lib/api/common";
+import { getRegions } from "../../lib/api/regions";
+import { IRegion } from "../../lib/api/Rest";
 import { useLogger } from "../../lib/Logger";
-import { IRegion } from "../../lib/Rest";
-import { EmptyResultError, getRegions } from "../../lib/rest_api";
 import { IDict } from "../../lib/utils";
 import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";

@@ -5,10 +5,10 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { WinesTable } from "../../components/WinesTable";
+import { IWine, IWineType } from "../../lib/api/Rest";
+import { getWines } from "../../lib/api/wines";
+import { getWineType, updateWineType } from "../../lib/api/wine_types";
 import Logger from "../../lib/Logger";
-import { IWine } from "../../lib/Rest";
-import { getWines, getWineType, updateWineType } from "../../lib/rest_api";
-import { IRestModel } from "../../lib/RestTypes";
 import { setTitle } from "../../lib/widgets";
 import { WineType } from "./WineType";
 
@@ -17,7 +17,7 @@ interface IState {
     // Editable
     wineTypeText: string;
     // "Pure" state
-    wineType?: IRestModel;
+    wineType?: IWineType;
     wines: IWine[];
 }
 

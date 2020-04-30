@@ -37,7 +37,7 @@ fn write_version(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
 fn main() -> Result<(), Box<dyn error::Error>> {
     // Truncate file if it already exists
     let type_def_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/Rest.d.ts"))?;
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/api/Rest.d.ts"))?;
     let mut type_def_writer = BufWriter::new(&type_def_file);
     // Main db models
     write_interface(&mut type_def_writer, Color::type_script_ify())?;

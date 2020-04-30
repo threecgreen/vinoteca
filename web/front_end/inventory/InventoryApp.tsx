@@ -3,12 +3,11 @@ import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import { get } from "../../lib/api_helper";
+import { IInventoryWine } from "../../lib/api/Rest";
+import { getInventory, partUpdateWine } from "../../lib/api/wines";
 import { download, generateCSV } from "../../lib/csv";
 import { dateToStr } from "../../lib/date";
 import { useLogger } from "../../lib/Logger";
-import { IInventoryWine } from "../../lib/Rest";
-import { partUpdateWine } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 
@@ -25,7 +24,7 @@ const InventoryApp: React.FC<{}> = (_) => {
 
     const updateInventory = async () => {
         try {
-            const wines: IInventoryWine[] = await get("/rest/wines/inventory");
+            const wines: IInventoryWine[] = await getInventory();
             setWines(wines);
         } catch (err) {
             logger.logError(`Failed to load inventory: ${err.message}`);

@@ -7,9 +7,11 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
+import { createPurchase, deletePurchase } from "../../lib/api/purchases";
+import { createWine, deleteWine } from "../../lib/api/wines";
+import { createWineGrapes } from "../../lib/api/wine_grapes";
 import { useLocalStorageReducer } from "../../lib/local_storage";
 import { useLogger } from "../../lib/Logger";
-import { createPurchase, createWine, createWineGrapes, deletePurchase, deleteWine } from "../../lib/rest_api";
 import { useTitle } from "../../lib/widgets";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 

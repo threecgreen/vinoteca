@@ -1,7 +1,7 @@
 import { redirectTo, RouteComponentProps } from "@reach/router";
 import React, { lazy } from "react";
 import { useLogger } from "../lib/Logger";
-import { IUser } from "../lib/Rest";
+import { IUser } from "../lib/api/Rest";
 import { LoginForm } from "./AccountModals";
 import { useSetUser, useUser } from "./UserContext";
 

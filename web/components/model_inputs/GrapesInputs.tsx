@@ -1,7 +1,8 @@
 import React from "react";
+import { toDict } from "../../lib/api/common";
+import { getGrapes, getOrCreateGrape } from "../../lib/api/grapes";
+import { IWineGrape, IWineGrapesForm } from "../../lib/api/Rest";
 import Logger, { useLogger } from "../../lib/Logger";
-import { IWineGrape, IWineGrapesForm } from "../../lib/Rest";
-import { getGrapes, getOrCreateGrape, toDict } from "../../lib/rest_api";
 import { IDict, maxBy, sumBy } from "../../lib/utils";
 import { FloatingBtn } from "../Buttons";
 import { Col, InputField, Row } from "../Grid";

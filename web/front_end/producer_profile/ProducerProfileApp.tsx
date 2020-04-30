@@ -7,9 +7,12 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
+import { EmptyResultError } from "../../lib/api/common";
+import { deleteProducer, getProducer, updateProducer } from "../../lib/api/producers";
+import { getRegion } from "../../lib/api/regions";
+import { IProducer, IRegion, IWine } from "../../lib/api/Rest";
+import { getWines } from "../../lib/api/wines";
 import Logger from "../../lib/Logger";
-import { IProducer, IRegion, IWine } from "../../lib/Rest";
-import { deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/rest_api";
 import { setTitle } from "../../lib/widgets";
 import { Producer } from "./Producer";
 

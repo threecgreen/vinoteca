@@ -6,11 +6,12 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
 import Logger from "../../lib/Logger";
-import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/Rest";
-import { getVitiArea, getVitiAreaStats, getWines, updateVitiArea } from "../../lib/rest_api";
+import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/api/Rest";
 import { setTitle } from "../../lib/widgets";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
+import { getVitiArea, getVitiAreaStats, updateVitiArea } from "../../lib/api/viti_areas";
+import { getWines } from "../../lib/api/wines";
 
 interface IState {
     isEditing: boolean;
