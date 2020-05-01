@@ -1,9 +1,12 @@
 import { Link } from "@reach/router";
 import React from "react";
+import { useViewport } from "../components/ViewportContext";
 import { VERSION } from "../lib/constants";
+import { MOBILE_CUTOFF } from "../components/constants";
 
 export const Footer: React.FC<{}> = (_) => {
     const thisYear = new Date().getFullYear();
+    const { width } = useViewport();
 
     return (
         <footer className="page-footer pink darken-4 footer-copyright">
@@ -59,12 +62,14 @@ export const Footer: React.FC<{}> = (_) => {
                             <p>© 2017&ndash;{ thisYear } Carter Green</p>
                         </div>
                         <div className="col s12 l4">
-                            <p className="center">
+                            <p className={ width > MOBILE_CUTOFF ? "center" : undefined }>
                                 This software and its source code are distributed under the MIT License.
                             </p>
                         </div>
                         <div className="col s12 l4">
-                            <p className="right no-indent">Version { VERSION }</p>
+                            <p className={ `${width > MOBILE_CUTOFF ? "right" : undefined} no-indent` }>
+                                Version { VERSION }
+                            </p>
                         </div>
                     </div>
                 </div>

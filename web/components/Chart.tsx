@@ -1,14 +1,12 @@
 import Chart from "chart.js";
 import React from "react";
 import { useLogger } from "../lib/Logger";
-import { useViewport } from "./ViewportContext";
 
 export interface IChartInput {
     label: string;
     value: number;
 }
 
-const MOBILE_CUTOFF = 500;
 const FONT_FAMILY = "'Roboto', sans-serif";
 
 const COLORS = new Map<string, string>([
@@ -118,11 +116,9 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
         const pie = new Chart(canvasRef.current, config);
     }, [canvasRef, config]);
 
-    const {width} = useViewport();
-
     return (
         <div className="canvas-container">
-            <canvas height={ width > MOBILE_CUTOFF ? "100px" : "175px" } ref={ canvasRef } />
+            <canvas height={ "175px" } ref={ canvasRef } />
         </div>
     );
 }
