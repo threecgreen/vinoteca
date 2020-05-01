@@ -1,7 +1,8 @@
-use super::error::{RestResult, VinotecaError};
-use super::models::{generic, Color};
-use super::schema::{colors, purchases, wines};
-use super::DbConn;
+use crate::error::{RestResult, VinotecaError};
+use crate::models::{generic, Color};
+use crate::schema::{colors, purchases, wines};
+use crate::users::Auth;
+use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
@@ -23,10 +24,12 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
 }
 
 #[get("/colors/top")]
-pub fn top(connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub fn top(auth: Auth, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = 20;
     top_table!(
-        colors::table.inner_join(wines::table.inner_join(purchases::table)),
+        colors::table
+            .inner_join(wines::table.inner_join(purchases::table))
+            .filter(wines::user_id.eq(auth.id)),
         colors::id,
         colors::name,
         limit,
