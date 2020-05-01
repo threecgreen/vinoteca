@@ -73,7 +73,7 @@ async def upload_wine_image(old_id: int) -> Union[str, None]:
                                            Body=data,
                                            ContentType='image/png')
             print(f"Response: {resp}")
-        return file_path
+        return name
 
 # Insert wines
 async def insert_wines(wine_types_map: Dict[int, int], producers_map: Dict[int, int], viti_areas_map: Dict[int, int]) -> Dict[int, int]:
@@ -115,13 +115,17 @@ async def insert_purchases(wines_map: Dict[int, int], stores_map: Dict[int, int]
             async for row in cursor:
                 # Convert int to date
                 date_int = row[6]
-                purchase_date = date(year=date_int // 10_000,
-                                     month=date_int % 10_000 // 100,
-                                     day=date_int % 100)
-                await pg_db.execute("INSERT INTO purchases (price, quantity, vintage, memo, store_id, wine_id, date) VALUES ($1, $2, $3, $4, $5, $6, $7);",
-                                    row[0], row[1], row[2], row[3],
-                                    stores_map[row[4]] if row[4] else None,
-                                    wines_map[row[5]], purchase_date)
+                if date_int is not None:
+                    purchase_date = date(year=date_int // 10_000,
+                                        month=date_int % 10_000 // 100,
+                                        day=date_int % 100)
+                else:
+                    purchase_date = None
+                if wine_id := wines_map.get(row[5]):
+                    await pg_db.execute("INSERT INTO purchases (price, quantity, vintage, memo, store_id, wine_id, date) VALUES ($1, $2, $3, $4, $5, $6, $7);",
+                                        row[0], row[1] or 1, row[2], row[3],
+                                        stores_map[row[4]] if row[4] else None,
+                                        wine_id, purchase_date)
 
 async def main():
     grapes_map, stores_map, wine_types_map, regions_map = await asyncio.gather(
