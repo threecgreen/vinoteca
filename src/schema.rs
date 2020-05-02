@@ -105,11 +105,25 @@ table! {
     }
 }
 
+table! {
+    recent_purchases(wine_id) {
+        wine_id -> Int4,
+        price -> Nullable<Float8>,
+        quantity -> Int4,
+        vintage -> Nullable<Int4>,
+        memo -> Nullable<Text>,
+        store_id -> Nullable<Int4>,
+        date -> Nullable<Date>,
+    }
+}
+
 joinable!(grapes -> users (user_id));
 joinable!(producers -> regions (region_id));
 joinable!(producers -> users (user_id));
 joinable!(purchases -> stores (store_id));
 joinable!(purchases -> wines (wine_id));
+joinable!(recent_purchases -> stores (store_id));
+joinable!(recent_purchases -> wines (wine_id));
 joinable!(stores -> users (user_id));
 joinable!(viti_areas -> regions (region_id));
 joinable!(viti_areas -> users (user_id));
@@ -134,4 +148,5 @@ allow_tables_to_appear_in_same_query!(
     wine_grapes,
     wines,
     wine_types,
+    recent_purchases,
 );

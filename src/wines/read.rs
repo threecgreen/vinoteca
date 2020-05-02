@@ -1,7 +1,7 @@
 use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
-use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use crate::schema::{colors, producers, purchases, regions, recent_purchases, viti_areas, wine_types, wines};
 use crate::users::Auth;
 use crate::DbConn;
 
@@ -39,7 +39,7 @@ pub fn get(
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
         .inner_join(wine_types::table)
-        .left_join(purchases::table)
+        .left_join(recent_purchases::table)
         .left_join(viti_areas::table)
         .filter(wines::user_id.eq(auth.id))
         .into_boxed();
@@ -112,7 +112,7 @@ pub fn get(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-            sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            recent_purchases::vintage.nullable(),
             wines::image,
         ))
         .load::<Wine>(&*connection)
@@ -122,6 +122,7 @@ pub fn get(
 
 #[get("/wines/inventory")]
 pub fn inventory(auth: Auth, connection: DbConn) -> RestResult<Vec<InventoryWine>> {
+    // TODO: move to diesel
     sql_query(include_str!("inventory.sql"))
         .bind::<Integer, _>(auth.id)
         .load::<InventoryWine>(&*connection)

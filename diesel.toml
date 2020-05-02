@@ -4,3 +4,4 @@
 [print_schema]
 file = "src/schema.rs"
 filter = { except_tables = ["spatial_ref_sys"] }
+patch_file = "src/schema.patch"
