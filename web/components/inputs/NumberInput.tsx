@@ -35,6 +35,7 @@ export const NumberInput: React.FC<IProps> = (props) => {
             s={ props.s }
             m={ props.m }
             l={ props.l }
+            active
         />
     );
 };

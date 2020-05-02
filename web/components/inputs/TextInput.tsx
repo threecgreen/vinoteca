@@ -68,16 +68,14 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     value={ props.value }
                     enabled={ props.enabled }
                     onChange={ (val) => onChange(val) }
-                    // onBlur={ onBlur }
-                    // onFocus={ onFocus }
                     className=""
                     inputFieldClassName={ `${props.className} flex-grow` }
-                    // s={ props.s } m={ props.m } l={ props.l }
                     inputRef={ inputRef }
+                    active={ Boolean(props.value) }
                 />
                 { isActive && <Btn onClick={ onShowPicker }
                     noRbtn={ true }
-                    classes={ ["green-bg", "overlap", "btn-small", showPicker ? "active" : ""] }
+                    classes={ ["green-bg", "overlap", "btn-small"] }
                 >
                     ñ
                 </Btn> }
@@ -142,6 +140,7 @@ const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => {
             onChange={ props.onChange }
             className={ props.className }
             s={ props.s } m={ props.m } l={ props.l }
+            active={ Boolean(props.value) }
         />
     );
 }

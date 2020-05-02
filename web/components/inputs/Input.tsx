@@ -1,4 +1,3 @@
-import M from "materialize-css";
 import React from "react";
 import { nameToId } from "../../lib/utils";
 import { InputField } from "../Grid";
@@ -15,7 +14,7 @@ export interface IInputProps<T extends IInputValue> {
     onBlur: () => void;
     inputRef?: React.Ref<HTMLInputElement>;
     inputType?: string;
-    active?: boolean;
+    active: boolean;
     step?: string;
     max?: number;
     min?: number;
@@ -46,7 +45,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     type={ this.props.inputType }
                     disabled={ !this.props.enabled }
                     value={ this.props.value }
-                    onChange={ (e) => this.onChange(e) }
+                    onChange={ (e) => this.props.onChange(e.target.value) }
                     onBlur={ this.props.onBlur }
                     onFocus={ this.props.onFocus }
                     step={ this.props.step }
@@ -59,17 +58,4 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
             </InputField>
         );
     }
-
-    public componentDidMount() {
-        M.updateTextFields();
-    }
-
-    public componentDidUpdate() {
-        M.updateTextFields();
-    }
-
-    public onChange(e: React.ChangeEvent<HTMLInputElement>) {
-        this.props.onChange(e.target.value);
-    }
 }
-
