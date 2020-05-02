@@ -74,27 +74,7 @@ pub fn get(
         query = query.filter(viti_areas::name.like(add_wildcards(&viti_area)));
     }
 
-    query
-        .group_by((
-            wines::id,
-            wines::description,
-            wines::notes,
-            wines::rating,
-            wines::inventory,
-            wines::why,
-            wines::color_id,
-            colors::name,
-            wines::producer_id,
-            producers::name,
-            producers::region_id,
-            regions::name,
-            wines::viti_area_id,
-            viti_areas::name,
-            wines::name,
-            wines::wine_type_id,
-            wine_types::name,
-        ))
-        .select((
+    query.select((
             wines::id,
             wines::description,
             wines::notes,
