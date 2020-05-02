@@ -19,8 +19,6 @@ export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
                 onChange(text);
             },
         });
-        // Fix overlappting text bug
-        M.updateTextFields();
     }
 }
 
