@@ -1,4 +1,6 @@
+import { RestResult, Result } from "../error";
 import { IDict, isEmpty } from "../utils";
+import { VinotecaError } from "./Rest";
 
 const HEADERS = {
     "Content-Type": "application/json",
@@ -24,18 +26,21 @@ async function decodeJsonIfAny(response: Response) {
     }
 }
 
-type VinotecaError =
-    | {"NotFound": string}
-    | {"Internal": string}
-    | {"MissingConstraint": string}
-    | {"BadRequest": string};
-
-function isVinotecaError(obj: object): obj is VinotecaError {
+function isVinotecaError(obj: any): obj is VinotecaError {
     if (obj && obj instanceof Object) {
-        const keys = Object.keys(obj);
-        return keys.length === 1
-            && ["NotFound", "Internal", "MissingConstraint", "BadRequest"]
-                .find((i) => i === keys[0]) !== undefined;
+        if (!obj.hasOwnProperty("type")) {
+            return false;
+        }
+        switch (obj.type) {
+            case "NotFound":
+            case "Internal":
+            case "MissingConstraint":
+            case "BadRequest":
+            case "Forbidden":
+                return true;
+            default:
+                return false;
+        }
     }
     return false;
 }
@@ -44,7 +49,8 @@ async function checkResponse(response: Response): Promise<any> {
     if (response.status > 310) {
         const message = await decodeJsonIfAny(response);
         if (isVinotecaError(message)) {
-            throw Error(`${Object.keys(message)[0]}: ${Object.values(message)[0]}`);
+            // TODO: create own error type?
+            throw Error(`${message.type}: ${message.message}`);
         }
         throw Error(message);
     }
@@ -58,6 +64,21 @@ async function checkResponse(response: Response): Promise<any> {
     }
 }
 
+async function checkResult(response: Response): Promise<RestResult<any>> {
+    if (response.status > 310) {
+        const message = await decodeJsonIfAny(response);
+        if (isVinotecaError(message)) {
+            return Result.Err(message);
+        }
+        throw Error(message);
+    }
+    try {
+        return Result.Ok(decodeJsonIfAny(response));
+    } catch (err) {
+        throw Error(await response.text());
+    }
+}
+
 /**
  * Makes an HTTP GET request to the url with the optional parameters, then parses
  * the JSON response.
@@ -65,9 +86,21 @@ async function checkResponse(response: Response): Promise<any> {
  * @param params An optional dictionary of parameters to their values
  * @returns parsed JSON response
  */
-export async function get<Response>(url: string, params: IQueryParams = {}): Promise<Response> {
+export async function get<T>(url: string, params: IQueryParams = {}): Promise<T> {
     const response = await fetch(url + encodeParams(params));
     return checkResponse(response);
+}
+
+/**
+ * Makes an HTTP GET request to the url with the optional parameters, then parses
+ * the JSON result.
+ * @param url A URL to request
+ * @param params An optional dictionary of parameters to their values
+ * @returns RestResult
+ */
+export async function getResult<T>(url: string, params: IQueryParams = {}): Promise<RestResult<T>> {
+    const response = await fetch(url + encodeParams(params));
+    return checkResult(response);
 }
 
 /**
@@ -78,9 +111,7 @@ export async function get<Response>(url: string, params: IQueryParams = {}): Pro
  * @param params An optional dictionary of parameters to their values
  * @returns parsed JSON response
  */
-export async function post<Response>(url: string, body: object,
-                                     params: IQueryParams = {}): Promise<Response> {
-
+export async function post<T>(url: string, body: object, params: IQueryParams = {}): Promise<T> {
     const response = await fetch(url + encodeParams(params), {
         body: encodeJson(body),
         headers: HEADERS,
@@ -89,8 +120,28 @@ export async function post<Response>(url: string, body: object,
     return checkResponse(response);
 }
 
-export async function postForm<Response>(url: string, form: FormData,
-                                         params: IQueryParams = {}): Promise<Response> {
+/**
+ * Makes an HTTP POST request to the url with the optional parameters containing
+ * the body, then parses the JSON result.
+ * @param url A URL to request
+ * @param body JSON object to encode and send to the server
+ * @param params An optional dictionary of parameters to their values
+ * @returns RestResult
+ */
+export async function postResult<T>(url: string, body: object,
+                                    params: IQueryParams = {}): Promise<RestResult<T>> {
+
+    const response = await fetch(url + encodeParams(params), {
+        body: encodeJson(body),
+        headers: HEADERS,
+        method: "POST",
+    });
+    return checkResult(response);
+}
+
+export async function postForm<T>(url: string, form: FormData,
+                                  params: IQueryParams = {}): Promise<T> {
+
     const response = await fetch(url + encodeParams(params), {
         body: form,
         method: "POST",

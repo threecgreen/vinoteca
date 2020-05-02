@@ -94,7 +94,7 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
     const submit = async () => {
         setIsSaving(true);
         await onConfirmClick();
-        // setIsSaving(false);
+        setIsSaving(false);
     }
 
     return (

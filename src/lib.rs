@@ -21,7 +21,7 @@ mod schema;
 // Server internals
 mod cached_static;
 mod config;
-mod error;
+pub mod error;
 mod media;
 
 #[macro_use] // Must be declared before modules using macros

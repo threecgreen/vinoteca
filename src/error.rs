@@ -9,9 +9,11 @@ use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
+use typescript_definitions::TypeScriptify;
 use validator::ValidationErrors;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, TypeScriptify)]
+#[serde(tag = "type", content = "message")]
 pub enum VinotecaError {
     NotFound(String),
     Internal(String),

@@ -1,6 +1,5 @@
 /// Generates an API contract TypeScript type definition file,
 /// in web/lib/Restd.d.ts
-// TODO: move this to build.rs
 use vinoteca::logs::{LogForm, LogResponse};
 use vinoteca::models::*;
 use vinoteca::purchases::{
@@ -10,6 +9,7 @@ use vinoteca::users::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
+use vinoteca::error::VinotecaError;
 
 use std::borrow::Cow;
 use std::error;
@@ -69,6 +69,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         "{}",
         AssociatedGrape::type_script_ify()
     )?;
+    // Write normally because it's a discriminated union
+    writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
     // Other models
     write_interface(&mut type_def_writer, ChangePasswordForm::type_script_ify())?;
     write_interface(&mut type_def_writer, ChangeUserForm::type_script_ify())?;
