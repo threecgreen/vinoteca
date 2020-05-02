@@ -7,7 +7,7 @@ import { columnToVal, WinesTable, WinesTableColumn } from "../../components/Wine
 import { IWine } from "../../lib/api/Rest";
 import { getWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
-import { useLogger } from "../../lib/Logger";
+import Logger, { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
@@ -92,7 +92,12 @@ const WinesApp: React.FC<{}> = (_) => {
         async function fetchWines() {
             try {
                 const wines = await getWines({});
-                dispatch({type: "setWines", wines});
+                if (wines instanceof Array) {
+                    dispatch({type: "setWines", wines});
+                } else {
+                    // FIXME: remove when we know what's happening
+                    new Logger("Wines App", false, false).logCritical(`getWines didn't return an array`, {wines});
+                }
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);
                 dispatch({type: "setWines", wines: []});
