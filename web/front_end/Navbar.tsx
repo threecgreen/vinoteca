@@ -1,4 +1,4 @@
-import { Link, redirectTo, useLocation } from "@reach/router";
+import { Link, navigate, useLocation } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 import { LoginForm } from "../components/AccountModals";
@@ -125,7 +125,7 @@ const UserMenuItems: React.FC<IMenuItemsProps> = ({id}) => {
         e.preventDefault();
         await logout();
         setUser(null);
-        redirectTo("/");
+        navigate("/");
     }
 
     return (

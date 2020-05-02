@@ -62,6 +62,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
+                    confirmDisabled={ !Boolean(password) || !Boolean(email) }
                 />
             </ModalFooter>
         </Modal>

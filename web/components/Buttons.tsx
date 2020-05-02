@@ -85,11 +85,13 @@ BtnLink.displayName = "BtnLink";
 interface ICancelOrConfirmProps {
     onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
+    confirmDisabled?: boolean;
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
-    ({onConfirmClick, onCancelClick}) => {
+    ({onConfirmClick, onCancelClick, confirmDisabled}) => {
     const [isSaving, setIsSaving] = React.useState(false);
+    const isConfirmDisabled = confirmDisabled || isSaving;
 
     const submit = async () => {
         setIsSaving(true);
@@ -97,12 +99,13 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
         setIsSaving(false);
     }
 
+
     return (
         <Col s={ 12 }>
             { isSaving && <PreloaderCirc className="hor-margin" /> }
             <Btn classes={ ["green-bg"] }
                 onClick={ submit }
-                disabled={ isSaving }
+                disabled={ isConfirmDisabled }
             >
                 Confirm
                 <MaterialIcon iconName="send" className="right" />

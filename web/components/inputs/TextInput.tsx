@@ -104,6 +104,8 @@ export const EmailInput: React.FC<ISimpleProps> = (props) => {
         <SimpleTextInput type="email"
             {...props}
             className={ `${props.className} validate`}
+            required={ true }
+            helperTexts={ {success: "", error: "E-mail is required"} }
         />
     );
 }
@@ -114,6 +116,8 @@ export const PasswordInput: React.FC<ISimpleProps> = (props) => {
         <SimpleTextInput type="password"
             {...props}
             className={ `${props.className} validate`}
+            required={ true }
+            helperTexts={ {success: "", error: "Password is required"} }
         />
     );
 }
@@ -129,6 +133,8 @@ interface IIntSimpleProps {
     m?: number;
     l?: number;
     type: string;
+    required: boolean;
+    helperTexts: {success: string, error: string};
 }
 
 const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => {
@@ -141,6 +147,8 @@ const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => {
             className={ props.className }
             s={ props.s } m={ props.m } l={ props.l }
             active={ Boolean(props.value) }
+            required={ props.required }
+            helperTexts={ props.helperTexts }
         />
     );
 }

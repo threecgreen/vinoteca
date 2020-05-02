@@ -1,4 +1,4 @@
-import { redirectTo } from "@reach/router";
+import { navigate } from "@reach/router";
 import format from "date-fns/esm/format";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
@@ -7,7 +7,7 @@ import { useUser } from "../../components/UserContext";
 const UserProfileApp: React.FC<{}> = (_) => {
     const user = useUser();
     if (!user) {
-        redirectTo("/");
+        navigate("/");
         return null;
     }
     return (

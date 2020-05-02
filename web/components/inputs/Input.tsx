@@ -22,6 +22,8 @@ export interface IInputProps<T extends IInputValue> {
     m?: number;
     l?: number;
     inputFieldClassName?: string;
+    required: boolean;
+    helperTexts?: {success: string, error: string};
 }
 
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
@@ -30,10 +32,17 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
         onChange: () => undefined,
         onFocus: () => undefined,
         onBlur: (_: React.FocusEvent<HTMLInputElement>) => undefined,
+        required: false,
     };
 
     public render() {
         const id = nameToId(this.props.name);
+        const helper = this.props.helperTexts
+            ? <span className="helper-text"
+                data-error={ this.props.helperTexts.error }
+                data-success={ this.props.helperTexts.success }
+            />
+            : null;
         return (
             <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }
                 classes={ [this.props.inputFieldClassName ?? ""] }
@@ -51,10 +60,12 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     step={ this.props.step }
                     min={ this.props.min }
                     max={ this.props.max }
+                    required={ this.props.required }
                 />
                 <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
                     { this.props.name }
                 </label>
+                { helper }
             </InputField>
         );
     }

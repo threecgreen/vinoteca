@@ -1,7 +1,7 @@
-import { redirectTo, RouteComponentProps } from "@reach/router";
+import { navigate, redirectTo, RouteComponentProps } from "@reach/router";
 import React, { lazy } from "react";
-import { useLogger } from "../lib/Logger";
 import { IUser } from "../lib/api/Rest";
+import { useLogger } from "../lib/Logger";
 import { LoginForm } from "./AccountModals";
 import { useSetUser, useUser } from "./UserContext";
 
@@ -35,7 +35,7 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
     // TODO: better support for creating an account as well
     return (
         <LoginForm onFinish={ setUser! }
-            onCancel={ () => redirectTo("/") }
+            onCancel={ () => navigate("/") }
         />
     );
 }
@@ -64,7 +64,7 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
     // TODO: better support for creating an account as well
     return (
         <LoginForm onFinish={ setUser! }
-            onCancel={ () => redirectTo("/") }
+            onCancel={ () => navigate("/") }
         />
     );
 }
