@@ -65,6 +65,7 @@ pub fn recent(
         )
         .left_join(stores::table)
         .filter(wines::user_id.eq(auth.id))
+        .filter(purchases::date.is_not_null())
         .select((
             purchases::id,
             purchases::price,
