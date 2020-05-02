@@ -24,7 +24,12 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
         let connection = request.guard::<DbConn>().map_failure(|e| {
             error!("Failed to acquire database connection: {:?}", e);
-            (Status::InternalServerError, Json(VinotecaError::Internal("Database connection failed".to_owned())))
+            (
+                Status::InternalServerError,
+                Json(VinotecaError::Internal(
+                    "Database connection failed".to_owned(),
+                )),
+            )
         })?;
         let auth = request
             .cookies()
@@ -41,7 +46,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
         if let Some(auth) = auth {
             Outcome::Success(auth)
         } else {
-            Outcome::Failure((Status::Forbidden, Json(VinotecaError::Forbidden("Bad email or password".to_owned()))))
+            Outcome::Failure((
+                Status::Forbidden,
+                Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
+            ))
         }
     }
 }

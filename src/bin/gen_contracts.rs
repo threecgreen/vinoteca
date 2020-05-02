@@ -1,3 +1,4 @@
+use vinoteca::error::VinotecaError;
 /// Generates an API contract TypeScript type definition file,
 /// in web/lib/Restd.d.ts
 use vinoteca::logs::{LogForm, LogResponse};
@@ -9,7 +10,6 @@ use vinoteca::users::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
-use vinoteca::error::VinotecaError;
 
 use std::borrow::Cow;
 use std::error;

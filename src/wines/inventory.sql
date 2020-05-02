@@ -8,27 +8,16 @@ SELECT
     , p.name AS producer
     , r.id AS region_id
     , r.name AS region
-    , p3.vintage AS last_purchase_vintage
-    , sub.last_purchase_date
+    , rc.vintage AS last_purchase_vintage
+    , rc.date AS last_purchase_date
     , w.inventory AS inventory
-    , p3.price AS last_purchase_price
+    , rc.price AS last_purchase_price
 FROM wines w
     INNER JOIN producers p ON w.producer_id = p.id
     INNER JOIN regions r ON p.region_id = r.id
     INNER JOIN colors c ON w.color_id = c.id
     INNER JOIN wine_types wt ON w.wine_type_id = wt.id
-    LEFT JOIN purchases pu ON w.id = pu.wine_id
-    LEFT JOIN (
-        SELECT
-            w2.id
-            , max(p2.date) as last_purchase_date
-        FROM wines w2
-            INNER JOIN purchases p2 ON w2.id = p2.wine_id
-        GROUP BY w2.id
-    ) AS sub ON sub.id = w.id
-    LEFT JOIN purchases p3 ON w.id = p3.wine_id
-        AND (p3.date = sub.last_purchase_date
-            OR sub.last_purchase_date IS NULL)
+    LEFT JOIN recent_purchases rc ON rc.wine_id = w.id
 WHERE w.inventory > 0
     AND w.user_id = $1
-ORDER BY sub.last_purchase_date DESC;
+ORDER BY rc.date DESC;
