@@ -2,7 +2,7 @@ import React from "react";
 import { createUser, login } from "../lib/api/auth";
 import { IUser } from "../lib/api/Rest";
 import { CancelOrConfirmBtns } from "./Buttons";
-import { EmailInput, PasswordInput, TextInput } from "./inputs/TextInput";
+import { EmailInput, PasswordInput, TextInput, SimpleTextInput } from "./inputs/TextInput";
 import { Modal, ModalContent, ModalFooter } from "./Modal";
 import { Form } from "./Form";
 import { useLogger } from "../lib/Logger";
@@ -22,6 +22,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
         const userResult = await login({email, password});
         userResult.map(onFinish)
             .mapErr((ve) => {
+                setPassword("");
                 switch (ve.type) {
                     case "BadRequest":
                     case "Forbidden":
@@ -44,7 +45,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     return (
         <Modal onClose={ onCancel }>
             <ModalContent onKeyDown={ onKeyDown }>
-                { errorMsg && <p>{ errorMsg }</p>}
+                { errorMsg && <p className="error-msg">{ errorMsg }</p>}
                 <Form>
                     <EmailInput name="E-mail"
                         className=""
@@ -62,7 +63,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
-                    confirmDisabled={ !Boolean(password) || !Boolean(email) }
+                    confirmDisabled={ !password || !email }
                 />
             </ModalFooter>
         </Modal>
@@ -97,17 +98,19 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     return (
         <Modal onClose={ onCancel }>
             <ModalContent>
-                { errorMsg && <p>{ errorMsg }</p>}
+                { errorMsg && <p className="error-msg">{ errorMsg }</p>}
                 <Form>
                     <EmailInput name="E-mail"
                         className=""
                         value={ email }
                         onChange={ setEmail }
                     />
-                    <TextInput name="Name"
+                    <SimpleTextInput name="Name"
+                        type="text"
                         className=""
                         value={ name }
                         onChange={ setName }
+                        required={ true }
                     />
                     <PasswordInput name="Password"
                         className=""
@@ -120,6 +123,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
+                    confirmDisabled={ !email || !name || !password }
                 />
             </ModalFooter>
         </Modal>

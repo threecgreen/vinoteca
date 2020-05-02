@@ -103,9 +103,7 @@ export const EmailInput: React.FC<ISimpleProps> = (props) => {
     return (
         <SimpleTextInput type="email"
             {...props}
-            className={ `${props.className} validate`}
             required={ true }
-            helperTexts={ {success: "", error: "E-mail is required"} }
         />
     );
 }
@@ -115,9 +113,7 @@ export const PasswordInput: React.FC<ISimpleProps> = (props) => {
     return (
         <SimpleTextInput type="password"
             {...props}
-            className={ `${props.className} validate`}
             required={ true }
-            helperTexts={ {success: "", error: "Password is required"} }
         />
     );
 }
@@ -134,24 +130,19 @@ interface IIntSimpleProps {
     l?: number;
     type: string;
     required: boolean;
-    helperTexts: {success: string, error: string};
 }
 
-const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => {
-    return (
-        <Input inputType={ props.type }
-            name={ props.name }
-            value={ props.value }
-            enabled={ props.enabled }
-            onChange={ props.onChange }
-            className={ props.className }
-            s={ props.s } m={ props.m } l={ props.l }
-            active={ Boolean(props.value) }
-            required={ props.required }
-            helperTexts={ props.helperTexts }
-        />
-    );
-}
+export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
+    <Input inputType={ props.type }
+        name={ props.name }
+        value={ props.value }
+        enabled={ props.enabled }
+        onChange={ props.onChange }
+        className={ `props.className ${props.required ? "validate" : ""}`  }
+        s={ props.s } m={ props.m } l={ props.l }
+        active={ Boolean(props.value) }
+        required={ props.required }
+        helperTexts={ props.required ? {success: "", error: `${props.name} is required`} : undefined }
+    />
+);
 SimpleTextInput.displayName = "SimpleTextInput";
-
-

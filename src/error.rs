@@ -78,6 +78,7 @@ impl From<std::io::Error> for VinotecaError {
 
 impl From<ValidationErrors> for VinotecaError {
     fn from(val_errors: ValidationErrors) -> Self {
+        // TODO: Improve formatting
         VinotecaError::BadRequest(format!("{}", val_errors))
     }
 }

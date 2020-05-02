@@ -7,9 +7,9 @@ use validator::Validate;
 #[derive(Deserialize, TypeScriptify, Validate, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct LoginForm<'a> {
-    #[validate(email)]
+    #[validate(email(message = "E-mail %s is invalid"))]
     pub email: &'a str,
-    #[validate(length(min = 8))]
+    #[validate(length(min = 8, message = "Password does not meet minimum length of 8"))]
     pub password: &'a str,
 }
 
@@ -31,8 +31,3 @@ pub struct ChangeUserForm<'a> {
     #[validate(length(min = 2))]
     pub name: &'a str,
 }
-
-// fn validate_password(password: &str) -> Result<(), ValidationError> {
-
-//     Ok(())
-// }
