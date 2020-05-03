@@ -1,5 +1,5 @@
 use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{HttpDate, LastModified};
+use rocket::http::hyper::header::{CacheControl, CacheDirective, HttpDate, LastModified};
 use rocket::http::{uri::Segments, ContentType, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
@@ -58,6 +58,8 @@ impl<'r> Responder<'r> for CachedFile {
             HttpDate(tm)
         };
         response.set_header(LastModified(mtime));
+        // User agent must revalidate. This is especially important for JS bundles
+        response.set_header(CacheControl(vec![CacheDirective::NoCache]));
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
