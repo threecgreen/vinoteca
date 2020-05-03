@@ -10,7 +10,6 @@ use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Double, Integer};
 use rocket_contrib::json::Json;
-use tokio::task::spawn_blocking;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub fn get(

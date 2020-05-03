@@ -6,7 +6,6 @@ fn run() -> Result<(), impl Error> {
     vinoteca::create_rocket().launch()
 }
 
-// TODO: convert to returning result
 fn main() -> Result<(), impl Error> {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {

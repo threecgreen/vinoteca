@@ -2,11 +2,11 @@ use chrono::{DateTime, Utc};
 use rocket::handler::{Handler, HandlerFuture, Outcome};
 use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
+use rocket::tokio::fs::{self, File};
+use rocket::tokio::io;
 use rocket::{Data, Request, Route};
 use std::borrow::Cow;
 use std::boxed::Box;
-use std::fs::{self, File};
-use std::io;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 
@@ -27,14 +27,9 @@ pub struct CachedFile(PathBuf, File);
 
 impl CachedFile {
     /// Attempts to open a file in read-only mode.
-    pub fn open(path: impl AsRef<Path>) -> io::Result<CachedFile> {
-        let file = File::open(path.as_ref())?;
+    pub async fn open(path: impl AsRef<Path>) -> io::Result<CachedFile> {
+        let file = File::open(path.as_ref()).await?;
         Ok(CachedFile(path.as_ref().to_path_buf(), file))
-    }
-
-    /// Retrieve the underlying `File`.
-    pub fn file(&self) -> &File {
-        &self.1
     }
 }
 
@@ -51,7 +46,7 @@ impl<'r> Responder<'r> for CachedFile {
             }
         }
         let epoch: DateTime<Utc> = {
-            let metadata = fs::metadata(&self.0.as_path()).unwrap();
+            let metadata = fs::metadata(&self.0.as_path()).await.unwrap();
             metadata
                 .modified()
                 // TODO: failure here?
@@ -87,16 +82,6 @@ impl Deref for CachedFile {
 impl DerefMut for CachedFile {
     fn deref_mut(&mut self) -> &mut File {
         &mut self.1
-    }
-}
-
-impl io::Read for CachedFile {
-    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        self.file().read(buf)
-    }
-
-    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
-        self.file().read_to_end(buf)
     }
 }
 
@@ -151,10 +136,12 @@ impl Handler for CachedStaticFiles {
             .and_then(|segments| segments.into_path_buf(false).ok())
             .map(|path| self.root.join(path));
 
-        match &path {
-            Some(path) if path.is_dir() => Box::pin(async move { Outcome::forward(data) }),
-            Some(path) => Outcome::from(req, CachedFile::open(path).ok()),
-            None => Box::pin(async move { Outcome::forward(data) }),
-        }
+        Box::pin(async move {
+            match &path {
+                Some(path) if path.is_dir() => Outcome::forward(data),
+                Some(path) => Outcome::from(req, CachedFile::open(path).await.ok()).await,
+                None => Outcome::forward(data),
+            }
+        })
     }
 }

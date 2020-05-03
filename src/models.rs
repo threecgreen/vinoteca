@@ -202,13 +202,13 @@ impl From<InternalUser> for User {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct UserForm<'a> {
+pub struct UserForm {
     #[validate(email)]
-    pub email: &'a str,
+    pub email: String,
     #[validate(length(min = 2))]
-    pub name: &'a str,
+    pub name: String,
     #[validate(length(min = 8))]
-    pub password: &'a str,
+    pub password: String,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]

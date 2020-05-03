@@ -4,13 +4,13 @@ use image::ImageError;
 use rocket::http::Status;
 use rocket::request::Request;
 use rocket::response::{self, Responder};
+use rocket::tokio::task::JoinError;
 use rocket_contrib::json::Json;
 use s3::S3Error;
 use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
-use tokio::task::JoinError;
 use typescript_definitions::TypeScriptify;
 use validator::ValidationErrors;
 

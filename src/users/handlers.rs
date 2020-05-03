@@ -8,6 +8,7 @@ use crate::DbConn;
 use chrono::Utc;
 use diesel::prelude::*;
 use rocket::http::{Cookie, Cookies, SameSite};
+use rocket::tokio::task::spawn_blocking;
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -30,12 +31,23 @@ pub fn get(auth: Auth, connection: DbConn) -> RestResult<User> {
 }
 
 #[post("/users/login", format = "json", data = "<form>")]
-pub fn login(form: Json<LoginForm>, mut cookies: Cookies, connection: DbConn) -> RestResult<User> {
+pub async fn login<'a>(
+    form: Json<LoginForm>,
+    mut cookies: Cookies<'a>,
+    connection: DbConn,
+) -> RestResult<User> {
     let form = form.into_inner();
+    form.validate()?;
+    let LoginForm { email, password } = form;
+
     let user = users::table
-        .filter(users::email.eq(form.email))
+        .filter(users::email.eq(email))
         .first::<InternalUser>(&*connection)?;
-    let valid = bcrypt::verify(form.password, &user.hash)?;
+
+    // Offload cpu-bound task
+    let hash = user.hash.clone();
+    let valid = spawn_blocking(move || bcrypt::verify(password, &hash)).await??;
+
     if !valid {
         return Err(VinotecaError::Forbidden("Bad password".to_string()));
     }
@@ -50,15 +62,25 @@ pub fn login(form: Json<LoginForm>, mut cookies: Cookies, connection: DbConn) ->
 }
 
 #[post("/users", format = "json", data = "<form>")]
-pub fn create(form: Json<UserForm>, mut cookies: Cookies, connection: DbConn) -> RestResult<User> {
+pub async fn create<'a>(
+    form: Json<UserForm>,
+    mut cookies: Cookies<'a>,
+    connection: DbConn,
+) -> RestResult<User> {
     let form = form.into_inner();
     form.validate()?;
+    let UserForm {
+        email,
+        name,
+        password,
+    } = form;
 
-    let hash = bcrypt::hash(form.password, bcrypt::DEFAULT_COST)?;
+    // Offload cpu-bound task
+    let hash = spawn_blocking(move || bcrypt::hash(password, bcrypt::DEFAULT_COST)).await??;
 
     let new_user = NewUser {
-        email: form.email,
-        name: form.name,
+        email: &email,
+        name: &name,
         image: None,
         hash,
     };
@@ -74,23 +96,34 @@ pub fn create(form: Json<UserForm>, mut cookies: Cookies, connection: DbConn) ->
 }
 
 #[post("/users/password", format = "json", data = "<form>")]
-pub fn change_password(
+pub async fn change_password<'a>(
     auth: Auth,
     form: Json<ChangePasswordForm>,
-    mut cookies: Cookies,
+    mut cookies: Cookies<'a>,
     connection: DbConn,
 ) -> RestResult<()> {
     let form = form.into_inner();
     form.validate()?;
+    let ChangePasswordForm {
+        new_password,
+        old_password,
+    } = form;
+
     let user = users::table
         .filter(users::id.eq(auth.id))
         .first::<InternalUser>(&*connection)?;
-    let valid = bcrypt::verify(form.old_password, &user.hash)?;
+
+    // Offload cpu-bound task
+    let hash = user.hash.clone();
+    let valid = spawn_blocking(move || bcrypt::verify(old_password, &hash)).await??;
+
     if !valid {
         return Err(VinotecaError::Forbidden("Bad password".to_string()));
     }
 
-    let new_hash = bcrypt::hash(form.new_password, bcrypt::DEFAULT_COST)?;
+    let new_hash =
+        spawn_blocking(move || bcrypt::hash(new_password, bcrypt::DEFAULT_COST)).await??;
+
     diesel::update(users::table.filter(users::id.eq(auth.id)))
         .set(users::hash.eq(new_hash))
         .execute(&*connection)?;
