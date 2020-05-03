@@ -10,10 +10,11 @@ import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
     value: string;
+    required: boolean;
     producerText?: string;
 }
 
-export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) => {
+export const RegionInput: React.FC<IProps> = ({value, producerText, required, onChange}) => {
     const logger = useLogger("RegionInput");
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -73,6 +74,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, onChange}) =
             enabled={ enabled }
             value={ value }
             onChange={ onChange }
+            required={ required }
         />
     );
 }

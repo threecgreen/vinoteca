@@ -23,7 +23,6 @@ export interface IInputProps<T extends IInputValue> {
     l?: number;
     inputFieldClassName?: string;
     required: boolean;
-    helperTexts?: {success: string, error: string};
 }
 
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
@@ -37,10 +36,9 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
 
     public render() {
         const id = nameToId(this.props.name);
-        const helper = this.props.helperTexts
+        const helper = this.props.required
             ? <span className="helper-text"
-                data-error={ this.props.helperTexts.error }
-                data-success={ this.props.helperTexts.success }
+                data-error={ `${this.props.name} is required` }
             />
             : null;
         return (

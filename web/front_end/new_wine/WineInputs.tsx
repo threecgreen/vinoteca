@@ -134,8 +134,10 @@ interface IProps {
 }
 
 export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
+    // TODO: enforce requirements before enabling submit button
     return (
         <>
+            {/* TODO: required */}
             <ColorInput selection={ data.color }
                 s={ 12 } m={ 4 } l={ 2 }
                 onChange={ (color) => dispatch({type: "setColor", color}) }
@@ -143,6 +145,7 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
             />
             <WineTypeInput value={ data.wineType }
                 onChange={ (wineType) => dispatch({type: "setWineType", wineType}) }
+                required={ true }
             />
             <TextInput name="Name" className=""
                 s={ 12 } l={ 6 }
@@ -151,9 +154,11 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
             />
             <ProducerInput value={ data.producer }
                 onChange={ (producer) => dispatch({type: "setProducer", producer}) }
+                required={ true }
             />
             <RegionInput value={ data.region }
                 onChange={ (region) => dispatch({type: "setRegion", region}) }
+                required={ true }
                 producerText={ data.producer }
             />
             <RatingInput isChecked={ data.isRatingEnabled }

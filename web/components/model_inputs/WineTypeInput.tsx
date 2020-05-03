@@ -8,6 +8,7 @@ import { IOnChange } from "../IProps";
 
 interface IWineTypeInputProps extends IOnChange {
     value: string;
+    required: boolean;
 }
 
 export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
@@ -30,6 +31,7 @@ export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
             onFocus={ props.onFocus }
             onChange={ props.onChange }
             onBlur={ props.onBlur }
+            required={ props.required }
         />
     );
 }

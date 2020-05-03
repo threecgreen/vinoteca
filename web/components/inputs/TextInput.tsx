@@ -16,11 +16,11 @@ interface ITextProps {
     m?: number;
     l?: number;
     inputRef?: React.MutableRefObject<HTMLInputElement>;
+    required?: boolean;
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
     const [timeoutId, setTimeoutId] = React.useState<number>();
-    const [timestamp, _] = React.useState(new Date());
     const [isActive, setIsActive] = React.useState(false);
     const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
     const [showPicker, setShowPicker] = React.useState(false);
@@ -72,6 +72,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     inputFieldClassName={ `${props.className} flex-grow` }
                     inputRef={ inputRef }
                     active={ Boolean(props.value) }
+                    required={ props.required }
                 />
                 { isActive && <Btn onClick={ onShowPicker }
                     noRbtn={ true }
@@ -142,7 +143,6 @@ export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
         s={ props.s } m={ props.m } l={ props.l }
         active={ Boolean(props.value) }
         required={ props.required }
-        helperTexts={ props.required ? {success: "", error: `${props.name} is required`} : undefined }
     />
 );
 SimpleTextInput.displayName = "SimpleTextInput";

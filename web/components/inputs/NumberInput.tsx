@@ -12,6 +12,7 @@ interface IProps {
     s?: number;
     m?: number;
     l?: number;
+    required?: boolean;
 }
 
 export const NumberInput: React.FC<IProps> = (props) => {
@@ -35,7 +36,8 @@ export const NumberInput: React.FC<IProps> = (props) => {
             s={ props.s }
             m={ props.m }
             l={ props.l }
-            active
+            active={ true }
+            required={ props.required }
         />
     );
 };

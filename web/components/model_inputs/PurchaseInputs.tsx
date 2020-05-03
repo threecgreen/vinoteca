@@ -25,7 +25,7 @@ export const initPurchaseInputData: () => IPurchaseData = () => ({
     date: dateToStr(new Date()),
     quantity: 1,
     shouldAddToInventory: true,
-    price: 0.00,
+    price: null,
     vintage: defaultVintageYear(),
     store: "",
     memo: "",
@@ -127,8 +127,9 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
             />
             <NumberInput name="Quantity"
                 number={ data.quantity }
+                required={ true }
                 onChange={ (quantity) => dispatch({type: "setQuantity", quantity}) }
-                min={ 0 }
+                min={ 1 }
                 step="1"
                 s={ quantityS } l={ quantityL }
             />
