@@ -9,7 +9,7 @@ use diesel::prelude::*;
 use rocket::State;
 
 #[delete("/wines/<id>")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
+pub async fn delete<'a>(auth: Auth, id: i32, connection: DbConn, config: State<'a, Config>) -> RestResult<()> {
     // Validate is user's wine
     wines::table
         .filter(wines::id.eq(id))
@@ -21,7 +21,7 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
         .execute(&*connection)
         .map(|_| ())
         .map_err(VinotecaError::from)?;
-    image::delete(auth, id, connection, config)
+    image::delete(auth, id, connection, config).await
 }
 
 #[cfg(test)]

@@ -22,9 +22,10 @@ pub fn robots() -> String {
 #[derive(Debug)]
 pub struct StaticHtml(&'static str);
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for StaticHtml {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
-        let mut response = self.0.respond_to(req)?;
+    async fn respond_to(self, req: &'r Request<'_>) -> response::Result<'r> {
+        let mut response = self.0.respond_to(req).await?;
         response.set_header(ContentType::HTML);
         Ok(response)
     }

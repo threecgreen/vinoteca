@@ -25,18 +25,18 @@ pub enum VinotecaError {
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
 
+#[rocket::async_trait]
 impl<'r> Responder<'r> for VinotecaError {
-    fn respond_to(self, _r: &Request) -> response::Result<'static> {
-        Json(self.clone()).respond_to(_r).map(|mut res| {
-            res.set_status(match self {
-                VinotecaError::NotFound(_) => Status::NotFound,
-                VinotecaError::Internal(_) => Status::InternalServerError,
-                VinotecaError::MissingConstraint(_) => Status::BadRequest,
-                VinotecaError::BadRequest(_) => Status::BadRequest,
-                VinotecaError::Forbidden(_) => Status::Forbidden,
-            });
-            res
-        })
+    async fn respond_to(self, _r: &'r Request<'_>) -> response::Result<'r> {
+        let mut response = Json(self.clone()).respond_to(_r).await?;
+        response.set_status(match self {
+            VinotecaError::NotFound(_) => Status::NotFound,
+            VinotecaError::Internal(_) => Status::InternalServerError,
+            VinotecaError::MissingConstraint(_) => Status::BadRequest,
+            VinotecaError::BadRequest(_) => Status::BadRequest,
+            VinotecaError::Forbidden(_) => Status::Forbidden,
+        });
+        Ok(response)
     }
 }
 

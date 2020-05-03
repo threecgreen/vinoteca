@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 
+use deadpool::{Config, Manager, Pool};
 use diesel::result::Error;
 use rocket::http::Status;
 use rocket_contrib::databases::diesel::PgConnection;
@@ -41,6 +42,17 @@ pub fn error_status(error: Error) -> Status {
             Status::InternalServerError
         }
     }
+}
+
+fn create_pool() -> Pool {
+    let mut cfg = Config::new();
+    cfg.host("localhost");
+    cfg.user("postgres");
+    cfg.password("postgres");
+    cfg.dbname("mydb");
+    cfg.port(5435);
+    let mgr = Manager::new(cfg, tokio_postgres::NoTls);
+    Pool::new(mgr, 16)
 }
 
 #[database("vinoteca")]

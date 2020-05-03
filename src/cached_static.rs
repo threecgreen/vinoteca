@@ -1,5 +1,6 @@
-use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{HttpDate, LastModified};
+use chrono::{DateTime, Utc};
+use rocket::handler::{Handler, HandlerFuture, Outcome};
+use rocket::http::hyper::header::{IF_MODIFIED_SINCE, LAST_MODIFIED};
 use rocket::http::{uri::Segments, ContentType, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
@@ -7,14 +8,14 @@ use std::fs::{self, File};
 use std::io;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotModified<R>(pub R);
 
 /// Sets the status code of the response to 304 Not Modified.
-impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
-    fn respond_to(self, _req: &Request) -> Result<Response<'r>, Status> {
+#[rocket::async_trait]
+impl<'r, R: Responder<'r> + Send> Responder<'r> for NotModified<R> {
+    async fn respond_to(self, _req: &'r Request<'_>) -> Result<Response<'r>, Status> {
         Response::build().status(Status::NotModified).ok()
     }
 }
@@ -39,33 +40,32 @@ impl CachedFile {
 /// Streams the named file to the client. Sets or overrides the Content-Type in
 /// the response according to the file's extension if the extension is
 /// recognized.
+#[rocket::async_trait]
 impl<'r> Responder<'r> for CachedFile {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
-        let mut response = self.1.respond_to(req)?;
+    async fn respond_to(self, req: &'r Request<'_>) -> response::Result<'r> {
+        let mut response = self.1.respond_to(req).await?;
         if let Some(ext) = self.0.extension() {
             if let Some(ct) = ContentType::from_extension(&ext.to_string_lossy()) {
                 response.set_header(ct);
             }
         }
-        let mtime = {
+        let epoch: DateTime<Utc> = {
             let metadata = fs::metadata(&self.0.as_path()).unwrap();
-            let epoch = metadata
+            metadata
                 .modified()
+                // TODO: failure here?
                 .unwrap()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap();
-            let tm = time::strptime(&epoch.as_secs().to_string(), "%s").unwrap();
-            HttpDate(tm)
+                .into()
         };
-        response.set_header(LastModified(mtime));
+        response.set_raw_header(LAST_MODIFIED, epoch.to_rfc2822());
+        // response.headers_mut().insert(LAST_MODIFIED, epoch.to_rfc2822());
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
-                let if_modified_since =
-                    time::strptime(if_modified_since, "%a, %d %b %Y %H:%M:%S GMT").unwrap();
-                let if_modified_since = HttpDate(if_modified_since);
-                if mtime <= if_modified_since {
-                    return NotModified("Not Modified").respond_to(req);
+                if let Ok(if_modified_since) = DateTime::parse_from_rfc2822(if_modified_since) {
+                    if epoch <= if_modified_since {
+                        return NotModified("Not Modified").respond_to(req);
+                    }
                 }
             }
         }
@@ -133,7 +133,7 @@ impl Into<Vec<Route>> for CachedStaticFiles {
 }
 
 impl Handler for CachedStaticFiles {
-    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> HandlerFuture<'r> {
         // If this is not the route with segments, handle it only if the user
         // requested a handling of index files.
         let current_route = req.route().expect("route while handling");

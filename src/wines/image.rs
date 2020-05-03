@@ -7,9 +7,10 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use image::GenericImageView;
+use mime::Mime;
 use rocket::State;
 use rocket_contrib::json::Json;
-use rocket_multipart_form_data::mime::Mime;
+// use rocket_multipart_form_data::mime::Mime;
 use std::io::{BufReader, Cursor};
 use uuid::Uuid;
 
@@ -22,7 +23,7 @@ static WINE_DIR: &str = "wine_images";
 static MAX_IMAGE_DIM: u32 = 1280;
 
 /// Auth must be handled before this function is called
-pub fn handle_image(
+pub async fn handle_image(
     wine_id: i32,
     image: Image,
     s3_bucket: &s3::bucket::Bucket,
@@ -33,7 +34,7 @@ pub fn handle_image(
     // AWS
     let path = Uuid::new_v4().to_string();
     let (data, code) =
-        s3_bucket.put_object_blocking(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg")?;
+        s3_bucket.put_object(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg").await?;
     if code > 304 {
         warn!(
             "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -52,12 +53,12 @@ pub fn handle_image(
 }
 
 #[post("/wines/<id>/image", data = "<image>")]
-pub fn post(
+pub async fn post<'a>(
     auth: Auth,
     id: i32,
     image: Image,
     connection: DbConn,
-    config: State<Config>,
+    config: State<'a, Config>,
 ) -> RestResult<String> {
     validate_owns_wine(auth, id, &connection)?;
 
@@ -66,16 +67,16 @@ pub fn post(
         .select(wines::image)
         .first::<Option<String>>(&*connection)?;
 
-    let path = handle_image(id, image, &config.s3_bucket, &connection)?;
+    let path = handle_image(id, image, &config.s3_bucket, &connection).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
-        delete_image(&config, &existing_image_path)?;
+        delete_image(&config, &existing_image_path).await?;
     }
     Ok(Json(path))
 }
 
 #[delete("/wines/<id>/image")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
+pub async fn delete<'a>(auth: Auth, id: i32, connection: DbConn, config: State<'a, Config>) -> RestResult<()> {
     let file_path = wines::table
         .filter(wines::user_id.eq(auth.id))
         .filter(wines::id.eq(id))
@@ -91,15 +92,15 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
                 .filter(wines::id.eq(id))
                 .set(wines::image.eq::<Option<String>>(None))
                 .execute(&*connection)?;
-            delete_image(&config, &file_path)?;
+            delete_image(&config, &file_path).await?;
             Ok(Json(()))
         }
         None => Ok(Json(())),
     }
 }
 
-fn delete_image(config: &State<Config>, path: &str) -> Result<(), VinotecaError> {
-    let (data, code) = config.s3_bucket.delete_object_blocking(path)?;
+async fn delete_image<'a>(config: &State<'a, Config>, path: &str) -> Result<(), VinotecaError> {
+    let (data, code) = config.s3_bucket.delete_object(path).await?;
     if code > 304 {
         warn!(
             "Error deleting existing image. Code: {}, AWSResponseData: {:?}",

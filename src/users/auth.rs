@@ -18,37 +18,40 @@ pub struct Auth {
 
 pub static COOKIE_NAME: &str = "vinoteca-auth";
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     type Error = Json<VinotecaError>;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
-        let connection = request.guard::<DbConn>().map_failure(|e| {
-            error!("Failed to acquire database connection: {:?}", e);
-            (
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
+        let guard = request.guard::<DbConn>().await;
+        if let Outcome::Success(connection) = guard {
+            let auth = request
+                .cookies()
+                .get_private(COOKIE_NAME)
+                .and_then(|cookie| cookie.value().parse().ok())
+                .and_then(|id: i32| {
+                    users::table
+                        .filter(users::id.eq(id))
+                        .select(users::id)
+                        .first(&*connection)
+                        .ok()
+                })
+                .map(|id| Auth { id });
+            if let Some(auth) = auth {
+                Outcome::Success(auth)
+            } else {
+                Outcome::Failure((
+                    Status::Forbidden,
+                    Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
+                ))
+            }
+        } else {
+            error!("Failed to acquire database connection: {:?}", guard);
+            Outcome::Failure((
                 Status::InternalServerError,
                 Json(VinotecaError::Internal(
                     "Database connection failed".to_owned(),
                 )),
-            )
-        })?;
-        let auth = request
-            .cookies()
-            .get_private(COOKIE_NAME)
-            .and_then(|cookie| cookie.value().parse().ok())
-            .and_then(|id: i32| {
-                users::table
-                    .filter(users::id.eq(id))
-                    .select(users::id)
-                    .first(&*connection)
-                    .ok()
-            })
-            .map(|id| Auth { id });
-        if let Some(auth) = auth {
-            Outcome::Success(auth)
-        } else {
-            Outcome::Failure((
-                Status::Forbidden,
-                Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
             ))
         }
     }

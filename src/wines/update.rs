@@ -33,7 +33,7 @@ pub fn patch(
 }
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
-pub fn put(
+pub async fn put(
     auth: Auth,
     id: i32,
     raw_wine_form: RawWineForm,
@@ -49,15 +49,13 @@ pub fn put(
     diesel::update(wines::table.filter(wines::id.eq(id)))
         .set(NewWine::from((auth, wine_form)))
         .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .map(|_| {
-            if let Some(image) = image {
-                if let Err(e) = handle_image(id, image, &config.s3_bucket, &connection) {
-                    warn!("Error updating image for wine with id {}: {}", id, e);
-                }
-            }
-        })
-        .and_then(|_| get_wine_by_id(auth, id, connection))
+        .map_err(VinotecaError::from)?;
+    if let Some(image) = image {
+        if let Err(e) = handle_image(id, image, &config.s3_bucket, &connection).await {
+            warn!("Error updating image for wine with id {}: {}", id, e);
+        }
+    }
+    get_wine_by_id(auth, id, connection)
 }
 
 pub fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {

@@ -14,46 +14,41 @@ use rocket::State;
 use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
-pub fn post(
+pub async fn post<'a>(
     auth: Auth,
     raw_wine_form: RawWineForm,
     connection: DbConn,
-    config: State<Config>,
+    config: State<'a, Config>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
     wine_form.validate()?;
 
-    diesel::insert_into(wines::table)
+    let wine_id = diesel::insert_into(wines::table)
         .values(NewWine::from((auth, wine_form)))
         .returning(wines::id)
         .get_result(&*connection)
-        .map_err(VinotecaError::from)
-        .map(|wine_id| {
-            if let Some(image) = image {
-                if let Err(e) = handle_image(wine_id, image, &config.s3_bucket, &connection) {
-                    warn!("Error adding image for new wine with id {}: {}", wine_id, e);
-                };
-            }
-            wine_id
-        })
-        .and_then(|wine_id| {
-            get(
-                auth,
-                Some(wine_id),
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                connection,
-            )?
-            .into_first("Newly-created wine")
-        })
+        .map_err(VinotecaError::from)?;
+    // if let Some(image) = image {
+    //     if let Err(e) = handle_image(wine_id, image, &config.s3_bucket, &connection).await {
+    //         warn!("Error adding image for new wine with id {}: {}", wine_id, e);
+    //     };
+    // }
+    get(
+        auth,
+        Some(wine_id),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        connection,
+    )?
+    .into_first("Newly-created wine")
 }
 
 #[cfg(test)]
