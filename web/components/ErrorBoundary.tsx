@@ -21,8 +21,13 @@ export class ErrorBoundary extends React.Component<{}, IState> {
     }
 
     public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        this.setState({hasThrown: true, error, errorInfo});
-        this.logger.logCritical(`App crashed with ${error.message}.\nTraceback: ${error.stack}\nInfo: ${errorInfo.componentStack}`);
+        if (error.message.startsWith("Loading chunk ")) {
+            this.logger.logCritical(`App crashed with loading chunk: ${error.message}.\nReloading...`);
+            location.reload();
+        } else {
+            this.setState({hasThrown: true, error, errorInfo});
+            this.logger.logCritical(`App crashed with ${error.message}.\nTraceback: ${error.stack}\nInfo: ${errorInfo.componentStack}`);
+        }
     }
 
     public render() {

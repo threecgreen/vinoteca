@@ -2,6 +2,7 @@ import React from "react";
 import { postLog } from "./api/logs";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
+import { LOG_LEVEL } from "./constants";
 
 /** Provides logging functionality for client-side JavaScript errors. */
 enum LogLevel {
@@ -19,6 +20,10 @@ interface ILogResult {
 type LogTags = IDict<string | number | Date | object | undefined | null>;
 
 export default class Logger {
+    private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning, LogLevel.Error, LogLevel.Critical]
+
+    private static logLevelOrder: number = Logger.logLevelOrdering.indexOf(LOG_LEVEL as LogLevel);
+
     /**
      * Logging class for client-side errors that will be posted to the server.
      *
@@ -59,20 +64,22 @@ export default class Logger {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        try {
-            const response: ILogResult = await postLog({
-                level,
-                // @ts-ignore
-                message: message instanceof Object ? "" : message,
-                module: this.module,
-                url: window.location.pathname,
-                tags,
-            });
-            if (!response.success) {
-                this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+        if (Logger.logLevelOrdering.indexOf(level) >= Logger.logLevelOrder) {
+            try {
+                const response: ILogResult = await postLog({
+                    level,
+                    // @ts-ignore
+                    message: message instanceof Object ? "" : message,
+                    module: this.module,
+                    url: window.location.pathname,
+                    tags,
+                });
+                if (!response.success) {
+                    this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+                }
+            } catch (e) {
+                this.toast(LogLevel.Error, `Failed to send client-side logs to server: ${e.message}`);
             }
-        } catch (e) {
-            this.toast(LogLevel.Error, `Failed to send client-side logs to server: ${e.message}`);
         }
     }
 

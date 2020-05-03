@@ -29,9 +29,30 @@ fn write_interface(
     writeln!(writer, "{}", &ts_def[..ts_def.len() - 1])
 }
 
+fn write_const(writer: &mut BufWriter<&File>, name: &str, value: &str) -> Result<(), io::Error> {
+    writeln!(writer, "export const {} = \"{}\";", name, value)
+}
+
 fn write_version(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
     let version = env!("CARGO_PKG_VERSION");
-    writeln!(writer, "export const VERSION = \"{}\";", version)
+    write_const(writer, "VERSION", version)
+}
+
+fn write_log_level(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
+    let mut log_level = option_env!("ROCKET_LOG").unwrap_or("info");
+    // What rocket calls critical, actually includes warnings
+    if log_level == "critical" {
+        log_level = "warning";
+    }
+    write_const(writer, "LOG_LEVEL", log_level)
+}
+
+fn write_contracts() -> Result<(), io::Error> {
+    let const_file =
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
+    let mut const_writer = BufWriter::new(&const_file);
+    write_version(&mut const_writer)?;
+    write_log_level(&mut const_writer)
 }
 
 fn main() -> Result<(), Box<dyn error::Error>> {
@@ -92,10 +113,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, WineGrapesForm::type_script_ify())?;
     write_interface(&mut type_def_writer, YearsPurchases::type_script_ify())?;
 
-    let const_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
-    let mut const_writer = BufWriter::new(&const_file);
-    write_version(&mut const_writer)?;
+    write_contracts()?;
 
     Ok(())
 }

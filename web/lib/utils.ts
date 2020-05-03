@@ -165,7 +165,12 @@ export function onLoad(fun: () => void) {
 export function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
 ) {
-    new Logger("window", false, false).logCritical(
-        `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
-        + ` event: ${event.toString()}`);
+    if (error && error.message.startsWith("Loading chunk ")) {
+        new Logger("window", false, false).logError(`A top-level error occured loading chunk: ${error.message}. Reloading...`);
+        location.reload();
+    } else {
+        new Logger("window", false, false).logCritical(
+            `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
+            + ` event: ${event.toString()}`);
+    }
 }
