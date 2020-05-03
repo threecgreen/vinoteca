@@ -4,7 +4,7 @@ use super::models::{RawWineForm, WinePatchForm};
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
-use crate::query_utils::IntoFirst;
+use crate::query_utils::{DbPool, IntoFirst};
 use crate::schema::wines;
 use crate::users::Auth;
 use crate::DbConn;
@@ -33,13 +33,13 @@ pub fn patch(
 }
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
-pub async fn put<'a>(
+pub async fn put(
     auth: Auth,
     id: i32,
     raw_wine_form: RawWineForm,
     // connection: DbConn,
-    pool: State<'a, diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>>,
-    config: State<'a, Config>,
+    pool: State<'_, DbPool>,
+    config: State<'_, Config>,
 ) -> RestResult<Wine> {
     let connection = DbConn(pool.get()?);
     let wine_form = raw_wine_form.wine_form;

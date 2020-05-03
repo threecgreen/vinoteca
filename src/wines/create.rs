@@ -4,7 +4,7 @@ use super::read::get;
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
-use crate::query_utils::IntoFirst;
+use crate::query_utils::{DbPool, IntoFirst};
 use crate::schema::wines;
 use crate::users::Auth;
 use crate::DbConn;
@@ -14,12 +14,12 @@ use rocket::State;
 use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
-pub async fn post<'a>(
+pub async fn post(
     auth: Auth,
     raw_wine_form: RawWineForm,
     // connection: DbConn,
-    pool: State<'a, diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>>,
-    config: State<'a, Config>,
+    pool: State<'_, DbPool>,
+    config: State<'_, Config>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;

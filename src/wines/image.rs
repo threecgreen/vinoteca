@@ -10,7 +10,6 @@ use image::GenericImageView;
 use mime::Mime;
 use rocket::State;
 use rocket_contrib::json::Json;
-// use rocket_multipart_form_data::mime::Mime;
 use std::io::{BufReader, Cursor};
 use uuid::Uuid;
 
@@ -54,12 +53,12 @@ pub async fn handle_image(
 }
 
 #[post("/wines/<id>/image", data = "<image>")]
-pub async fn post<'a>(
+pub async fn post(
     auth: Auth,
     id: i32,
     image: Image,
     connection: DbConn,
-    config: State<'a, Config>,
+    config: State<'_, Config>,
 ) -> RestResult<String> {
     validate_owns_wine(auth, id, &connection)?;
 
@@ -77,11 +76,11 @@ pub async fn post<'a>(
 }
 
 #[delete("/wines/<id>/image")]
-pub async fn delete<'a>(
+pub async fn delete(
     auth: Auth,
     id: i32,
     connection: DbConn,
-    config: State<'a, Config>,
+    config: State<'_, Config>,
 ) -> RestResult<()> {
     let file_path = wines::table
         .filter(wines::user_id.eq(auth.id))
@@ -105,7 +104,7 @@ pub async fn delete<'a>(
     }
 }
 
-async fn delete_image<'a>(config: &State<'a, Config>, path: &str) -> Result<(), VinotecaError> {
+async fn delete_image(config: &State<'_, Config>, path: &str) -> Result<(), VinotecaError> {
     let (data, code) = config.s3_bucket.delete_object(path).await?;
     if code > 304 {
         warn!(

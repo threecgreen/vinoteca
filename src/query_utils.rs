@@ -31,6 +31,8 @@ macro_rules! top_table {
     }};
 }
 
+pub type DbPool = diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>;
+
 #[database("vinoteca")]
 pub struct DbConn(PgConnection);
 
