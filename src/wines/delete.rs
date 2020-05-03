@@ -9,7 +9,12 @@ use diesel::prelude::*;
 use rocket::State;
 
 #[delete("/wines/<id>")]
-pub async fn delete<'a>(auth: Auth, id: i32, connection: DbConn, config: State<'a, Config>) -> RestResult<()> {
+pub async fn delete<'a>(
+    auth: Auth,
+    id: i32,
+    connection: DbConn,
+    config: State<'a, Config>,
+) -> RestResult<()> {
     // Validate is user's wine
     wines::table
         .filter(wines::id.eq(id))

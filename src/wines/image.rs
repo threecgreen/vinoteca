@@ -27,14 +27,15 @@ pub async fn handle_image(
     wine_id: i32,
     image: Image,
     s3_bucket: &s3::bucket::Bucket,
-    connection: diesel::PgConnection,
+    connection: impl diesel::Connection,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
     // AWS
     let path = Uuid::new_v4().to_string();
-    let (data, code) =
-        s3_bucket.put_object(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg").await?;
+    let (data, code) = s3_bucket
+        .put_object(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg")
+        .await?;
     if code > 304 {
         warn!(
             "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -67,7 +68,7 @@ pub async fn post<'a>(
         .select(wines::image)
         .first::<Option<String>>(&*connection)?;
 
-    let path = handle_image(id, image, &config.s3_bucket, &connection).await?;
+    let path = handle_image(id, image, &config.s3_bucket, connection.0).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
         delete_image(&config, &existing_image_path).await?;
@@ -76,7 +77,12 @@ pub async fn post<'a>(
 }
 
 #[delete("/wines/<id>/image")]
-pub async fn delete<'a>(auth: Auth, id: i32, connection: DbConn, config: State<'a, Config>) -> RestResult<()> {
+pub async fn delete<'a>(
+    auth: Auth,
+    id: i32,
+    connection: DbConn,
+    config: State<'a, Config>,
+) -> RestResult<()> {
     let file_path = wines::table
         .filter(wines::user_id.eq(auth.id))
         .filter(wines::id.eq(id))

@@ -1,9 +1,10 @@
 use chrono::{DateTime, Utc};
 use rocket::handler::{Handler, HandlerFuture, Outcome};
-use rocket::http::hyper::header::{IF_MODIFIED_SINCE, LAST_MODIFIED};
-use rocket::http::{uri::Segments, ContentType, Method, Status};
+use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
+use std::borrow::Cow;
+use std::boxed::Box;
 use std::fs::{self, File};
 use std::io;
 use std::ops::{Deref, DerefMut};
@@ -57,14 +58,16 @@ impl<'r> Responder<'r> for CachedFile {
                 .unwrap()
                 .into()
         };
-        response.set_raw_header(LAST_MODIFIED, epoch.to_rfc2822());
-        // response.headers_mut().insert(LAST_MODIFIED, epoch.to_rfc2822());
+        response.set_header(Header {
+            name: Uncased::new("Last-Modified"),
+            value: Cow::from(epoch.to_rfc2822()),
+        });
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
                 if let Ok(if_modified_since) = DateTime::parse_from_rfc2822(if_modified_since) {
                     if epoch <= if_modified_since {
-                        return NotModified("Not Modified").respond_to(req);
+                        return NotModified("Not Modified").respond_to(req).await;
                     }
                 }
             }
@@ -139,7 +142,7 @@ impl Handler for CachedStaticFiles {
         let current_route = req.route().expect("route while handling");
         let is_segments_route = current_route.uri.path().ends_with('>');
         if !is_segments_route {
-            return Outcome::forward(data);
+            return Box::pin(async move { Outcome::forward(data) });
         }
 
         let path = req
@@ -149,9 +152,9 @@ impl Handler for CachedStaticFiles {
             .map(|path| self.root.join(path));
 
         match &path {
-            Some(path) if path.is_dir() => Outcome::forward(data),
+            Some(path) if path.is_dir() => Box::pin(async move { Outcome::forward(data) }),
             Some(path) => Outcome::from(req, CachedFile::open(path).ok()),
-            None => Outcome::forward(data),
+            None => Box::pin(async move { Outcome::forward(data) }),
         }
     }
 }

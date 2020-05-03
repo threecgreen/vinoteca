@@ -3,7 +3,7 @@ use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
 
-use rocket::data::{FromDataSimple, Outcome, FromDataFuture};
+use rocket::data::{FromDataFuture, FromDataSimple, Outcome};
 use rocket::http::Status;
 use rocket::{Data, Outcome::*, Request};
 // use rocket_multipart_form_data::{

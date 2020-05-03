@@ -22,7 +22,6 @@ mod schema;
 mod cached_static;
 mod config;
 pub mod error;
-mod media;
 
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;

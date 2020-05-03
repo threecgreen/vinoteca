@@ -37,9 +37,11 @@ pub async fn put<'a>(
     auth: Auth,
     id: i32,
     raw_wine_form: RawWineForm,
-    connection: DbConn,
+    // connection: DbConn,
+    pool: State<'a, diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>>,
     config: State<'a, Config>,
 ) -> RestResult<Wine> {
+    let connection = DbConn(pool.get()?);
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
     wine_form.validate()?;
@@ -51,7 +53,7 @@ pub async fn put<'a>(
         .execute(&*connection)
         .map_err(VinotecaError::from)?;
     if let Some(image) = image {
-        if let Err(e) = handle_image(id, image, &config.s3_bucket, &connection).await {
+        if let Err(e) = handle_image(id, image, &config.s3_bucket, pool.get()?).await {
             warn!("Error updating image for wine with id {}: {}", id, e);
         }
     }

@@ -10,6 +10,7 @@ use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
+use tokio::task::JoinError;
 use typescript_definitions::TypeScriptify;
 use validator::ValidationErrors;
 
@@ -105,10 +106,17 @@ impl From<exif::Error> for VinotecaError {
     }
 }
 
-impl From<r2d2::Error> for VinotecaError {
-    fn from(r2d2_error: r2d2::Error) -> Self {
+impl From<r2d2::PoolError> for VinotecaError {
+    fn from(r2d2_error: r2d2::PoolError) -> Self {
         error!("Error with connection pool: {:?}", r2d2_error);
         VinotecaError::Internal("Error getting pooled database connection".to_owned())
+    }
+}
+
+impl From<JoinError> for VinotecaError {
+    fn from(join_error: JoinError) -> Self {
+        error!("Error joining tokio task: {:?}", join_error);
+        VinotecaError::Internal("Internal task error".to_owned())
     }
 }
 
