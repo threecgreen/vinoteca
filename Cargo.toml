@@ -21,14 +21,13 @@ chrono = { version = "0.4.11", features = ["serde"] }
 # basic ORM
 diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
+futures = "0.3.4"
 # Image handling
 image = "0.23.2"
 kamadak-exif = "0.5.1"
 log = "0.4"
-mime = "0.3.16"
 multipart-async = { version = "0.0.2", features = ["hyper", "server"] }
 rocket_codegen = { git = "https://github.com/SergioBenitez/rocket", branch = "async" }
-# rocket-multipart-form-data = "0.8.1"
 # AWS S3 access
 rust-s3 = "0.20.0"
 # (De)serialization
@@ -39,6 +38,7 @@ uuid = { version = "0.8", features = ["v4"] }
 # Input validation
 validator = "0.10"
 validator_derive = "0.10"
+tokio-util = "0.3.1"
 
 [dependencies.rocket]
 git = "https://github.com/SergioBenitez/rocket"

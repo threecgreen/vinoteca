@@ -7,7 +7,7 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use image::GenericImageView;
-use mime::Mime;
+use multipart_async::mime::{self, Mime};
 use rocket::State;
 use rocket_contrib::json::Json;
 use std::io::{BufReader, Cursor};

@@ -3,9 +3,15 @@ use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
 
+use multipart_async::mime;
+use multipart_async::server::Multipart;
+use futures::stream::{Stream, self};
 use rocket::data::{FromDataFuture, FromDataSimple, Outcome};
 use rocket::http::Status;
 use rocket::{Data, Outcome::*, Request};
+use rocket::tokio::io;
+use rocket::tokio::prelude::AsyncRead;
+use tokio_util::codec;
 // use rocket_multipart_form_data::{
 //     mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
 // };
@@ -108,11 +114,32 @@ impl FromDataSimple for RawWineForm {
     }
 }
 
+fn into_byte_stream<R>(r: R) -> impl Stream<Item=io::Result<u8>>
+where
+    R: AsyncRead,
+{
+    codec::FramedRead::new(r, codec::BytesCodec::new())
+        .map_ok(|bytes| stream::iter(bytes).map(Ok))
+        .try_flatten()
+}
+
+fn try_from_rocket_request(request: &Request, data: Data) -> Result<Multipart<impl Stream<Item=io::Result<u8>>>, VinotecaError> {
+    if request.method() != rocket::http::Method::Post {
+        return Err(VinotecaError::BadRequest(format!("Invalid method: {:?}", request.method())))
+    }
+    if let Some((_, boundary)) = request.content_type().and_then(|c| c.params().find(|&(k, _)| k == mime::BOUNDARY)) {
+        Ok(Multipart::with_body( into_byte_stream(data.open()), boundary))
+    } else {
+        Err(VinotecaError::BadRequest("Couldn't find multipart form boundary".to_owned()))
+    }
+}
+
 impl FromDataSimple for Image {
     type Error = VinotecaError;
 
     fn from_data(request: &Request, data: Data) -> FromDataFuture<'static, Self, Self::Error> {
         todo!("Rewrite with multipart-async");
+
         // let mut options = MultipartFormDataOptions::new();
         // options.allowed_fields.push(
         //     MultipartFormDataField::raw("image")
