@@ -1,9 +1,10 @@
 import { navigate, redirectTo, RouteComponentProps } from "@reach/router";
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import { IUser } from "../lib/api/Rest";
 import { useLogger } from "../lib/Logger";
 import { LoginForm } from "./AccountModals";
 import { useSetUser, useUser } from "./UserContext";
+import { Preloader } from "./Preloader";
 
 interface IRouteByIdProps {
     id: string;
@@ -102,8 +103,14 @@ const Components = {
 
 export const AsyncComponent: React.FC<{componentName: keyof typeof Components}> = ({componentName, ...props}) => {
     const Component = Components[componentName];
-    // @ts-ignore
-    return <Component {...props} />;
+    return (
+        <Suspense fallback={ <Preloader /> }>
+            {
+                // @ts-ignore
+                <Component {...props} />
+            }
+        </Suspense>
+    );
 }
 
 export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
