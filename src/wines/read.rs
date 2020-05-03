@@ -1,14 +1,14 @@
 use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
-use crate::schema::{colors, producers, purchases, regions, recent_purchases, viti_areas, wine_types, wines};
+use crate::schema::{colors, producers, recent_purchases, regions, viti_areas, wine_types, wines};
 use crate::users::Auth;
 use crate::DbConn;
 
-use diesel::dsl::{count, sql};
+use diesel::dsl::count;
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{Integer, Nullable};
+use diesel::sql_types::Integer;
 use rocket_contrib::json::Json;
 
 fn add_wildcards(query: &str) -> String {
@@ -74,7 +74,8 @@ pub fn get(
         query = query.filter(viti_areas::name.like(add_wildcards(&viti_area)));
     }
 
-    query.select((
+    query
+        .select((
             wines::id,
             wines::description,
             wines::notes,
@@ -128,7 +129,7 @@ pub fn search(
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
         .inner_join(wine_types::table)
-        .left_join(purchases::table)
+        .left_join(recent_purchases::table)
         .left_join(viti_areas::table)
         .filter(wines::user_id.eq(auth.id))
         .into_boxed();
@@ -148,25 +149,6 @@ pub fn search(
         query = query.filter(viti_areas::name.like(wrap_in_wildcards(&viti_area_like)));
     }
     query
-        .group_by((
-            wines::id,
-            wines::description,
-            wines::notes,
-            wines::rating,
-            wines::inventory,
-            wines::why,
-            wines::color_id,
-            colors::name,
-            wines::producer_id,
-            producers::name,
-            producers::region_id,
-            regions::name,
-            wines::viti_area_id,
-            viti_areas::name,
-            wines::name,
-            wines::wine_type_id,
-            wine_types::name,
-        ))
         .select((
             wines::id,
             wines::description,
@@ -185,7 +167,7 @@ pub fn search(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-            sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            recent_purchases::vintage.nullable(),
             wines::image,
         ))
         .load::<Wine>(&*connection)
