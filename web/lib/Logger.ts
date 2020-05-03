@@ -1,8 +1,8 @@
 import React from "react";
 import { postLog } from "./api/logs";
+import { LOG_LEVEL } from "./constants";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
-import { LOG_LEVEL } from "./constants";
 
 /** Provides logging functionality for client-side JavaScript errors. */
 enum LogLevel {
@@ -20,7 +20,8 @@ interface ILogResult {
 type LogTags = IDict<string | number | Date | object | undefined | null>;
 
 export default class Logger {
-    private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning, LogLevel.Error, LogLevel.Critical]
+    private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning,
+                                       LogLevel.Error, LogLevel.Critical];
 
     private static logLevelOrder: number = Logger.logLevelOrdering.indexOf(LOG_LEVEL as LogLevel);
 
@@ -78,7 +79,8 @@ export default class Logger {
                     this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
                 }
             } catch (e) {
-                this.toast(LogLevel.Error, `Failed to send client-side logs to server: ${e.message}`);
+                this.toast(LogLevel.Error,
+                           `Failed to send client-side logs to server: ${e.message}`);
             }
         }
     }
