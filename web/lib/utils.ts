@@ -162,11 +162,12 @@ export function onLoad(fun: () => void) {
     document.addEventListener("DOMContentLoaded", fun);
 }
 
-export function onError(
+export async function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
 ) {
     if (error && error.message.startsWith("Loading chunk ")) {
-        new Logger("window", false, false).logError(`A top-level error occured loading chunk: ${error.message}. Reloading...`);
+        const logger = new Logger("window", false, false);
+        await logger.logError(`A top-level error occured loading chunk: ${error.message}. Reloading...`);
         location.reload();
     } else {
         new Logger("window", false, false).logCritical(

@@ -20,9 +20,9 @@ export class ErrorBoundary extends React.Component<{}, IState> {
         this.logger = new Logger("ErrorBoundary", false, false);
     }
 
-    public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    public async componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         if (error.message.startsWith("Loading chunk ")) {
-            this.logger.logCritical(`App crashed with loading chunk: ${error.message}.\nReloading...`);
+            await this.logger.logCritical(`App crashed with loading chunk: ${error.message}.\nReloading...`);
             location.reload();
         } else {
             this.setState({hasThrown: true, error, errorInfo});
