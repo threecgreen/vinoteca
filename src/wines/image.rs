@@ -9,7 +9,7 @@ use diesel::prelude::*;
 use image::GenericImageView;
 use rocket::State;
 use rocket_contrib::json::Json;
-use rocket_multipart_form_data::mime::Mime;
+use rocket_multipart_form_data::mime::{self, Mime};
 use std::io::{BufReader, Cursor};
 use uuid::Uuid;
 
