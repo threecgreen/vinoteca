@@ -1,4 +1,5 @@
 use bcrypt::BcryptError;
+use diesel::r2d2;
 use image::ImageError;
 use rocket::http::Status;
 use rocket::request::Request;
@@ -101,6 +102,13 @@ impl From<exif::Error> for VinotecaError {
     fn from(exif_error: exif::Error) -> Self {
         warn!("Error reading exif data: {:?}", exif_error);
         VinotecaError::Internal("Error handling image metadata".to_owned())
+    }
+}
+
+impl From<r2d2::Error> for VinotecaError {
+    fn from(r2d2_error: r2d2::Error) -> Self {
+        error!("Error with connection pool: {:?}", r2d2_error);
+        VinotecaError::Internal("Error getting pooled database connection".to_owned())
     }
 }
 

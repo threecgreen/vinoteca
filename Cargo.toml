@@ -18,8 +18,6 @@ aws-region = "0.20.0"
 bcrypt = "0.7.0"
 # Datetime functionality
 chrono = { version = "0.4.11", features = ["serde"] }
-# Async connection pool
-deadpool = { version = "0.5.1", features = ["managed"] }
 # basic ORM
 diesel = { version = "1.4", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
@@ -51,7 +49,7 @@ features = ["private-cookies"]
 git = "https://github.com/SergioBenitez/rocket"
 branch = "async"
 default-features = false
-features = ["json"]
+features = ["json", "diesel_postgres_pool"]
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]

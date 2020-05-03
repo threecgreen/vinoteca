@@ -5,7 +5,7 @@ use crate::models::{InternalUser, NewUser, User, UserForm};
 use crate::schema::users;
 use crate::DbConn;
 
-use chrono::Utc;
+use chrono::{DateTime, Duration, Utc};
 use diesel::prelude::*;
 use rocket::http::{Cookie, Cookies, SameSite};
 use rocket_contrib::json::Json;
@@ -114,7 +114,8 @@ fn add_auth_cookie(cookies: &mut Cookies, user_id: i32) {
         .same_site(SameSite::Strict)
         .http_only(true)
         .secure(true)
-        .expires(time::now() + time::Duration::days(5))
+        // .expires(time::now() + time::Duration::days(5))
+        .expires(DateTime::now() + Duration::days(5))
         .finish();
     cookies.add_private(cookie);
 }

@@ -33,12 +33,12 @@ pub fn patch(
 }
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
-pub async fn put(
+pub async fn put<'a>(
     auth: Auth,
     id: i32,
     raw_wine_form: RawWineForm,
     connection: DbConn,
-    config: State<Config>,
+    config: State<'a, Config>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;

@@ -27,7 +27,7 @@ pub async fn handle_image(
     wine_id: i32,
     image: Image,
     s3_bucket: &s3::bucket::Bucket,
-    connection: &DbConn,
+    connection: diesel::PgConnection,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
@@ -47,7 +47,7 @@ pub async fn handle_image(
     diesel::update(wines::table)
         .filter(wines::id.eq(wine_id))
         .set(wines::image.eq(&path))
-        .execute(&**connection)?;
+        .execute(&connection)?;
 
     Ok(path)
 }
