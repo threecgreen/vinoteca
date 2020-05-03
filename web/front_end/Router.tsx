@@ -27,32 +27,30 @@ export const Router: React.FC<{}> = (_props) => (
     <ErrorBoundary>
         <UserProvider>
             <ViewportProvider>
-                <Suspense fallback={ <Preloader /> }>
-                    <ReachRouter>
-                        <App path="/">
-                            <HomeApp path="/" />
-                            <AboutApp path="/about" />
-                            <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
-                            <AuthenticatedRoute componentName="Grapes" path="grapes" />
+                <ReachRouter>
+                    <App path="/">
+                        <HomeApp path="/" />
+                        <AboutApp path="/about" />
+                        <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
+                        <AuthenticatedRoute componentName="Grapes" path="grapes" />
 
-                            <AuthenticatedRoute componentName="Wines" path="wines" />
-                            <RouteById componentName="WineProfile" path="wines/:id" />
-                            <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
-                            <AuthenticatedRoute componentName="NewWine" path="wines/new" />
-                            <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
+                        <AuthenticatedRoute componentName="Wines" path="wines" />
+                        <RouteById componentName="WineProfile" path="wines/:id" />
+                        <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
+                        <AuthenticatedRoute componentName="NewWine" path="wines/new" />
+                        <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
 
-                            <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
-                            <AuthenticatedRoute componentName="RegionProfile" path="regions/:regionId"
-                            />
-                            <AuthenticatedRoute componentName="UserProfile" path="profile" />
-                            <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
-                            <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />
+                        <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
+                        <AuthenticatedRoute componentName="RegionProfile" path="regions/:regionId"
+                        />
+                        <AuthenticatedRoute componentName="UserProfile" path="profile" />
+                        <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
+                        <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />
 
-                            <PleaseCrash path="/crash/please" />
-                            <NotFound default />
-                        </App>
-                    </ReachRouter>
-                </Suspense>
+                        {/* <PleaseCrash path="/crash/please" /> */}
+                        <NotFound default />
+                    </App>
+                </ReachRouter>
             </ViewportProvider>
         </UserProvider>
     </ErrorBoundary>
@@ -62,6 +60,6 @@ Router.displayName = "Router";
 /**
  * For testing purposes
  */
-const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
-    throw Error();
-}
+// const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
+//     throw Error();
+// }
