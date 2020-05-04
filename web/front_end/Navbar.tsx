@@ -100,14 +100,17 @@ const MenuItems: React.FC<IMenuItemsProps> = (props) => {
 
     return (
         user
-        ? <UserMenuItems {...props} />
+        ? <UserMenuItems {...props} user={ user } />
         : <NoUserMenuItems {...props} />
     );
 }
 MenuItems.displayName = "MenuItems";
 
-const UserMenuItems: React.FC<IMenuItemsProps> = ({id}) => {
-    const user = useUser();
+interface IUserMenuItemsProps extends IMenuItemsProps {
+    user: IUser;
+}
+
+const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
     const setUser = useSetUser();
 
     const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
@@ -174,7 +177,7 @@ const UserMenuItems: React.FC<IMenuItemsProps> = ({id}) => {
                     ref={ userDropdownRef }
                 >
                     <MaterialIcon className="left" iconName="account_circle" />
-                    { user?.name ?? "" }
+                    { user.name }
                     <MaterialIcon className="right" iconName="arrow_drop_down" />
                 </a>
             </li>
