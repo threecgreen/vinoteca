@@ -68,15 +68,18 @@ export class Producer extends React.Component<IProducerProps> {
                     <Form>
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
+                            required={ true }
                         />
                         <RegionInput value={ this.props.regionText }
                             onChange={ this.onRegionTextChange }
+                            required={ true }
                         />
                     </Form>
                 </Col>
                 <CancelOrConfirmBtns
                     onConfirmClick={ this.props.onConfirmClick }
                     onCancelClick={ this.props.onCancelClick }
+                    confirmDisabled={ !this.props.producerText || !this.props.regionText }
                 />
             </>
         );

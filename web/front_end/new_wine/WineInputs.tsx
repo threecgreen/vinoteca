@@ -134,7 +134,6 @@ interface IProps {
 }
 
 export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
-    // TODO: enforce requirements before enabling submit button
     return (
         <>
             {/* TODO: required */}

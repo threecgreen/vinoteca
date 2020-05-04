@@ -97,7 +97,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 />
                 <Btn classes={ ["green-bg"] }
                     onClick={ onSubmit }
-                    disabled={ isSaving }
+                    disabled={ isSaving || !wineState.producer || !wineState.region || !wineState.wineType }
                 >
                     Confirm
                     <MaterialIcon className="right" iconName="send" />

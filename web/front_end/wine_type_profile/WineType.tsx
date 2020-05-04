@@ -30,6 +30,7 @@ export const WineType: React.FC<IProps> = (props) => {
                 <Form>
                     <WineTypeInput value={ props.wineTypeText }
                         onChange={ props.onWineTypeChange }
+                        required={ true }
                     />
                 </Form>
             </Col>

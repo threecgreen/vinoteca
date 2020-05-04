@@ -28,13 +28,16 @@ export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
                 />
                 <WineTypeInput value={ props.wineTypeText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.WineType, v) }
+                    required={ false }
                 />
                 <ProducerInput value={ props.producerText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Producer, v) }
+                    required={ false }
                 />
                 <RegionInput value={ props.regionText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.Region, v) }
                     producerText={ props.producerText }
+                    required={ false }
                 />
                 <VitiAreaInput value={ props.vitiAreaText }
                     onChange={ (v) => props.onInputChange(SearchWinesInput.VitiArea, v) }
