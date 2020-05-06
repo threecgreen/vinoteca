@@ -1,6 +1,7 @@
 import React from "react";
 import { capitalizeFirstLetter, nameToId } from "../../lib/utils";
 import { InputField } from "../Grid";
+import { useViewport } from "../ViewportContext";
 
 interface IProps {
     name: string;
@@ -22,11 +23,13 @@ export const SelectInput: React.FC<IProps> = (props) => {
             { props.selectText }
         </option>;
     }
+    const {width} = useViewport();
     return (
         <InputField s={ props.s } m={ props.m } l={ props.l }
             classes={ ["col"] }
         >
             <select id={ id }
+                className={ width <= 600 ? "browser-default" : undefined }
                 name={ id }
                 onChange={ (e) => props.onChange(e.target.value) }
                 value={ props.selection || props.selectText }
@@ -41,7 +44,7 @@ export const SelectInput: React.FC<IProps> = (props) => {
                     );
                 })}
             </select>
-            <label htmlFor={ id }>{ props.name }</label>
+            { width > 600 && <label htmlFor={ id }>{ props.name }</label> }
         </InputField>
     );
 };

@@ -99,7 +99,7 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
     };
     const selection = props.text === "" ? extraChoice : props.text;
 
-    const [selectionOptions, selectRef] = useColorsSelect(logger, extraChoice);
+    const [selectionOptions, selectRef] = useColorsSelect(logger);
 
     return (
         <td>
