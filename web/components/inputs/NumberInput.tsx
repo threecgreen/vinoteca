@@ -28,6 +28,7 @@ export const NumberInput: React.FC<IProps> = (props) => {
             name={ props.name }
             enabled={ props.enabled ?? true }
             className="validate"
+            inputFieldClassName="col"
             value={ props.number || "" }
             onChange={ onChange }
             max={ props.max }

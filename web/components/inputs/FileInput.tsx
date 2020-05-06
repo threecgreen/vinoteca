@@ -21,7 +21,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
 
     return (
         <InputField s={ 12 } l={ 6 }
-            classes={ ["file-field"] }
+            classes={ ["file-field", "col"] }
         >
             <div className="btn yellow-bg">
                 <span>{ name }</span>

@@ -115,7 +115,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
                     onChange={ (id, grape, percent) => dispatch({type: "modifyGrape", id, grape, percent}) }
                 />
             )) }
-            <InputField>
+            <InputField classes={ ["col"] }>
                 <FloatingBtn onClick={ () => dispatch({type: "addGrape"}) }
                     classes={ ["green-bg"] }
                 >

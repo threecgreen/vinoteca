@@ -25,7 +25,9 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
 
     return (
         <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
-            <InputField s={ 1 }>
+            <InputField s={ 1 }
+                classes={ ["col"] }
+            >
                 <FloatingBtn onClick={ () => handleDelete(id) }
                     classes={ ["red-bg"] }
                 >

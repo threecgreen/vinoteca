@@ -27,10 +27,19 @@ export class CheckboxInput extends React.Component<IProps> {
                             onChange={ (e) => this.props.onClick(e.target.checked) }
                             disabled={ !this.props.enabled }
                         />
-                        <span className="lever" />
+                        <span className="lever"
+                            // Increase clickable area, particularly for mobile
+                            style={ {zIndex: 1} }
+                            onClick={ (e) => this.onSpanClick(e) }
+                        />
                     </label>
                 </div>
             </Col>
         );
+    }
+
+    private onSpanClick(e: React.MouseEvent<HTMLSpanElement>) {
+        e.preventDefault();
+        this.props.onClick(!this.props.isChecked);
     }
 }

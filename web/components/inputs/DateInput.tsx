@@ -38,6 +38,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
         <Input name={ name }
             value={ dateString }
             className="datepicker"
+            inputFieldClassName="col"
             s={ 6 } l={ 3 }
             active={ isValueSet }
             inputRef={ inputRef }

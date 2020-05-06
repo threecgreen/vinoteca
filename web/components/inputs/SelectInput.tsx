@@ -23,7 +23,9 @@ export const SelectInput: React.FC<IProps> = (props) => {
         </option>;
     }
     return (
-        <InputField s={ props.s } m={ props.m } l={ props.l }>
+        <InputField s={ props.s } m={ props.m } l={ props.l }
+            classes={ ["col"] }
+        >
             <select id={ id }
                 name={ id }
                 onChange={ (e) => props.onChange(e.target.value) }
