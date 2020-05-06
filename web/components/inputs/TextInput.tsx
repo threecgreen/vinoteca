@@ -68,15 +68,15 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     value={ props.value }
                     enabled={ props.enabled }
                     onChange={ (val) => onChange(val) }
-                    className=""
-                    inputFieldClassName={ `${props.className} flex-grow` }
+                    className={ `${props.className} ${props.required ? "validate" : ""}`  }
+                    inputFieldClassName="flex-grow"
                     inputRef={ inputRef }
                     active={ Boolean(props.value) }
                     required={ props.required }
                 />
                 { isActive && <Btn onClick={ onShowPicker }
                     noRbtn={ true }
-                    classes={ ["green-bg", "overlap", "btn-small"] }
+                    classes={ ["green-bg", "overlap", "btn-small", showPicker ? "active" : ""] }
                 >
                     ñ
                 </Btn> }
@@ -139,7 +139,7 @@ export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
         value={ props.value }
         enabled={ props.enabled }
         onChange={ props.onChange }
-        className={ `props.className ${props.required ? "validate" : ""}`  }
+        className={ `${props.className} ${props.required ? "validate" : ""}`  }
         s={ props.s } m={ props.m } l={ props.l }
         active={ Boolean(props.value) }
         required={ props.required }
