@@ -24,6 +24,9 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
             .mapErr((ve) => {
                 setPassword("");
                 switch (ve.type) {
+                    case "NotFound":
+                        setEmail("")
+                        // fallthrough
                     case "BadRequest":
                     case "Forbidden":
                     case "MissingConstraint":

@@ -34,7 +34,8 @@ pub fn login(form: Json<LoginForm>, mut cookies: Cookies, connection: DbConn) ->
     let form = form.into_inner();
     let user = users::table
         .filter(users::email.eq(form.email))
-        .first::<InternalUser>(&*connection)?;
+        .first::<InternalUser>(&*connection)
+        .map_err(|_| VinotecaError::NotFound("E-mail not recognized".to_owned()))?;
     let valid = bcrypt::verify(form.password, &user.hash)?;
     if !valid {
         return Err(VinotecaError::Forbidden("Bad password".to_string()));
