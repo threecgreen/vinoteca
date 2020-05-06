@@ -35,7 +35,7 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
     }
     // TODO: better support for creating an account as well
     return (
-        <LoginForm onFinish={ setUser! }
+        <LoginForm onFinish={ setUser }
             onCancel={ () => navigate("/") }
         />
     );

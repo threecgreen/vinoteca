@@ -73,7 +73,8 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
         throw Error(message);
     }
     try {
-        return Result.Ok(decodeJsonIfAny(response));
+        const json = await decodeJsonIfAny(response);
+        return Result.Ok(json);
     } catch (err) {
         throw Error(await response.text());
     }
