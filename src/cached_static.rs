@@ -152,7 +152,11 @@ impl Handler for CachedStaticFiles {
 
         match &path {
             Some(path) if path.is_dir() => Outcome::forward(data),
-            Some(path) => Outcome::from(req, CachedFile::open(path).ok()),
+            Some(path) if path.exists() => Outcome::from(req, CachedFile::open(path).ok()),
+            Some(path) => {
+                warn!("Request received for static file that doesn't exist at path '{:?}'", path);
+                Outcome::failure(Status::NotFound)
+            }
             None => Outcome::forward(data),
         }
     }
