@@ -6,6 +6,7 @@ import { EmailInput, PasswordInput, TextInput, SimpleTextInput } from "./inputs/
 import { Modal, ModalContent, ModalFooter } from "./Modal";
 import { Form } from "./Form";
 import { useLogger } from "../lib/Logger";
+import { UserInputs, userInputReducer, initUserInputData } from "./UserInputs";
 
 interface IUserProps {
     onFinish: (user: IUser) => void,
@@ -77,14 +78,12 @@ LoginForm.displayName = "LoginForm";
 export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     const logger = useLogger("NewUserForm");
 
-    const [email, setEmail] = React.useState("");
-    const [name, setName] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const [data, dispatch] = React.useReducer(userInputReducer, [], initUserInputData);
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
     // TODO: image
 
     const onSubmit = async () => {
-        const user = await createUser({email, name, password});
+        const user = await createUser(data);
         user.map(onFinish)
             .mapErr((ve) => {
                 switch (ve.type) {
@@ -103,22 +102,8 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
             <ModalContent>
                 { errorMsg && <p className="error-msg">{ errorMsg }</p>}
                 <Form>
-                    <EmailInput name="E-mail"
-                        className=""
-                        value={ email }
-                        onChange={ setEmail }
-                    />
-                    <SimpleTextInput name="Name"
-                        type="text"
-                        className=""
-                        value={ name }
-                        onChange={ setName }
-                        required={ true }
-                    />
-                    <PasswordInput name="Password"
-                        className=""
-                        value={ password }
-                        onChange={ setPassword }
+                    <UserInputs data={ data }
+                        dispatch={ dispatch }
                     />
                 </Form>
             </ModalContent>
@@ -126,7 +111,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 <CancelOrConfirmBtns
                     onConfirmClick={ onSubmit }
                     onCancelClick={ onCancel }
-                    confirmDisabled={ !email || !name || !password }
+                    confirmDisabled={ !data.email || !data.name || !data.password }
                 />
             </ModalFooter>
         </Modal>

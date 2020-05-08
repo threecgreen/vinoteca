@@ -3,6 +3,7 @@ import format from "date-fns/esm/format";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { useUser } from "../../components/UserContext";
+import { useLogger } from "../../lib/Logger";
 
 const UserProfileApp: React.FC<{}> = (_) => {
     const user = useUser();
@@ -10,6 +11,9 @@ const UserProfileApp: React.FC<{}> = (_) => {
         navigate("/");
         return null;
     }
+
+    const logger = useLogger("UserProfileApp");
+
     return (
         <div className="container">
             <Row>

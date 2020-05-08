@@ -133,58 +133,56 @@ interface IProps {
     dispatch: React.Dispatch<Action>;
 }
 
-export const WineInputs: React.FC<IProps> = ({data, dispatch}) => {
-    return (
-        <>
-            {/* TODO: required */}
-            <ColorInput selection={ data.color }
-                s={ 12 } m={ 4 } l={ 2 }
-                onChange={ (color) => dispatch({type: "setColor", color}) }
-                extraChoice="Select a color"
-            />
-            <WineTypeInput value={ data.wineType }
-                onChange={ (wineType) => dispatch({type: "setWineType", wineType}) }
-                required={ true }
-            />
-            <TextInput name="Name" className=""
-                s={ 12 } l={ 6 }
-                value={ data.name }
-                onChange={ (name) => dispatch({type: "setName", name}) }
-            />
-            <ProducerInput value={ data.producer }
-                onChange={ (producer) => dispatch({type: "setProducer", producer}) }
-                required={ true }
-            />
-            <RegionInput value={ data.region }
-                onChange={ (region) => dispatch({type: "setRegion", region}) }
-                required={ true }
-                producerText={ data.producer }
-            />
-            <RatingInput isChecked={ data.isRatingEnabled }
-                onIsCheckedChange={ (isRatingEnabled) => dispatch({type: "setIsRatingEnabled", isRatingEnabled}) }
-                rating={ data.rating }
-                onRatingChange={ (rating) => dispatch({type: "setRating", rating}) }
-            />
-            <VitiAreaInput value={ data.vitiArea }
-                onChange={ (vitiArea) => dispatch({type: "setVitiArea", vitiArea}) }
-                regionText={ data.region }
-            />
-            <TextInput name="Description" className=""
-                value={ data.description }
-                onChange={ (description) => dispatch({type: "setDescription", description}) }
-                s={ 12 } l={ 6 }
-            />
-            <TextInput name="Notes" className=""
-                s={ 12 } l={ 6 }
-                value={ data.notes }
-                onChange={ (notes) => dispatch({type: "setNotes", notes}) }
-            />
-            <FileInput name="Wine Image"
-                onChange={ (file) => dispatch({type: "setFile", file}) }
-                // This to display something while editing if the wine already has an image
-                fileName={ data.file?.name }
-            />
-        </>
-    );
-}
+export const WineInputs: React.FC<IProps> = ({data, dispatch}) => (
+    <>
+        {/* TODO: required */}
+        <ColorInput selection={ data.color }
+            s={ 12 } m={ 4 } l={ 2 }
+            onChange={ (color) => dispatch({type: "setColor", color}) }
+            extraChoice="Select a color"
+        />
+        <WineTypeInput value={ data.wineType }
+            onChange={ (wineType) => dispatch({type: "setWineType", wineType}) }
+            required={ true }
+        />
+        <TextInput name="Name" className=""
+            s={ 12 } l={ 6 }
+            value={ data.name }
+            onChange={ (name) => dispatch({type: "setName", name}) }
+        />
+        <ProducerInput value={ data.producer }
+            onChange={ (producer) => dispatch({type: "setProducer", producer}) }
+            required={ true }
+        />
+        <RegionInput value={ data.region }
+            onChange={ (region) => dispatch({type: "setRegion", region}) }
+            required={ true }
+            producerText={ data.producer }
+        />
+        <RatingInput isChecked={ data.isRatingEnabled }
+            onIsCheckedChange={ (isRatingEnabled) => dispatch({type: "setIsRatingEnabled", isRatingEnabled}) }
+            rating={ data.rating }
+            onRatingChange={ (rating) => dispatch({type: "setRating", rating}) }
+        />
+        <VitiAreaInput value={ data.vitiArea }
+            onChange={ (vitiArea) => dispatch({type: "setVitiArea", vitiArea}) }
+            regionText={ data.region }
+        />
+        <TextInput name="Description" className=""
+            value={ data.description }
+            onChange={ (description) => dispatch({type: "setDescription", description}) }
+            s={ 12 } l={ 6 }
+        />
+        <TextInput name="Notes" className=""
+            s={ 12 } l={ 6 }
+            value={ data.notes }
+            onChange={ (notes) => dispatch({type: "setNotes", notes}) }
+        />
+        <FileInput name="Wine Image"
+            onChange={ (file) => dispatch({type: "setFile", file}) }
+            // This to display something while editing if the wine already has an image
+            fileName={ data.file?.name }
+        />
+    </>
+);
 WineInputs.displayName = "WineInputs";
