@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GreenCard } from "../../components/Cards";
-import { PreloaderCirc } from "../../components/Preloader";
+import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
 import { getRecentPurchases } from "../../lib/api/purchases";
@@ -28,7 +28,7 @@ const RecentPurchases: React.FC<{}> = (_) => {
 
     let content;
     if (!hasLoaded) {
-        content = <PreloaderCirc />;
+        content = <PreloaderCirc color={ SpinnerColor.WineRed } />;
     } else if (purchases.length > 0) {
         content = (
             <SimpleTable columns={ ["Date", "Name and Type", "Producer", "Region", "Store",

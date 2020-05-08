@@ -3,7 +3,7 @@ import React from "react";
 import { Col } from "./Grid";
 import { IChildrenProp, IClassesProp } from "./IProps";
 import { MaterialIcon } from "./MaterialIcon";
-import { PreloaderCirc } from "./Preloader";
+import { CircleSize, PreloaderCirc } from "./Preloader";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
@@ -102,13 +102,16 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
 
     return (
         <Col s={ 12 }>
-            { isSaving && <PreloaderCirc className="hor-margin" /> }
+            {/* { isSaving && <PreloaderCirc className="hor-margin" /> } */}
             <Btn classes={ ["green-bg"] }
                 onClick={ submit }
                 disabled={ isConfirmDisabled }
             >
                 Confirm
-                <MaterialIcon iconName="send" className="right" />
+                { isSaving
+                    ? <PreloaderCirc size={ CircleSize.Tiny } />
+                    : <MaterialIcon iconName="send" className="right" />
+                }
             </Btn>
             <Btn classes={ ["red-bg"] }
                 onClick={ onCancelClick }

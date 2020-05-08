@@ -2,7 +2,7 @@ import React from "react";
 import { useLogger } from "../lib/Logger";
 import { nameToId } from "../lib/utils";
 import { BarChart } from "./Chart";
-import { PreloaderCirc } from "./Preloader";
+import { PreloaderCirc, SpinnerColor } from "./Preloader";
 import { SimpleTable } from "./Table";
 import { NumCell, PriceCell } from "./TableCells";
 import { indexFactory, Tab, TabColor, TabPanel, Tabs } from "./Tabs";
@@ -25,8 +25,12 @@ interface IProps<Entity> {
     EntityCell: React.FC<IEntityCellProps>;
     fetchEntity: () => Promise<Entity[]>;
     minQuantity?: number;
+    preloaderColor: SpinnerColor;
 }
-export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity, minQuantity}: IProps<Entity>) {
+export function TopEntity<Entity extends IEntity>({
+    name, EntityCell, fetchEntity, minQuantity, preloaderColor
+}: IProps<Entity>) {
+
     minQuantity = minQuantity ?? 5;
 
     const logger = useLogger("TopEntity");
@@ -49,7 +53,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
 
 
     if (!hasLoaded) {
-        return <PreloaderCirc />;
+        return <PreloaderCirc color={ preloaderColor } />;
     }
     if (topEntities.length >= minQuantity) {
         const tabIdxer = indexFactory(nameToId(name));

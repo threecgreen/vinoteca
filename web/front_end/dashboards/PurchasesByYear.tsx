@@ -1,7 +1,7 @@
 import React from "react";
 import { GreenCard, RedCard } from "../../components/Cards";
 import { LineChart } from "../../components/Chart";
-import { PreloaderCirc } from "../../components/Preloader";
+import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
 import { SimpleTable } from "../../components/Table";
 import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
 import { getPurchasesByYear } from "../../lib/api/purchases";
@@ -35,7 +35,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
 
     let content;
     if (!hasLoaded) {
-        content = <PreloaderCirc />;
+        content = <PreloaderCirc color={ SpinnerColor.WineRed } />;
     } else if (yearsPurchases.length > 1) {
         content = (
             <LineChart data={[

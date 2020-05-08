@@ -1,5 +1,6 @@
 import React from "react";
 import { GreenCard, RedCard, YellowCard } from "../../components/Cards";
+import { SpinnerColor } from "../../components/Preloader";
 import { ProducerCell, RegionCell, VitiAreaCell } from "../../components/TableCells";
 import { TopEntity } from "../../components/TopEntity";
 import { getTopColors } from "../../lib/api/colors";
@@ -15,6 +16,7 @@ export const TopProducers: React.FC<{}> = (_) => {
             <TopEntity name="Producers"
                 EntityCell={ ProducerCell }
                 fetchEntity={ getTopProducers }
+                preloaderColor={ SpinnerColor.WineGreen }
             />
         </RedCard>
     );
@@ -27,6 +29,7 @@ export const TopRegions: React.FC<{}> = (_) => {
             <TopEntity name="Region"
                 EntityCell={ RegionCell }
                 fetchEntity={ getTopRegions }
+                preloaderColor={ SpinnerColor.WineGreen }
             />
         </YellowCard>
     );
@@ -40,6 +43,7 @@ export const TopVitiAreas: React.FC<{}> = (_) => {
                 // @ts-ignore viti area ids won't be null here
                 EntityCell={ VitiAreaCell }
                 fetchEntity={ getTopVitiAreas }
+                preloaderColor={ SpinnerColor.WineRed }
             />
         </GreenCard>
     );
@@ -61,6 +65,7 @@ export const TopGrapes: React.FC<{}> = (_) => {
             <TopEntity name="Grape"
                 EntityCell={ NonLinkCell }
                 fetchEntity={ getTopGrapes }
+                preloaderColor={ SpinnerColor.WineRed }
             />
         </RedCard>
     )
@@ -76,6 +81,7 @@ export const TopColors: React.FC<{}> = (_) => {
                     return colors.map((c) => ({...c, name: capitalizeFirstLetter(c.name)}));
                 } }
                 minQuantity={ 1 }
+                preloaderColor={ SpinnerColor.WineRed }
             />
         </GreenCard>
     )
