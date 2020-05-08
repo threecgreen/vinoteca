@@ -8,6 +8,7 @@ import { DeleteModal } from "../../components/Modal";
 import { wineGrapesToForm } from "../../components/model_inputs/GrapesInputs";
 import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../components/model_inputs/PurchaseInputs";
 import { Preloader } from "../../components/Preloader";
+import { useViewport } from "../../components/ViewportContext";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "../../lib/api/purchases";
 import { IPurchase, IWineGrape } from "../../lib/api/Rest";
 import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage } from "../../lib/api/wines";
@@ -34,6 +35,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = useLogger("WineProfileApp");
+
+    const {width} = useViewport();
 
     useTitle(state.wine ? getNameAndType(state.wine.name, state.wine.wineType) : "Wine profile");
 
@@ -355,6 +358,32 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     if (!state.wine) {
         return <Preloader />;
     }
+    const purchaseHeading = (
+        <Col s={ 12 } m={ 9 }>
+            <h4>Purchases</h4>
+        </Col>
+    );
+    const fixedActionButtons = (
+        <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] }>
+            <FixedActionList>
+                <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
+                    classes={ ["green-bg"] }
+                >
+                    <MaterialIcon iconName="add" />
+                </FloatingBtn>
+                <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "editWine"}}) }
+                    classes={ ["yellow-bg"] }
+                >
+                    <MaterialIcon iconName="edit" />
+                </FloatingBtn>
+                <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "deleteWine"}}) }
+                    classes={ ["red-bg"] }
+                >
+                    <MaterialIcon iconName="delete" />
+                </FloatingBtn>
+            </FixedActionList>
+        </Col>
+    );
     return (
         <div className="container">
             <WineHeader
@@ -369,28 +398,10 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 { renderWineDetails() }
             </WineHeader>
             <Row>
-                <Col s={ 12 } m={ 9 }>
-                    <h4>Purchases</h4>
-                </Col>
-                <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] }>
-                    <FixedActionList>
-                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
-                            classes={ ["green-bg"] }
-                        >
-                            <MaterialIcon iconName="add" />
-                        </FloatingBtn>
-                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "editWine"}}) }
-                            classes={ ["yellow-bg"] }
-                        >
-                            <MaterialIcon iconName="edit" />
-                        </FloatingBtn>
-                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "deleteWine"}}) }
-                            classes={ ["red-bg"] }
-                        >
-                            <MaterialIcon iconName="delete" />
-                        </FloatingBtn>
-                    </FixedActionList>
-                </Col>
+                { width > 600
+                    ? [purchaseHeading, fixedActionButtons]
+                    : [fixedActionButtons, purchaseHeading]
+                }
                 <Col s={ 12 }>
                     <Purchases purchases={ state.purchases }
                         onEditClick={ (id) => dispatch({type: "setMode", mode: {type: "editPurchase", id}}) }
