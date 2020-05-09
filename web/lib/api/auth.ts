@@ -1,6 +1,6 @@
 import { RestResult } from "../error";
-import { getResult, postResult } from "./requests";
-import { IChangePasswordForm, ILoginForm, IUser, IUserForm } from "./Rest";
+import { getResult, postResult, putResult } from "./requests";
+import { IChangePasswordForm, IChangeUserForm, ILoginForm, IUser, IUserForm } from "./Rest";
 
 async function getUser(): Promise<RestResult<IUser>> {
     return getResult("/rest/users");
@@ -25,6 +25,10 @@ export async function createUser(form: IUserForm): Promise<RestResult<IUser>> {
 
 export async function changePassword(form: IChangePasswordForm): Promise<RestResult<void>> {
     return postResult("/rest/users/password", form);
+}
+
+export async function updateUser(form: IChangeUserForm): Promise<RestResult<IUser>> {
+    return putResult("/rest/users", form);
 }
 
 export async function logout(): Promise<RestResult<void>> {

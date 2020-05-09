@@ -168,6 +168,17 @@ export async function put<Response>(url: string, body: object,
     return checkResponse(response);
 }
 
+export async function putResult<T>(url: string, body: object,
+                                   params: IQueryParams = {}): Promise<RestResult<T>> {
+
+    const response = await fetch(url + encodeParams(params), {
+        body: encodeJson(body),
+        headers: HEADERS,
+        method: "PUT",
+    });
+    return checkResult(response);
+}
+
 export async function putForm<Response>(url: string, form: FormData,
                                         params: IQueryParams = {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {

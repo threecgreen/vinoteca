@@ -29,10 +29,11 @@ export const userInputReducer: React.Reducer<IUserForm, Action> = (state, action
 interface IProps {
     data: IUserForm;
     dispatch: React.Dispatch<Action>;
+    includePassword?: boolean;
 }
 
 // TODO: re-enter password input
-export const UserInputs: React.FC<IProps> = ({data, dispatch}) => (
+export const UserInputs: React.FC<IProps> = ({data, dispatch, includePassword}) => (
     <>
         <EmailInput name="E-mail"
             className=""
@@ -46,11 +47,11 @@ export const UserInputs: React.FC<IProps> = ({data, dispatch}) => (
             onChange={ (name) => dispatch({type: "setName", name}) }
             required={ true }
         />
-        <PasswordInput name="Password"
+        { (includePassword ?? true) && <PasswordInput name="Password"
             className=""
             value={ data.password }
             onChange={ (password) => dispatch({type: "setPassword", password}) }
-        />
+        /> }
     </>
 );
 UserInputs.displayName = "UserInputs";
