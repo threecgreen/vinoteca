@@ -1,5 +1,5 @@
 use super::auth::{Auth, COOKIE_NAME};
-use super::models::{ChangePasswordForm, LoginForm};
+use super::models::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{InternalUser, NewUser, User, UserForm};
 use crate::schema::users;
@@ -106,8 +106,24 @@ pub fn logout(mut cookies: Cookies) -> RestResult<()> {
     Ok(Json(()))
 }
 
-// #[put("/users")]
-// pub fn modify_profile(auth: Auth, )
+#[put("/users", format = "json", data = "<form>")]
+pub fn modify_profile(
+    auth: Auth,
+    form: Json<ChangeUserForm>,
+    connection: DbConn,
+) -> RestResult<User> {
+    let form = form.into_inner();
+    form.validate()?;
+
+    // Check if exists
+    users::table
+        .filter(users::id.eq(auth.id))
+        .first::<InternalUser>(&*connection)?;
+    diesel::update(users::table.filter(users::id.eq(auth.id)))
+        .set(form)
+        .execute(&*connection)?;
+    get(auth, connection)
+}
 
 fn add_auth_cookie(cookies: &mut Cookies, user_id: i32) {
     let cookie = Cookie::build(COOKIE_NAME, user_id.to_string())
