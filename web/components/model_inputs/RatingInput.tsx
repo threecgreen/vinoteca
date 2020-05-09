@@ -14,11 +14,13 @@ export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rat
     const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
-        new Range(ref.current)
+        if (ref) {
+            new Range(ref.current)
+        }
     }, [ref]);
 
     return (
-        <Col s={ 4 } l={ 2 } classes={ ["range-field" ] }>
+        <Col s={ 12 } m={ 4 } l={ 2 } classes={ ["range-field" ] }>
             <CheckboxInput name="has-rating"
                 text="Rating"
                 isChecked={ isChecked }

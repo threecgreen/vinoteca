@@ -32,7 +32,7 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange, required}) => 
     return (
         <TextInput name="Producer"
             className="autocomplete"
-            s={ 6 } l={ 3 }
+            s={ 7 } l={ 3 }
             inputRef={ inputRef }
             value={ value }
             onChange={ onChange }
