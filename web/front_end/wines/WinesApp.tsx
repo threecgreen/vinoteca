@@ -96,7 +96,8 @@ const WinesApp: React.FC<{}> = (_) => {
                     dispatch({type: "setWines", wines});
                 } else {
                     // FIXME: remove when we know what's happening
-                    new Logger("Wines App", false, false).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
+                    new Logger("Wines App", false, true).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
+                    dispatch({type: "setWines", wines: []});
                 }
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);
