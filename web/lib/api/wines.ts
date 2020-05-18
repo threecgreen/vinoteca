@@ -17,8 +17,7 @@ export async function getWines(
         id, region_id: regionId, producer_id: producerId,
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
-    const wines: IWine[] = await get("/rest/wines", nonNullParams);
-    return wines;
+    return get("/rest/wines", nonNullParams);
 }
 
 export const getWine = singleEntityGetter("wine", getWines);
