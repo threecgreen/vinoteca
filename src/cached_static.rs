@@ -1,13 +1,14 @@
+use chrono::{DateTime, Utc};
 use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CacheControl, CacheDirective, HttpDate, LastModified};
-use rocket::http::{uri::Segments, ContentType, Method, Status};
+use rocket::http::hyper::header::{CacheControl, CacheDirective};
+use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
+use std::borrow::Cow;
 use std::fs::{self, File};
 use std::io;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
-use std::time::SystemTime;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotModified<R>(pub R);
@@ -47,27 +48,23 @@ impl<'r> Responder<'r> for CachedFile {
                 response.set_header(ct);
             }
         }
-        let mtime = {
+        let epoch: DateTime<Utc> = {
             let metadata = fs::metadata(&self.0.as_path()).unwrap();
-            let epoch = metadata
-                .modified()
-                .unwrap()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap();
-            let tm = time::strptime(&epoch.as_secs().to_string(), "%s").unwrap();
-            HttpDate(tm)
+            metadata.modified().unwrap().into()
         };
-        response.set_header(LastModified(mtime));
+        response.set_header(Header {
+            name: Uncased::new("Last-Modified"),
+            value: Cow::from(epoch.to_rfc2822()),
+        });
         // User agent must revalidate. This is especially important for JS bundles
         response.set_header(CacheControl(vec![CacheDirective::NoCache]));
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
-                let if_modified_since =
-                    time::strptime(if_modified_since, "%a, %d %b %Y %H:%M:%S GMT").unwrap();
-                let if_modified_since = HttpDate(if_modified_since);
-                if mtime <= if_modified_since {
-                    return NotModified("Not Modified").respond_to(req);
+                if let Ok(if_modified_since) = DateTime::parse_from_rfc2822(if_modified_since) {
+                    if epoch <= if_modified_since {
+                        return NotModified("Not Modified").respond_to(req);
+                    }
                 }
             }
         }

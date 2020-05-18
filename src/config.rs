@@ -8,9 +8,9 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(aws_access_key: String, aws_secret_key: String) -> Config {
+    pub fn new(aws_access_key: &str, aws_secret_key: &str) -> Config {
         let creds =
-            Credentials::new_blocking(Some(aws_access_key), Some(aws_secret_key), None, None)
+            Credentials::new_blocking(Some(aws_access_key), Some(aws_secret_key), None, None, None)
                 .expect("Valid credentials");
         Config {
             s3_bucket: Bucket::new(BUCKET_NAME, "us-east-2".parse().expect("AWS region"), creds)

@@ -156,6 +156,6 @@ pub fn create_rocket() -> rocket::Rocket {
         .expect("AWS secret key")
         .to_owned();
     rocket
-        .manage(config::Config::new(aws_access_key, aws_secret_key))
+        .manage(config::Config::new(&aws_access_key, &aws_secret_key))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
 }
