@@ -1,4 +1,5 @@
 use crate::schema::*;
+use crate::serde::{trim_opt_string, trim_str};
 use crate::users::Auth;
 
 use chrono::{DateTime, NaiveDate, Utc};
@@ -19,6 +20,7 @@ pub struct Color {
 #[serde(rename_all = "camelCase")]
 pub struct ColorForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
 
@@ -34,6 +36,7 @@ pub struct Grape {
 #[serde(rename_all = "camelCase")]
 pub struct GrapeForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
 
@@ -65,6 +68,7 @@ pub struct Producer {
 #[serde(rename_all = "camelCase")]
 pub struct ProducerForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
     pub region_id: i32,
 }
@@ -113,6 +117,7 @@ pub struct PurchaseForm {
     #[validate(range(min = 1900))]
     pub vintage: Option<i32>,
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_opt_string")]
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
@@ -132,6 +137,7 @@ pub struct Region {
 #[serde(rename_all = "camelCase")]
 pub struct RegionForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
 
@@ -146,6 +152,7 @@ pub struct Store {
 #[serde(rename_all = "camelCase")]
 pub struct StoreForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
 
@@ -204,8 +211,10 @@ impl From<InternalUser> for User {
 #[serde(rename_all = "camelCase")]
 pub struct UserForm<'a> {
     #[validate(email)]
+    #[serde(deserialize_with = "trim_str")]
     pub email: &'a str,
     #[validate(length(min = 2))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
     #[validate(length(min = 8))]
     pub password: &'a str,
@@ -233,6 +242,7 @@ pub struct VitiArea {
 #[serde(rename_all = "camelCase")]
 pub struct VitiAreaForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
     pub region_id: i32,
 }
@@ -283,19 +293,23 @@ pub struct Wine {
 #[serde(rename_all = "camelCase")]
 pub struct WineForm {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_opt_string")]
     pub description: Option<String>,
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_opt_string")]
     pub notes: Option<String>,
     #[validate(range(min = 0, max = 10))]
     pub rating: Option<i32>,
     #[validate(range(min = 0))]
     pub inventory: i32,
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_opt_string")]
     pub why: Option<String>,
     pub color_id: i32,
     pub producer_id: i32,
     pub viti_area_id: Option<i32>,
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_opt_string")]
     pub name: Option<String>,
     pub wine_type_id: i32,
 }
@@ -363,6 +377,7 @@ pub struct WineType {
 #[serde(rename_all = "camelCase")]
 pub struct WineTypeForm<'a> {
     #[validate(length(min = 1))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
 

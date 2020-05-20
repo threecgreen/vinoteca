@@ -1,4 +1,5 @@
 use crate::schema::users;
+use crate::serde::trim_str;
 
 use serde::Deserialize;
 use typescript_definitions::TypeScriptify;
@@ -8,6 +9,7 @@ use validator::Validate;
 #[serde(rename_all = "camelCase")]
 pub struct LoginForm<'a> {
     #[validate(email(message = "E-mail %s is invalid"))]
+    #[serde(deserialize_with = "trim_str")]
     pub email: &'a str,
     #[validate(length(min = 8, message = "Password does not meet minimum length of 8"))]
     pub password: &'a str,
@@ -27,7 +29,9 @@ pub struct ChangePasswordForm<'a> {
 #[serde(rename_all = "camelCase")]
 pub struct ChangeUserForm<'a> {
     #[validate(email)]
+    #[serde(deserialize_with = "trim_str")]
     pub email: &'a str,
     #[validate(length(min = 2))]
+    #[serde(deserialize_with = "trim_str")]
     pub name: &'a str,
 }
