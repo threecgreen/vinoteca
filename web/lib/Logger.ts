@@ -1,6 +1,6 @@
 import React from "react";
 import { postLog } from "./api/logs";
-import { LOG_LEVEL } from "./constants";
+import { GIT_SHA, LOG_LEVEL, VERSION } from "./constants";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
 
@@ -66,6 +66,7 @@ export default class Logger {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
         if (Logger.logLevelOrdering.indexOf(level) >= Logger.logLevelOrder) {
+            tags["fullVersion"] = `${VERSION}-${GIT_SHA}`;
             try {
                 const response: ILogResult = await postLog({
                     level,

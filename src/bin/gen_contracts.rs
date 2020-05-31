@@ -29,16 +29,16 @@ fn write_interface(
     writeln!(writer, "{}", &ts_def[..ts_def.len() - 1])
 }
 
-fn write_const(writer: &mut BufWriter<&File>, name: &str, value: &str) -> Result<(), io::Error> {
+fn write_const(writer: &mut BufWriter<&File>, name: &str, value: &str) -> io::Result<()> {
     writeln!(writer, "export const {} = \"{}\";", name, value)
 }
 
-fn write_version(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
+fn write_version(writer: &mut BufWriter<&File>) -> io::Result<()> {
     let version = env!("CARGO_PKG_VERSION");
     write_const(writer, "VERSION", version)
 }
 
-fn write_log_level(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
+fn write_log_level(writer: &mut BufWriter<&File>) -> io::Result<()> {
     let mut log_level = option_env!("ROCKET_LOG").unwrap_or("info");
     // What rocket calls critical, actually includes warnings
     if log_level == "critical" {
@@ -47,12 +47,19 @@ fn write_log_level(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
     write_const(writer, "LOG_LEVEL", log_level)
 }
 
-fn write_contracts() -> Result<(), io::Error> {
+fn write_sha(writer: &mut BufWriter<&File>) -> Result<(), Box<dyn error::Error>> {
+    let output = std::process::Command::new("git").args(&["rev-parse", "HEAD"]).output()?;
+    let sha = String::from_utf8(output.stdout)?;
+    Ok(write_const(writer, "GIT_SHA", &sha)?)
+}
+
+fn write_contracts() ->  Result<(), Box<dyn error::Error>> {
     let const_file =
         File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
     let mut const_writer = BufWriter::new(&const_file);
     write_version(&mut const_writer)?;
-    write_log_level(&mut const_writer)
+    write_log_level(&mut const_writer)?;
+    write_sha(&mut const_writer)
 }
 
 fn main() -> Result<(), Box<dyn error::Error>> {
