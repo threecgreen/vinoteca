@@ -105,7 +105,7 @@ const WinesApp: React.FC<{}> = (_) => {
                     dispatch({type: "setWines", wines});
                 } else {
                     // FIXME: remove when we know what's happening
-                    new Logger("Wines App", false, true).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
+                    new Logger("WinesApp", false, true).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
                     dispatch({type: "setError"});
                     wines = await getWines({});
                     if (wines instanceof Array) {
