@@ -48,12 +48,14 @@ fn write_log_level(writer: &mut BufWriter<&File>) -> io::Result<()> {
 }
 
 fn write_sha(writer: &mut BufWriter<&File>) -> Result<(), Box<dyn error::Error>> {
-    let output = std::process::Command::new("git").args(&["rev-parse", "HEAD"]).output()?;
+    let output = std::process::Command::new("git")
+        .args(&["rev-parse", "HEAD"])
+        .output()?;
     let sha = String::from_utf8(output.stdout)?;
     Ok(write_const(writer, "GIT_SHA", sha.trim())?)
 }
 
-fn write_contracts() ->  Result<(), Box<dyn error::Error>> {
+fn write_contracts() -> Result<(), Box<dyn error::Error>> {
     let const_file =
         File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
     let mut const_writer = BufWriter::new(&const_file);

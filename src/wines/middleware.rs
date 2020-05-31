@@ -7,7 +7,7 @@ use rocket::data::{FromDataSimple, Outcome};
 use rocket::http::Status;
 use rocket::{Data, Outcome::*, Request};
 use rocket_multipart_form_data::{
-    mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField
+    mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField,
 };
 
 impl FromDataSimple for RawWineForm {
