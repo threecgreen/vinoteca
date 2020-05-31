@@ -407,6 +407,6 @@ pub mod generic {
         pub name: String,
         pub quantity: i64,
         pub varieties: i64,
-        pub avg_price: f64,
+        pub avg_price: Option<f64>,
     }
 }

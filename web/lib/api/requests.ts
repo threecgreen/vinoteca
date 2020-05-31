@@ -24,7 +24,6 @@ async function decodeJsonIfAny(response: Response) {
         && response.headers.get("content-type") === "application/json") {
         return response.json();
     }
-    throw Error("Unexpected content-type or length");
 }
 
 function isVinotecaError(obj: any): obj is VinotecaError {
@@ -75,7 +74,10 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
     }
     try {
         const json = await decodeJsonIfAny(response);
-        return Result.Ok(json);
+        if (json) {
+            return Result.Ok(json);
+        }
+        throw Error();
     } catch (err) {
         throw Error(await response.text());
     }

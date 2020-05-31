@@ -12,7 +12,7 @@ macro_rules! top_table {
         use crate::error::VinotecaError;
         use crate::models::generic;
 
-        use diesel::sql_types::{BigInt, Double};
+        use diesel::sql_types::{BigInt, Double, Nullable};
         use rocket_contrib::json::Json;
 
         $table
@@ -23,7 +23,7 @@ macro_rules! top_table {
                 sql::<BigInt>("sum(purchases.quantity)"),
                 // Should probably be distinct
                 sql::<BigInt>("count(wines.id)"),
-                sql::<Double>("avg(purchases.price)"),
+                sql::<Nullable<Double>>("avg(purchases.price)"),
             ))
             .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
             .limit($limit as i64)

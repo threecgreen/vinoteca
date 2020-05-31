@@ -12,7 +12,7 @@ interface IEntity {
     name: string;
     quantity: number;
     varieties: number;
-    avgPrice: number;
+    avgPrice: number | null;
 }
 
 interface IEntityCellProps {
@@ -103,7 +103,7 @@ export function TopEntity<Entity extends IEntity>({
                 </TabPanel>
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
-                        data={topEntities.map((ent) => ({ label: ent.name, value: Number.parseFloat(ent.avgPrice.toFixed(2)) }))}
+                        data={topEntities.map((ent) => ({ label: ent.name, value: Number.parseFloat(ent.avgPrice?.toFixed(2) ?? "0") }))}
                     />
                 </TabPanel>
             </>
