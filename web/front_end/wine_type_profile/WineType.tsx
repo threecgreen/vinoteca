@@ -4,6 +4,7 @@ import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
 import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
 import { IWineType } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     isEditing: boolean;
@@ -15,6 +16,8 @@ interface IProps {
 }
 
 export const WineType: React.FC<IProps> = (props) => {
+    const [isSaving, setIsSaving] = React.useState(false);
+
     const renderView = () => (
         <Col s={ 12 }>
             <h3>
@@ -35,8 +38,9 @@ export const WineType: React.FC<IProps> = (props) => {
                 </Form>
             </Col>
             <CancelOrConfirmBtns
-                onConfirmClick={ props.onConfirmClick }
+                onConfirmClick={ handleSubmit(props.onConfirmClick, setIsSaving) }
                 onCancelClick={ props.onCancelClick }
+                isSaving={ isSaving }
             />
         </>
     );

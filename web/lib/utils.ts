@@ -175,3 +175,13 @@ export async function onError(
             + ` event: ${event.toString()}`);
     }
 }
+
+export function handleSubmit(save: () => Promise<void>,
+                             setIsSaving: (isSaving: boolean) => void): () => Promise<void> {
+
+    return async () => {
+        setIsSaving(true);
+        await save();
+        setIsSaving(false);
+    };
+}

@@ -89,26 +89,17 @@ interface ICancelOrConfirmProps {
     onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
     confirmDisabled?: boolean;
-    // TODO: make prop
-    // isSaving: boolean;
+    isSaving: boolean;
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
-    ({onConfirmClick, onCancelClick, confirmDisabled}) => {
-    const [isSaving, setIsSaving] = React.useState(false);
+    ({onConfirmClick, onCancelClick, isSaving, confirmDisabled}) => {
     const isConfirmDisabled = confirmDisabled || isSaving;
-
-    const submit = async () => {
-        setIsSaving(true);
-        await onConfirmClick();
-        setIsSaving(false);
-    }
-
 
     return (
         <Col s={ 12 }>
             <Btn classes={ ["green-bg"] }
-                onClick={ submit }
+                onClick={ onConfirmClick }
                 disabled={ isConfirmDisabled }
                 type="submit"
             >

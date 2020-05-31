@@ -4,6 +4,7 @@ import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
 import { grapeReducer, GrapesInputs } from "../../components/model_inputs/GrapesInputs";
 import { IWine, IWineGrape } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
 
 interface IProps {
@@ -27,6 +28,8 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
     });
     const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
 
+    const [isSaving, setIsSaving] = React.useState(false);
+
     return (
         <Modal onClose={ onCancel }>
             <ModalContent>
@@ -42,8 +45,9 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ () => onSubmit(mutableWine, mutableGrapes) }
+                    onConfirmClick={ handleSubmit(() => onSubmit(mutableWine, mutableGrapes), setIsSaving) }
                     onCancelClick={ onCancel }
+                    isSaving={ isSaving }
                     confirmDisabled={ !wine.producer || !wine.region || !wine.wineType }
                 />
             </ModalFooter>

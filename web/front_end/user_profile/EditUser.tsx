@@ -4,6 +4,7 @@ import { userInputReducer, initUserInputData, UserInputs } from "../../component
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
 import { Form } from "../../components/Form";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     user: IUser;
@@ -14,6 +15,8 @@ interface IProps {
 export const EditUser: React.FC<IProps> = ({user, onSubmit, onCancel}) => {
     const [mutableUser, dispatch] = React.useReducer(userInputReducer,
                                                      {password: "", email: user.email, name: user.name});
+
+    const [isSaving, setIsSaving] = React.useState(false);
 
     return (
         <Modal onClose={ onCancel }>
@@ -26,8 +29,9 @@ export const EditUser: React.FC<IProps> = ({user, onSubmit, onCancel}) => {
                 </Form>
             </ModalContent>
             <ModalFooter>
-                <CancelOrConfirmBtns onConfirmClick={ () => onSubmit(mutableUser) }
+                <CancelOrConfirmBtns onConfirmClick={ handleSubmit(() => onSubmit(mutableUser), setIsSaving) }
                     onCancelClick={ onCancel }
+                    isSaving={ isSaving }
                     confirmDisabled={ !mutableUser.email || !mutableUser.name }
                 />
             </ModalFooter>

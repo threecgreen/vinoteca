@@ -1,6 +1,6 @@
 import { RouteComponentProps } from "@reach/router";
 import React, { Suspense } from "react";
-import { NewUserForm } from "../../components/AccountModals";
+import { NewUserForm } from "../../components/AuthModals";
 import { Btn, BtnLink } from "../../components/Buttons";
 import { AsyncComponent } from "../../components/CommonRoutes";
 import { Col, Row } from "../../components/Grid";

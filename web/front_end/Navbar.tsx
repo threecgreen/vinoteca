@@ -1,7 +1,7 @@
 import { Link, navigate, useLocation } from "@reach/router";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
-import { LoginForm } from "../components/AccountModals";
+import { LoginForm } from "../components/AuthModals";
 import { MaterialIcon } from "../components/MaterialIcon";
 import { useSetUser, useUser } from "../components/UserContext";
 import { logout } from "../lib/api/auth";

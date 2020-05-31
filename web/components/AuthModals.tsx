@@ -18,8 +18,10 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+    const [isSaving, setIsSaving] = React.useState(false);
 
     const onSubmit = async () => {
+        setIsSaving(true);
         const userResult = await login({email, password});
         userResult.map(onFinish)
             .mapErr((ve) => {
@@ -37,6 +39,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                         logger.logError(`Failed to login with ${ve.type} error: ${ve.message}`);
                 }
             })
+        setIsSaving(false);
     }
 
     const onKeyDown = (e: React.KeyboardEvent) => {
@@ -48,9 +51,9 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
 
     return (
         <Modal onClose={ onCancel }>
-            <ModalContent onKeyDown={ onKeyDown }>
-                { errorMsg && <p className="error-msg">{ errorMsg }</p>}
-                <Form onSubmit={ () => password && email && onSubmit() }>
+            <Form onSubmit={ () => password && email && onSubmit() }>
+                <ModalContent onKeyDown={ onKeyDown }>
+                    { errorMsg && <p className="error-msg">{ errorMsg }</p>}
                     <EmailInput name="E-mail"
                         className=""
                         value={ email }
@@ -61,15 +64,16 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                         value={ password }
                         onChange={ setPassword }
                     />
-                </Form>
-            </ModalContent>
-            <ModalFooter>
-                <CancelOrConfirmBtns
-                    onConfirmClick={ onSubmit }
-                    onCancelClick={ onCancel }
-                    confirmDisabled={ !password || !email }
-                />
-            </ModalFooter>
+                </ModalContent>
+                <ModalFooter>
+                    <CancelOrConfirmBtns
+                        onConfirmClick={ onSubmit }
+                        onCancelClick={ onCancel }
+                        isSaving={ isSaving }
+                        confirmDisabled={ !password || !email }
+                    />
+                </ModalFooter>
+            </Form>
         </Modal>
     );
 }
@@ -80,9 +84,11 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
 
     const [data, dispatch] = React.useReducer(userInputReducer, [], initUserInputData);
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+    const [isSaving, setIsSaving] = React.useState(false);
     // TODO: image
 
     const onSubmit = async () => {
+        setIsSaving(true);
         const user = await createUser(data);
         user.map(onFinish)
             .mapErr((ve) => {
@@ -95,25 +101,27 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                         logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
             });
+        setIsSaving(false);
     }
 
     return (
         <Modal onClose={ onCancel }>
-            <ModalContent>
-                { errorMsg && <p className="error-msg">{ errorMsg }</p>}
-                <Form onSubmit={ () => data.email && data.name && data.password && onSubmit() }>
-                    <UserInputs data={ data }
-                        dispatch={ dispatch }
+            <Form onSubmit={ () => data.email && data.name && data.password && onSubmit() }>
+                <ModalContent>
+                    { errorMsg && <p className="error-msg">{ errorMsg }</p>}
+                        <UserInputs data={ data }
+                            dispatch={ dispatch }
+                        />
+                </ModalContent>
+                <ModalFooter>
+                    <CancelOrConfirmBtns
+                        onConfirmClick={ onSubmit }
+                        onCancelClick={ onCancel }
+                        isSaving={ isSaving }
+                        confirmDisabled={ !data.email || !data.name || !data.password }
                     />
-                </Form>
-            </ModalContent>
-            <ModalFooter>
-                <CancelOrConfirmBtns
-                    onConfirmClick={ onSubmit }
-                    onCancelClick={ onCancel }
-                    confirmDisabled={ !data.email || !data.name || !data.password }
-                />
-            </ModalFooter>
+                </ModalFooter>
+            </Form>
         </Modal>
     );
 }

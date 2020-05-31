@@ -4,6 +4,7 @@ import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
 import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { IPurchase } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     title: string;
@@ -24,7 +25,9 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
         memo: purchase.memo ?? "",
         shouldAddToInventory: null
     });
+    const [isSaving, setIsSaving] = React.useState(false);
 
+    // TODO: Use form?
     return (
         <Modal onClose={ onCancel }>
             <ModalContent>
@@ -38,8 +41,9 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ () => onSubmit(state) }
+                    onConfirmClick={ handleSubmit(() => onSubmit(state), setIsSaving) }
                     onCancelClick={ onCancel }
+                    isSaving={ isSaving }
                 />
             </ModalFooter>
         </Modal>
