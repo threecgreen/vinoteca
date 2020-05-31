@@ -66,7 +66,7 @@ export default class Logger {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
         if (Logger.logLevelOrdering.indexOf(level) >= Logger.logLevelOrder) {
-            tags["fullVersion"] = `${VERSION}-${GIT_SHA}`;
+            tags.fullVersion = `${VERSION}-${GIT_SHA}`;
             try {
                 const response: ILogResult = await postLog({
                     level,
