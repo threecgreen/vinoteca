@@ -26,8 +26,9 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
                 <NotFound />
             );
         }
+        let idNum: number = Number.parseInt(id);
         // @ts-ignore
-        return <AsyncComponent componentName={ componentName } id={ id } />;
+        return <AsyncComponent componentName={ componentName } id={ idNum } />;
     }
     // Wait 500ms before showing login screen
     if (new Date().getTime() - creationTime < 500)  {
