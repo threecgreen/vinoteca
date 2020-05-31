@@ -12,11 +12,17 @@ import { useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
 
+enum Status {
+    Initial,
+    HasLoaded,
+    Error,
+}
+
 interface IState {
     wines: IWine[];
     predicates: Map<WinesTableColumn, FilterExpr>;
     filterTexts: Map<WinesTableColumn, string>;
-    hasLoaded: boolean;
+    status: Status;
     currentPage: number;
     winesPerPage: number;
 }
@@ -25,7 +31,8 @@ type Action =
     | { type: "setWines", wines: IWine[] }
     | { type: "setFilter", column: WinesTableColumn, text: string }
     | { type: "resetFilters" }
-    | { type: "setCurrentPage", currentPage: number };
+    | { type: "setCurrentPage", currentPage: number }
+    | { type: "setError" };
 
 const deserializeFilters = (json: string): Map<WinesTableColumn, string> => {
     const logger = useLogger("WinesApp");
@@ -57,7 +64,7 @@ const initState = (): IState => {
         wines: [],
         filterTexts,
         predicates: parseAllFilters(filterTexts),
-        hasLoaded: false,
+        status: Status.Initial,
         currentPage: 1,
         winesPerPage: 50,
     }
@@ -66,7 +73,7 @@ const initState = (): IState => {
 const reducer: React.Reducer<IState, Action> = (state, action) => {
     switch (action.type) {
         case "setWines":
-            return { ...state, wines: action.wines, hasLoaded: true };
+            return { ...state, wines: action.wines, status: Status.HasLoaded };
         case "setFilter":
             const predicates = new Map(state.predicates);
             const filterTexts = new Map(state.filterTexts);
@@ -77,6 +84,8 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
             return { ...state, predicates: new Map(), filterTexts: new Map() };
         case "setCurrentPage":
             return { ...state, currentPage: action.currentPage };
+        case "setError":
+            return { ...state, status: Status.Error }
         default:
             return state;
     }
@@ -91,13 +100,17 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchWines() {
             try {
-                const wines = await getWines({});
+                let wines = await getWines({});
                 if (wines instanceof Array) {
                     dispatch({type: "setWines", wines});
                 } else {
                     // FIXME: remove when we know what's happening
                     new Logger("Wines App", false, true).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
-                    dispatch({type: "setWines", wines: []});
+                    dispatch({type: "setError"});
+                    wines = await getWines({});
+                    if (wines instanceof Array) {
+                        dispatch({type: "setWines", wines});
+                    }
                 }
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);
@@ -122,11 +135,20 @@ const WinesApp: React.FC<{}> = (_) => {
     }, [state.filterTexts]);
 
     // Rendering
-    if (!state.hasLoaded) {
+    if (state.status === Status.Initial) {
         return <Preloader />;
     }
     let winesComponent = undefined;
-    if (state.wines.length === 0) {
+    if (state.status === Status.Error) {
+        winesComponent = (
+            <div className="center-align">
+                <h6 className="bold">
+                    Critical error retrieving wines.
+                </h6>
+                <p>Try refreshing the page</p>
+            </div>
+        );
+    } else if (state.wines.length === 0) {
         winesComponent = (
             <div className="center-align">
                 <h6 className="bold">
