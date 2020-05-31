@@ -58,12 +58,14 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
         case "setProducer":
             return {
                 ...state,
+                mode: Mode.Display,
                 producer: action.producer,
                 producerText: action.producer.name
             };
         case "setRegion":
             return {
                 ...state,
+                mode: Mode.Display,
                 region: action.region,
                 regionText: action.region.name,
             };
