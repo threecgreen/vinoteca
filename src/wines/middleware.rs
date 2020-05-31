@@ -7,7 +7,7 @@ use rocket::data::{FromDataSimple, Outcome};
 use rocket::http::Status;
 use rocket::{Data, Outcome::*, Request};
 use rocket_multipart_form_data::{
-    mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField, TextField,
+    mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField
 };
 
 impl FromDataSimple for RawWineForm {
@@ -61,10 +61,10 @@ impl FromDataSimple for RawWineForm {
             }
         };
         // Check for image field
-        let image_part: Option<RawField> = multipart_form.raw.remove("image");
+        let image_part: Option<Vec<RawField>> = multipart_form.raw.remove("image");
         // Verify only one text field
         let wine_form = match wine_form_json {
-            TextField::Single(text) => match serde_json::from_str::<WineForm>(&text.text) {
+            texts if texts.len() == 1 => match serde_json::from_str::<WineForm>(&texts[0].text) {
                 Ok(parsed) => parsed,
                 Err(e) => {
                     return Failure((
@@ -76,7 +76,7 @@ impl FromDataSimple for RawWineForm {
                     ))
                 }
             },
-            TextField::Multiple(_text) => {
+            _text => {
                 return Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Extra text fields supplied".to_owned()),
@@ -85,16 +85,19 @@ impl FromDataSimple for RawWineForm {
         };
         // Verify only one image provided
         let image = match image_part {
-            Some(RawField::Single(raw)) => {
+            Some(raw) if raw.len() == 1 => {
+                let raw = &raw[0];
                 Some(Image {
-                    data: raw.raw,
+                    // FIXME: clone
+                    data: raw.raw.clone(),
                     // TODO: determine if default is good
                     mime_type: raw
                         .content_type
+                        .clone()
                         .unwrap_or_else(|| "image/png".parse().expect("PNG mime")),
                 })
             }
-            Some(RawField::Multiple(_raw)) => {
+            Some(_raw) => {
                 return Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
@@ -154,20 +157,22 @@ impl FromDataSimple for Image {
             }
         };
         // Verify only one image provided
-        match raw_field {
-            RawField::Single(raw) => {
-                Success(Image {
-                    data: raw.raw,
-                    // TODO: determine if default is good
-                    mime_type: raw
-                        .content_type
-                        .unwrap_or_else(|| "image/jpeg".parse().expect("JPEG mime")),
-                })
-            }
-            RawField::Multiple(_raw) => Failure((
+        if raw_field.len() == 1 {
+            let raw = &raw_field[0];
+            Success(Image {
+                // FIXME: clone
+                data: raw.raw.clone(),
+                // TODO: determine if default is good
+                mime_type: raw
+                    .content_type
+                    .clone()
+                    .unwrap_or_else(|| "image/jpeg".parse().expect("JPEG mime")),
+            })
+        } else {
+            Failure((
                 Status::BadRequest,
                 VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
-            )),
+            ))
         }
     }
 }
