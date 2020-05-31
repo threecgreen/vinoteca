@@ -243,13 +243,13 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         if (state.wine?.image && state.grapes.length) {
             return (
                 <>
-                    <Col s={ 12 } l={ 4 }>
+                    <Col s={ 12 } l={ 4 } key="wineData">
                         { renderWineData() }
                     </Col>
-                    <Col s={ 12 } l={ 4 }>
+                    <Col s={ 12 } l={ 4 } key="grapesData">
                         { renderGrapes() }
                     </Col>
-                    <Col s={ 12 } l={ 4 }>
+                    <Col s={ 12 } l={ 4 } key="wineImage">
                         { renderWineImg() }
                     </Col>
                 </>
@@ -258,10 +258,10 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         if (state.wine?.image) {
             return (
                 <>
-                    <Col s={ 12 } l={ 6 }>
+                    <Col s={ 12 } l={ 6 } key="wineData">
                         { renderWineData() }
                     </Col>
-                    <Col s={ 12 } l={ 6 }>
+                    <Col s={ 12 } l={ 6 } key="wineImage">
                         { renderWineImg() }
                     </Col>
                 </>
@@ -270,17 +270,17 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         if (state.grapes.length) {
             return (
                 <>
-                    <Col s={ 12 } l={ 6 }>
+                    <Col s={ 12 } l={ 6 } key="wineData">
                         { renderWineData() }
                     </Col>
-                    <Col s={ 12 } l={ 6 }>
+                    <Col s={ 12 } l={ 6 } key="grapesData">
                         { renderGrapes() }
                     </Col>
                 </>
             );
         }
         return (
-            <Col s={ 12 }>
+            <Col s={ 12 } key="wineData">
                 { renderWineData() }
             </Col>
         );
@@ -359,12 +359,12 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         return <Preloader />;
     }
     const purchaseHeading = (
-        <Col s={ 12 } m={ 9 }>
+        <Col s={ 12 } m={ 9 } key="purchaseHeading">
             <h4>Purchases</h4>
         </Col>
     );
     const fixedActionButtons = (
-        <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] }>
+        <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] } key="fixedActionBtns">
             <FixedActionList>
                 <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
                     classes={ ["green-bg"] }
@@ -402,7 +402,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     ? [purchaseHeading, fixedActionButtons]
                     : [fixedActionButtons, purchaseHeading]
                 }
-                <Col s={ 12 }>
+                <Col s={ 12 } key="purchases">
                     <Purchases purchases={ state.purchases }
                         onEditClick={ (id) => dispatch({type: "setMode", mode: {type: "editPurchase", id}}) }
                         onDeleteClick={ (id) => dispatch({type: "setMode", mode: {type: "deletePurchase", id}}) }
