@@ -14,6 +14,7 @@ interface IProps extends IOnChange {
     producerText?: string;
 }
 
+// TODO: validate region exists
 export const RegionInput: React.FC<IProps> = ({value, producerText, required, onChange}) => {
     const logger = useLogger("RegionInput");
 
