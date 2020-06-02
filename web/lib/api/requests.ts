@@ -2,9 +2,11 @@ import { RestResult, Result } from "../error";
 import { IDict, isEmpty } from "../utils";
 import { VinotecaError } from "./Rest";
 
+const APP_JSON = "application/json";
+
 const HEADERS = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: APP_JSON,
+    "Content-Type": APP_JSON,
 };
 
 export type IQueryParams = IDict<string | number | boolean>;
@@ -21,8 +23,7 @@ function encodeJson(obj: object): string {
 }
 
 async function decodeJsonIfAny(response: Response) {
-    if (parseFloat(response.headers.get("content-length") ?? "0") > 0
-        && response.headers.get("content-type") === "application/json") {
+    if (response.headers.get("content-type") === APP_JSON) {
         return response.json();
     }
 }
@@ -50,7 +51,7 @@ async function checkResponse(response: Response): Promise<any> {
     if (response.status > 310) {
         const message = await decodeJsonIfAny(response);
         if (isVinotecaError(message)) {
-            // TODO: create own error type?
+            // TODO: create own error type in JS?
             throw Error(`${message.type}: ${message.message}`);
         }
         throw Error(message);
@@ -92,7 +93,7 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
  * @returns parsed JSON response
  */
 export async function get<T>(url: string, params: IQueryParams = {}): Promise<T> {
-    const response = await fetch(url + encodeParams(params));
+    const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
     return checkResponse(response);
 }
 
@@ -104,7 +105,7 @@ export async function get<T>(url: string, params: IQueryParams = {}): Promise<T>
  * @returns RestResult
  */
 export async function getResult<T>(url: string, params: IQueryParams = {}): Promise<RestResult<T>> {
-    const response = await fetch(url + encodeParams(params));
+    const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
     return checkResult(response);
 }
 

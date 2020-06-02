@@ -100,18 +100,8 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchWines() {
             try {
-                let wines = await getAllWines();
-                if (wines instanceof Array) {
-                    dispatch({type: "setWines", wines});
-                } else {
-                    // FIXME: remove when we know what's happening
-                    new Logger("WinesApp", false, true).logCritical(`getWines didn't return an array`, {wines: wines, type: typeof wines});
-                    dispatch({type: "setError"});
-                    wines = await getWines({});
-                    if (wines instanceof Array) {
-                        dispatch({type: "setWines", wines});
-                    }
-                }
+                const wines = await getAllWines();
+                dispatch({type: "setWines", wines});
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);
                 dispatch({type: "setWines", wines: []});

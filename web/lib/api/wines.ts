@@ -11,27 +11,6 @@ interface IGetWinesParams {
     wineTypeId?: number;
 }
 
-export async function getAllWines(): Promise<IWine[]> {
-    const logger = new Logger("api::wines", true, false);
-    const response = await fetch('/rest/wines', {
-        headers: {
-            Accept: "application/json"
-        },
-        method: "GET"
-    });
-    const json = await response.json();
-    await logger.logWarning('All wines response received', {
-        json,
-        statusCode: response.status,
-        contentLength: response.headers.get("content-length"),
-        contentType: response.headers.get("content-type"),
-    });
-    if (response.status <= 310) {
-        return json;
-    }
-    throw new Error(json);
-}
-
 export async function getWines(
     { id, producerId, regionId, vitiAreaId, wineTypeId }: IGetWinesParams,
 ): Promise<IWine[]> {
