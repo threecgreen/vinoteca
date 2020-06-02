@@ -5,9 +5,9 @@ import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import { columnToVal, WinesTable, WinesTableColumn } from "../../components/WinesTable";
 import { IWine } from "../../lib/api/Rest";
-import { getWines, getAllWines } from "../../lib/api/wines";
+import { getWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
-import Logger, { useLogger } from "../../lib/Logger";
+import { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
@@ -100,7 +100,7 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchWines() {
             try {
-                const wines = await getAllWines();
+                const wines = await getWines({});
                 dispatch({type: "setWines", wines});
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);

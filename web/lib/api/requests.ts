@@ -26,6 +26,8 @@ async function decodeJsonIfAny(response: Response) {
     if (response.headers.get("content-type") === APP_JSON) {
         return response.json();
     }
+    // Sentinel
+    return "EMPTY";
 }
 
 function isVinotecaError(obj: any): obj is VinotecaError {
