@@ -26,8 +26,6 @@ async function decodeJsonIfAny(response: Response) {
     if (response.headers.get("content-type") === APP_JSON) {
         return response.json();
     }
-    // Sentinel
-    return "EMPTY";
 }
 
 function isVinotecaError(obj: any): obj is VinotecaError {
@@ -61,11 +59,11 @@ async function checkResponse(response: Response): Promise<any> {
     if (response.status === 204) {
         return [];
     }
-    try {
-        return decodeJsonIfAny(response);
-    } catch (err) {
-        throw Error(await response.text());
+    const json = decodeJsonIfAny(response);
+    if (json !== undefined) {
+        return json;
     }
+    throw Error(await response.text());
 }
 
 async function checkResult(response: Response): Promise<RestResult<any>> {
@@ -78,7 +76,7 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
     }
     try {
         const json = await decodeJsonIfAny(response);
-        if (json) {
+        if (json !== undefined) {
             return Result.Ok(json);
         }
         throw Error();

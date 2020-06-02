@@ -168,7 +168,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
                         Profile
                     </NavLink>
                     <li className="sidenav-close">
-                        <a href="#!" onClick={ onLogout }>
+                        <a onClick={ onLogout }>
                             Log out
                         </a>
                     </li>
