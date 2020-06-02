@@ -1,14 +1,11 @@
 import React from "react";
-import { capitalizeFirstLetter, nameToId } from "../../lib/utils";
+import { nameToId } from "../../lib/utils";
 import { InputField } from "../Grid";
-import { useViewport } from "../ViewportContext";
+import { IChildrenProp } from "../IProps";
 
-interface IProps {
+interface IProps extends IChildrenProp {
     name: string;
-    options: string[];
     selection: string;
-    selectText?: string;
-    selectRef: React.RefObject<HTMLSelectElement>;
     onChange: (val: string) => void;
     s?: number;
     m?: number;
@@ -16,35 +13,32 @@ interface IProps {
 }
 
 export const SelectInput: React.FC<IProps> = (props) => {
-    const id = nameToId(props.name);
-    let selectText: JSX.Element | undefined;
-    if (props.selectText) {
-        selectText = <option value="" disabled>
-            { props.selectText }
-        </option>;
-    }
-    const {width} = useViewport();
+    const selectRef = React.useRef(null) as React.MutableRefObject<HTMLSelectElement | null>;
+    const formSelectInstance = React.useRef(null) as React.MutableRefObject<M.FormSelect | null>;
+
+    React.useEffect(() => {
+        formSelectInstance.current = M.FormSelect.init(selectRef.current!)
+
+        return () => formSelectInstance.current?.destroy();
+    }, [props.children]);
+
+    const renderOption = (child: React.ReactElement<HTMLOptionElement>) => React.cloneElement(child, {key: child.props.value});
+
     return (
         <InputField s={ props.s } m={ props.m } l={ props.l }
             classes={ ["col"] }
         >
-            <select id={ id }
-                className={ width <= 600 ? "browser-default" : undefined }
-                name={ id }
+            <select id={ nameToId(props.name) }
+                value={ props.selection }
+                ref={ selectRef }
                 onChange={ (e) => props.onChange(e.target.value) }
-                value={ props.selection || props.selectText }
-                ref={ props.selectRef }
             >
-                { selectText }
-                { props.options.map((option) => {
-                    return (
-                        <option value={ option } key={ option }>
-                            { capitalizeFirstLetter(option) }
-                        </option>
-                    );
-                })}
+                { React.Children.map(props.children, renderOption) }
             </select>
-            { width > 600 && <label htmlFor={ id }>{ props.name }</label> }
+            <label htmlFor={ props.name }>
+                { props.name }
+            </label>
         </InputField>
     );
 };
+SelectInput.displayName = "SelectInput";

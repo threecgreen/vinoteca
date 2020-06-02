@@ -1,8 +1,10 @@
 import React from "react";
-import Logger from "../lib/Logger";
+import { getColors } from "../lib/api/colors";
+import { IColor } from "../lib/api/Rest";
+import { useLogger } from "../lib/Logger";
+import { capitalizeFirstLetter } from "../lib/utils";
 import { SelectInput } from "./inputs/SelectInput";
 import { MaterialIcon } from "./MaterialIcon";
-import { useColorsSelect } from "./model_inputs/ColorInput";
 
 export enum SortingState {
     NotSorted,
@@ -87,28 +89,31 @@ export const FilterHeader: React.FC<IFilterProps> = (props) => {
 FilterHeader.displayName = "FilterHeader";
 
 export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
-    const extraChoice = "Any";
-    const logger = new Logger("SelectFilterHeader");
+    const logger = useLogger("SelectFilterHeader");
+    const [colors, setColors] = React.useState<string[]>([]);
 
-    const onChange = (selection: string) => {
-        if (selection === extraChoice) {
-            props.onChange("");
-        } else {
-            props.onChange(selection);
-        }
-    };
-    const selection = props.text === "" ? extraChoice : props.text;
-
-    const [selectionOptions, selectRef] = useColorsSelect(logger);
+    React.useEffect(() => {
+        (async () => {
+            try {
+                const colors: IColor[] = await getColors({});
+                setColors(colors.map((color) => color.name));
+            } catch (e) {
+                logger.logError(`Failed to get colors: ${e.message}`);
+            }
+        })()
+    }, []);
 
     return (
         <td>
             <SelectInput name=""
-                selectRef={ selectRef }
-                options={ selectionOptions }
-                selection={ selection }
-                onChange={ onChange }
-            />
+                selection={ props.text }
+                onChange={ props.onChange }
+            >
+                <option key="any" value="">Any</option>
+                { colors.map((color) => (
+                    <option key={ color } value={ color }>{ capitalizeFirstLetter(color) }</option>
+                )) }
+            </SelectInput>
         </td>
     );
 }
