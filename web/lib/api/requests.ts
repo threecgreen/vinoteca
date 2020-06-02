@@ -5,7 +5,7 @@ import { VinotecaError } from "./Rest";
 const APP_JSON = "application/json";
 
 const HEADERS = {
-    Accept: APP_JSON,
+    "Accept": APP_JSON,
     "Content-Type": APP_JSON,
 };
 
