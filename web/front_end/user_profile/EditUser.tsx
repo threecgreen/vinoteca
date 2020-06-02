@@ -18,7 +18,7 @@ export const EditUser: React.FC<IProps> = ({user, onSubmit, onCancel}) => {
     return (
         <Modal onClose={ onCancel }>
             <ModalContent>
-                <Form>
+                <Form onSubmit={ () => mutableUser.email && mutableUser.name && onSubmit(mutableUser) }>
                     <UserInputs data={ mutableUser }
                         dispatch={ dispatch }
                         includePassword={ false }

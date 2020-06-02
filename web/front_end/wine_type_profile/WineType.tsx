@@ -27,7 +27,7 @@ export const WineType: React.FC<IProps> = (props) => {
         <>
             <Col s={ 10 }>
                 <h3 className="bold">Edit Wine Type</h3>
-                <Form>
+                <Form onSubmit={ props.onConfirmClick }>
                     <WineTypeInput value={ props.wineTypeText }
                         onChange={ props.onWineTypeChange }
                         required={ true }

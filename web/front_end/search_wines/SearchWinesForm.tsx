@@ -19,7 +19,7 @@ interface IProps {
 
 export const SearchWinesForm: React.FunctionComponent<IProps> = (props) => {
     return (
-        <Form>
+        <Form onSubmit={ () => {} }>
             <Row>
                 <ColorInput selection={ props.colorSelection }
                     s={ 12 } m={ 4 } l={ 2 }

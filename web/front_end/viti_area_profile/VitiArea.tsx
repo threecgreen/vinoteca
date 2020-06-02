@@ -52,7 +52,7 @@ export class VitiArea extends React.Component<IProps, IState> {
             <>
                 <Col s={ 10 }>
                     <h3 className="bold">Edit Viticultural Area</h3>
-                    <Form>
+                    <Form onSubmit={ this.props.onConfirmClick }>
                         <VitiAreaInput value={ this.props.vitiAreaText }
                             onChange={ this.props.onVitiAreaChange }
                         />

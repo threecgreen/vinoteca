@@ -65,7 +65,7 @@ export class Producer extends React.Component<IProducerProps> {
             <>
                 <Col s={ 12 }>
                     <h3 className="bold">{ `Edit Producer ${this.props.producer.name}` }</h3>
-                    <Form>
+                    <Form onSubmit={ () => this.props.producerText && this.props.regionText && this.props.onConfirmClick() }>
                         <ProducerInput value={ this.props.producerText }
                             onChange={ this.props.onProducerChange }
                             required={ true }

@@ -82,7 +82,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             >
                 Reset form
             </Btn>
-            <Form>
+            <Form onSubmit={ () => !isSaving && wineState.producer && wineState.region && wineState.wineType && onSubmit() }>
                 <Row s={ 12 }>
                     <PurchaseInputs displayInventoryBtn
                         data={ purchaseState }

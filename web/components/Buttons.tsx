@@ -42,13 +42,15 @@ FloatingBtn.defaultProps = { onMouseDown: (_) => undefined };
 interface IBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
     disabled?: boolean;
-    noRbtn?: boolean
+    noRbtn?: boolean;
+    type?: "button" | "reset" | "submit";
 }
 
 export const Btn: React.FC<IBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
     const disabled = props.disabled ?? false;
     const noRbtn = props.noRbtn ?? false;
+
     const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         props.onClick();
@@ -58,6 +60,7 @@ export const Btn: React.FC<IBtnProps> = (props) => {
         <button className={ `${noRbtn ? "" : "rbtn"} waves-effect waves-light btn ${classes}` }
             onClick={ onClick }
             disabled={ disabled }
+            type={ props.type }
         >
             { props.children }
         </button>
@@ -86,6 +89,8 @@ interface ICancelOrConfirmProps {
     onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
     confirmDisabled?: boolean;
+    // TODO: make prop
+    // isSaving: boolean;
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
@@ -102,10 +107,10 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
 
     return (
         <Col s={ 12 }>
-            {/* { isSaving && <PreloaderCirc className="hor-margin" /> } */}
             <Btn classes={ ["green-bg"] }
                 onClick={ submit }
                 disabled={ isConfirmDisabled }
+                type="submit"
             >
                 Confirm
                 { isSaving

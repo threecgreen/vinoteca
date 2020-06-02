@@ -50,7 +50,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
         <Modal onClose={ onCancel }>
             <ModalContent onKeyDown={ onKeyDown }>
                 { errorMsg && <p className="error-msg">{ errorMsg }</p>}
-                <Form>
+                <Form onSubmit={ () => password && email && onSubmit() }>
                     <EmailInput name="E-mail"
                         className=""
                         value={ email }
@@ -101,7 +101,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
         <Modal onClose={ onCancel }>
             <ModalContent>
                 { errorMsg && <p className="error-msg">{ errorMsg }</p>}
-                <Form>
+                <Form onSubmit={ () => data.email && data.name && data.password && onSubmit() }>
                     <UserInputs data={ data }
                         dispatch={ dispatch }
                     />
