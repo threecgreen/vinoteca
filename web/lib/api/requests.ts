@@ -3,6 +3,7 @@ import { IDict, isEmpty } from "../utils";
 import { VinotecaError } from "./Rest";
 
 const HEADERS = {
+    Accept: "application/json",
     "Content-Type": "application/json",
 };
 

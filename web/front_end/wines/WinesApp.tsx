@@ -5,7 +5,7 @@ import { Pagination } from "../../components/Pagination";
 import { Preloader } from "../../components/Preloader";
 import { columnToVal, WinesTable, WinesTableColumn } from "../../components/WinesTable";
 import { IWine } from "../../lib/api/Rest";
-import { getWines } from "../../lib/api/wines";
+import { getWines, getAllWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
 import Logger, { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
@@ -100,7 +100,7 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchWines() {
             try {
-                let wines = await getWines({});
+                let wines = await getAllWines();
                 if (wines instanceof Array) {
                     dispatch({type: "setWines", wines});
                 } else {

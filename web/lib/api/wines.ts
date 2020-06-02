@@ -1,6 +1,7 @@
 import { nonNulls, singleEntityGetter } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
 import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
+import Logger from "../Logger";
 
 interface IGetWinesParams {
     id?: number;
@@ -8,6 +9,27 @@ interface IGetWinesParams {
     regionId?: number;
     vitiAreaId?: number;
     wineTypeId?: number;
+}
+
+export async function getAllWines(): Promise<IWine[]> {
+    const logger = new Logger("api::wines", true, false);
+    const response = await fetch('/rest/wines', {
+        headers: {
+            Accept: "application/json"
+        },
+        method: "GET"
+    });
+    const json = await response.json();
+    await logger.logWarning('All wines response received', {
+        json,
+        statusCode: response.status,
+        contentLength: response.headers.get("content-length"),
+        contentType: response.headers.get("content-type"),
+    });
+    if (response.status <= 310) {
+        return json;
+    }
+    throw new Error(json);
 }
 
 export async function getWines(
