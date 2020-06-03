@@ -2,6 +2,7 @@ import React from "react";
 import { nameToId } from "../../lib/utils";
 import { InputField } from "../Grid";
 import { IChildrenProp } from "../IProps";
+import { useViewport } from "../ViewportContext";
 
 interface IProps extends IChildrenProp {
     name: string;
@@ -13,6 +14,24 @@ interface IProps extends IChildrenProp {
 }
 
 export const SelectInput: React.FC<IProps> = (props) => {
+    const {width} = useViewport();
+
+    const renderOption = (child: React.ReactElement<HTMLOptionElement>) => React.cloneElement(child, {key: child.props.value});
+
+    const Select = width > 600 ? MaterializeSelect : DefaultSelct;
+    return (
+        <InputField s={ props.s } m={ props.m } l={ props.l }
+            classes={ ["col"] }
+        >
+            <Select { ...props }>
+                { React.Children.map(props.children, renderOption) }
+            </Select>
+        </InputField>
+    );
+};
+SelectInput.displayName = "SelectInput";
+
+const MaterializeSelect: React.FC<IProps> = (props) => {
     const selectRef = React.useRef(null) as React.MutableRefObject<HTMLSelectElement | null>;
     const formSelectInstance = React.useRef(null) as React.MutableRefObject<M.FormSelect | null>;
 
@@ -22,23 +41,32 @@ export const SelectInput: React.FC<IProps> = (props) => {
         return () => formSelectInstance.current?.destroy();
     }, [props.children]);
 
-    const renderOption = (child: React.ReactElement<HTMLOptionElement>) => React.cloneElement(child, {key: child.props.value});
-
     return (
-        <InputField s={ props.s } m={ props.m } l={ props.l }
-            classes={ ["col"] }
-        >
+        <>
             <select id={ nameToId(props.name) }
                 value={ props.selection }
                 ref={ selectRef }
                 onChange={ (e) => props.onChange(e.target.value) }
             >
-                { React.Children.map(props.children, renderOption) }
+                { props.children }
             </select>
             <label htmlFor={ props.name }>
                 { props.name }
             </label>
-        </InputField>
+        </>
     );
-};
-SelectInput.displayName = "SelectInput";
+}
+MaterializeSelect.displayName = "MterializeSelect";
+
+const DefaultSelct: React.FC<IProps> = (props) => {
+    return (
+        <select id={ nameToId(props.name) }
+            className="browser-default"
+            value={ props.selection }
+            onChange={ (e) => props.onChange(e.target.value) }
+        >
+            { props.children }
+        </select>
+    );
+}
+DefaultSelct.displayName = "DefaultSelect";
