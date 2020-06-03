@@ -120,7 +120,7 @@ export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>
-                Error 404&nbsp;&nbsp;&nbsp;(○口○ )
+                Error 404<span style={ {whiteSpace: "pre-wrap"} }>   (○口○&nbsp;)</span>
             </h1>
             <br />
             <h4>Looks like you took a wrong turn in the cellar&hellip;</h4>
