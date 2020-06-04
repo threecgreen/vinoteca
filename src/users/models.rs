@@ -8,7 +8,7 @@ use validator::Validate;
 #[derive(Deserialize, TypeScriptify, Validate, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct LoginForm<'a> {
-    #[validate(email(message = "E-mail %s is invalid"))]
+    #[validate(email(message = "Email %s is invalid"))]
     #[serde(deserialize_with = "trim_str")]
     pub email: &'a str,
     #[validate(length(min = 8, message = "Password does not meet minimum length of 8"))]

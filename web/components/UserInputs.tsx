@@ -35,7 +35,7 @@ interface IProps {
 // TODO: re-enter password input
 export const UserInputs: React.FC<IProps> = ({data, dispatch, includePassword}) => (
     <>
-        <EmailInput name="E-mail"
+        <EmailInput name="Email"
             className=""
             value={ data.email }
             onChange={ (email) => dispatch({type: "setEmail", email}) }
