@@ -24,10 +24,8 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
     }, [inputRef, completions, onChange, id, percent]);
 
     return (
-        <Col classes={ ["grape-block"] } s={ 12 } l={ 6 }>
-            <InputField s={ 1 }
-                classes={ ["col"] }
-            >
+        <Col s={ 12 } l={ 6 }>
+            <InputField classes={ ["col", "no-padding"] }>
                 <FloatingBtn onClick={ () => handleDelete(id) }
                     classes={ ["red-bg"] }
                 >
@@ -35,16 +33,17 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
                 </FloatingBtn>
             </InputField>
             <NumberInput name="Percent"
-                s={ 3 }
                 number={ percent }
+                s={ 3 }
+                l={ 2 }
                 min={ 0 }
                 max={ 100 }
                 step="1"
                 onChange={ (n) => onChange(id, grape, n) }
             />
             <TextInput name="Grape"
-                s={ 8 }
-                className="autocomplete"
+                useCol={ false }
+                className="col autocomplete"
                 value={ grape }
                 onChange={ (grape) => onChange(id, grape, percent) }
                 inputRef={ inputRef }

@@ -3,6 +3,7 @@ import { Btn } from "../Buttons";
 import { Col } from "../Grid";
 import { insertCharAt, SpecialCharPicker } from "../SpecialChars";
 import { Input } from "./Input";
+import { IChildrenProp } from "../IProps";
 
 interface ITextProps {
     name: string;
@@ -18,6 +19,7 @@ interface ITextProps {
     inputRef?: React.MutableRefObject<HTMLInputElement>;
     required?: boolean;
     autocomplete?: string;
+    useCol?: boolean;
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
@@ -58,12 +60,22 @@ export const TextInput: React.FC<ITextProps> = (props) => {
         clearTimeout(timeoutId);
         setShowPicker(!showPicker);
     }
+    const useCol = props.useCol ?? true;
+    const UseCol = (p: IChildrenProp) => (
+        useCol
+        ? <Col s={ props.s } m={ props.m} l={ props.l } classes={ ["flex"] }>
+            { p.children }
+        </Col>
+        : <div className="flex">
+            { p.children }
+        </div>
+    );
 
     return (
         <div onFocus={ (_) => onFocus() }
             onBlur={ (_) => onBlur() }
         >
-            <Col s={ props.s } m={ props.m} l={ props.l } classes={ ["flex"] }>
+            <UseCol>
                 <Input inputType="text"
                     name={ props.name }
                     value={ props.value }
@@ -82,7 +94,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                 >
                     ñ
                 </Btn> }
-            </Col>
+            </UseCol>
             { showPicker && <SpecialCharPicker
                 onClick={ (c) => onSpecialCharClick(c) }
             /> }
