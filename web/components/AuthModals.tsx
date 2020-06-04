@@ -1,12 +1,12 @@
 import React from "react";
 import { createUser, login } from "../lib/api/auth";
 import { IUser } from "../lib/api/Rest";
-import { CancelOrConfirmBtns } from "./Buttons";
-import { EmailInput, PasswordInput, TextInput, SimpleTextInput } from "./inputs/TextInput";
-import { Modal, ModalContent, ModalFooter } from "./Modal";
-import { Form } from "./Form";
 import { useLogger } from "../lib/Logger";
-import { UserInputs, userInputReducer, initUserInputData } from "./UserInputs";
+import { CancelOrConfirmBtns } from "./Buttons";
+import { Form } from "./Form";
+import { EmailInput, PasswordInput } from "./inputs/TextInput";
+import { Modal, ModalContent, ModalFooter } from "./Modal";
+import { initUserInputData, userInputReducer, UserInputs } from "./UserInputs";
 
 interface IUserProps {
     onFinish: (user: IUser) => void,
@@ -60,6 +60,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                         onChange={ setEmail }
                     />
                     <PasswordInput name="Password"
+                        autocomplete="current-password"
                         className=""
                         value={ password }
                         onChange={ setPassword }

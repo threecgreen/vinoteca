@@ -42,12 +42,14 @@ export const UserInputs: React.FC<IProps> = ({data, dispatch, includePassword}) 
         />
         <SimpleTextInput name="Name"
             type="text"
+            autocomplete="username"
             className=""
             value={ data.name }
             onChange={ (name) => dispatch({type: "setName", name}) }
             required={ true }
         />
         { (includePassword ?? true) && <PasswordInput name="Password"
+            autocomplete="new-password"
             className=""
             value={ data.password }
             onChange={ (password) => dispatch({type: "setPassword", password}) }

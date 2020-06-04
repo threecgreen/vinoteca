@@ -23,6 +23,7 @@ export interface IInputProps<T extends IInputValue> {
     l?: number;
     inputFieldClassName?: string;
     required: boolean;
+    autocomplete?: string;
 }
 
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
@@ -59,6 +60,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     min={ this.props.min }
                     max={ this.props.max }
                     required={ this.props.required }
+                    autoComplete={ this.props.autocomplete }
                 />
                 <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
                     { this.props.name }

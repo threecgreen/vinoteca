@@ -17,6 +17,7 @@ interface ITextProps {
     l?: number;
     inputRef?: React.MutableRefObject<HTMLInputElement>;
     required?: boolean;
+    autocomplete?: string;
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
@@ -73,6 +74,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     inputRef={ inputRef }
                     active={ Boolean(props.value) }
                     required={ props.required }
+                    autocomplete={ props.autocomplete }
                 />
                 { isActive && <Btn onClick={ onShowPicker }
                     noRbtn={ true }
@@ -105,12 +107,13 @@ export const EmailInput: React.FC<ISimpleProps> = (props) => {
         <SimpleTextInput type="email"
             {...props}
             required={ true }
+            autocomplete="email"
         />
     );
 }
 EmailInput.displayName = "EmailInput";
 
-export const PasswordInput: React.FC<ISimpleProps> = (props) => {
+export const PasswordInput: React.FC<ISimpleProps & {autocomplete: string}> = (props) => {
     return (
         <SimpleTextInput type="password"
             {...props}
@@ -131,18 +134,14 @@ interface IIntSimpleProps {
     l?: number;
     type: string;
     required: boolean;
+    autocomplete: string;
 }
 
 export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
     <Input inputType={ props.type }
-        name={ props.name }
-        value={ props.value }
-        enabled={ props.enabled }
-        onChange={ props.onChange }
+        {...props}
         className={ `${props.className} ${props.required ? "validate" : ""}`  }
-        s={ props.s } m={ props.m } l={ props.l }
         active={ Boolean(props.value) }
-        required={ props.required }
     />
 );
 SimpleTextInput.displayName = "SimpleTextInput";
