@@ -1,14 +1,17 @@
 # vinoteca
-A wine purchase tracker and review system in a rust web app.
+A wine purchase tracker and review app built with Rust and React with TypeScript.
 I created this project to give my dad a better way to track his wine purchases
 than the Excel spreadsheet he was using.
-As such, vinoteca was designed with a specific user in mind.
 
-## Installation
- 1. Install sqlite3 if not already installed
- 1. Download and install the latest release
+## Built-With
+ * Rocket
+ * PostgreSQL
+ * React
+ * TypeScript
+ * Materialize CSS
+ * Chart.js
 
-### Building from source
+## Building from source
  1. Clone the repository
      ```bash
      $ git clone https://github.com/threecgreen/vinoteca
@@ -20,8 +23,7 @@ As such, vinoteca was designed with a specific user in mind.
     ```
  1. Build the web server
     ```bash
-    $ rustup override add nightly
-    $ cargo build
+    $ cargo buildj
     ```
  1. Generate contracts
     ```bash
@@ -32,17 +34,24 @@ As such, vinoteca was designed with a specific user in mind.
     $ npm install --save --no-optional
     $ npm run-script build
     ```
+ 1. Start the web server
+    ```bash
+    $ cargo run
+    ```
+ 1. Navigate to [localhost:8000](http://localhost:800). The service will run
+    the necessary database migrations on startup.
 
 ## Configuration
 Configuration is managed via `Rocket.toml`.
 
-## Built-With
-* Rocket
-* sqlite3
-* Materialize CSS
-* React
-* Webpack
-* Chart.js
+Required configurations:
+ * Postgres database
+ * AWS S3 access keys
+
+Optional configurations
+ * Secret key for generating encrypted cookies
+ * Log level
+ * Number of workers
 
 ## Acknowledgements
-* Homepage image taken by [CollideStorm](https://www.reddit.com/r/wine/comments/6z7d6c/one_of_my_favorite_road_trips_i_have_ever_done_i/)
+The background image on the main page was taken by [CollideStorm](https://www.reddit.com/r/wine/comments/6z7d6c/one_of_my_favorite_road_trips_i_have_ever_done_i/)
