@@ -36,14 +36,12 @@ interface IProps {
 export const UserInputs: React.FC<IProps> = ({data, dispatch, includePassword}) => (
     <>
         <EmailInput name="Email"
-            className=""
             value={ data.email }
             onChange={ (email) => dispatch({type: "setEmail", email}) }
         />
         <SimpleTextInput name="Name"
             type="text"
             autocomplete="username"
-            className=""
             value={ data.name }
             onChange={ (name) => dispatch({type: "setName", name}) }
             required={ true }

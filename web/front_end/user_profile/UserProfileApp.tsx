@@ -8,6 +8,7 @@ import { updateUser } from "../../lib/api/auth";
 import { IChangeUserForm } from "../../lib/api/Rest";
 import { useLogger } from "../../lib/Logger";
 import { EditUser } from "./EditUser";
+import { ChangePasswordForm } from "../../components/AuthModals";
 
 enum Mode {
     Display,
@@ -48,7 +49,9 @@ const UserProfileApp: React.FC<{}> = (_) => {
             />
         );
     } else if (mode == Mode.ChangePassword) {
-
+        modal = (
+            <ChangePasswordForm onFinish={ () => (Mode.Display) } />
+        );
     }
 
     return (

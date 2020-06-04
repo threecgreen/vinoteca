@@ -108,7 +108,7 @@ interface ISimpleProps {
     value: string;
     enabled?: boolean;
     onChange: (val: string) => void;
-    className: string;
+    className?: string;
     s?: number;
     m?: number;
     l?: number;
@@ -140,7 +140,7 @@ interface IIntSimpleProps {
     value: string;
     enabled?: boolean;
     onChange: (val: string) => void;
-    className: string;
+    className?: string;
     s?: number;
     m?: number;
     l?: number;
@@ -152,7 +152,7 @@ interface IIntSimpleProps {
 export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
     <Input inputType={ props.type }
         {...props}
-        className={ `${props.className} ${props.required ? "validate" : ""}`  }
+        className={ `${props.className ?? ""} ${props.required ? "validate" : ""}`  }
         active={ Boolean(props.value) }
     />
 );
