@@ -1,21 +1,26 @@
+use bcrypt::BcryptError;
 use image::ImageError;
 use rocket::http::Status;
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket_contrib::json::Json;
+use s3::S3Error;
 use serde::Serialize;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
+use typescript_definitions::TypeScriptify;
 use validator::ValidationErrors;
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, TypeScriptify)]
+#[serde(tag = "type", content = "message")]
 pub enum VinotecaError {
     NotFound(String),
     Internal(String),
     // Foreign key
     MissingConstraint(String),
     BadRequest(String),
+    Forbidden(String),
 }
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
@@ -28,9 +33,23 @@ impl<'r> Responder<'r> for VinotecaError {
                 VinotecaError::Internal(_) => Status::InternalServerError,
                 VinotecaError::MissingConstraint(_) => Status::BadRequest,
                 VinotecaError::BadRequest(_) => Status::BadRequest,
+                VinotecaError::Forbidden(_) => Status::Forbidden,
             });
             res
         })
+    }
+}
+
+impl From<BcryptError> for VinotecaError {
+    fn from(bcrypt_error: BcryptError) -> Self {
+        let msg = "Error hashing password".to_owned();
+        match bcrypt_error {
+            BcryptError::InvalidPassword => VinotecaError::Forbidden("Bad password".to_owned()),
+            e => {
+                error!("Error performing password hash: {:?}", e);
+                VinotecaError::Internal(msg)
+            }
+        }
     }
 }
 
@@ -57,6 +76,13 @@ impl From<std::io::Error> for VinotecaError {
     }
 }
 
+impl From<ValidationErrors> for VinotecaError {
+    fn from(val_errors: ValidationErrors) -> Self {
+        // TODO: Improve formatting
+        VinotecaError::BadRequest(format!("{}", val_errors))
+    }
+}
+
 impl From<ImageError> for VinotecaError {
     fn from(img_error: ImageError) -> Self {
         warn!("Error reading or writing image: {:#?}", img_error);
@@ -64,19 +90,28 @@ impl From<ImageError> for VinotecaError {
     }
 }
 
-impl From<ValidationErrors> for VinotecaError {
-    fn from(val_errors: ValidationErrors) -> Self {
-        VinotecaError::BadRequest(format!("{}", val_errors))
+impl From<S3Error> for VinotecaError {
+    fn from(s3_error: S3Error) -> Self {
+        warn!("Error saving file to s3: {:?}", s3_error);
+        VinotecaError::Internal("Error handling file".to_owned())
+    }
+}
+
+impl From<exif::Error> for VinotecaError {
+    fn from(exif_error: exif::Error) -> Self {
+        warn!("Error reading exif data: {:?}", exif_error);
+        VinotecaError::Internal("Error handling image metadata".to_owned())
     }
 }
 
 impl Display for VinotecaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let fmt_arg = match self {
-            Self::NotFound(msg) => format!("NotFound({})", msg),
-            Self::Internal(msg) => format!("Internal({})", msg),
-            Self::MissingConstraint(msg) => format!("MissingConstraint({})", msg),
-            Self::BadRequest(msg) => format!("BadRequest({})", msg),
+            Self::NotFound(msg) => format!("Error not found: {}", msg),
+            Self::Internal(msg) => format!("Internal error: {}", msg),
+            Self::MissingConstraint(msg) => format!("Error missing constraint: {}", msg),
+            Self::BadRequest(msg) => format!("Error bad request: {}", msg),
+            Self::Forbidden(msg) => format!("Error forbidden: {}", msg),
         };
         write!(f, "{}", fmt_arg)
     }
@@ -89,6 +124,7 @@ impl Error for VinotecaError {
             Self::Internal(_) => "Unexpected interal error",
             Self::MissingConstraint(_) => "Missing foreign key",
             Self::BadRequest(_) => "Invalid data received from the request",
+            Self::Forbidden(_) => "Forbidden; not authorized",
         }
     }
 

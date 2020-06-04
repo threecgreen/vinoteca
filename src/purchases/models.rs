@@ -1,4 +1,5 @@
-use diesel::sql_types::{Float, Integer, Nullable};
+use chrono::NaiveDate;
+use diesel::sql_types::{BigInt, Double, Integer, Nullable, Text};
 use diesel::QueryableByName;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
@@ -8,12 +9,13 @@ use typescript_definitions::TypeScriptify;
 #[serde(rename_all = "camelCase")]
 pub struct RecentPurchase {
     pub id: i32,
-    pub price: Option<f32>,
-    pub quantity: Option<i32>,
+    pub price: Option<f64>,
+    pub quantity: i32,
     pub vintage: Option<i32>,
     pub memo: Option<String>,
     pub store: Option<String>,
-    pub date: Option<i32>,
+    #[ts(ts_type = "string | null")]
+    pub date: Option<NaiveDate>,
     pub wine_id: i32,
     pub wine_name: Option<String>,
     pub producer_id: i32,
@@ -29,18 +31,18 @@ pub struct RecentPurchase {
 pub struct YearsPurchases {
     #[sql_type = "Integer"]
     pub year: i32,
-    #[sql_type = "Integer"]
-    pub quantity: i32,
-    #[sql_type = "Nullable<Float>"]
-    pub total_price: Option<f32>,
-    #[sql_type = "Nullable<Float>"]
-    pub avg_price: Option<f32>,
+    #[sql_type = "BigInt"]
+    pub quantity: i64,
+    #[sql_type = "Nullable<Double>"]
+    pub total_price: Option<f64>,
+    #[sql_type = "Nullable<Double>"]
+    pub avg_price: Option<f64>,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct TotalLiters {
-    pub total_liters: f32,
+    pub total_liters: f64,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]
@@ -52,6 +54,6 @@ pub struct PurchaseCount {
 #[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MostCommonPurchaseDate {
-    #[sql_type = "Nullable<Integer>"]
-    pub most_common_purchase_date: Option<i32>,
+    #[sql_type = "Nullable<Text>"]
+    pub most_common_purchase_date: Option<String>,
 }

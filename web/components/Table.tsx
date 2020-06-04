@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { IChildrenProp } from "./IProps";
 
 export interface IColumnHeader {
@@ -12,15 +12,30 @@ export const WineTableNumCols: IColumnHeader[] = [
     { name: "Rating", isNumCol: true },
 ]
 
-interface IProps extends IChildrenProp {
+interface ITableProps extends IChildrenProp {
+    condensed: boolean;
+}
+
+export const Table: React.FC<ITableProps> = ({condensed, children}) => {
+    return (
+        <div className="table-wrapper">
+            <table className={ `highlight ${condensed ? "condensed" : ""}` }>
+                { children }
+            </table>
+        </div>
+    );
+}
+Table.displayName = "Table";
+
+interface ISimpleTableProps extends IChildrenProp {
     columns: (string | IColumnHeader)[];
     condensed?: boolean;
 }
 
-export const Table: React.FC<IProps> = (props) => {
+export const SimpleTable: React.FC<ISimpleTableProps> = (props) => {
     const condensed = props.condensed ?? true;
     return (
-        <table className={ `highlight responsive ${condensed ? "condensed" : ""}` }>
+        <Table condensed={ condensed }>
             <thead>
                 <tr>
                     { props.columns.map((col) => {
@@ -39,7 +54,7 @@ export const Table: React.FC<IProps> = (props) => {
             <tbody>
                 { props.children }
             </tbody>
-        </table>
+        </Table>
     );
 };
-Table.displayName = "Table";
+SimpleTable.displayName = "SimpleTable";

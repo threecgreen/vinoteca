@@ -2,16 +2,18 @@ use super::{MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, 
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Purchase;
 use crate::schema::{producers, purchases, regions, stores, wine_types, wines};
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::dsl::{sql, sum};
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::Float;
+use diesel::sql_types::{Double, Integer};
 use rocket_contrib::json::Json;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub fn get(
+    auth: Auth,
     id: Option<i32>,
     wine_id: Option<i32>,
     wine_name: Option<String>,
@@ -20,6 +22,7 @@ pub fn get(
     let mut query = purchases::table
         .left_join(stores::table)
         .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(id) = id {
         query = query.filter(purchases::id.eq(id));
@@ -48,7 +51,11 @@ pub fn get(
 }
 
 #[get("/purchases/recent?<limit>")]
-pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<RecentPurchase>> {
+pub fn recent(
+    auth: Auth,
+    limit: Option<usize>,
+    connection: DbConn,
+) -> RestResult<Vec<RecentPurchase>> {
     let limit = limit.unwrap_or(10);
     purchases::table
         .inner_join(
@@ -57,6 +64,8 @@ pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<Recent
                 .inner_join(wine_types::table),
         )
         .left_join(stores::table)
+        .filter(wines::user_id.eq(auth.id))
+        .filter(purchases::date.is_not_null())
         .select((
             purchases::id,
             purchases::price,
@@ -82,17 +91,22 @@ pub fn recent(limit: Option<usize>, connection: DbConn) -> RestResult<Vec<Recent
 }
 
 #[get("/purchases/by-year")]
-pub fn by_year(connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
+pub fn by_year(auth: Auth, connection: DbConn) -> RestResult<Vec<YearsPurchases>> {
     sql_query(include_str!("purchases_by_year.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<YearsPurchases>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
 }
 
 #[get("/purchases/total-liters")]
-pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
+pub fn total_liters(auth: Auth, connection: DbConn) -> Json<TotalLiters> {
     let res = purchases::table
-        .select(sum(sql::<Float>("quantity * 0.75")))
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
+        .select(sum(sql::<Double>(
+            "cast(quantity * 0.75 AS DOUBLE PRECISION)",
+        )))
         .first(&*connection)
         .unwrap_or(Some(0.0));
     let total_liters = TotalLiters {
@@ -102,8 +116,20 @@ pub fn total_liters(connection: DbConn) -> Json<TotalLiters> {
 }
 
 #[get("/purchases/most-common-purchase-date")]
-pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseDate> {
+pub fn most_common_purchase_date(auth: Auth, connection: DbConn) -> Json<MostCommonPurchaseDate> {
+    let count = purchases::table
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
+        .count()
+        .first(&*connection);
+    if Ok(0) == count || count.is_err() {
+        return Json(MostCommonPurchaseDate {
+            most_common_purchase_date: None,
+        });
+    }
+    // TODO: figure out why this panics when there aren't any purchases
     let mut res = sql_query(include_str!("most_common_purchase_date.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<MostCommonPurchaseDate>(&*connection)
         .unwrap_or_else(|e| {
             warn!("Error getting most common purchase date: {}", e);
@@ -116,10 +142,12 @@ pub fn most_common_purchase_date(connection: DbConn) -> Json<MostCommonPurchaseD
 }
 
 #[get("/purchases/count")]
-pub fn count(connection: DbConn) -> Json<PurchaseCount> {
-    let res: Result<Option<i64>, _> = purchases::table
+pub fn count(auth: Auth, connection: DbConn) -> Json<PurchaseCount> {
+    let res = purchases::table
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
         .select(sum(purchases::quantity))
-        .first(&*connection);
+        .first::<Option<i64>>(&*connection);
     let total_liters = PurchaseCount {
         count: res.unwrap_or(Some(0)).unwrap_or(0),
     };

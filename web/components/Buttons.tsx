@@ -3,7 +3,7 @@ import React from "react";
 import { Col } from "./Grid";
 import { IChildrenProp, IClassesProp } from "./IProps";
 import { MaterialIcon } from "./MaterialIcon";
-import { PreloaderCirc } from "./Preloader";
+import { CircleSize, PreloaderCirc } from "./Preloader";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
@@ -42,20 +42,25 @@ FloatingBtn.defaultProps = { onMouseDown: (_) => undefined };
 interface IBtnProps extends IChildrenProp, IClassesProp {
     onClick: () => void;
     disabled?: boolean;
+    noRbtn?: boolean;
+    type?: "button" | "reset" | "submit";
 }
 
 export const Btn: React.FC<IBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
     const disabled = props.disabled ?? false;
+    const noRbtn = props.noRbtn ?? false;
+
     const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         props.onClick();
     }
 
     return (
-        <button className={ `rbtn waves-effect waves-light btn ${classes}` }
+        <button className={ `${noRbtn ? "" : "rbtn"} waves-effect waves-light btn ${classes}` }
             onClick={ onClick }
             disabled={ disabled }
+            type={ props.type }
         >
             { props.children }
         </button>
@@ -83,27 +88,26 @@ BtnLink.displayName = "BtnLink";
 interface ICancelOrConfirmProps {
     onConfirmClick: () => void;
     onCancelClick: () => void;
+    confirmDisabled?: boolean;
+    isSaving: boolean;
 }
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
-    ({onConfirmClick, onCancelClick}) => {
-    const [isSaving, setIsSaving] = React.useState(false);
-
-    const submit = () => {
-        setIsSaving(true);
-        onConfirmClick();
-        setIsSaving(false);
-    }
+    ({onConfirmClick, onCancelClick, isSaving, confirmDisabled}) => {
+    const isConfirmDisabled = confirmDisabled || isSaving;
 
     return (
         <Col s={ 12 }>
-            { isSaving && <PreloaderCirc className="hor-margin" /> }
             <Btn classes={ ["green-bg"] }
-                onClick={ submit }
-                disabled={ isSaving }
+                onClick={ onConfirmClick }
+                disabled={ isConfirmDisabled }
+                type="submit"
             >
                 Confirm
-                <MaterialIcon iconName="send" className="right" />
+                { isSaving
+                    ? <PreloaderCirc size={ CircleSize.Tiny } className="confirm" />
+                    : <MaterialIcon iconName="send" className="right" />
+                }
             </Btn>
             <Btn classes={ ["red-bg"] }
                 onClick={ onCancelClick }

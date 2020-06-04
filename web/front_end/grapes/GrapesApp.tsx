@@ -1,25 +1,30 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Col, Row } from "../../components/Grid";
 import { Preloader } from "../../components/Preloader";
-import Logger from "../../lib/Logger";
-import { IGrape, IGrapeForm } from "../../lib/Rest";
-import { getGrapes, updateGrape } from "../../lib/RestApi";
+import { getGrapes, updateGrape } from "../../lib/api/grapes";
+import { IGrape, IGrapeForm } from "../../lib/api/Rest";
+import { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
 import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
-export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
-    const logger = new Logger("GrapesApp");
+const GrapesApp: React.FC<{}> = (_) => {
+    const logger = useLogger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
     useTitle("Grapes");
 
     React.useEffect(() => {
         async function fetchGrapes() {
-            const grapes: IGrape[] = await getGrapes({});
-            dispatch({type: "setGrapes", grapes});
+            try {
+                const grapes: IGrape[] = await getGrapes({});
+                dispatch({type: "setGrapes", grapes});
+            } catch (e) {
+                logger.logWarning(`Failed to load grapes: ${e.message}`);
+            } finally {
+                dispatch({type: "hasLoaded"});
+            }
         }
 
         fetchGrapes();
@@ -40,7 +45,7 @@ export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
         }
     }
 
-    if (state.grapes.length === 0) {
+    if (!state.hasLoaded) {
         return <Preloader />;
     }
     let editComponent = null;
@@ -68,3 +73,4 @@ export const GrapesApp: React.FC<RouteComponentProps> = (_props) => {
     );
 }
 GrapesApp.displayName = "GrapesApp";
+export default GrapesApp;

@@ -1,66 +1,65 @@
-import { Router as ReachRouter, RouteComponentProps } from "@reach/router";
-import React from "react";
+import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
+import React, { Suspense } from "react";
+import { AuthenticatedRoute, NotFound, RouteById } from "../components/CommonRoutes";
 import { ErrorBoundary } from "../components/ErrorBoundary";
-import { RouteById } from "../components/RouteById";
+import { IChildrenProp } from "../components/IProps";
+import { Preloader } from "../components/Preloader";
+import { UserProvider } from "../components/UserContext";
+import { ViewportProvider } from "../components/ViewportContext";
 import { AboutApp } from "./about/AboutApp";
-import { DashboardApp } from "./dashboards/DashboardApp";
-import { GrapesApp } from "./grapes/GrapesApp";
+import { Footer } from "./Footer";
 import { HomeApp } from "./home/HomeApp";
-import { InventoryApp } from "./inventory/InventoryApp";
-import { NewWineApp } from "./new_wine/NewWineApp";
-import { ProducerProfileApp } from "./producer_profile/ProducerProfileApp";
-import { RegionProfileApp } from "./region_profile/RegionProfileApp";
-import { SearchWinesApp } from "./search_wines/SearchWinesApp";
-import { VitiAreaProfileApp } from "./viti_area_profile/VitiAreaProfileApp";
-import { WinesApp } from "./wines/WinesApp";
-import { WineProfileApp } from "./wine_profile/WineProfileApp";
-import { WineTypeProfileApp } from "./wine_type_profile/WineTypeProfileApp";
-import Logger from "../lib/Logger";
+import { Navbar } from "./Navbar";
 
-const NotFound: React.FC<RouteComponentProps<{}>> = () => {
-    new Logger("NotFound", false, false).logWarning("Client requested url that doesn't exist")
+const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
-        <div className="container" style={ {maxWidth: "750px"} }>
-            <h1 className="light center big" style={ {fontSize: "80px" } }>
-                Error 404&nbsp;&nbsp;&nbsp;(○口○ )
-            </h1>
-            <br />
-            <h4>Looks like you took a wrong turn in the cellar&hellip;</h4>
+        <div id="site-content">
+            <Navbar />
+            <main>
+                { children }
+            </main>
+            <Footer />
         </div>
     );
 }
-NotFound.displayName = "NotFound";
+
+export const Router: React.FC<{}> = (_props) => (
+    <ErrorBoundary>
+        <UserProvider>
+            <ViewportProvider>
+                <ReachRouter>
+                    <App path="/">
+                        <HomeApp path="/" />
+                        <AboutApp path="/about" />
+                        <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
+                        <AuthenticatedRoute componentName="Grapes" path="grapes" />
+
+                        <AuthenticatedRoute componentName="Wines" path="wines" />
+                        <RouteById componentName="WineProfile" path="wines/:id" />
+                        <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
+                        <AuthenticatedRoute componentName="NewWine" path="wines/new" />
+                        <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
+
+                        <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
+                        <AuthenticatedRoute componentName="RegionProfile" path="regions/:regionId"
+                        />
+                        <AuthenticatedRoute componentName="UserProfile" path="profile" />
+                        <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
+                        <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />
+
+                        {/* <PleaseCrash path="/crash/please" /> */}
+                        <NotFound default />
+                    </App>
+                </ReachRouter>
+            </ViewportProvider>
+        </UserProvider>
+    </ErrorBoundary>
+);
+Router.displayName = "Router";
 
 /**
  * For testing purposes
  */
-const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
-    throw Error();
-}
-
-export const Router: React.FC<{}> = (_) => {
-    return (
-        <ErrorBoundary>
-            <ReachRouter>
-                <HomeApp path="/" />
-                <AboutApp path="/about" />
-                <DashboardApp path="dashboards" />
-                <GrapesApp path="grapes" />
-
-                <WinesApp path="wines" />
-                <RouteById Component={ WineProfileApp } path="wines/:id" />
-                <InventoryApp path="wines/inventory" />
-                <NewWineApp path="wines/new" />
-                <SearchWinesApp path="wines/search" />
-
-                <ProducerProfileApp path="/producers/:producerId" />
-                <RegionProfileApp path="/regions/:regionId" />
-                <VitiAreaProfileApp path="/viti-areas/:vitiAreaId" />
-                <WineTypeProfileApp path="/wine-types/:wineTypeId" />
-                <PleaseCrash path="/crash/please" />
-                <NotFound default />
-            </ReachRouter>
-        </ErrorBoundary>
-    );
-};
-Router.displayName = "Router";
+// const PleaseCrash: React.FC<RouteComponentProps<{}>> = () => {
+//     throw Error();
+// }

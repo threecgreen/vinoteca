@@ -2,14 +2,15 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
-import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "../../components/PurchaseInputs";
-import { IPurchase } from "../../lib/Rest";
+import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
+import { IPurchase } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     title: string;
     purchase: IPurchase;
     displayInventoryBtn: boolean;
-    onSubmit: (purchase: IPurchaseData) => void;
+    onSubmit: (purchase: IPurchaseData) => Promise<void>;
     onCancel: () => void;
 }
 
@@ -24,9 +25,11 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
         memo: purchase.memo ?? "",
         shouldAddToInventory: null
     });
+    const [isSaving, setIsSaving] = React.useState(false);
 
+    // TODO: Use form?
     return (
-        <Modal>
+        <Modal onClose={ onCancel }>
             <ModalContent>
                 <Row>
                     <h4>{ title }</h4>
@@ -38,8 +41,9 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ () => onSubmit(state) }
+                    onConfirmClick={ handleSubmit(() => onSubmit(state), setIsSaving) }
                     onCancelClick={ onCancel }
+                    isSaving={ isSaving }
                 />
             </ModalFooter>
         </Modal>

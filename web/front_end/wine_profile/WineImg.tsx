@@ -1,15 +1,15 @@
 import React from "react";
 
 interface IProps {
-    id: number;
+    path: string;
 }
 
-export const WineImg: React.FC<IProps> = ({id}) => {
+export const WineImg: React.FC<IProps> = ({path}) => {
     return (
         <div className="card" id="wine-image">
             <div className="card-image">
-                <img src={ `/media/${ id }.png` }
-                    alt="Wine Image"
+                <img src={ `https://vinoteca.s3.us-east-2.amazonaws.com/wine_images/${path}` }
+                    alt="Wine image"
                     className="responsive-img"
                 />
             </div>

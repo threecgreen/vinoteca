@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { GreenCard } from "../../components/Cards";
-import { PreloaderCirc } from "../../components/Preloader";
-import { Table } from "../../components/Table";
-import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell, WineTypeCell } from "../../components/TableCells";
-import { get } from "../../lib/ApiHelper";
-import Logger from "../../lib/Logger";
-import { IRecentPurchase } from "../../lib/Rest";
+import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
+import { SimpleTable } from "../../components/Table";
+import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
+import { getRecentPurchases } from "../../lib/api/purchases";
+import { IRecentPurchase } from "../../lib/api/Rest";
+import { useLogger } from "../../lib/Logger";
 
-export const RecentPurchases: React.FC<{}> = (_) => {
-    const logger = new Logger("RecentPurchases");
+const RecentPurchases: React.FC<{}> = (_) => {
+    const logger = useLogger("RecentPurchases");
     const [hasLoaded, setHasLoaded] = useState<boolean>(false);
     const [purchases, setPurchases] = useState<IRecentPurchase[]>([]);
     useEffect(() => {
         async function fetchPurchases() {
             try {
-                const purchases = await get<IRecentPurchase[]>("/rest/purchases/recent");
+                const purchases = await getRecentPurchases();
                 setPurchases(purchases);
             } catch (e) {
                 logger.logError(`Error fetching recent purchases: ${e.message}`);
@@ -28,11 +28,11 @@ export const RecentPurchases: React.FC<{}> = (_) => {
 
     let content;
     if (!hasLoaded) {
-        content = <PreloaderCirc />;
-    } else if (purchases) {
+        content = <PreloaderCirc color={ SpinnerColor.WineRed } />;
+    } else if (purchases.length > 0) {
         content = (
-            <Table columns={ ["Date", "Store", "Name and Type", "Producer", "Region",
-                              {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
+            <SimpleTable columns={ ["Date", "Name and Type", "Producer", "Region", "Store",
+                                    {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
                 condensed={ false }
             >
                 { purchases.map((purchase) => {
@@ -41,7 +41,6 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                             <DateCell date={ purchase.date }
                                 format="MMM dd"
                             />
-                            <TextCell text={ purchase.store } />
                             <NameAndTypeCell id={ purchase.wineId }
                                 name={ purchase.wineName }
                                 wineType={ purchase.wineType }
@@ -52,12 +51,13 @@ export const RecentPurchases: React.FC<{}> = (_) => {
                             <RegionCell id={ purchase.regionId }
                                 name={ purchase.region }
                             />
+                            <TextCell text={ purchase.store } />
                             <PriceCell price={ purchase.price } />
                             <NumCell num={ purchase.quantity } />
                         </tr>
                     );
                 }) }
-            </Table>
+            </SimpleTable>
         );
     } else {
         content = <h6 className="bold">No purchases yet</h6>;
@@ -69,3 +69,4 @@ export const RecentPurchases: React.FC<{}> = (_) => {
     );
 }
 RecentPurchases.displayName = "RecentPurchases";
+export default RecentPurchases;

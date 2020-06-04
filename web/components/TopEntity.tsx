@@ -1,18 +1,18 @@
 import React from "react";
-import Logger from "../lib/Logger";
+import { useLogger } from "../lib/Logger";
+import { nameToId } from "../lib/utils";
 import { BarChart } from "./Chart";
-import { PreloaderCirc } from "./Preloader";
-import { Table } from "./Table";
+import { PreloaderCirc, SpinnerColor } from "./Preloader";
+import { SimpleTable } from "./Table";
 import { NumCell, PriceCell } from "./TableCells";
 import { indexFactory, Tab, TabColor, TabPanel, Tabs } from "./Tabs";
-import { nameToId } from "../lib/utils";
 
 interface IEntity {
     id: number;
     name: string;
     quantity: number;
     varieties: number;
-    avgPrice: number;
+    avgPrice: number | null;
 }
 
 interface IEntityCellProps {
@@ -25,11 +25,15 @@ interface IProps<Entity> {
     EntityCell: React.FC<IEntityCellProps>;
     fetchEntity: () => Promise<Entity[]>;
     minQuantity?: number;
+    preloaderColor: SpinnerColor;
 }
-export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity, minQuantity}: IProps<Entity>) {
+export function TopEntity<Entity extends IEntity>({
+    name, EntityCell, fetchEntity, minQuantity, preloaderColor
+}: IProps<Entity>) {
+
     minQuantity = minQuantity ?? 5;
 
-    const logger = new Logger("TopEntity");
+    const logger = useLogger("TopEntity");
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
     React.useEffect(() => {
@@ -49,7 +53,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
 
 
     if (!hasLoaded) {
-        return <PreloaderCirc />;
+        return <PreloaderCirc color={ preloaderColor } />;
     }
     if (topEntities.length >= minQuantity) {
         const tabIdxer = indexFactory(nameToId(name));
@@ -71,7 +75,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                     </Tab>
                 </Tabs>
                 <TabPanel id={tabIdxer(0)}>
-                    <Table columns={[name, { name: "Purchases", isNumCol: true },
+                    <SimpleTable columns={[name, { name: "Purchases", isNumCol: true },
                         { name: "Varieties", isNumCol: true }, { name: "Price", isNumCol: true }]}
                         condensed={false}
                     >
@@ -85,7 +89,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                                 <PriceCell price={entity.avgPrice} />
                             </tr>
                         )}
-                    </Table>
+                    </SimpleTable>
                 </TabPanel>
                 <TabPanel id={tabIdxer(1)}>
                     <BarChart height={canvasHeight}
@@ -99,7 +103,7 @@ export function TopEntity<Entity extends IEntity>({name, EntityCell, fetchEntity
                 </TabPanel>
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
-                        data={topEntities.map((ent) => ({ label: ent.name, value: ent.avgPrice }))}
+                        data={topEntities.map((ent) => ({ label: ent.name, value: Number.parseFloat(ent.avgPrice?.toFixed(2) ?? "0") }))}
                     />
                 </TabPanel>
             </>

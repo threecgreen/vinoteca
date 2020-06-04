@@ -11,17 +11,28 @@ extern crate rocket;
 #[macro_use]
 extern crate validator_derive;
 
+#[cfg(test)]
+#[macro_use]
+extern crate lazy_static;
+
 // Diesel modules
 pub mod models;
 mod schema;
-// Misc
-mod error;
+// Server internals
+mod cached_static;
+mod config;
+pub mod error;
+mod serde;
+
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;
+// Test helpers
+#[cfg(test)]
+#[macro_use]
+mod testing;
 /////////////////////
 // Rocket handlers //
 /////////////////////
-mod cached_static;
 mod html;
 // Rest
 mod colors;
@@ -31,22 +42,17 @@ mod producers;
 pub mod purchases;
 pub mod regions;
 mod stores;
+pub mod users;
 pub mod viti_areas;
 pub mod wine_grapes;
 mod wine_types;
 pub mod wines;
-// Test helpers
-#[cfg(test)]
-mod testing;
 
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
 use rocket::fairing::AdHoc;
 use rocket::Rocket;
-
-/// Keep media dir as global variable for use when saving new images
-pub struct MediaDir(String);
 
 #[macro_use]
 extern crate diesel_migrations;
@@ -67,10 +73,6 @@ pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
 }
 
 pub fn create_rocket() -> rocket::Rocket {
-    // Use in-memory database if testing
-    #[cfg(test)]
-    let mut rocket = testing::test_rocket_config();
-    #[cfg(not(test))]
     let mut rocket = rocket::ignite();
 
     rocket = rocket
@@ -79,7 +81,7 @@ pub fn create_rocket() -> rocket::Rocket {
         // Run embedded database migrations on startup
         .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
         // TODO: persistent logger
-        .mount("/", routes![html::home, html::any_other])
+        .mount("/", routes![html::home, html::any_other, html::robots])
         .mount(
             "/rest",
             routes![
@@ -105,11 +107,17 @@ pub fn create_rocket() -> rocket::Rocket {
                 purchases::recent,
                 purchases::count,
                 regions::get,
-                regions::put,
-                regions::post,
+                // regions::put,
+                // regions::post,
                 regions::top,
                 stores::get,
                 stores::post,
+                users::create,
+                users::get,
+                users::login,
+                users::logout,
+                users::modify_profile,
+                users::change_password,
                 viti_areas::get,
                 viti_areas::put,
                 viti_areas::post,
@@ -123,6 +131,8 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::inventory,
                 wines::search,
                 wines::varieties,
+                wines::image::post,
+                wines::image::delete,
                 wine_grapes::get,
                 wine_grapes::post,
                 wine_types::get,
@@ -135,14 +145,18 @@ pub fn create_rocket() -> rocket::Rocket {
         .config()
         .get_str("static_dir")
         .unwrap_or("web/static")
-        .to_string();
-    let media_dir = rocket
+        .to_owned();
+    let aws_access_key = rocket
         .config()
-        .get_str("media_dir")
-        .unwrap_or("media")
-        .to_string();
+        .get_str("aws_access_key")
+        .expect("AWS access key")
+        .to_owned();
+    let aws_secret_key = rocket
+        .config()
+        .get_str("aws_secret_key")
+        .expect("AWS secret key")
+        .to_owned();
     rocket
-        .manage(MediaDir(media_dir.clone()))
+        .manage(config::Config::new(&aws_access_key, &aws_secret_key))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
-        .mount("/media", CachedStaticFiles::from(media_dir).rank(1))
 }

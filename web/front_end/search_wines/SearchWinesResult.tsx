@@ -1,6 +1,6 @@
 import React from "react";
 import { ColorCell, NameAndTypeCell, TextCell } from "../../components/TableCells";
-import { IWine } from "../../lib/Rest";
+import { IWine } from "../../lib/api/Rest";
 
 interface ISearchWinesResultProps {
     result: IWine

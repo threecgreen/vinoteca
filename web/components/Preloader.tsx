@@ -9,10 +9,31 @@ export const Preloader: React.FC<{}> = (_) => {
 }
 Preloader.displayName = "Preloader";
 
-export const PreloaderCirc: React.FC<{className?: string}> = ({className}) => {
+export enum CircleSize {
+    Tiny = "tiny",
+    Small = "small",
+    Medium = "",
+    Large = "big"
+}
+
+export enum SpinnerColor {
+    WineRed = "spinner-wine-red",
+    GoldenYellow = "spinner-golden-yellow",
+    WineGreen = "",
+}
+
+interface ICircProps {
+    color?: SpinnerColor,
+    size?: CircleSize;
+    className?: string;
+}
+
+export const PreloaderCirc: React.FC<ICircProps> = ({color, className, size}) => {
+    color = color ?? SpinnerColor.WineGreen;
+    size = size ?? CircleSize.Medium;
     return (
-        <div className={ `preloader-wrapper active ${className ?? ''}` }>
-            <div className="spinner-layer">
+        <div className={ `preloader-wrapper active ${className ?? ''} ${size}` }>
+            <div className={ `spinner-layer ${color}` }>
                 <div className="circle-clipper left">
                     <div className="circle"></div>
                 </div><div className="gap-patch">

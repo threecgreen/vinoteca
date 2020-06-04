@@ -10,7 +10,7 @@ export interface IGridProps {
 
 type IAllGridProps = IGridProps & IClassesProp & IChildrenProp;
 
-function joinClasses(grid: string[], classes?: string[]): string {
+export function joinClasses(grid: string[], classes?: string[]): string {
     let allClasses: string[] = [];
     grid.forEach((gc) => {
         if (gc.length > 0) {
@@ -21,7 +21,7 @@ function joinClasses(grid: string[], classes?: string[]): string {
     return allClasses.join(" ");
 }
 
-function gridClasses(props: IAllGridProps): string[] {
+export function gridClasses(props: IGridProps): string[] {
     const sClass = props.s ? `s${props.s}` : "";
     const mClass = props.m ? `m${props.m}` : "";
     const lClass = props.l ? `l${props.l}` : "";
@@ -46,4 +46,4 @@ export const Row: React.FC<IAllGridProps> = GridComponentFactory("row", "Row");
 
 export const Col: React.FC<IAllGridProps> = GridComponentFactory("col", "Col");
 
-export const InputField: React.FC<IAllGridProps> = GridComponentFactory("col input-field", "InputField")
+export const InputField: React.FC<IAllGridProps> = GridComponentFactory("input-field", "InputField")

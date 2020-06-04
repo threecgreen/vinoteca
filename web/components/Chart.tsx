@@ -1,6 +1,6 @@
-import React from "react";
 import Chart from "chart.js";
-import Logger from "../lib/Logger";
+import React from "react";
+import { useLogger } from "../lib/Logger";
 
 export interface IChartInput {
     label: string;
@@ -117,7 +117,9 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
     }, [canvasRef, config]);
 
     return (
-        <canvas height="100px" ref={canvasRef} />
+        <div className="canvas-container">
+            <canvas height={ "175px" } ref={ canvasRef } />
+        </div>
     );
 }
 PieChart.displayName = "PieChart";
@@ -203,9 +205,8 @@ interface ILineChartProps {
     data: IChartInput[][];
     seriesLabels: string[];
 }
-
 export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
-    const logger = new Logger("LineChart");
+    const logger = useLogger("LineChart");
 
     const chartLabels = splitData(data[0])[0];
     if (data.length !== seriesLabels.length) {
@@ -226,6 +227,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
                     top: 15,
                 },
             },
+            maintainAspectRatio: false,
             responsive: true,
             scales: {
                 xAxes: [{
@@ -292,7 +294,9 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     }, [canvasRef, config]);
 
     return (
-        <canvas ref={canvasRef} />
+        <div className="canvas-container">
+            <canvas ref={canvasRef} height={ 300 } />
+        </div>
     );
 }
 LineChart.displayName = "LineChart";

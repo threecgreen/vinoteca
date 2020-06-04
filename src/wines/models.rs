@@ -1,6 +1,8 @@
+use super::image::Image;
 use crate::models::WineForm;
 
-use diesel::sql_types::{Integer, Nullable, Text};
+use chrono::NaiveDate;
+use diesel::sql_types::{Date, Double, Integer, Nullable, Text};
 use diesel::QueryableByName;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
@@ -8,7 +10,7 @@ use validator::Validate;
 
 pub struct RawWineForm {
     /// raw submitted wine image
-    pub image: Option<Vec<u8>>,
+    pub image: Option<Image>,
     /// JSON data for database
     pub wine_form: WineForm,
 }
@@ -50,10 +52,11 @@ pub struct InventoryWine {
     pub region: String,
     #[sql_type = "Nullable<Integer>"]
     pub last_purchase_vintage: Option<i32>,
-    #[sql_type = "Nullable<Integer>"]
-    pub last_purchase_date: Option<i32>,
+    #[ts(ts_type = "string | null")]
+    #[sql_type = "Nullable<Date>"]
+    pub last_purchase_date: Option<NaiveDate>,
     #[sql_type = "Integer"]
     pub inventory: i32,
-    #[sql_type = "Nullable<Integer>"]
-    pub last_purchase_price: Option<i32>,
+    #[sql_type = "Nullable<Double>"]
+    pub last_purchase_price: Option<f64>,
 }

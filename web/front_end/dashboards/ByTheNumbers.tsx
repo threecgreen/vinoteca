@@ -1,13 +1,12 @@
-import format from "date-fns/esm/format";
 import React from "react";
 import { YellowCard } from "../../components/Cards";
 import { PreloaderCirc } from "../../components/Preloader";
-import { getMostCommonPurchaseDate, getTotalLiters, getWineVarieties, getPurchaseCount } from "../../lib/RestApi";
-import { EN_DASH, numToDate } from "../../lib/utils";
+import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters } from "../../lib/api/purchases";
+import { getWineVarieties } from "../../lib/api/wines";
 
 export const ByTheNumbers: React.FC<{}> = (_) => {
     const [totalLiters, setTotalLiters] = React.useState(0);
-    const [mostCommonPurchaseDate, setMostCommonPurchaseDate] = React.useState<Date | null>(null);
+    const [mostCommonPurchaseDate, setMostCommonPurchaseDate] = React.useState<string | null>(null);
     const [totalPurchases, setTotalPurchases] = React.useState(0);
     const [totalVarieties, setTotalVarieties] = React.useState(0);
     const [hasLoaded, setHasLoaded] = React.useState(false);
@@ -22,7 +21,7 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
                 async() => {
                     const mcd = await getMostCommonPurchaseDate();
                     if (mcd.mostCommonPurchaseDate) {
-                        setMostCommonPurchaseDate(numToDate(mcd.mostCommonPurchaseDate));
+                        setMostCommonPurchaseDate(mcd.mostCommonPurchaseDate);
                     }
                 },
                 async() => {
@@ -40,7 +39,6 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
         fetchData();
     }, [setTotalLiters, setMostCommonPurchaseDate, setTotalLiters, setTotalVarieties, setHasLoaded]);
     if (hasLoaded) {
-        const formattedDate = mostCommonPurchaseDate ? format(mostCommonPurchaseDate, "MMM dd") : EN_DASH;
         return (
             <YellowCard title="By the numbers">
                 <p>
@@ -48,7 +46,7 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
                     Liters of wine
                 </p>
                 <p>
-                    <span className="by-the-numbers">{ formattedDate }</span>
+                    <span className="by-the-numbers">{ mostCommonPurchaseDate ?? "No" }</span>
                     Most common purchase date
                 </p>
                 <p>

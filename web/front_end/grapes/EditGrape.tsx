@@ -1,21 +1,23 @@
 import React from "react";
-import { ModalContent, Modal, ModalFooter } from "../../components/Modal";
-import { TextInput } from "../../components/TextInput";
-import { Row } from "../../components/Grid";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
-import { IGrapeForm } from "../../lib/Rest";
+import { Row } from "../../components/Grid";
+import { TextInput } from "../../components/inputs/TextInput";
+import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
+import { IGrapeForm } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     name: string;
     onCancelClick: () => void;
-    onSaveClick: (form: IGrapeForm) => void;
+    onSaveClick: (form: IGrapeForm) => Promise<void>;
 }
 
 export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) => {
     const [text, setText] = React.useState(name);
+    const [isSaving, setIsSaving] = React.useState(false);
 
     return (
-        <Modal>
+        <Modal onClose={ onCancelClick }>
             <ModalContent>
                 <Row>
                     <h4>Edit grape</h4>
@@ -28,8 +30,9 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ () => onSaveClick({name: text}) }
+                    onConfirmClick={ handleSubmit(() => onSaveClick({name: text}), setIsSaving) }
                     onCancelClick={ onCancelClick }
+                    isSaving={ isSaving }
                 />
             </ModalFooter>
         </Modal>

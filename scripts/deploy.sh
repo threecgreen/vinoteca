@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Build release for use on render
 
 source "$(dirname $0)/utils.sh"
 

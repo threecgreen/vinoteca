@@ -1,15 +1,40 @@
 import { RouteComponentProps } from "@reach/router";
-import React from "react";
-import { BtnLink } from "../../components/Buttons";
+import React, { Suspense } from "react";
+import { NewUserForm } from "../../components/AuthModals";
+import { Btn, BtnLink } from "../../components/Buttons";
+import { AsyncComponent } from "../../components/CommonRoutes";
 import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
+import { Preloader } from "../../components/Preloader";
+import { useSetUser, useUser } from "../../components/UserContext";
 import { useTitle } from "../../lib/widgets";
-import { RecentPurchases } from "./RecentPurchases";
-import { TopWineTypes } from "./TopWineTypes";
 
-export const HomeApp: React.FC<RouteComponentProps> = (_) => {
+export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
+
+    const user = useUser();
+    const setUser = useSetUser();
+
+    const [showNewUserModal, setShowNewUserModal] = React.useState(false);
+
+    const homeDashboards = user ? (
+            <Suspense fallback={ <Preloader /> }>
+                <AsyncComponent componentName="HomeDashboard" />
+            </Suspense>
+        ) : null;
+
+    const button = user ? (
+        <BtnLink classes={["yellow-bg"]} to="/wines/new">
+            <MaterialIcon iconName="add_circle" />
+            add wine
+        </BtnLink>
+    ) : (
+        <Btn classes={ ["yellow-bg"] } onClick={ () => setShowNewUserModal(true) }>
+            <MaterialIcon iconName="add_circle" />
+            create account
+        </Btn>
+    );
 
     return (
         <>
@@ -17,29 +42,25 @@ export const HomeApp: React.FC<RouteComponentProps> = (_) => {
             <div className="section white">
                 <div className="container">
                     <Row>
-                        <Col s={ 12 }>
+                        <Col s={12}>
                             <h1 className="center bold">
                                 Welcome to <span className="brand-logo">vinoteca</span>
                             </h1>
                             <h5 className="center">A wine purchase tracker and review system</h5>
                         </Col>
                         <div className="center-align">
-                            <BtnLink classes={ ["yellow-bg"] } to="/wines/new">
-                                <MaterialIcon iconName="add_circle" />
-                                add wine
-                            </BtnLink>
+                            { button }
                         </div>
                     </Row>
-                    <Row>
-                        <Col s={ 12 } xl={ 7 }>
-                            <RecentPurchases />
-                        </Col>
-                        <Col s={ 12 } xl={ 5 }>
-                            <TopWineTypes />
-                        </Col>
-                    </Row>
+                    { homeDashboards }
                 </div>
             </div>
+            { showNewUserModal && <NewUserForm onCancel={ () => setShowNewUserModal(false) }
+                onFinish={ (user) => {
+                    setUser!(user);
+                    setShowNewUserModal(false);
+                }}
+            /> }
         </>
     );
 }

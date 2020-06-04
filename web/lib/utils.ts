@@ -1,6 +1,5 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 import Logger from "./Logger";
-import { IRestModel } from "./RestTypes";
 
 /**
  * Key-value store where the key must be a string, but the value is of any type
@@ -8,39 +7,6 @@ import { IRestModel } from "./RestTypes";
  */
 export interface IDict<T> {
     [key: string]: T;
-}
-
-/**
- * Converts the objects to a single object of names to null for use with materialize
- * autocomplete.
- * @param objects An array of REST models
- */
-export function restModelsToNameDict(objects: IRestModel[]): IDict<null> {
-    const dict: IDict<null> = {};
-    objects.map((obj) => {
-        dict[obj.name] = null;
-    });
-    return dict;
-}
-
-/**
- * Converts an 8-digit number of format 'yyyymmdd' to a Date object.
- * @param num a date number of format 'yyyymmdd'
- */
-export function numToDate(num: number): Date {
-    const strNum = `${num}`;
-    if (strNum.length !== 8) {
-        console.warn(`Invalid date number '${strNum}'`);
-    }
-    const year = strNum.substr(0, 4);
-    const month = strNum.substr(4, 2);
-    const day = strNum.substr(6, 2);
-    // JS months are 0-based
-    return new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
-}
-
-export function dateToNum(date: Date): number {
-    return date.getFullYear() * 10_000 + (date.getMonth() + 1) * 100 + date.getDate();
 }
 
 export const EN_DASH: string = "–";
@@ -128,6 +94,36 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
+export function hasChanged(newObj: any, source: any, exclude: string[] = []): boolean {
+    const keysToExclude = new Set(exclude);
+    for (const k of Object.keys(newObj)) {
+        if (keysToExclude.has(k)) {
+            continue;
+        }
+        if (newObj[k] !== source[k]) {
+            // If both falsey, ignore differences
+            if (!newObj[k] && !source[k]) {
+                continue;
+            }
+            (new Logger("hasChanged", false, false)).logWarning(`Key that changed`, {key: k});
+            return true;
+        }
+    }
+    return false;
+}
+
+export function arrayHasChanged(newArr: any[], source: any[], exclude: string[] = []): boolean {
+    if (newArr.length !== source.length) {
+        return true;
+    }
+    for (let i = 0; i < newArr.length; ++i) {
+        if (hasChanged(newArr[i], source[i], exclude)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 interface IRangeArgs {
     start?: number;
     stop?: number;
@@ -166,10 +162,26 @@ export function onLoad(fun: () => void) {
     document.addEventListener("DOMContentLoaded", fun);
 }
 
-export function onError(
+export async function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
 ) {
-    new Logger("window", false, false).logCritical(
-        `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
-        + ` event: ${event.toString()}`);
+    const logger = new Logger("window", false, false);
+    if (error && error.message.startsWith("Loading chunk ")) {
+        await logger.logError(`A top-level error occured loading chunk: ${error.message}. Reloading...`);
+        location.reload();
+    } else {
+        logger.logCritical(
+            `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
+            + ` event: ${event.toString()}`);
+    }
+}
+
+export function handleSubmit(save: () => Promise<void>,
+                             setIsSaving: (isSaving: boolean) => void): () => Promise<void> {
+
+    return async () => {
+        setIsSaving(true);
+        await save();
+        setIsSaving(false);
+    };
 }

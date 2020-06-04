@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -6,19 +5,19 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { WinesTable } from "../../components/WinesTable";
+import { IWine, IWineType } from "../../lib/api/Rest";
+import { getWines } from "../../lib/api/wines";
+import { getWineType, updateWineType } from "../../lib/api/wine_types";
 import Logger from "../../lib/Logger";
-import { IWine } from "../../lib/Rest";
-import { getWines, getWineType, updateWineType } from "../../lib/RestApi";
-import { IRestModel } from "../../lib/RestTypes";
-import { WineType } from "./WineType";
 import { setTitle } from "../../lib/widgets";
+import { WineType } from "./WineType";
 
 interface IState {
     isEditing: boolean;
     // Editable
     wineTypeText: string;
     // "Pure" state
-    wineType?: IRestModel;
+    wineType?: IWineType;
     wines: IWine[];
 }
 
@@ -26,7 +25,7 @@ interface IProps {
     wineTypeId: number;
 }
 
-export class WineTypeProfileApp extends React.Component<RouteComponentProps<IProps>, IState> {
+export default class WineTypeProfileApp extends React.Component<IProps, IState> {
     private logger: Logger;
 
     constructor(props: IProps) {
@@ -38,7 +37,7 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
             wines: [],
         }
 
-        this.logger = new Logger("WineTypeProfileApp", true);
+        this.logger = new Logger("WineTypeProfileApp");
         this.onWineTypeChange = this.onWineTypeChange.bind(this);
         this.onEditClick = this.onEditClick.bind(this);
         this.onConfirmClick = this.onConfirmClick.bind(this);
@@ -46,11 +45,15 @@ export class WineTypeProfileApp extends React.Component<RouteComponentProps<IPro
     }
 
     public async componentDidMount() {
-        await Promise.all([
-            this.getAndSetWineTypes(),
-            this.getAndSetWines(),
-        ]);
         setTitle(this.state.wineType?.name ?? "Wine type profile");
+        try {
+            await Promise.all([
+                this.getAndSetWineTypes(),
+                this.getAndSetWines(),
+            ]);
+        } catch (e) {
+            this.logger.logWarning(`Failed to load wine type: ${e.message}`, {id: this.props.wineTypeId});
+        }
     }
 
     private async getAndSetWineTypes() {

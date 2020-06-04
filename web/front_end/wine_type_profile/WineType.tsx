@@ -1,62 +1,55 @@
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
-import { WineTypeInput } from "../../components/WineTypeInput";
-import { IRestModel } from "../../lib/RestTypes";
+import { WineTypeInput } from "../../components/model_inputs/WineTypeInput";
+import { IWineType } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     isEditing: boolean;
     wineTypeText: string;
-    wineType: IRestModel;
+    wineType: IWineType;
     onWineTypeChange: (val: string) => void;
-    onConfirmClick: () => void;
+    onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
 }
 
-export class WineType extends React.Component<IProps> {
-    constructor(props: IProps) {
-        super(props);
-        this.state = {
-            stats: undefined,
-        };
-    }
+export const WineType: React.FC<IProps> = (props) => {
+    const [isSaving, setIsSaving] = React.useState(false);
 
-    public render() {
-        const content = this.props.isEditing ? this.renderEdit() : this.renderView();
-        return (
-            <Row>
-                { content }
-            </Row>
-        );
-    }
+    const renderView = () => (
+        <Col s={ 12 }>
+            <h3>
+                <span className="bold">{ props.wineType.name }</span>
+            </h3>
+        </Col>
+    );
 
-    private renderView(): JSX.Element {
-        return (
-            <Col s={ 12 }>
-                <h3>
-                    <span className="bold">{ this.props.wineType.name }</span>
-                </h3>
+    const renderEdit = () => (
+        <>
+            <Col s={ 10 }>
+                <h3 className="bold">Edit Wine Type</h3>
+                <Form onSubmit={ props.onConfirmClick }>
+                    <WineTypeInput value={ props.wineTypeText }
+                        onChange={ props.onWineTypeChange }
+                        required={ true }
+                    />
+                </Form>
             </Col>
-        );
-    }
+            <CancelOrConfirmBtns
+                onConfirmClick={ handleSubmit(props.onConfirmClick, setIsSaving) }
+                onCancelClick={ props.onCancelClick }
+                isSaving={ isSaving }
+            />
+        </>
+    );
 
-    private renderEdit(): JSX.Element {
-        return (
-            <React.Fragment>
-                <Col s={ 10 }>
-                    <h3 className="bold">Edit Wine Type</h3>
-                    <form autoComplete="off">
-                        <WineTypeInput value={ this.props.wineTypeText }
-                            onChange={ this.props.onWineTypeChange }
-                        />
-                    </form>
-                </Col>
-                <CancelOrConfirmBtns
-                    onConfirmClick={ this.props.onConfirmClick }
-                    onCancelClick={ this.props.onCancelClick }
-                />
-            </React.Fragment>
-        );
-    }
+    return (
+        <Row>
+            { props.isEditing ? renderEdit() : renderView() }
+        </Row>
+    );
 }
+WineType.displayName = "WineType";
 

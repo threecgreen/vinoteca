@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { FixedActionList } from "../../components/FixedActionList";
@@ -7,10 +7,13 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { DeleteModal } from "../../components/Modal";
 import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
-import Logger from "../../lib/Logger";
-import { IProducer, IRegion, IWine } from "../../lib/Rest";
-import { createRegion, deleteProducer, EmptyResultError, getProducer, getRegion, getWines, updateProducer } from "../../lib/RestApi";
-import { setTitle } from "../../lib/widgets";
+import { EmptyResultError } from "../../lib/api/common";
+import { deleteProducer, getProducer, updateProducer } from "../../lib/api/producers";
+import { getRegion } from "../../lib/api/regions";
+import { IProducer, IRegion, IWine } from "../../lib/api/Rest";
+import { getWines } from "../../lib/api/wines";
+import { useLogger } from "../../lib/Logger";
+import { useTitle } from "../../lib/widgets";
 import { Producer } from "./Producer";
 
 export enum ProducerProfileTextInput {
@@ -18,10 +21,14 @@ export enum ProducerProfileTextInput {
     Region,
 };
 
-interface IProducerProfileAppState {
-    isEditing: boolean;
-    showDeleteModal: boolean;
-    lastActiveTextInput?: ProducerProfileTextInput;
+enum Mode {
+    Display,
+    Edit,
+    Delete,
+}
+
+interface IState {
+    mode: Mode;
     // Editable fields
     producerText: string;
     regionText: string;
@@ -31,203 +38,203 @@ interface IProducerProfileAppState {
     wines: IWine[];
 }
 
-interface IProducerProfileAppProps {
+type Action =
+    | { type: "setMode", mode: Mode }
+    | { type: "setProducerText", text: string }
+    | { type: "setRegionText", text: string }
+    | { type: "setProducer", producer: IProducer }
+    | { type: "setRegion", region: IRegion }
+    | { type: "setWines", wines: IWine[] }
+    | { type: "reset"};
+
+const reducer: React.Reducer<IState, Action> = (state, action) => {
+    switch (action.type) {
+        case "setMode":
+            return { ...state, mode: action.mode };
+        case "setProducerText":
+            return { ...state, producerText: action.text };
+        case "setRegionText":
+            return { ...state, regionText: action.text };
+        case "setProducer":
+            return {
+                ...state,
+                mode: Mode.Display,
+                producer: action.producer,
+                producerText: action.producer.name
+            };
+        case "setRegion":
+            return {
+                ...state,
+                mode: Mode.Display,
+                region: action.region,
+                regionText: action.region.name,
+            };
+        case "setWines":
+            return { ...state, wines: action.wines };
+        case "reset":
+            return {
+                ...state,
+                mode: Mode.Display,
+                producerText: state.producer?.name ?? "",
+                regionText: state.region?.name ?? "",
+            };
+        default:
+            return state;
+    }
+}
+
+interface IProps {
     producerId: number;
 }
 
-export class ProducerProfileApp extends React.Component<RouteComponentProps<IProducerProfileAppProps>, IProducerProfileAppState> {
-    private logger: Logger;
+const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
+    const logger = useLogger("ProducerProfileApp");
 
-    constructor(props: IProducerProfileAppProps) {
-        super(props);
-        this.state = {
-            isEditing: false,
-            showDeleteModal: false,
-            producerText: "",
-            regionText: "",
-            producer: undefined,
-            region: undefined,
-            wines: [],
-        };
-        this.logger = new Logger("ProducerProfileApp", false);
-        this.onEditClick = this.onEditClick.bind(this);
-        this.onProducerChange = this.onProducerChange.bind(this);
-        this.onRegionChange = this.onRegionChange.bind(this);
-        this.onConfirmClick = this.onConfirmClick.bind(this);
-        this.onCancelClick = this.onCancelClick.bind(this);
-        this.onShowDeleteModalClick = this.onShowDeleteModalClick.bind(this);
-        this.onDeleteClick = this.onDeleteClick.bind(this);
-    }
+    const [state, dispatch] = React.useReducer(reducer, [], () => ({
+        mode: Mode.Display,
+        producerText: "",
+        regionText: "",
+        producer: undefined,
+        region: undefined,
+        wines: [],
+    }));
 
-    public async componentDidMount() {
-        const [_, wines] = await Promise.all([
-            this.getCurrentProducerData(),
-            getWines({producerId: this.props.producerId}),
-        ]);
-        setTitle(this.state.producer?.name ?? "Producer profile");
-        this.setState({wines: wines});
-    }
+    useTitle(state.producer?.name ?? "Producer profile");
 
-    public render() {
-        if (!this.state.producer) {
-            return <Preloader />;
-        }
-        const modal = this.state.showDeleteModal
-            ? <DeleteModal item="producer"
-                onNoClick={ () => this.setState({showDeleteModal: false}) }
-                onYesClick={ this.onDeleteClick }
-            /> : null;
-        return (
-            <div className="container">
-                <Producer isEditing={ this.state.isEditing }
-                    producer={ this.state.producer }
-                    producerText={ this.state.producerText }
-                    onProducerChange={ this.onProducerChange }
-                    region={ this.state.region }
-                    regionText={ this.state.regionText }
-                    onRegionChange={ this.onRegionChange }
-                    onConfirmClick={ this.onConfirmClick }
-                    onCancelClick={ this.onCancelClick }
-                />
-                <Row>
-                    <Col s={ 12 } l={ 9 }>
-                        <h5>Wines</h5>
-                    </Col>
-                    <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
-                        <FixedActionList>
-                            <FloatingBtn onClick={ this.onEditClick }
-                                classes={ ["yellow-bg"] }
-                            >
-                                <MaterialIcon iconName="edit" />
-                            </FloatingBtn>
-                            <FloatingBtn onClick={ this.onShowDeleteModalClick }
-                                classes={ ["red-bg"] }
-                            >
-                                <MaterialIcon iconName="delete" />
-                            </FloatingBtn>
-                        </FixedActionList>
-                    </Col>
-                    <Col s={ 12 }>
-                        <WinesTable wines={ this.state.wines }
-                            excludeColumn={ ColumnToExclude.Producer }
-                        />
-                    </Col>
-                </Row>
-                { modal }
-            </div>
-        );
-    }
-
-    private onEditClick() {
-        this.setState({isEditing: true});
-    }
-
-    /**
-     * Gets the current state of the producer and its region on the server side
-     * and updates state.
-     */
-    private async getCurrentProducerData() {
+    const getProducerData = async () => {
         try {
-            const producer = await getProducer({id: this.props.producerId});
-            this.setState({
-                producer: producer,
-                producerText: producer.name,
-            });
+            const producer = await getProducer({id: producerId});
+            dispatch({type: "setProducer", producer});
             const region = await getRegion({id: producer.regionId});
-            this.setState({
-                region,
-                regionText: region.name
-            });
+            dispatch({type: "setRegion", region});
         } catch (e) {
-            this.logger.logWarning(`Error getting producer data: ${e.message}`);
+            logger.logWarning(`Error getting producer data: ${e.message}`);
         }
     }
 
-    private onProducerChange(val: string) {
-        this.setState({producerText: val});
-    }
+    React.useEffect(() => {
+        async function fetchData() {
+            try {
+                const [_, wines] = await Promise.all([
+                    getProducerData(),
+                    getWines({producerId}),
+                ]);
+                dispatch({type: "setWines", wines});
+            } catch (e) {
+                logger.logWarning(`Failed to load producer: ${e.message}`, {id: producerId});
+            }
+        }
 
-    private onRegionChange(text: string) {
-        this.setState({regionText: text});
-    }
+        fetchData();
+    }, []);
 
-    private async onConfirmClick() {
+    const onConfirmClick = async () => {
         try {
-            const [regionChanged, regionId] = await this.handleRegionChanges();
-            if (this.state.producer
-                && (this.state.producerText !== this.state.producer.name || regionChanged)) {
+            const [regionChanged, regionId] = await handleRegionChanges();
+            if (state.producer
+                && (state.producerText !== state.producer.name || regionChanged)) {
 
-                this.updateProducer(regionId === -1 ? null! : regionId);
+                const producer = await updateProducer({
+                    id: state.producer!.id,
+                    name: state.producerText,
+                    regionId: regionId,
+                });
+                dispatch({type: "setProducer", producer});
+            } else {
+                dispatch({type: "reset"});
             }
         } catch (err) {
-            this.logger.logWarning(`Failed to save changes to the database: ${err.message}`);
+            logger.logWarning(`Failed to save changes to the database: ${err.message}`);
         }
     }
 
-    private async handleRegionChanges(): Promise<[boolean, number]> {
-        if ((this.state.regionText && !this.state.region)
-            || (this.state.region && this.state.regionText !== this.state.region.name)) {
+    const handleRegionChanges = async (): Promise<[boolean, number]> => {
+        if ((state.regionText && !state.region)
+            || (state.region && state.regionText !== state.region.name)) {
 
-            // Try Get
+            // TODO: limit region to set values
             try {
-                const region = await getRegion({name: this.state.regionText});
-                this.setState({
-                    region,
-                    regionText: region.name,
-                });
+                const region = await getRegion({name: state.regionText});
+                dispatch({type: "setRegion", region});
                 return [true, region.id];
             } catch (err) {
                 if (EmptyResultError.isInstance(err)) {
-                    // Create
-                    const region = await createRegion({ name: this.state.regionText})
-                    this.setState({
-                        region,
-                        regionText: region.name,
-                    });
-                    return [true, region.id];
+                    logger.logWarning("Invalid region while trying to edit producer",
+                                      {producer: state.producerText,
+                                       region: state.regionText});
+                } else {
+                    logger.logError("Error fetching region",
+                                    {errorMsg: err.message,
+                                     region: state.regionText,
+                                     producer: state.producerText});
                 }
                 throw err;
             }
         }
-        if (this.state.region) {
-            return[false, this.state.region.id];
+        if (state.region) {
+            return[false, state.region.id];
         }
         return [false, -1];
     }
 
-    private async updateProducer(regionId: number) {
-        const producer = await updateProducer({
-            id: this.state.producer!.id,
-            name: this.state.producerText,
-            regionId: regionId,
-        });
-        this.setState({
-            producer: producer,
-            producerText: producer.name,
-            isEditing: false,
-        })
-    }
-
-    private onCancelClick() {
-        this.setState((state) => ({
-            isEditing: false,
-            producerText: state.producer ? state.producer.name : "",
-            regionText: state.region ? state.region.name : "",
-        }));
-    }
-
-    private onShowDeleteModalClick() {
-        this.setState({showDeleteModal: true});
-    }
-
-    private async onDeleteClick() {
+    const onDeleteClick = async () => {
         try {
-            await deleteProducer(this.props.producerId!);
+            await deleteProducer(producerId!);
             // Redirect home
             navigate("/");
         } catch (ex) {
-            this.logger.logWarning(`Failed to delete producer with id ${this.props.producerId}`
-                                   + ` with exception: ${ex.message}`);
+            logger.logWarning(`Failed to delete producer: ${ex.message}`, {id: producerId});
         }
     }
+
+    if (!state.producer) {
+        return <Preloader />;
+    }
+    const modal = state.mode === Mode.Delete
+        ? <DeleteModal item="producer"
+            onNoClick={ () => dispatch({type: "setMode", mode: Mode.Display}) }
+            onYesClick={ onDeleteClick }
+        /> : null;
+    return (
+        <div className="container">
+            <Producer isEditing={ state.mode === Mode.Edit }
+                producer={ state.producer }
+                producerText={ state.producerText }
+                onProducerChange={ (text) => dispatch({type: "setProducerText", text}) }
+                region={ state.region }
+                regionText={ state.regionText }
+                onRegionChange={ (text) => dispatch({type: "setRegionText", text}) }
+                onConfirmClick={ onConfirmClick }
+                onCancelClick={ () => dispatch({type: "reset"}) }
+            />
+            <Row>
+                <Col s={ 12 } l={ 9 }>
+                    <h5>Wines</h5>
+                </Col>
+                <Col s={ 12 } l={ 3 } classes={ ["fixed-action-div"] }>
+                    <FixedActionList>
+                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: Mode.Edit}) }
+                            classes={ ["yellow-bg"] }
+                        >
+                            <MaterialIcon iconName="edit" />
+                        </FloatingBtn>
+                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: Mode.Delete}) }
+                            classes={ ["red-bg"] }
+                        >
+                            <MaterialIcon iconName="delete" />
+                        </FloatingBtn>
+                    </FixedActionList>
+                </Col>
+                <Col s={ 12 }>
+                    <WinesTable wines={ state.wines }
+                        excludeColumn={ ColumnToExclude.Producer }
+                    />
+                </Col>
+            </Row>
+            { modal }
+        </div>
+    );
+
 }
+ProducerProfileApp.displayName = "ProducerProfileApp";
+export default ProducerProfileApp;

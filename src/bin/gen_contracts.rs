@@ -1,3 +1,4 @@
+use vinoteca::error::VinotecaError;
 /// Generates an API contract TypeScript type definition file,
 /// in web/lib/Restd.d.ts
 use vinoteca::logs::{LogForm, LogResponse};
@@ -5,6 +6,7 @@ use vinoteca::models::*;
 use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
 };
+use vinoteca::users::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
@@ -27,15 +29,45 @@ fn write_interface(
     writeln!(writer, "{}", &ts_def[..ts_def.len() - 1])
 }
 
-fn write_version(writer: &mut BufWriter<&File>) -> Result<(), io::Error> {
+fn write_const(writer: &mut BufWriter<&File>, name: &str, value: &str) -> io::Result<()> {
+    writeln!(writer, "export const {} = \"{}\";", name, value)
+}
+
+fn write_version(writer: &mut BufWriter<&File>) -> io::Result<()> {
     let version = env!("CARGO_PKG_VERSION");
-    writeln!(writer, "export const VERSION = \"{}\";", version)
+    write_const(writer, "VERSION", version)
+}
+
+fn write_log_level(writer: &mut BufWriter<&File>) -> io::Result<()> {
+    let mut log_level = option_env!("ROCKET_LOG").unwrap_or("info");
+    // What rocket calls critical, actually includes warnings
+    if log_level == "critical" {
+        log_level = "warning";
+    }
+    write_const(writer, "LOG_LEVEL", log_level)
+}
+
+fn write_sha(writer: &mut BufWriter<&File>) -> Result<(), Box<dyn error::Error>> {
+    let output = std::process::Command::new("git")
+        .args(&["rev-parse", "HEAD"])
+        .output()?;
+    let sha = String::from_utf8(output.stdout)?;
+    Ok(write_const(writer, "GIT_SHA", sha.trim())?)
+}
+
+fn write_contracts() -> Result<(), Box<dyn error::Error>> {
+    let const_file =
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
+    let mut const_writer = BufWriter::new(&const_file);
+    write_version(&mut const_writer)?;
+    write_log_level(&mut const_writer)?;
+    write_sha(&mut const_writer)
 }
 
 fn main() -> Result<(), Box<dyn error::Error>> {
     // Truncate file if it already exists
     let type_def_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/Rest.d.ts"))?;
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/api/Rest.d.ts"))?;
     let mut type_def_writer = BufWriter::new(&type_def_file);
     // Main db models
     write_interface(&mut type_def_writer, Color::type_script_ify())?;
@@ -50,6 +82,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, RegionForm::type_script_ify())?;
     write_interface(&mut type_def_writer, Store::type_script_ify())?;
     write_interface(&mut type_def_writer, StoreForm::type_script_ify())?;
+    write_interface(&mut type_def_writer, User::type_script_ify())?;
+    write_interface(&mut type_def_writer, UserForm::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiArea::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiAreaForm::type_script_ify())?;
     write_interface(&mut type_def_writer, Wine::type_script_ify())?;
@@ -65,10 +99,15 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         "{}",
         AssociatedGrape::type_script_ify()
     )?;
+    // Write normally because it's a discriminated union
+    writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
     // Other models
+    write_interface(&mut type_def_writer, ChangePasswordForm::type_script_ify())?;
+    write_interface(&mut type_def_writer, ChangeUserForm::type_script_ify())?;
     write_interface(&mut type_def_writer, InventoryWine::type_script_ify())?;
     write_interface(&mut type_def_writer, LogForm::type_script_ify())?;
     write_interface(&mut type_def_writer, LogResponse::type_script_ify())?;
+    write_interface(&mut type_def_writer, LoginForm::type_script_ify())?;
     write_interface(
         &mut type_def_writer,
         MostCommonPurchaseDate::type_script_ify(),
@@ -83,10 +122,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, WineGrapesForm::type_script_ify())?;
     write_interface(&mut type_def_writer, YearsPurchases::type_script_ify())?;
 
-    let const_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
-    let mut const_writer = BufWriter::new(&const_file);
-    write_version(&mut const_writer)?;
+    write_contracts()?;
 
     Ok(())
 }

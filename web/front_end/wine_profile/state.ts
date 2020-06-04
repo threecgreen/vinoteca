@@ -1,9 +1,8 @@
 import React from "react";
-import { IPurchase, IWine, IWineGrape } from "../../lib/Rest";
+import { IPurchase, IWine, IWineGrape } from "../../lib/api/Rest";
 
 export interface IState {
     mode: Mode;
-    hasImage: boolean;
     grapes: IWineGrape[];
     wine?: IWine;
     purchases: IPurchase[];
@@ -22,7 +21,6 @@ export type Mode =
 
 export const initState = (): IState => ({
     mode: {type: "display"},
-    hasImage: false,
     grapes: [],
     wine: undefined,
     purchases: [],
@@ -30,7 +28,6 @@ export const initState = (): IState => ({
 
 export type Action =
     | {type: "setMode", mode: Mode}
-    | {type: "setHasImage", hasImage: boolean}
     | {type: "setGrapes", grapes: IWineGrape[]}
     | {type: "setWine", wine: IWine}
     | {type: "setPurchases", purchases: IPurchase[]};
@@ -39,8 +36,6 @@ export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
     switch (action.type) {
         case "setMode":
             return {...state, mode: action.mode};
-        case "setHasImage":
-            return {...state, hasImage: action.hasImage};
         case "setGrapes":
             return {...state, grapes: action.grapes};
         case "setWine":

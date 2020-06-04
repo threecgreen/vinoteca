@@ -1,6 +1,6 @@
 pub mod create;
 pub mod delete;
-mod image;
+pub mod image;
 mod middleware;
 pub mod models;
 pub mod read;

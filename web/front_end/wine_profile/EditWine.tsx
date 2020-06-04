@@ -2,43 +2,36 @@ import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
 import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
-import { IWine, IWineGrape } from "../../lib/Rest";
+import { grapeReducer, GrapesInputs } from "../../components/model_inputs/GrapesInputs";
+import { IWine, IWineGrape } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
-import { grapeReducer, GrapesInputs } from "../../components/GrapesInputs";
-import { PreloaderCirc } from "../../components/Preloader";
 
 interface IProps {
     wine: IWine;
     grapes: IWineGrape[];
-    hasImage: boolean;
-    onSubmit: (wine: IWineData, grapes: IWineGrape[]) => void;
+    onSubmit: (wine: IWineData, grapes: IWineGrape[]) => Promise<void>;
     onCancel: () => void;
 }
 
-export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, onCancel}) => {
+export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) => {
     const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,
         name: wine.name ?? "",
         description: wine.description ?? "",
         rating: wine.rating ?? 5,
         isRatingEnabled: wine.rating !== null,
-        file: hasImage ? new File([], `${wine.id}.png`) : null,
+        file: wine.image ? new File([], wine.image) : null,
         notes: wine.notes ?? "",
         vitiArea: wine.vitiArea ?? "",
         why: wine.why ?? "",
     });
     const [mutableGrapes, grapesDispatch] = React.useReducer(grapeReducer, grapes);
 
-    const checkFileAndSubmit = () => {
-        if (mutableWine.file && mutableWine.file.name === `${wine.id}.png`) {
-            // Don't submit mock file
-            onSubmit({...mutableWine, file: null}, mutableGrapes);
-        }
-        onSubmit(mutableWine, mutableGrapes);
-    }
+    const [isSaving, setIsSaving] = React.useState(false);
 
     return (
-        <Modal>
+        <Modal onClose={ onCancel }>
             <ModalContent>
                 <Row>
                     <h4>Edit wine</h4>
@@ -52,8 +45,10 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, hasImage, onSubmit, on
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ checkFileAndSubmit }
+                    onConfirmClick={ handleSubmit(() => onSubmit(mutableWine, mutableGrapes), setIsSaving) }
                     onCancelClick={ onCancel }
+                    isSaving={ isSaving }
+                    confirmDisabled={ !wine.producer || !wine.region || !wine.wineType }
                 />
             </ModalFooter>
         </Modal>

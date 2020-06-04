@@ -41,33 +41,36 @@ module.exports = (env, argv) => {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: !isProd,
+                                includePaths: [__dirname + "node_modules/materialize-css"]
                             }
                         },
                     ],
                 },
                 // Don't load moment.js because we don't use the date functionality
                 {
-                    test: __dirname + '/node_modules/moment/moment.js',
-                    use: 'null-loader',
+                    test: __dirname + "/node_modules/moment/moment.js",
+                    use: "null-loader",
                 },
             ],
         },
         optimization: {
             splitChunks: {
-                cacheGroups: {
-                    vendors: {
-                        name: "vendors",
-                        test: /[\\/]node_modules[\\/]/,
-                        chunks: "initial",
-                    },
-                },
+                chunks: "all",
+                minChunks: 2,
+        //         cacheGroups: {
+        //             vendors: {
+        //                 name: "vendors",
+        //                 test: /[\\/]node_modules[\\/]/,
+        //                 chunks: "initial",
+        //             },
+        //         },
             },
-        },
-        performance: {
-            hints: false
         },
         output: {
             filename: "[name].bundle.js",
+            // How dynamic chunks will be named
+            chunkFilename: "[name].bundle.js",
+            publicPath: "/static/",
             path: outputPath,
         },
         plugins: [

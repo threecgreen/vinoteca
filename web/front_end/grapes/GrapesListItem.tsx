@@ -2,7 +2,7 @@ import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { NumCell, TextCell } from "../../components/TableCells";
-import { IGrape } from "../../lib/Rest";
+import { IGrape } from "../../lib/api/Rest";
 
 interface IProps {
     grape: IGrape;

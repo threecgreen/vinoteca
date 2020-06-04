@@ -16,7 +16,7 @@ interface IProps {
 export const WineHeader: React.FC<IProps> = (props) => {
     return (
         <Row>
-            <Col s={ 12 }>
+            <Col s={ 12 } key="wineHeader">
                 <NameType { ...props } />
                 <h4>
                     <Link to={ `/producers/${props.producerId}` }

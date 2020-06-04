@@ -1,10 +1,12 @@
+import { Link } from "@reach/router";
 import React from "react";
 import { CancelOrConfirmBtns } from "../../components/Buttons";
+import { Form } from "../../components/Form";
 import { Col, Row } from "../../components/Grid";
-import { ProducerInput } from "../../components/ProducerInput";
-import { RegionInput } from "../../components/RegionInput";
-import { IProducer, IRegion } from "../../lib/Rest";
-import { Link } from "@reach/router";
+import { ProducerInput } from "../../components/model_inputs/ProducerInput";
+import { RegionInput } from "../../components/model_inputs/RegionInput";
+import { IProducer, IRegion } from "../../lib/api/Rest";
+import { handleSubmit } from "../../lib/utils";
 
 interface IProducerProps {
     isEditing: boolean;
@@ -14,74 +16,57 @@ interface IProducerProps {
     regionText: string;
     region?: IRegion
     onRegionChange: (text: string) => void;
-    onConfirmClick: () => void;
+    onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
 }
 
-export class Producer extends React.Component<IProducerProps> {
-    constructor(props: IProducerProps) {
-        super(props);
-        this.state = {
-            isEditing: false,
-        };
-        this.onRegionTextChange = this.onRegionTextChange.bind(this);
-    }
+export const Producer: React.FC<IProducerProps> = (props) => {
+    const [isSaving, setIsSaving] = React.useState(false);
 
-    public render() {
-        const content = this.props.isEditing ? this.renderEdit() : this.renderView();
+    if (props.isEditing) {
         return (
             <Row>
-                { content }
+                <Col s={ 12 }>
+                    <h3 className="bold">{ `Edit Producer ${props.producer.name}` }</h3>
+                    <Form onSubmit={ () => props.producerText && props.regionText && props.onConfirmClick() }>
+                        <ProducerInput value={ props.producerText }
+                            onChange={ props.onProducerChange }
+                            required={ true }
+                        />
+                        <RegionInput value={ props.regionText }
+                            onChange={ props.onRegionChange }
+                            required={ true }
+                        />
+                    </Form>
+                </Col>
+                <CancelOrConfirmBtns
+                    onConfirmClick={ handleSubmit(props.onConfirmClick, setIsSaving) }
+                    onCancelClick={ props.onCancelClick }
+                    isSaving={ isSaving }
+                    confirmDisabled={ !props.producerText || !props.regionText }
+                />
             </Row>
         );
     }
-
-    private renderView(): JSX.Element {
-        let regionInfo: JSX.Element | null;
-        if (this.props.region) {
-            regionInfo = (
-                <h4 className="light">
-                    <Link to={ `/regions/${this.props.region.id}/` }
-                         className="text-link"
-                    >
-                        { this.props.region.name }
-                    </Link>
-                </h4>
-            );
-        } else {
-            regionInfo = null;
-        }
-        return (
-            <Col s={ 12 }>
-                <h3 className="bold">{ this.props.producer.name }</h3>
-                { regionInfo }
-            </Col>
+    let regionInfo;
+    if (props.region) {
+        regionInfo = (
+            <h4 className="light">
+                <Link to={ `/regions/${props.region.id}/` }
+                        className="text-link"
+                >
+                    { props.region.name }
+                </Link>
+            </h4>
         );
     }
-
-    private renderEdit(): JSX.Element {
-        return (
-            <React.Fragment>
-                <Col s={ 12 }>
-                    <h3 className="bold">{ `Edit Producer ${this.props.producer.name}` }</h3>
-                    <form autoComplete="off">
-                        <ProducerInput value={ this.props.producerText }
-                            onChange={ this.props.onProducerChange }
-                        />
-                        <RegionInput value={ this.props.regionText }
-                            onChange={ this.onRegionTextChange }
-                        />
-                    </form>
-                </Col>
-                <CancelOrConfirmBtns
-                    onConfirmClick={ this.props.onConfirmClick }
-                    onCancelClick={ this.props.onCancelClick }
-                />
-            </React.Fragment>
-        )
-    }
-
-    private onRegionTextChange(val: string) {
-        this.props.onRegionChange(val);
-    }
+    return (
+        <Row>
+            <Col s={ 12 }>
+                <h3 className="bold">{ props.producer.name }</h3>
+                { regionInfo }
+        </Col>
+        </Row>
+    );
 }
+Producer.displayName = "Producer";

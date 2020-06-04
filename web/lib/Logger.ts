@@ -1,4 +1,6 @@
-import { postLog } from "./RestApi";
+import React from "react";
+import { postLog } from "./api/logs";
+import { GIT_SHA, LOG_LEVEL, VERSION } from "./constants";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
 
@@ -18,9 +20,13 @@ interface ILogResult {
 type LogTags = IDict<string | number | Date | object | undefined | null>;
 
 export default class Logger {
+    private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning,
+                                       LogLevel.Error, LogLevel.Critical];
+
+    private static logLevelOrder: number = Logger.logLevelOrdering.indexOf(LOG_LEVEL as LogLevel);
+
     /**
-     * Logging class for client-side errors that will be posted to the server
-     * for logging to the same file as all other vinoteca logs.
+     * Logging class for client-side errors that will be posted to the server.
      *
      * @param module the name of the module from which the log messages originate.
      * @param toConsole whether to also print messages to the console
@@ -29,31 +35,18 @@ export default class Logger {
     constructor(private module: string, private toConsole = false, private shouldToast = true) {
     }
 
-    /**
-     * Meant for irrecoverable or truly exceptional errors. A toast with the
-     * log message will be displayed and the log will be sent back to the server
-     * for posterity.
-     */
     public logCritical(message: string, tags: LogTags = {}) {
         const level = LogLevel.Critical;
         this.toast(level, message);
         return this.log(level, message, tags);
     }
 
-    /**
-     * A toast with the log message will be displayed and the log will be sent
-     * back to the server for posterity.
-     */
     public logError(message: string, tags: LogTags = {}) {
         const level = LogLevel.Error;
         this.toast(level, message);
         return this.log(level, message, tags);
     }
 
-    /**
-     * A toast with the log message will be displayed and the log will be sent
-     * back to the server for posterity.
-     */
     public logWarning(message: string, tags: LogTags = {}) {
         const level = LogLevel.Warning;
         this.toast(level, message);
@@ -72,24 +65,24 @@ export default class Logger {
         if (this.toConsole) {
             console.log(`${level.toUpperCase()} ${new Date()} ${this.module}: ${message}`);
         }
-        const strTags: IDict<string> = {};
-        Object.entries(tags).forEach(([k, v]) => {
-            strTags[k] = v instanceof Object ? JSON.stringify(v) : v ?.toString() ?? "";
-        });
-        try {
-            const response: ILogResult = await postLog({
-                level,
-                // @ts-ignore
-                message: message instanceof Object ? "" : message,
-                module: this.module,
-                url: window.location.pathname,
-                tags: strTags,
-            });
-            if (!response.success) {
-                this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+        if (Logger.logLevelOrdering.indexOf(level) >= Logger.logLevelOrder) {
+            tags.fullVersion = `${VERSION}-${GIT_SHA}`;
+            try {
+                const response: ILogResult = await postLog({
+                    level,
+                    // @ts-ignore
+                    message: message instanceof Object ? "" : message,
+                    module: this.module,
+                    url: window.location.pathname,
+                    tags,
+                });
+                if (!response.success) {
+                    this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
+                }
+            } catch (e) {
+                this.toast(LogLevel.Error,
+                           `Failed to send client-side logs to server: ${e.message}`);
             }
-        } catch (e) {
-            this.toast(LogLevel.Error, `Failed to send client-side logs to server: ${e.message}`);
         }
     }
 
@@ -99,3 +92,15 @@ export default class Logger {
         }
     }
 }
+
+/**
+ * Logging hook for posting client-side logs to the server.
+ *
+ * @param module the name of the module from which the log messages originate.
+ * @param toConsole whether to also print messages to the console
+ * @param shouldToast whether to display a toast message
+ */
+export const useLogger = (module: string, toConsole = false, shouldToast = false) => {
+    const [logger, _] = React.useState(new Logger(module, toConsole, shouldToast));
+    return logger;
+};

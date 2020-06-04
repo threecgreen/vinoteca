@@ -1,12 +1,12 @@
 /* Color variables */
-$black: rgba(0,0,0,0.87)
-$pink: rgb(233, 30, 99)
+$white: rgb(240, 240, 240)
+$black: rgba(0, 0, 0, 0.87)
 $wine-red: rgb(135, 14, 79)
 $wine-green: rgb(139, 195, 74)
 $golden-yellow: rgb(251, 192, 45)
 $light-gray: rgb(200, 200, 200)
 
-/** Colored background classes */
+/* Colored background classes */
 .green-bg
   background-color: $wine-green
 .green-bg:focus
@@ -16,13 +16,13 @@ $light-gray: rgb(200, 200, 200)
 .green-bg:hover
   background-color: lighten($wine-green, 10)
 .yellow-bg
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:focus
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:visited
-  background-color: $golden-yellow
+  background-color: $golden-yellow !important
 .yellow-bg:hover
-  background-color: lighten($golden-yellow, 10)
+  background-color: lighten($golden-yellow, 10) !important
 .red-bg
   background-color: lighten($wine-red, 5) !important
 .red-bg:focus
@@ -32,15 +32,21 @@ $light-gray: rgb(200, 200, 200)
 .red-bg:hover
   background-color: lighten($wine-red, 15)
 .light-gray-bg
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:focus
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:visited
-  background-color: $light-gray
+  background-color: $light-gray !important
 .light-gray-bg:hover
-  background-color: lighten($light-gray, 7)
+  background-color: lighten($light-gray, 7) !important
 
-body
+@import "~materialize-css/sass/components/_color-variables.scss"
+$primary-color: $wine-red !default
+$secondary-color: $wine-green !default
+@import "~materialize-css/sass/materialize.scss"
+
+// Sticky footer
+#site-content
   display: flex
   min-height: 100vh
   flex-direction: column
@@ -126,16 +132,6 @@ td
 
 table.highlight tbody tr:hover
   background-color: rgba(245, 245, 245, 0.5)
-
-/* rows hidden by filtering (needed for child rows) */
-.tablesorter .filtered
-  display: none
-
-/* ajax error row */
-.tablesorter .tablesorter-errorRow td
-  text-align: center
-  cursor: pointer
-  background-color: #e6bf99
 
 ul.bullets
   padding-left: 30px
@@ -248,6 +244,7 @@ img
   @extend .light-gray-bg
   margin-left: 4px
   margin-right: 4px
+  margin-top: 4px
 .shift-btn
   margin-left: 4px
   margin-right: 4px
@@ -272,7 +269,8 @@ img
     margin-bottom: 0
 
 .grape-block
-  padding: 0 !important
+  .no-padding
+    padding: 0 !important
 
 /** Change toggle switch color */
 .switch label input[type=checkbox]:checked+.lever
@@ -310,9 +308,9 @@ th
 #wine-image div img
   width: unset
 .card-image
-  height: 35rem
+  max-height: 35rem
 .card-image img
-  max-height: 100%
+  max-height: inherit
   max-width: 100%
 
 // Adjacent floating action button margins
@@ -333,3 +331,74 @@ td.inventory-plus-minus
 .hor-margin
   margin-left: 20px
   margin-right: 20px
+
+// Scrollable tables
+.table-wrapper
+  width: 100%
+  overflow-x: auto
+  table-layout: fixed
+  margin-bottom: 30px
+
+.table-wrapper td, th
+  white-space: nowrap
+
+.overlap
+  margin-left: -50px
+
+.flex
+  display: flex
+  align-items: baseline
+
+.flex-grow
+  flex-grow: 1
+
+// Special chars
+aside.special-char-picker
+  @extend .z-depth-1
+  background: $white
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  height: 250px
+  width: 280px
+  position: relative
+  align-content: center
+  padding: 15px
+
+form
+  margin-bottom: 20px
+
+// Fix range field forcing notes out of place in new wines form
+p.range-field
+  margin-bottom: 0px
+
+.canvas-container
+  position: relative
+
+p.error-msg
+  margin-bottom: 2rem
+  color: red
+
+// Helper text doesn't ruin alignment
+.input-field .helper-text
+  min-height: 0
+
+// Preloader spinner
+.spinner-wine-red
+  border-color: $wine-red
+.spinner-golden-yellow
+  border-color: $golden-yellow
+.preloader-wrapper
+  &.tiny
+    width: 24px
+    height: 24px
+
+// Fix horizontal spacing around select on mobile wines table especially
+td
+  div.input-field.col
+    padding: 0
+
+// Confirm spinner
+div.confirm
+  vertical-align: middle
+  margin: 5px

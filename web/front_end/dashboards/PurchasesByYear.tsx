@@ -1,12 +1,12 @@
 import React from "react";
 import { GreenCard, RedCard } from "../../components/Cards";
-import Logger from "../../lib/Logger";
-import { get } from "../../lib/ApiHelper";
-import { PreloaderCirc } from "../../components/Preloader";
 import { LineChart } from "../../components/Chart";
-import { IYearsPurchases } from "../../lib/Rest";
-import { Table } from "../../components/Table";
-import { YearCell, NumCell, PriceCell } from "../../components/TableCells";
+import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
+import { SimpleTable } from "../../components/Table";
+import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
+import { getPurchasesByYear } from "../../lib/api/purchases";
+import { IYearsPurchases } from "../../lib/api/Rest";
+import Logger, { useLogger } from "../../lib/Logger";
 
 const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
@@ -14,7 +14,7 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     React.useEffect(() => {
         async function fetchYearsPurchases() {
             try {
-                const yearsPurchases = await get<IYearsPurchases[]>("/rest/purchases/by-year");
+                const yearsPurchases = await getPurchasesByYear();
                 setYearsPurchases(yearsPurchases);
             } catch (e) {
                 logger.logError(`Error fetching purchases by year: ${e.message}`);
@@ -30,12 +30,12 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
 }
 
 export const PurchasesByYearGraph: React.FC<{}> = (_) => {
-    const logger = new Logger("PurchasesByYearGraph");
+    const logger = useLogger("PurchasesByYearGraph");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 
     let content;
     if (!hasLoaded) {
-        content = <PreloaderCirc />;
+        content = <PreloaderCirc color={ SpinnerColor.WineRed } />;
     } else if (yearsPurchases.length > 1) {
         content = (
             <LineChart data={[
@@ -58,7 +58,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
 PurchasesByYearGraph.displayName = "PurchasesByYearGraph";
 
 export const PurchasesByYearTable: React.FC<{}> = (_) => {
-    const logger = new Logger("PurchasesByYearTable");
+    const logger = useLogger("PurchasesByYearTable");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 
     let content;
@@ -66,7 +66,7 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
         content = <PreloaderCirc />;
     } else if (yearsPurchases.length > 0) {
         content = (
-            <Table columns={["Year",
+            <SimpleTable columns={["Year",
                              {name: "Bottles", isNumCol: true},
                              {name: "Total Spent", isNumCol: true},
                              {name: "Avg Price", isNumCol: true} ]}
@@ -79,7 +79,7 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
                         <PriceCell price={ year.avgPrice } />
                     </tr>
                 )}
-            </Table>
+            </SimpleTable>
         );
     } else {
         content = <h6 className="bold">No purchases</h6>;

@@ -1,8 +1,9 @@
 import React from "react";
-import { IWine } from "../lib/Rest";
+import { IWine } from "../lib/api/Rest";
+import { getNameAndType } from "../lib/utils";
+import { Table } from "./Table";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell, YearCell } from "./TableCells";
 import { FilterHeader, SelectFilterHeader, SortingState, TableHeader } from "./TableHeader";
-import { getNameAndType } from "../lib/utils";
 
 export enum WinesTableColumn {
     Inventory,
@@ -103,7 +104,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             ) : null;
         const exCol = this.props.excludeColumn;
         return (
-            <table className="responsive highlight condensed">
+            <Table condensed>
                 <thead>
                     <tr key="headers">
                         <TableHeader {...this.tableHeaderProps(WinesTableColumn.Inventory)} isNumCol >
@@ -164,7 +165,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </Table>
         );
     }
 

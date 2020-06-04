@@ -1,11 +1,10 @@
-import { RouteComponentProps } from "@reach/router";
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Row } from "../../components/Grid";
+import { IWine } from "../../lib/api/Rest";
+import { searchWines } from "../../lib/api/wines";
 import Logger from "../../lib/Logger";
-import { IWine } from "../../lib/Rest";
-import { searchWines } from "../../lib/RestApi";
-import { setTitle, navbar } from "../../lib/widgets";
+import { setTitle } from "../../lib/widgets";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
 
@@ -35,7 +34,7 @@ interface ISearchWinesAppState {
     lastActiveTextInput?: SearchWinesTextInput;
 }
 
-export class SearchWinesApp extends React.Component<RouteComponentProps, ISearchWinesAppState> {
+export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     private static defaultState: Readonly<ISearchWinesAppState> = {
             colorSelection: "",
             wineTypeText: "",
@@ -84,7 +83,6 @@ export class SearchWinesApp extends React.Component<RouteComponentProps, ISearch
 
     public componentDidMount() {
         setTitle("Search wines");
-        navbar("new-wine");
     }
 
     private onInputChange(input: SearchWinesInput, val: string) {

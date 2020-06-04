@@ -1,6 +1,7 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
+use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
@@ -10,13 +11,19 @@ use std::collections::HashSet;
 use typescript_definitions::TypeScriptify;
 use validator::{Validate, ValidationError};
 
+// TODO: consolidate with wines
+
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub fn get(
+    auth: Auth,
     wine_id: Option<i32>,
     grape_id: Option<i32>,
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
-    let mut query = wine_grapes::table.inner_join(grapes::table).into_boxed();
+    let mut query = wine_grapes::table
+        .inner_join(grapes::table)
+        .filter(grapes::user_id.eq(auth.id))
+        .into_boxed();
     if let Some(wine_id) = wine_id {
         query = query.filter(wine_grapes::wine_id.eq(wine_id));
     }
@@ -25,7 +32,6 @@ pub fn get(
     }
     query
         .select((
-            wine_grapes::id,
             wine_grapes::percent,
             wine_grapes::grape_id,
             grapes::name,
@@ -93,15 +99,17 @@ fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
 
 #[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
 pub fn post(
+    auth: Auth,
     wine_grape_form: Json<WineGrapesForm>,
     connection: DbConn,
 ) -> RestResult<Vec<WineGrape>> {
     let wine_grape_form = wine_grape_form.into_inner();
     wine_grape_form.validate()?;
+    validate_user_owns_grapes(auth.id, &wine_grape_form.grapes, &connection)?;
+
     let wine_id = wine_grape_form.wine_id;
     let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
 
-    connection.set_timeout(1_000)?;
     // Delete existing wine grapes
     let delete_result = diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
         .execute(&*connection);
@@ -117,112 +125,141 @@ pub fn post(
             .values(&wine_grapes)
             .execute(&*connection)?;
     }
-    get(Some(wine_id), None, connection)
+    get(auth, Some(wine_id), None, connection)
+}
+
+fn validate_user_owns_grapes(
+    user_id: i32,
+    wine_grapes: &[AssociatedGrape],
+    connection: &DbConn,
+) -> Result<(), VinotecaError> {
+    let valid_grape_count = grapes::table
+        .filter(grapes::user_id.eq(user_id))
+        .filter(
+            grapes::id.eq_any(
+                wine_grapes
+                    .iter()
+                    .map(|wg| wg.grape_id)
+                    .collect::<Vec<i32>>(),
+            ),
+        )
+        .count()
+        .get_result::<i64>(&**connection)?;
+    if valid_grape_count as usize == wine_grapes.len() {
+        Ok(())
+    } else {
+        Err(VinotecaError::BadRequest(
+            "One or more of the grapes are invalid".to_owned(),
+        ))
+    }
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::testing::{create_test_db, create_test_rocket};
 
     #[test]
     fn post_many() {
-        let connection = create_test_db();
-        let form = WineGrapesForm {
-            wine_id: 1,
-            grapes: vec![
-                AssociatedGrape {
-                    grape_id: 1,
-                    percent: Some(50),
-                },
-                AssociatedGrape {
-                    grape_id: 2,
-                    percent: Some(25),
-                },
-                AssociatedGrape {
-                    grape_id: 3,
-                    percent: Some(5),
-                },
-                AssociatedGrape {
-                    grape_id: 4,
-                    percent: Some(5),
-                },
-                AssociatedGrape {
-                    grape_id: 5,
-                    percent: Some(5),
-                },
-                AssociatedGrape {
-                    grape_id: 6,
-                    percent: Some(5),
-                },
-            ],
-        };
-        let response = post(Json(form), connection);
-        assert!(response.is_ok());
-        let wine_grapes = response.unwrap();
-        assert_eq!(wine_grapes.len(), 6);
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 1,
+                grapes: vec![
+                    AssociatedGrape {
+                        grape_id: 1,
+                        percent: Some(50),
+                    },
+                    AssociatedGrape {
+                        grape_id: 2,
+                        percent: Some(25),
+                    },
+                    AssociatedGrape {
+                        grape_id: 3,
+                        percent: Some(5),
+                    },
+                    AssociatedGrape {
+                        grape_id: 4,
+                        percent: Some(5),
+                    },
+                    AssociatedGrape {
+                        grape_id: 5,
+                        percent: Some(5),
+                    },
+                    AssociatedGrape {
+                        grape_id: 6,
+                        percent: Some(5),
+                    },
+                ],
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(response.is_ok());
+            let wine_grapes = response.unwrap();
+            assert_eq!(wine_grapes.len(), 6);
+        })
     }
 
     #[test]
     fn post_high_percent() {
-        let connection = create_test_db();
-        let form = WineGrapesForm {
-            wine_id: 2,
-            grapes: vec![
-                AssociatedGrape {
-                    grape_id: 2,
-                    percent: Some(40),
-                },
-                AssociatedGrape {
-                    grape_id: 3,
-                    percent: Some(76),
-                },
-            ],
-        };
-        let response = post(Json(form), connection);
-        assert!(
-            matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("maximum"))
-        );
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 2,
+                grapes: vec![
+                    AssociatedGrape {
+                        grape_id: 2,
+                        percent: Some(40),
+                    },
+                    AssociatedGrape {
+                        grape_id: 3,
+                        percent: Some(76),
+                    },
+                ],
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(
+                matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("maximum"))
+            );
+        })
     }
 
     #[test]
     fn post_negative_percent() {
-        let connection = create_test_db();
-        let form = WineGrapesForm {
-            wine_id: 3,
-            grapes: vec![AssociatedGrape {
-                grape_id: 2,
-                percent: Some(-3),
-            }],
-        };
-        let response = post(Json(form), connection);
-        assert!(matches!(response, Err(VinotecaError::BadRequest(_))));
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 3,
+                grapes: vec![AssociatedGrape {
+                    grape_id: 2,
+                    percent: Some(-3),
+                }],
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(matches!(response, Err(VinotecaError::BadRequest(_))));
+        })
     }
 
     #[test]
     fn post_duplicate() {
-        let connection = create_test_db();
-        let form = WineGrapesForm {
-            wine_id: 1,
-            grapes: vec![
-                AssociatedGrape {
-                    grape_id: 1,
-                    percent: None,
-                },
-                AssociatedGrape {
-                    grape_id: 2,
-                    percent: Some(5),
-                },
-                AssociatedGrape {
-                    grape_id: 1,
-                    percent: Some(75),
-                },
-            ],
-        };
-        let response = post(Json(form), connection);
-        assert!(
-            matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("Duplicate"))
-        );
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 1,
+                grapes: vec![
+                    AssociatedGrape {
+                        grape_id: 1,
+                        percent: None,
+                    },
+                    AssociatedGrape {
+                        grape_id: 2,
+                        percent: Some(5),
+                    },
+                    AssociatedGrape {
+                        grape_id: 1,
+                        percent: Some(75),
+                    },
+                ],
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(
+                matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("Duplicate"))
+            );
+        })
     }
 
     #[test]
@@ -251,43 +288,43 @@ mod test {
 
     #[test]
     fn post_empty_no_op() {
-        let connection = create_test_db();
-        let form = WineGrapesForm {
-            wine_id: 3,
-            grapes: Vec::new(),
-        };
-        let response = post(Json(form), connection);
-        assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 3,
+                grapes: Vec::new(),
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
+        })
     }
 
     #[test]
     fn post_empty_delete_existing() {
-        let rocket = create_test_rocket();
-        // Create initial wine grapes
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let form = WineGrapesForm {
-            wine_id: 4,
-            grapes: vec![
-                AssociatedGrape {
-                    grape_id: 1,
-                    percent: Some(45),
-                },
-                AssociatedGrape {
-                    grape_id: 2,
-                    percent: Some(55),
-                },
-            ],
-        };
-        let response = post(Json(form), connection);
-        assert!(matches!(response, Ok(Json(wg)) if wg.len() == 2));
-        // Post empty wine grapes for same wine
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let form = WineGrapesForm {
-            wine_id: 4,
-            grapes: Vec::new(),
-        };
-        let response = post(Json(form), connection);
-        dbg!(&response);
-        assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
+        run_test!(|rocket, connection| {
+            let form = WineGrapesForm {
+                wine_id: 1,
+                grapes: vec![
+                    AssociatedGrape {
+                        grape_id: 1,
+                        percent: Some(45),
+                    },
+                    AssociatedGrape {
+                        grape_id: 2,
+                        percent: Some(55),
+                    },
+                ],
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            assert!(matches!(response, Ok(Json(wg)) if wg.len() == 2));
+            // Post empty wine grapes for same wine
+            let connection = DbConn::get_one(&rocket).expect("database connection");
+            let form = WineGrapesForm {
+                wine_id: 1,
+                grapes: Vec::new(),
+            };
+            let response = post(Auth { id: 1 }, Json(form), connection);
+            dbg!(&response);
+            assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
+        })
     }
 }

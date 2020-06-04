@@ -1,13 +1,14 @@
 use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
-use crate::schema::{colors, producers, purchases, regions, viti_areas, wine_types, wines};
+use crate::schema::{colors, producers, recent_purchases, regions, viti_areas, wine_types, wines};
+use crate::users::Auth;
 use crate::DbConn;
 
-use diesel::dsl::{count, sql};
+use diesel::dsl::count;
 use diesel::prelude::*;
 use diesel::sql_query;
-use diesel::sql_types::{Integer, Nullable};
+use diesel::sql_types::Integer;
 use rocket_contrib::json::Json;
 
 fn add_wildcards(query: &str) -> String {
@@ -18,6 +19,7 @@ fn add_wildcards(query: &str) -> String {
 #[allow(clippy::too_many_arguments)]
 #[get("/wines?<id>&<producer_id>&<region_id>&<viti_area_id>&<wine_type_id>&<color>&<wine_type>&<producer>&<region>&<viti_area>")]
 pub fn get(
+    auth: Auth,
     // Exact match parameters
     id: Option<i32>,
     producer_id: Option<i32>,
@@ -37,8 +39,9 @@ pub fn get(
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
         .inner_join(wine_types::table)
-        .left_join(purchases::table)
+        .left_join(recent_purchases::table)
         .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(id) = id {
         query = query.filter(wines::id.eq(id));
@@ -72,25 +75,6 @@ pub fn get(
     }
 
     query
-        .group_by((
-            wines::id,
-            wines::description,
-            wines::notes,
-            wines::rating,
-            wines::inventory,
-            wines::why,
-            wines::color_id,
-            colors::name,
-            wines::producer_id,
-            producers::name,
-            producers::region_id,
-            regions::name,
-            wines::viti_area_id,
-            viti_areas::name,
-            wines::name,
-            wines::wine_type_id,
-            wine_types::name,
-        ))
         .select((
             wines::id,
             wines::description,
@@ -109,7 +93,8 @@ pub fn get(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-            sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            recent_purchases::vintage.nullable(),
+            wines::image,
         ))
         .load::<Wine>(&*connection)
         .map(Json)
@@ -117,8 +102,10 @@ pub fn get(
 }
 
 #[get("/wines/inventory")]
-pub fn inventory(connection: DbConn) -> RestResult<Vec<InventoryWine>> {
+pub fn inventory(auth: Auth, connection: DbConn) -> RestResult<Vec<InventoryWine>> {
+    // TODO: move to diesel
     sql_query(include_str!("inventory.sql"))
+        .bind::<Integer, _>(auth.id)
         .load::<InventoryWine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
@@ -130,6 +117,7 @@ fn wrap_in_wildcards(filter_str: &str) -> String {
 
 #[get("/wines/search?<color_like>&<wine_type_like>&<producer_like>&<region_like>&<viti_area_like>")]
 pub fn search(
+    auth: Auth,
     color_like: Option<String>,
     wine_type_like: Option<String>,
     producer_like: Option<String>,
@@ -141,8 +129,9 @@ pub fn search(
         .inner_join(producers::table.inner_join(regions::table))
         .inner_join(colors::table)
         .inner_join(wine_types::table)
-        .left_join(purchases::table)
+        .left_join(recent_purchases::table)
         .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(color_like) = color_like {
         query = query.filter(colors::name.like(wrap_in_wildcards(&color_like)));
@@ -160,25 +149,6 @@ pub fn search(
         query = query.filter(viti_areas::name.like(wrap_in_wildcards(&viti_area_like)));
     }
     query
-        .group_by((
-            wines::id,
-            wines::description,
-            wines::notes,
-            wines::rating,
-            wines::inventory,
-            wines::why,
-            wines::color_id,
-            colors::name,
-            wines::producer_id,
-            producers::name,
-            producers::region_id,
-            regions::name,
-            wines::viti_area_id,
-            viti_areas::name,
-            wines::name,
-            wines::wine_type_id,
-            wine_types::name,
-        ))
         .select((
             wines::id,
             wines::description,
@@ -197,7 +167,8 @@ pub fn search(
             wines::name,
             wines::wine_type_id,
             wine_types::name,
-            sql::<Nullable<Integer>>("max(purchases.vintage)"),
+            recent_purchases::vintage.nullable(),
+            wines::image,
         ))
         .load::<Wine>(&*connection)
         .map(Json)
@@ -205,8 +176,11 @@ pub fn search(
 }
 
 #[get("/wines/count")]
-pub fn varieties(connection: DbConn) -> Json<WineCount> {
-    let res = wines::table.select(count(wines::id)).first(&*connection);
+pub fn varieties(auth: Auth, connection: DbConn) -> Json<WineCount> {
+    let res = wines::table
+        .filter(wines::user_id.eq(auth.id))
+        .select(count(wines::id))
+        .first(&*connection);
     let total_liters = WineCount {
         count: res.unwrap_or(0),
     };
@@ -219,38 +193,40 @@ mod test {
     use super::super::post;
     use super::*;
     use crate::models::WineForm;
-    use crate::testing::create_test_rocket;
     use crate::DbConn;
     use rocket::State;
 
+    #[ignore]
     #[test]
     fn wine_without_purchases_appears_in_inventory() {
-        let rocket = create_test_rocket();
-        let media_dir = State::from(&rocket).unwrap();
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let form = RawWineForm {
-            image: None,
-            wine_form: WineForm {
-                description: None,
-                notes: None,
-                rating: Some(5),
-                inventory: 2,
-                why: None,
-                color_id: 1,
-                producer_id: 1,
-                viti_area_id: None,
-                name: None,
-                wine_type_id: 1,
-            },
-        };
-        let wine_response = post(form, connection, media_dir);
-        assert!(wine_response.is_ok());
-        let wine_id = wine_response.unwrap().id;
+        run_test!(|rocket, connection| {
+            let auth = Auth { id: 1 };
+            // TODO: mock out
+            let media_dir = State::from(&rocket).unwrap();
+            let form = RawWineForm {
+                image: None,
+                wine_form: WineForm {
+                    description: None,
+                    notes: None,
+                    rating: Some(5),
+                    inventory: 2,
+                    why: None,
+                    color_id: 1,
+                    producer_id: 1,
+                    viti_area_id: None,
+                    name: None,
+                    wine_type_id: 1,
+                },
+            };
+            let wine_response = post(auth, form, connection, media_dir);
+            assert!(wine_response.is_ok());
+            let wine_id = wine_response.unwrap().id;
 
-        let connection = DbConn::get_one(&rocket).expect("database connection");
-        let inventory_response = inventory(connection);
-        assert!(inventory_response.is_ok());
-        let inventory = inventory_response.unwrap().into_inner();
-        assert!(inventory.iter().any(|w| w.id == wine_id));
+            let connection = DbConn::get_one(&rocket).expect("database connection");
+            let inventory_response = inventory(auth, connection);
+            assert!(inventory_response.is_ok());
+            let inventory = inventory_response.unwrap().into_inner();
+            assert!(inventory.iter().any(|w| w.id == wine_id));
+        })
     }
 }
