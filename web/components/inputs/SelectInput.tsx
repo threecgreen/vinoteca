@@ -1,5 +1,6 @@
 import React from "react";
 import { nameToId } from "../../lib/utils";
+import { MOBILE_CUTOFF } from "../constants";
 import { InputField } from "../Grid";
 import { IChildrenProp } from "../IProps";
 import { useViewport } from "../ViewportContext";
@@ -18,7 +19,7 @@ export const SelectInput: React.FC<IProps> = (props) => {
 
     const renderOption = (child: React.ReactElement<HTMLOptionElement>) => React.cloneElement(child, {key: child.props.value});
 
-    const Select = width > 600 ? MaterializeSelect : DefaultSelct;
+    const Select = width > MOBILE_CUTOFF ? MaterializeSelect : DefaultSelct;
     return (
         <InputField s={ props.s } m={ props.m } l={ props.l }
             classes={ ["col"] }

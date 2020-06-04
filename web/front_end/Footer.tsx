@@ -1,12 +1,14 @@
 import { Link } from "@reach/router";
 import React from "react";
+import { MOBILE_CUTOFF } from "../components/constants";
+import { useUser } from "../components/UserContext";
 import { useViewport } from "../components/ViewportContext";
 import { VERSION } from "../lib/constants";
-import { MOBILE_CUTOFF } from "../components/constants";
 
 export const Footer: React.FC<{}> = (_) => {
     const thisYear = new Date().getFullYear();
     const { width } = useViewport();
+    const user = useUser();
 
     return (
         <footer className="page-footer pink darken-4 footer-copyright">
@@ -31,14 +33,14 @@ export const Footer: React.FC<{}> = (_) => {
                             </li>
                             <li>
                                 <Link className="footer-link"
-                                    to="/about#help"
+                                    to="/about#bugs-and-suggestions"
                                 >
-                                    Help
+                                    Report a bug
                                 </Link>
                             </li>
                         </ul>
                     </div>
-                    <div className="col l6 s12">
+                    { user && <div className="col l6 s12">
                         <h5 className="white-text">List Views</h5>
                         <p className="grey-text text-lighten-4">
                             Simple views for more direct access to your data.
@@ -52,7 +54,7 @@ export const Footer: React.FC<{}> = (_) => {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
+                    </div> }
                 </div>
             </div>
             <div className="footer-copyright">
