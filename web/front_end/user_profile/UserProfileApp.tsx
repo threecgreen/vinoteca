@@ -50,7 +50,7 @@ const UserProfileApp: React.FC<{}> = (_) => {
         );
     } else if (mode == Mode.ChangePassword) {
         modal = (
-            <ChangePasswordForm onFinish={ () => (Mode.Display) } />
+            <ChangePasswordForm onFinish={ () => setMode(Mode.Display) } />
         );
     }
 

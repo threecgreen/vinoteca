@@ -38,8 +38,8 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                     default:
                         logger.logError(`Failed to login with ${ve.type} error: ${ve.message}`);
                 }
+                setIsSaving(false);
             })
-        setIsSaving(false);
     }
 
     const onKeyDown = (e: React.KeyboardEvent) => {
@@ -99,8 +99,8 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                     default:
                         logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
+                setIsSaving(false);
             });
-        setIsSaving(false);
     }
 
     return (
@@ -180,14 +180,14 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                     default:
                         logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
-            })
-        setIsSaving(false);
+                setIsSaving(false);
+            });
     };
 
-    const checkAndSubmit = async () => {
+    const checkAndSubmit = () => {
         if (state.oldPassword && state.newPassword && state.newPassword2) {
             if (state.newPassword === state.newPassword2) {
-                await onSubmit();
+                onSubmit();
             } else {
                 setErrorMsg("New passwords must match");
             }

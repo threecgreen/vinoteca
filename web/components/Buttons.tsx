@@ -86,7 +86,7 @@ export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
 BtnLink.displayName = "BtnLink";
 
 interface ICancelOrConfirmProps {
-    onConfirmClick: () => Promise<void>;
+    onConfirmClick: () => void;
     onCancelClick: () => void;
     confirmDisabled?: boolean;
     isSaving: boolean;
@@ -105,7 +105,7 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
             >
                 Confirm
                 { isSaving
-                    ? <PreloaderCirc size={ CircleSize.Tiny } />
+                    ? <PreloaderCirc size={ CircleSize.Tiny } className="confirm" />
                     : <MaterialIcon iconName="send" className="right" />
                 }
             </Btn>
