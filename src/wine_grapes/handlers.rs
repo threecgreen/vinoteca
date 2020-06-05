@@ -1,3 +1,5 @@
+use super::models::WineGrapesForm;
+use super::validation::validate_user_owns_grapes;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
@@ -6,12 +8,7 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use rocket_contrib::json::Json;
-use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
-use typescript_definitions::TypeScriptify;
-use validator::{Validate, ValidationError};
-
-// TODO: consolidate with wines
+use validator::Validate;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub fn get(
@@ -40,61 +37,6 @@ pub fn get(
         .load::<WineGrape>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
-}
-
-#[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct AssociatedGrape {
-    #[validate(range(min = 0, max = 100))]
-    pub percent: Option<i32>,
-    pub grape_id: i32,
-}
-
-#[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct WineGrapesForm {
-    pub wine_id: i32,
-    #[validate] // Nested validation
-    #[validate(custom = "validate_total_percentage")]
-    #[validate(custom = "validate_unique")]
-    pub grapes: Vec<AssociatedGrape>,
-}
-
-impl From<WineGrapesForm> for Vec<WineGrapeForm> {
-    fn from(wine_grapes_form: WineGrapesForm) -> Self {
-        wine_grapes_form
-            .grapes
-            .iter()
-            .map(|g| WineGrapeForm {
-                percent: g.percent,
-                grape_id: g.grape_id,
-                wine_id: wine_grapes_form.wine_id,
-            })
-            .collect()
-    }
-}
-
-fn validate_total_percentage(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
-    let total_percentage = grapes
-        .iter()
-        .fold(0, |sum, wg| sum + wg.percent.unwrap_or(0));
-    if total_percentage > 100 {
-        Err(ValidationError::new(
-            "Grape percentage exceeds maximum of 100 allowed",
-        ))
-    } else {
-        Ok(())
-    }
-}
-
-fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
-    let mut unique_grapes = HashSet::new();
-    for wg in grapes {
-        if !unique_grapes.insert(wg.grape_id) {
-            return Err(ValidationError::new("Duplicate grapes"));
-        }
-    }
-    Ok(())
 }
 
 #[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
@@ -126,32 +68,6 @@ pub fn post(
             .execute(&*connection)?;
     }
     get(auth, Some(wine_id), None, connection)
-}
-
-fn validate_user_owns_grapes(
-    user_id: i32,
-    wine_grapes: &[AssociatedGrape],
-    connection: &DbConn,
-) -> Result<(), VinotecaError> {
-    let valid_grape_count = grapes::table
-        .filter(grapes::user_id.eq(user_id))
-        .filter(
-            grapes::id.eq_any(
-                wine_grapes
-                    .iter()
-                    .map(|wg| wg.grape_id)
-                    .collect::<Vec<i32>>(),
-            ),
-        )
-        .count()
-        .get_result::<i64>(&**connection)?;
-    if valid_grape_count as usize == wine_grapes.len() {
-        Ok(())
-    } else {
-        Err(VinotecaError::BadRequest(
-            "One or more of the grapes are invalid".to_owned(),
-        ))
-    }
 }
 
 #[cfg(test)]
@@ -260,30 +176,6 @@ mod test {
                 matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("Duplicate"))
             );
         })
-    }
-
-    #[test]
-    fn total_percentage_some_and_none() {
-        let associated_grapes = vec![
-            AssociatedGrape {
-                grape_id: 1,
-                percent: Some(45),
-            },
-            AssociatedGrape {
-                grape_id: 2,
-                percent: None,
-            },
-            AssociatedGrape {
-                grape_id: 3,
-                percent: Some(56),
-            },
-            AssociatedGrape {
-                grape_id: 4,
-                percent: None,
-            },
-        ];
-        let result = validate_total_percentage(&associated_grapes);
-        assert!(result.is_err());
     }
 
     #[test]

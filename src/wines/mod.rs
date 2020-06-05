@@ -1,10 +1,10 @@
-pub mod create;
-pub mod delete;
+mod create;
+mod delete;
 pub mod image;
 mod middleware;
-pub mod models;
-pub mod read;
-pub mod update;
+mod models;
+mod read;
+mod update;
 
 pub use self::create::*;
 pub use self::delete::*;

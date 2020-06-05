@@ -1,6 +1,6 @@
-pub mod auth;
-pub mod handlers;
-pub mod models;
+mod auth;
+mod handlers;
+mod models;
 
 pub use auth::Auth;
 pub use handlers::*;

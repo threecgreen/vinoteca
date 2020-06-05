@@ -52,30 +52,3 @@ pub fn top(
         connection
     )
 }
-
-// #[post("/regions", format = "json", data = "<region_form>")]
-// pub fn post(region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
-//     let region_form = region_form.into_inner();
-//     region_form.validate()?;
-
-//     diesel::insert_into(regions::table)
-//         .values(&region_form)
-//         .execute(&*connection)
-//         .map_err(VinotecaError::from)
-//         .and_then(|_| {
-//             get(None, Some(region_form.name.to_owned()), None, connection)?
-//                 .into_first("Newly-created region")
-//         })
-// }
-
-// #[put("/regions/<id>", format = "json", data = "<region_form>")]
-// pub fn put(id: i32, region_form: Json<RegionForm>, connection: DbConn) -> RestResult<Region> {
-//     let region_form = region_form.into_inner();
-//     region_form.validate()?;
-
-//     diesel::update(regions::table.filter(regions::id.eq(id)))
-//         .set(regions::name.eq(region_form.name))
-//         .execute(&*connection)
-//         .map_err(VinotecaError::from)
-//         .and_then(|_| get(Some(id), None, None, connection)?.into_first("Edited region"))
-// }
