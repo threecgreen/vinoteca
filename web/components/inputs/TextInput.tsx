@@ -1,11 +1,26 @@
 import React from "react";
 import { Btn } from "../Buttons";
-import { Col } from "../Grid";
+import { Col, IGridProps } from "../Grid";
+import { IChildrenProp } from "../IProps";
 import { insertCharAt, SpecialCharPicker } from "../SpecialChars";
 import { Input } from "./Input";
-import { IChildrenProp } from "../IProps";
 
-interface ITextProps {
+interface IUseColProps extends IChildrenProp, IGridProps {
+    useCol: boolean;
+}
+
+const UseCol: React.FC<IUseColProps> = (props) => (
+    props.useCol
+    ? <Col s={ props.s } m={ props.m } l={ props.l } classes={ ["flex"] }>
+        { props.children }
+    </Col>
+    : <div className="flex">
+        { props.children }
+    </div>
+);
+UseCol.displayName = "UseCol";
+
+interface ITextProps extends IGridProps {
     name: string;
     value: string;
     enabled?: boolean;
@@ -13,9 +28,6 @@ interface ITextProps {
     onFocus?: () => void;
     onBlur?: () => void;
     className: string;
-    s?: number;
-    m?: number;
-    l?: number;
     inputRef?: React.MutableRefObject<HTMLInputElement>;
     required?: boolean;
     autocomplete?: string;
@@ -23,6 +35,8 @@ interface ITextProps {
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
+    const useCol = props.useCol ?? true;
+
     const [timeoutId, setTimeoutId] = React.useState<number>();
     const [isActive, setIsActive] = React.useState(false);
     const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -60,22 +74,12 @@ export const TextInput: React.FC<ITextProps> = (props) => {
         clearTimeout(timeoutId);
         setShowPicker(!showPicker);
     }
-    const useCol = props.useCol ?? true;
-    const UseCol = (p: IChildrenProp) => (
-        useCol
-        ? <Col s={ props.s } m={ props.m} l={ props.l } classes={ ["flex"] }>
-            { p.children }
-        </Col>
-        : <div className="flex">
-            { p.children }
-        </div>
-    );
 
     return (
         <div onFocus={ (_) => onFocus() }
             onBlur={ (_) => onBlur() }
         >
-            <UseCol>
+            <UseCol useCol={ useCol } s={ props.s } m={ props.m } l={ props.l }>
                 <Input inputType="text"
                     name={ props.name }
                     value={ props.value }
@@ -103,15 +107,12 @@ export const TextInput: React.FC<ITextProps> = (props) => {
 }
 TextInput.displayName = "TextInput";
 
-interface ISimpleProps {
+interface ISimpleProps extends IGridProps {
     name: string;
     value: string;
     enabled?: boolean;
     onChange: (val: string) => void;
     className?: string;
-    s?: number;
-    m?: number;
-    l?: number;
 }
 
 export const EmailInput: React.FC<ISimpleProps> = (props) => {

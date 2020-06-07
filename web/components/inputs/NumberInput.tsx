@@ -1,7 +1,8 @@
 import React from "react";
+import { IGridProps } from "../Grid";
 import { Input } from "./Input";
 
-interface IProps {
+interface IProps extends IGridProps {
     name: string;
     enabled?: boolean;
     number: number | null;
@@ -9,9 +10,6 @@ interface IProps {
     max?: number;
     min: number;
     step: string;
-    s?: number;
-    m?: number;
-    l?: number;
     required?: boolean;
 }
 

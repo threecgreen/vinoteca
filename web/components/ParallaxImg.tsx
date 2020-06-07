@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Parallax } from "materialize-css";
 
 export const ParallaxImg: React.FC<{src: string, alt: string}> = ({src: imgSource, alt}) => {

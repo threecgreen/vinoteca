@@ -1,26 +1,21 @@
 import React from "react";
 import { nameToId } from "../../lib/utils";
-import { InputField } from "../Grid";
+import { IGridProps, InputField } from "../Grid";
 
 type IInputValue = string | number | string[];
 
-export interface IInputProps<T extends IInputValue> {
+export interface IInputProps<T extends IInputValue> extends IGridProps {
     name: string;
     value: T;
     enabled: boolean;
     className: string;
     onChange: (val: string) => void;
-    onFocus: () => void;
-    onBlur: () => void;
     inputRef?: React.Ref<HTMLInputElement>;
     inputType?: string;
     active: boolean;
     step?: string;
     max?: number;
     min?: number;
-    s?: number;
-    m?: number;
-    l?: number;
     inputFieldClassName?: string;
     required: boolean;
     autocomplete?: string;
@@ -54,8 +49,6 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     disabled={ !this.props.enabled }
                     value={ this.props.value }
                     onChange={ (e) => this.props.onChange(e.target.value) }
-                    onBlur={ this.props.onBlur }
-                    onFocus={ this.props.onFocus }
                     step={ this.props.step }
                     min={ this.props.min }
                     max={ this.props.max }
