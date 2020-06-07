@@ -1,11 +1,12 @@
 use bcrypt::BcryptError;
 use image::ImageError;
-use rocket::http::Status;
+use rocket::http::{Header, Status, uncased::Uncased};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket_contrib::json::Json;
 use s3::S3Error;
 use serde::Serialize;
+use std::borrow::Cow;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
@@ -15,12 +16,17 @@ use validator::ValidationErrors;
 #[derive(Clone, Debug, Serialize, TypeScriptify)]
 #[serde(tag = "type", content = "message")]
 pub enum VinotecaError {
+    /// Entity not found
     NotFound(String),
     Internal(String),
-    // Foreign key
+    /// Foreign key or `CHECK` constraint
     MissingConstraint(String),
+    /// The request is missing a requirement or otherwise malformed
     BadRequest(String),
+    /// The user is not authorized to access the resource
     Forbidden(String),
+    /// The user has not yet been authorized
+    Unauthorized,
 }
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
@@ -34,7 +40,19 @@ impl<'r> Responder<'r> for VinotecaError {
                 VinotecaError::MissingConstraint(_) => Status::BadRequest,
                 VinotecaError::BadRequest(_) => Status::BadRequest,
                 VinotecaError::Forbidden(_) => Status::Forbidden,
+                VinotecaError::Unauthorized => Status::Unauthorized,
             });
+            match self {
+                VinotecaError::Unauthorized => {
+                    // Response with 401 Unauthorized must set this header
+                    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
+                    res.set_header(Header {
+                        name: Uncased::new("WWW-Authenticate"),
+                        value: Cow::from("cookie"),
+                    });
+                }
+                _ => ()
+            }
             res
         })
     }
@@ -112,6 +130,7 @@ impl Display for VinotecaError {
             Self::MissingConstraint(msg) => format!("Error missing constraint: {}", msg),
             Self::BadRequest(msg) => format!("Error bad request: {}", msg),
             Self::Forbidden(msg) => format!("Error forbidden: {}", msg),
+            Self::Unauthorized => format!("Unauthorized user"),
         };
         write!(f, "{}", fmt_arg)
     }
@@ -124,7 +143,8 @@ impl Error for VinotecaError {
             Self::Internal(_) => "Unexpected interal error",
             Self::MissingConstraint(_) => "Missing foreign key",
             Self::BadRequest(_) => "Invalid data received from the request",
-            Self::Forbidden(_) => "Forbidden; not authorized",
+            Self::Forbidden(_) => "Forbidden",
+            Self::Unauthorized => "Unauthorized",
         }
     }
 

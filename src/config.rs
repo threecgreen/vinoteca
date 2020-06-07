@@ -3,7 +3,9 @@ use s3::bucket::Bucket;
 
 static BUCKET_NAME: &str = "vinoteca";
 
+/// Stores configurations needed at runtime
 pub struct Config {
+    /// Connection to AWS S3 bucket
     pub s3_bucket: Bucket,
 }
 
