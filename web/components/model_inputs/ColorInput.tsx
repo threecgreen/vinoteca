@@ -31,8 +31,8 @@ export const ColorInput: React.FC<IProps> = (props) => {
 
     return (
         <SelectInput name="Color"
-            onChange={ (v) => props?.onChange(v) }
             { ...props }
+            onChange={ (v) => props?.onChange(v) }
         >
             <option key="default" value="" disabled>Select a color</option>
             { colors.map((color) => (
