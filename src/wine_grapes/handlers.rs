@@ -73,6 +73,7 @@ pub fn post(
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::wine_grapes::AssociatedGrape;
 
     #[test]
     fn post_many() {
