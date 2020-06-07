@@ -55,7 +55,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                     ))
                 }
             }
-            None => Outcome::Failure((Status::Unauthorized, Json(VinotecaError::Unauthorized))),
+            None => Outcome::Failure((
+                Status::Unauthorized,
+                Json(VinotecaError::Unauthorized("Login required".to_owned())),
+            )),
         }
     }
 }

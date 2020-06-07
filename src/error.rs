@@ -26,7 +26,7 @@ pub enum VinotecaError {
     /// The user is not authorized to access the resource
     Forbidden(String),
     /// The user has not yet been authorized
-    Unauthorized,
+    Unauthorized(String),
 }
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
@@ -40,9 +40,9 @@ impl<'r> Responder<'r> for VinotecaError {
                 VinotecaError::MissingConstraint(_) => Status::BadRequest,
                 VinotecaError::BadRequest(_) => Status::BadRequest,
                 VinotecaError::Forbidden(_) => Status::Forbidden,
-                VinotecaError::Unauthorized => Status::Unauthorized,
+                VinotecaError::Unauthorized(_) => Status::Unauthorized,
             });
-            if let VinotecaError::Unauthorized = self {
+            if let VinotecaError::Unauthorized(_) = self {
                 // Response with 401 Unauthorized must set this header
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
                 res.set_header(Header {
@@ -127,7 +127,7 @@ impl Display for VinotecaError {
             Self::MissingConstraint(msg) => format!("Error missing constraint: {}", msg),
             Self::BadRequest(msg) => format!("Error bad request: {}", msg),
             Self::Forbidden(msg) => format!("Error forbidden: {}", msg),
-            Self::Unauthorized => "Unauthorized user".to_owned(),
+            Self::Unauthorized(msg) => format!("Error unauthorized: {}", msg),
         };
         write!(f, "{}", fmt_arg)
     }
@@ -141,7 +141,7 @@ impl Error for VinotecaError {
             Self::MissingConstraint(_) => "Missing foreign key",
             Self::BadRequest(_) => "Invalid data received from the request",
             Self::Forbidden(_) => "Forbidden",
-            Self::Unauthorized => "Unauthorized",
+            Self::Unauthorized(_) => "Unauthorized",
         }
     }
 

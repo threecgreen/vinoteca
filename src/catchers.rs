@@ -3,7 +3,7 @@ use crate::error::VinotecaError;
 #[catch(401)]
 pub fn unauthorized() -> VinotecaError {
     warn!("Handling unauthorized request");
-    VinotecaError::Unauthorized
+    VinotecaError::Unauthorized("Login required".to_owned())
 }
 
 #[catch(403)]
