@@ -20,6 +20,7 @@ pub mod models;
 mod schema;
 // Server internals
 mod cached_static;
+mod catchers;
 mod config;
 pub mod error;
 mod serde;
@@ -140,7 +141,9 @@ pub fn create_rocket() -> rocket::Rocket {
                 wine_types::post,
                 wine_types::top,
             ],
-        );
+        )
+        // These errors should only happen with rest requests so they also return JSON
+        .register(catchers![catchers::forbidden, catchers::unauthorized]);
     let static_dir = rocket
         .config()
         .get_str("static_dir")

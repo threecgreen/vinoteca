@@ -31,12 +31,13 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                 )),
             )
         })?;
-        let cookie = request
-            .cookies()
-            .get_private(COOKIE_NAME);
+        let cookie = request.cookies().get_private(COOKIE_NAME);
         match cookie {
             Some(cookie) => {
-                let auth = cookie.value().parse().ok()
+                let auth = cookie
+                    .value()
+                    .parse()
+                    .ok()
                     .and_then(|id: i32| {
                         users::table
                             .filter(users::id.eq(id))
@@ -54,7 +55,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                     ))
                 }
             }
-            None => Outcome::Failure((Status::Unauthorized, Json(VinotecaError::Unauthorized)))
+            None => Outcome::Failure((Status::Unauthorized, Json(VinotecaError::Unauthorized))),
         }
     }
 }

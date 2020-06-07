@@ -1,6 +1,6 @@
 use bcrypt::BcryptError;
 use image::ImageError;
-use rocket::http::{Header, Status, uncased::Uncased};
+use rocket::http::{uncased::Uncased, Header, Status};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket_contrib::json::Json;
@@ -42,16 +42,13 @@ impl<'r> Responder<'r> for VinotecaError {
                 VinotecaError::Forbidden(_) => Status::Forbidden,
                 VinotecaError::Unauthorized => Status::Unauthorized,
             });
-            match self {
-                VinotecaError::Unauthorized => {
-                    // Response with 401 Unauthorized must set this header
-                    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
-                    res.set_header(Header {
-                        name: Uncased::new("WWW-Authenticate"),
-                        value: Cow::from("cookie"),
-                    });
-                }
-                _ => ()
+            if let VinotecaError::Unauthorized = self {
+                // Response with 401 Unauthorized must set this header
+                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
+                res.set_header(Header {
+                    name: Uncased::new("WWW-Authenticate"),
+                    value: Cow::from("cookie"),
+                });
             }
             res
         })
@@ -130,7 +127,7 @@ impl Display for VinotecaError {
             Self::MissingConstraint(msg) => format!("Error missing constraint: {}", msg),
             Self::BadRequest(msg) => format!("Error bad request: {}", msg),
             Self::Forbidden(msg) => format!("Error forbidden: {}", msg),
-            Self::Unauthorized => format!("Unauthorized user"),
+            Self::Unauthorized => "Unauthorized user".to_owned(),
         };
         write!(f, "{}", fmt_arg)
     }
