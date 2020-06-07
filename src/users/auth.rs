@@ -31,25 +31,31 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                 )),
             )
         })?;
-        let auth = request
-            .cookies()
-            .get_private(COOKIE_NAME)
-            .and_then(|cookie| cookie.value().parse().ok())
-            .and_then(|id: i32| {
-                users::table
-                    .filter(users::id.eq(id))
-                    .select(users::id)
-                    .first(&*connection)
+        let cookie = request.cookies().get_private(COOKIE_NAME);
+        match cookie {
+            Some(cookie) => {
+                let auth = cookie
+                    .value()
+                    .parse()
                     .ok()
-            })
-            .map(|id| Auth { id });
-        if let Some(auth) = auth {
-            Outcome::Success(auth)
-        } else {
-            Outcome::Failure((
-                Status::Forbidden,
-                Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
-            ))
+                    .and_then(|id: i32| {
+                        users::table
+                            .filter(users::id.eq(id))
+                            .select(users::id)
+                            .first(&*connection)
+                            .ok()
+                    })
+                    .map(|id| Auth { id });
+                if let Some(auth) = auth {
+                    Outcome::Success(auth)
+                } else {
+                    Outcome::Failure((
+                        Status::Forbidden,
+                        Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
+                    ))
+                }
+            }
+            None => Outcome::Failure((Status::Unauthorized, Json(VinotecaError::Unauthorized))),
         }
     }
 }

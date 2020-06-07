@@ -1,3 +1,4 @@
+/// Custom deserializers to trim leading and trailing whitespace from strings.
 use serde::{Deserialize, Deserializer};
 
 pub fn trim_str<'de, D>(deserializer: D) -> Result<&'de str, D::Error>

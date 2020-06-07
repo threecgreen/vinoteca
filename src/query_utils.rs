@@ -1,7 +1,5 @@
 use crate::error::{RestResult, VinotecaError};
 
-use diesel::result::Error;
-use rocket::http::Status;
 use rocket_contrib::databases::diesel::PgConnection;
 use rocket_contrib::json::Json;
 
@@ -33,16 +31,7 @@ macro_rules! top_table {
     }};
 }
 
-pub fn error_status(error: Error) -> Status {
-    match error {
-        Error::NotFound => Status::NotFound,
-        e => {
-            warn!("Error encountered: {:?}", e);
-            Status::InternalServerError
-        }
-    }
-}
-
+/// Database connection from connection pool.
 #[database("vinoteca")]
 pub struct DbConn(PgConnection);
 
