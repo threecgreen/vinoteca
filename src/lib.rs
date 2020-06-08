@@ -24,6 +24,7 @@ mod catchers;
 mod config;
 pub mod error;
 mod serde;
+mod storage;
 
 #[macro_use] // Must be declared before modules using macros
 mod query_utils;
@@ -108,8 +109,6 @@ pub fn create_rocket() -> rocket::Rocket {
                 purchases::recent,
                 purchases::count,
                 regions::get,
-                // regions::put,
-                // regions::post,
                 regions::top,
                 stores::get,
                 stores::post,
@@ -159,7 +158,9 @@ pub fn create_rocket() -> rocket::Rocket {
         .get_str("aws_secret_key")
         .expect("AWS secret key")
         .to_owned();
+    let storage =
+        storage::S3::new(&aws_access_key, &aws_secret_key).expect("AWS S3 bucket connection");
     rocket
-        .manage(config::Config::new(&aws_access_key, &aws_secret_key))
+        .manage(config::Config::new(storage))
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
 }

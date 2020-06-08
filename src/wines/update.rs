@@ -52,7 +52,7 @@ pub fn put(
         .map_err(VinotecaError::from)
         .map(|_| {
             if let Some(image) = image {
-                if let Err(e) = handle_image(id, image, &config.s3_bucket, &connection) {
+                if let Err(e) = handle_image(id, image, &*config.storage, &connection) {
                     warn!("Error updating image for wine with id {}: {}", id, e);
                 }
             }

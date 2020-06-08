@@ -56,3 +56,4 @@ features = ["export-typescript"]
 
 [dev-dependencies]
 lazy_static = "1.4.0"
+mockall = "0.7.1"

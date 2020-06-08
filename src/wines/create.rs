@@ -31,7 +31,7 @@ pub fn post(
         .map_err(VinotecaError::from)
         .map(|wine_id| {
             if let Some(image) = image {
-                if let Err(e) = handle_image(wine_id, image, &config.s3_bucket, &connection) {
+                if let Err(e) = handle_image(wine_id, image, &*config.storage, &connection) {
                     warn!("Error adding image for new wine with id {}: {}", wine_id, e);
                 };
             }

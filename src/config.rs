@@ -1,22 +1,15 @@
-use awscreds::Credentials;
-use s3::bucket::Bucket;
+use crate::storage::Storage;
 
-static BUCKET_NAME: &str = "vinoteca";
-
-/// Stores configurations needed at runtime
+/// Holds runtime configurations
 pub struct Config {
-    /// Connection to AWS S3 bucket
-    pub s3_bucket: Bucket,
+    /// Storage object for user images and other files
+    pub storage: Box<dyn Storage>,
 }
 
 impl Config {
-    pub fn new(aws_access_key: &str, aws_secret_key: &str) -> Config {
-        let creds =
-            Credentials::new_blocking(Some(aws_access_key), Some(aws_secret_key), None, None, None)
-                .expect("Valid credentials");
+    pub fn new<S: Storage>(storage: S) -> Config {
         Config {
-            s3_bucket: Bucket::new(BUCKET_NAME, "us-east-2".parse().expect("AWS region"), creds)
-                .expect("AWS bucket"),
+            storage: Box::new(storage),
         }
     }
 }

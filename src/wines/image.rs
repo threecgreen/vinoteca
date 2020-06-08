@@ -2,6 +2,7 @@ use super::update::validate_owns_wine;
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
+use crate::storage::Storage;
 use crate::users::Auth;
 use crate::DbConn;
 
@@ -11,7 +12,6 @@ use rocket::State;
 use rocket_contrib::json::Json;
 use rocket_multipart_form_data::mime::{self, Mime};
 use std::io::{BufReader, Cursor};
-use uuid::Uuid;
 
 pub struct Image {
     pub mime_type: Mime,
@@ -25,23 +25,13 @@ static MAX_IMAGE_DIM: u32 = 1280;
 pub fn handle_image(
     wine_id: i32,
     image: Image,
-    s3_bucket: &s3::bucket::Bucket,
+    storage: &dyn Storage,
     connection: &DbConn,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
     // AWS
-    let path = Uuid::new_v4().to_string();
-    let (data, code) =
-        s3_bucket.put_object_blocking(&format!("{}/{}", WINE_DIR, &path), &image, "image/jpeg")?;
-    if code > 304 {
-        warn!(
-            "Error saving image. Code: {}, AWSResponseData: {:?}",
-            code,
-            String::from_utf8(data)
-        );
-        return Err(VinotecaError::Internal("Error saving image".to_owned()));
-    }
+    let path = storage.put_object(WINE_DIR, &image, "image/jpeg")?;
 
     diesel::update(wines::table)
         .filter(wines::id.eq(wine_id))
@@ -66,10 +56,10 @@ pub fn post(
         .select(wines::image)
         .first::<Option<String>>(&*connection)?;
 
-    let path = handle_image(id, image, &config.s3_bucket, &connection)?;
+    let path = handle_image(id, image, &*config.storage, &connection)?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
-        delete_image(&config, &existing_image_path)?;
+        config.storage.delete_object(&existing_image_path)?;
     }
     Ok(Json(path))
 }
@@ -91,26 +81,10 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
                 .filter(wines::id.eq(id))
                 .set(wines::image.eq::<Option<String>>(None))
                 .execute(&*connection)?;
-            delete_image(&config, &file_path)?;
+            config.storage.delete_object(&file_path)?;
             Ok(Json(()))
         }
         None => Ok(Json(())),
-    }
-}
-
-fn delete_image(config: &State<Config>, path: &str) -> Result<(), VinotecaError> {
-    let (data, code) = config.s3_bucket.delete_object_blocking(path)?;
-    if code > 304 {
-        warn!(
-            "Error deleting existing image. Code: {}, AWSResponseData: {:?}",
-            code,
-            String::from_utf8(data)
-        );
-        Err(VinotecaError::Internal(
-            "Error deleting existing image".to_owned(),
-        ))
-    } else {
-        Ok(())
     }
 }
 
