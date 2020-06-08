@@ -1,4 +1,7 @@
 # vinoteca
+
+[![Build Status](https://travis-ci.org/threecgreen/vinoteca.svg?branch=master)](https://travis-ci.org/threecgreen/vinoteca)
+
 A wine purchase tracker and review app built with Rust and React with TypeScript.
 I created this project to give my dad a better way to track his wine purchases
 than the Excel spreadsheet he was using.
