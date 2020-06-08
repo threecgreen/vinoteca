@@ -85,7 +85,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
             "Garnacha",
         ];
         for (i, grape) in mock_grapes.iter().enumerate() {
-            dbg!("grapes {}", grape);
             diesel::insert_into(grapes::table)
                 .values((
                     grapes::id.eq(i as i32 + 1),
