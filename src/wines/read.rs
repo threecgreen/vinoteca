@@ -192,17 +192,20 @@ mod test {
     use super::super::models::RawWineForm;
     use super::super::post;
     use super::*;
+    use crate::config::Config;
     use crate::models::WineForm;
+    use crate::storage::MockStorage;
     use crate::DbConn;
+
     use rocket::State;
 
-    #[ignore]
     #[test]
     fn wine_without_purchases_appears_in_inventory() {
         run_test!(|rocket, connection| {
             let auth = Auth { id: 1 };
-            // TODO: mock out
-            let media_dir = State::from(&rocket).unwrap();
+            let mock = MockStorage::new();
+            let rocket = rocket.manage(Config::new(mock));
+            let config = State::from(&rocket).unwrap();
             let form = RawWineForm {
                 image: None,
                 wine_form: WineForm {
@@ -218,7 +221,7 @@ mod test {
                     wine_type_id: 1,
                 },
             };
-            let wine_response = post(auth, form, connection, media_dir);
+            let wine_response = post(auth, form, connection, config);
             assert!(wine_response.is_ok());
             let wine_id = wine_response.unwrap().id;
 
