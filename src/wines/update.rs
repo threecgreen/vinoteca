@@ -86,3 +86,25 @@ fn get_wine_by_id(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
     )?
     .into_first("Edited wine")
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn validate_owns_wine_fails() {
+        run_test!(|rocket, connection| {
+            // Invalid user id
+            let res = validate_owns_wine(Auth { id: -1 }, 1, &connection);
+            assert!(matches!(res, Err(VinotecaError::NotFound(_))));
+        })
+    }
+
+    #[test]
+    fn validate_owns_wine_succeeds() {
+        run_test!(|rocket, connection| {
+            let res = validate_owns_wine(Auth { id: 1 }, 1, &connection);
+            assert!(res.is_ok());
+        })
+    }
+}
