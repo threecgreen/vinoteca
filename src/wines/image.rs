@@ -81,11 +81,14 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
                 .filter(wines::id.eq(id))
                 .set(wines::image.eq::<Option<String>>(None))
                 .execute(&*connection)?;
-            config.storage.delete_object(&file_path)?;
-            Ok(Json(()))
+            delete_from_storage(&*config.storage, &file_path).map(Json)
         }
         None => Ok(Json(())),
     }
+}
+
+pub fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
+    storage.delete_object(&format!("{}/{}", WINE_DIR, path))
 }
 
 fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {

@@ -136,6 +136,7 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 wines::color_id.eq(2),
                 wines::inventory.eq(0),
                 wines::user_id.eq(user_id),
+                wines::image.eq(Some("unique_id")),
             ))
             .execute(&*connection)
             .unwrap();

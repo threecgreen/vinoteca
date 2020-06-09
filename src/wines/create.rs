@@ -58,34 +58,59 @@ pub fn post(
 
 #[cfg(test)]
 mod test {
-    use super::super::models::RawWineForm;
     use super::*;
+    use crate::config::Config;
     use crate::models::WineForm;
+    use crate::storage::MockStorage;
+    use crate::wines::models::RawWineForm;
     use crate::DbConn;
+
     use rocket::State;
 
-    #[ignore]
+    const FORM: RawWineForm = RawWineForm {
+        image: None,
+        wine_form: WineForm {
+            description: None,
+            notes: None,
+            rating: Some(5),
+            inventory: 0,
+            why: None,
+            color_id: 1,
+            producer_id: 1,
+            viti_area_id: None,
+            name: None,
+            wine_type_id: 1,
+        },
+    };
+
+    // TODO: add mock image data and enabled
+
     #[test]
+    #[ignore]
     fn insert_wine() {
         run_test!(|rocket, connection| {
-            // TODO: mock out
-            let media_dir = State::from(&rocket).unwrap();
-            let form = RawWineForm {
-                image: None,
-                wine_form: WineForm {
-                    description: None,
-                    notes: None,
-                    rating: Some(5),
-                    inventory: 0,
-                    why: None,
-                    color_id: 1,
-                    producer_id: 1,
-                    viti_area_id: None,
-                    name: None,
-                    wine_type_id: 1,
-                },
-            };
-            let response = post(Auth { id: 1 }, form, connection, media_dir);
+            let mut mock = MockStorage::new();
+            mock.expect_put_object()
+                // .times(1)
+                .return_const(Ok("uuid123".to_owned()));
+            let rocket = rocket.manage(Config::new(mock));
+            let config = State::from(&rocket).unwrap();
+            let response = post(Auth { id: 1 }, FORM, connection, config);
+            assert!(response.is_ok());
+        })
+    }
+
+    #[test]
+    #[ignore]
+    fn image_failure_still_saves_wine() {
+        run_test!(|rocket, connection| {
+            let mut mock = MockStorage::new();
+            mock.expect_put_object()
+                // .times(1)
+                .return_const(Err(VinotecaError::Internal("No good".to_owned())));
+            let rocket = rocket.manage(Config::new(mock));
+            let config = State::from(&rocket).unwrap();
+            let response = post(Auth { id: 1 }, FORM, connection, config);
             assert!(response.is_ok());
         })
     }

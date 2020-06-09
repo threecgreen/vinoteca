@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 /// Trait for persistin
 #[cfg(test)]
-use mockall::{automock, mock, predicate::*};
+use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
 pub trait Storage: Send + Sync + 'static {
     /// Store object `content` in `dir` at a generated path. Returns the path where
