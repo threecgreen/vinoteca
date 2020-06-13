@@ -59,7 +59,7 @@ mod test {
 
     #[test]
     fn delete_removes_wine() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_delete_object().times(1).return_const(Ok(()));
             let rocket = rocket.manage(Config::new(mock));

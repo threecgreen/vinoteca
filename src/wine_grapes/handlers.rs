@@ -77,7 +77,7 @@ mod test {
 
     #[test]
     fn post_many() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
                 grapes: vec![
@@ -116,7 +116,7 @@ mod test {
 
     #[test]
     fn post_high_percent() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 2,
                 grapes: vec![
@@ -139,7 +139,7 @@ mod test {
 
     #[test]
     fn post_negative_percent() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 3,
                 grapes: vec![AssociatedGrape {
@@ -154,7 +154,7 @@ mod test {
 
     #[test]
     fn post_duplicate() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
                 grapes: vec![
@@ -181,7 +181,7 @@ mod test {
 
     #[test]
     fn post_empty_no_op() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 3,
                 grapes: Vec::new(),
@@ -193,7 +193,7 @@ mod test {
 
     #[test]
     fn post_empty_delete_existing() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
                 grapes: vec![

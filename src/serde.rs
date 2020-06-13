@@ -36,8 +36,8 @@ where
 mod test {
     use super::*;
 
+    use serde::de::value::{BorrowedStrDeserializer, Error, StringDeserializer};
     use serde::de::IntoDeserializer;
-    use serde::de::value::{BorrowedStrDeserializer, StringDeserializer, Error};
 
     #[test]
     fn trim_str_untouched() {
@@ -74,8 +74,12 @@ mod test {
 
     #[test]
     fn trim_string_leading_and_trailing() {
-        let deserializer: StringDeserializer<Error> = "  the Quick brown fox  ".to_owned().into_deserializer();
-        assert_eq!(trim_string(deserializer), Ok("the Quick brown fox".to_owned()));
+        let deserializer: StringDeserializer<Error> =
+            "  the Quick brown fox  ".to_owned().into_deserializer();
+        assert_eq!(
+            trim_string(deserializer),
+            Ok("the Quick brown fox".to_owned())
+        );
     }
 
     #[test]

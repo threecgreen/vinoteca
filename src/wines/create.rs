@@ -94,7 +94,7 @@ mod test {
 
     #[test]
     fn insert_wine() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_put_object()
                 .times(1)
@@ -108,7 +108,7 @@ mod test {
 
     #[test]
     fn image_failure_still_saves_wine() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_put_object()
                 .times(1)

@@ -201,7 +201,7 @@ mod test {
 
     #[test]
     fn wine_without_purchases_appears_in_inventory() {
-        run_test!(|rocket, connection| {
+        db_test!(|rocket, connection| {
             let auth = Auth { id: 1 };
             let mock = MockStorage::new();
             let rocket = rocket.manage(Config::new(mock));

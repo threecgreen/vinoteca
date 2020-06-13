@@ -17,13 +17,26 @@ lazy_static! {
     pub static ref DB_LOCK: Mutex<()> = Mutex::new(());
 }
 
-macro_rules! run_test {
+macro_rules! db_test {
     (|$rocket: ident, $conn: ident| $test_block: expr) => {{
         use crate::testing::{create_test_rocket, DB_LOCK};
 
         let _lock = DB_LOCK.lock();
         let $rocket = create_test_rocket();
         let $conn = DbConn::get_one(&$rocket).expect("database connection");
+
+        // Execute test code
+        $test_block
+        // `_lock` is dropped
+    }};
+}
+
+macro_rules! rocket_test {
+    (|$rocket: ident| $test_block: expr) => {{
+        use crate::testing::{create_test_rocket, DB_LOCK};
+
+        let _lock = DB_LOCK.lock();
+        let $rocket = create_test_rocket();
 
         // Execute test code
         $test_block

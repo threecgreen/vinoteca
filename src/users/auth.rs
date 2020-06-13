@@ -62,3 +62,54 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    use rocket::http::Cookie;
+    use rocket::local::Client;
+
+    #[get("/")]
+    fn test_auth(auth: Auth) -> Json<i32> {
+        Json(auth.id)
+    }
+
+    #[test]
+    fn missing_cookie() {
+        rocket_test!(|rocket| {
+            let rocket = rocket.mount("/", routes![test_auth]);
+            let client = Client::new(rocket).expect("rocket client");
+            let req = client.get("/");
+            let response = req.dispatch();
+            assert_eq!(response.status(), Status::Unauthorized);
+        })
+    }
+
+    #[test]
+    fn missing_user() {
+        rocket_test!(|rocket| {
+            let rocket = rocket.mount("/", routes![test_auth]);
+            let client = Client::new(rocket).expect("rocket client");
+            let req = client
+                .get("/")
+                // User that doesn't exist
+                .private_cookie(Cookie::new("vinoteca-auth", "-1"));
+            let response = req.dispatch();
+            assert_eq!(response.status(), Status::Forbidden);
+        })
+    }
+
+    #[test]
+    fn authorize() {
+        rocket_test!(|rocket| {
+            let rocket = rocket.mount("/", routes![test_auth]);
+            let client = Client::new(rocket).expect("rocket client");
+            let req = client
+                .get("/")
+                .private_cookie(Cookie::new("vinoteca-auth", "1"));
+            let response = req.dispatch();
+            assert_eq!(response.status(), Status::Ok);
+        })
+    }
+}
