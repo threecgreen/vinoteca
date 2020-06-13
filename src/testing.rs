@@ -54,10 +54,11 @@ pub fn create_test_rocket() -> Rocket {
 fn test_rocket_config() -> rocket::Rocket {
     let mut database_config = HashMap::new();
     let mut databases = HashMap::new();
-    database_config.insert(
-        "url",
-        Value::from(env::var("ROCKET_TEST_DB").expect("Test database connection string")),
-    );
+    let rocket_test_db = env::var("ROCKET_TEST_DB").expect("Test database connection string");
+    // Testing db should have test in the name
+    assert!(rocket_test_db.contains("test"));
+
+    database_config.insert("url", Value::from(rocket_test_db));
     databases.insert("vinoteca", Value::from(database_config));
     let config = Config::build(Environment::Development)
         .workers(1)
