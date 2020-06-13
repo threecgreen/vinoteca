@@ -1,4 +1,4 @@
-import { getOrCreate, nonNulls, singleEntityGetter } from "./common";
+import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
 import { IGrape, IGrapeForm, ITopEntity } from "./Rest";
 
@@ -12,7 +12,6 @@ export async function getGrapes({ id, name }: IGetGrapesParams): Promise<IGrape[
     return get("/rest/grapes", nonNullParams);
 }
 
-export const getGrape = singleEntityGetter("grape", getGrapes);
 export const getOrCreateGrape = getOrCreate("grape", getGrapes, createGrape);
 
 export async function createGrape(grape: IGrapeForm): Promise<IGrape> {

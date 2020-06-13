@@ -44,6 +44,12 @@ pub fn get(
         .map_err(VinotecaError::from)
 }
 
+#[get("/producers/<id>")]
+pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<Producer> {
+    let producer = get(auth, Some(id), None, None, None, connection)?;
+    producer.into_first(&format!("Producer with id: {}", id))
+}
+
 #[get("/producers/top?<limit>")]
 pub fn top(
     auth: Auth,

@@ -1,6 +1,7 @@
 use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
+use crate::query_utils::IntoFirst;
 use crate::schema::{colors, producers, recent_purchases, regions, viti_areas, wine_types, wines};
 use crate::users::Auth;
 use crate::DbConn;
@@ -99,6 +100,25 @@ pub fn get(
         .load::<Wine>(&*connection)
         .map(Json)
         .map_err(VinotecaError::from)
+}
+
+#[get("/wines/<id>")]
+pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
+    let wines = get(
+        auth,
+        Some(id),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        connection,
+    )?;
+    wines.into_first(&format!("wine with id {}", id))
 }
 
 #[get("/wines/inventory")]

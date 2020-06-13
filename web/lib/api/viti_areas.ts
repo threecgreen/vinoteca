@@ -1,4 +1,4 @@
-import { getOrCreate, nonNulls, singleEntityGetter } from "./common";
+import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
 import { ITopEntity, IVitiArea, IVitiAreaForm, IVitiAreaStats } from "./Rest";
 
@@ -16,7 +16,10 @@ export async function getVitiAreas(
     return vitiAreas;
 }
 
-export const getVitiArea = singleEntityGetter("viticultural area", getVitiAreas);
+export async function getVitiArea(id: number): Promise<IVitiArea> {
+    return get(`/rest/viti-areas/${id}`);
+}
+
 export const getOrCreateVitiArea = getOrCreate("viticultural area", getVitiAreas, createVitiArea);
 
 export async function createVitiArea(vitiArea: IVitiAreaForm): Promise<IVitiArea> {

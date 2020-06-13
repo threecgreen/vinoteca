@@ -1,4 +1,4 @@
-import { getOrCreate, nonNulls, singleEntityGetter } from "./common";
+import { getOrCreate, nonNulls } from "./common";
 import { get, post } from "./requests";
 import { IStore, IStoreForm } from "./Rest";
 
@@ -13,7 +13,6 @@ export async function getStores({id, name}: IGetStoreParams): Promise<IStore[]> 
     return stores;
 }
 
-export const getStore = singleEntityGetter("store", getStores);
 export const getOrCreateStore = getOrCreate("store", getStores, createStore);
 
 export async function createStore(store: IStoreForm): Promise<IStore> {

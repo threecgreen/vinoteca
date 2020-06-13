@@ -42,7 +42,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     // Data fetchers
     const fetchWine = async () => {
-        const wine = await getWine({id});
+        const wine = await getWine(id);
+        // TODO: move to `RestResult`
         dispatch({type: "setWine", wine});
     }
     const fetchPurchases = async () => {

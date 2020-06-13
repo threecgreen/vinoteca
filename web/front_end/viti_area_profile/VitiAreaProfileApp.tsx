@@ -61,7 +61,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
     }
 
     private async getAndSetVitiArea() {
-        const vitiArea = await getVitiArea({id: this.props.vitiAreaId});
+        const vitiArea = await getVitiArea(this.props.vitiAreaId);
         this.setState({vitiArea, vitiAreaText: vitiArea.name});
     }
 

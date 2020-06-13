@@ -46,6 +46,12 @@ pub fn get(
         .map_err(VinotecaError::from)
 }
 
+#[get("/viti-areas/<id>")]
+pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<VitiArea> {
+    let viti_area = get(auth, Some(id), None, None, None, connection)?;
+    viti_area.into_first(&format!("Viticultural area with id {}", id))
+}
+
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VitiAreaStats {

@@ -1,4 +1,4 @@
-import { getOrCreate, nonNulls, singleEntityGetter } from "./common";
+import { getOrCreate, nonNulls } from "./common";
 import { delete_, get, post, put } from "./requests";
 import { IProducer, IProducerForm, ITopEntity } from "./Rest";
 
@@ -15,7 +15,10 @@ export async function getProducers({id, name, regionId}: IGetProducersParams): P
     return producers;
 }
 
-export const getProducer = singleEntityGetter("producer", getProducers);
+export async function getProducer(id: number): Promise<IProducer> {
+    return get(`/rest/producers/${id}`);
+}
+
 export const getOrCreateProducer = getOrCreate("producer", getProducers, createProducer);
 
 export async function createProducer(producer: IProducerForm): Promise<IProducer> {

@@ -1,4 +1,4 @@
-import { nonNulls, singleEntityGetter } from "./common";
+import { nonNulls } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
 import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
 
@@ -20,7 +20,9 @@ export async function getWines(
     return get("/rest/wines", nonNullParams);
 }
 
-export const getWine = singleEntityGetter("wine", getWines);
+export async function getWine(id: number): Promise<IWine> {
+    return get(`/rest/wines/${id}`);
+}
 
 const createWineHttpForm = (wine: IWineForm, file: File | null) => {
     const form = new FormData();

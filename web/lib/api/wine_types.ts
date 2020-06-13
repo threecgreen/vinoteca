@@ -1,4 +1,4 @@
-import { getOrCreate, nonNulls, singleEntityGetter } from "./common";
+import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
 import { ITopEntity, IWineType, IWineTypeForm } from "./Rest";
 
@@ -7,24 +7,29 @@ interface IGetWineTypesParams {
     name?: string;
 }
 
+const BASE_URL = "/rest/wine-types";
+
 export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<IWineType[]> {
     const nonNullParams = nonNulls({ id, name });
-    const wineTypes: IWineType[] = await get("/rest/wine-types", nonNullParams);
+    const wineTypes: IWineType[] = await get(BASE_URL, nonNullParams);
     return wineTypes;
 }
 
-export const getWineType = singleEntityGetter("wine type", getWineTypes);
+export async function getWineType(id: number): Promise<IWineType> {
+    return get(`${BASE_URL}/${id}`);
+}
+
 export const getOrCreateWineType = getOrCreate("wine type", getWineTypes, createWineType);
 
 export async function createWineType(wineType: IWineTypeForm): Promise<IWineType> {
-    return post("/rest/wine-types", wineType);
+    return post(BASE_URL, wineType);
 }
 
 export async function updateWineType(wineType: IWineType): Promise<IWineType> {
-    return put(`/rest/wine-types/${wineType.id}`, wineType);
+    return put(`${BASE_URL}/${wineType.id}`, wineType);
 }
 
 export async function getTopWineTypes(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
-    return get("/rest/wine-types/top", nonNullParams);
+    return get(`${BASE_URL}/top`, nonNullParams);
 }

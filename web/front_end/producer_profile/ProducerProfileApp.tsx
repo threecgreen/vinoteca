@@ -103,7 +103,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
 
     const getProducerData = async () => {
         try {
-            const producer = await getProducer({id: producerId});
+            const producer = await getProducer(producerId);
             dispatch({type: "setProducer", producer});
             const region = await getRegion({id: producer.regionId});
             dispatch({type: "setRegion", region});
