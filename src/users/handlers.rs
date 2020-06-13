@@ -135,3 +135,24 @@ fn add_auth_cookie(cookies: &mut Cookies, user_id: i32) {
         .finish();
     cookies.add_private(cookie);
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    #[ignore]
+    fn logon_adds_cookie() {}
+
+    #[test]
+    #[ignore]
+    fn logoff_removes_cookie() {}
+
+    #[test]
+    #[ignore]
+    fn new_user() {}
+
+    #[test]
+    #[ignore]
+    fn new_user_bad_input() {}
+}
