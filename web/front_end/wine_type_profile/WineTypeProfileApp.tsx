@@ -57,7 +57,7 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
     }
 
     private async getAndSetWineTypes() {
-        const wineType = await getWineType({id: this.props.wineTypeId});
+        const wineType = await getWineType(this.props.wineTypeId);
         this.setState({wineType: wineType, wineTypeText: wineType.name});
     }
 

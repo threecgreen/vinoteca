@@ -2,6 +2,8 @@ import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
 import { IGrape, IGrapeForm, ITopEntity } from "./Rest";
 
+const BASE_URL = "/rest/grapes";
+
 interface IGetGrapesParams {
     id?: number;
     name?: string;
@@ -9,20 +11,20 @@ interface IGetGrapesParams {
 
 export async function getGrapes({ id, name }: IGetGrapesParams): Promise<IGrape[]> {
     const nonNullParams = nonNulls({ id, name });
-    return get("/rest/grapes", nonNullParams);
+    return get(BASE_URL, nonNullParams);
 }
 
 export const getOrCreateGrape = getOrCreate("grape", getGrapes, createGrape);
 
 export async function createGrape(grape: IGrapeForm): Promise<IGrape> {
-    return post("/rest/grapes", grape);
+    return post(BASE_URL, grape);
 }
 
 export async function updateGrape(id: number, grape: IGrapeForm): Promise<IGrape> {
-    return put(`/rest/grapes/${id}`, grape);
+    return put(`${BASE_URL}/${id}`, grape);
 }
 
 export async function getTopGrapes(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
-    return get("/rest/grapes/top", nonNullParams);
+    return get(`${BASE_URL}/top`, nonNullParams);
 }

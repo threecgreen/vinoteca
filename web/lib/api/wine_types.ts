@@ -2,12 +2,12 @@ import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
 import { ITopEntity, IWineType, IWineTypeForm } from "./Rest";
 
+const BASE_URL = "/rest/wine-types";
+
 interface IGetWineTypesParams {
     id?: number;
     name?: string;
 }
-
-const BASE_URL = "/rest/wine-types";
 
 export async function getWineTypes({ id, name }: IGetWineTypesParams): Promise<IWineType[]> {
     const nonNullParams = nonNulls({ id, name });

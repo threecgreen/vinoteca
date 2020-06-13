@@ -2,6 +2,8 @@ import { nonNulls } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
 import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
 
+const BASE_URL = "/rest/wines";
+
 interface IGetWinesParams {
     id?: number;
     producerId?: number;
@@ -17,11 +19,11 @@ export async function getWines(
         id, region_id: regionId, producer_id: producerId,
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
     });
-    return get("/rest/wines", nonNullParams);
+    return get(BASE_URL, nonNullParams);
 }
 
 export async function getWine(id: number): Promise<IWine> {
-    return get(`/rest/wines/${id}`);
+    return get(`${BASE_URL}/${id}`);
 }
 
 const createWineHttpForm = (wine: IWineForm, file: File | null) => {
@@ -35,20 +37,20 @@ const createWineHttpForm = (wine: IWineForm, file: File | null) => {
 
 export async function createWine(wine: IWineForm, file: File | null): Promise<IWine> {
     const form = createWineHttpForm(wine, file);
-    return postForm("/rest/wines", form);
+    return postForm(BASE_URL, form);
 }
 
 export async function updateWine(id: number, wine: IWineForm, file: File | null): Promise<IWine> {
     const form = createWineHttpForm(wine, file);
-    return putForm(`/rest/wines/${id}`, form);
+    return putForm(`${BASE_URL}/${id}`, form);
 }
 
 export async function partUpdateWine(id: number, wine: IWinePatchForm): Promise<IWine> {
-    return patch(`/rest/wines/${id}`, wine);
+    return patch(`${BASE_URL}/${id}`, wine);
 }
 
 export async function deleteWine(id: number): Promise<void> {
-    return delete_(`/rest/wines/${id}`);
+    return delete_(`${BASE_URL}/${id}`);
 }
 
 interface ISearchWinesParams {
@@ -66,23 +68,23 @@ export async function searchWines(
         color_like: colorLike, wine_type_like: wineTypeLike, producer_like: producerLike,
         region_like: regionLike, viti_area_like: vitiAreaLike,
     });
-    return get("/rest/wines/search", nonNullParams);
+    return get(`${BASE_URL}/search`, nonNullParams);
 }
 
 export async function getWineVarieties(): Promise<IWineCount> {
-    return get("/rest/wines/count");
+    return get(`${BASE_URL}/count`);
 }
 
 export async function getInventory(): Promise<IInventoryWine[]> {
-    return get("/rest/wines/inventory");
+    return get(`${BASE_URL}/inventory`);
 }
 
 export async function uploadWineImage(id: number, image: File): Promise<string> {
     const form = new FormData();
     form.append("image", image);
-    return postForm(`/rest/wines/${id}/image`, form);
+    return postForm(`${BASE_URL}/${id}/image`, form);
 }
 
 export async function deleteWineImage(id: number): Promise<void> {
-    return delete_(`/rest/wines/${id}/image`);
+    return delete_(`${BASE_URL}/${id}/image`);
 }
