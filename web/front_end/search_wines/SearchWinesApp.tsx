@@ -74,9 +74,11 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
                     vitiAreaText={ this.state.vitiAreaText }
                     onInputChange={ this.onInputChange }
                 />
-                <SearchWinesResults results={ this.state.results }
-                    resultState={ this.state.resultState }
-                />
+                <div className="section">
+                    <SearchWinesResults results={ this.state.results }
+                        resultState={ this.state.resultState }
+                    />
+                </div>
             </div>
         );
     }
@@ -107,9 +109,18 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
     }
 
     private async querySearchResults() {
+        // Check if all form items are empty
+        const allEmpty = [
+            this.state.colorSelection, this.state.wineTypeText, this.state.producerText,
+            this.state.regionText, this.state.vitiAreaText
+        ].every((s) => s.length === 0);
+        if (allEmpty) {
+            this.setState({resultState: ResultState.HasNotSearched});
+            return;
+        }
         this.setState({resultState: ResultState.Searching});
         const results: IWine[] = await searchWines({
-            colorLike: this.state.colorSelection === "Any" ? "" : this.state.colorSelection,
+            colorLike: this.state.colorSelection,
             wineTypeLike: this.state.wineTypeText,
             producerLike: this.state.producerText,
             regionLike: this.state.regionText,
