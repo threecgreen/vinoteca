@@ -14,11 +14,12 @@ matrix:
 env:
   global:
     - HOST=x86_64-unknown-linux-gnu
+    - NODE_VERSION="10.19.0"
 
 sudo: required
 
-install:
-  - sudo apt update
+before_install:
+  - nvm install $NODE_VERSION
 
 script:
   - bash scripts/build.sh

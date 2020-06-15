@@ -37,6 +37,8 @@ check_for_node()
     if [ $? != 0 ]; then
         error_exit "npm is not installed."
     fi
+    node -v
+    npm -v
 }
 
 rust_build()
