@@ -1,7 +1,7 @@
 use super::models::{InventoryWine, WineCount};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
-use crate::query_utils::IntoFirst;
+use crate::query_utils::{lower, IntoFirst};
 use crate::schema::{colors, producers, recent_purchases, regions, viti_areas, wine_types, wines};
 use crate::users::Auth;
 use crate::DbConn;
@@ -154,19 +154,26 @@ pub fn search(
         .filter(wines::user_id.eq(auth.id))
         .into_boxed();
     if let Some(color_like) = color_like {
-        query = query.filter(colors::name.like(wrap_in_wildcards(&color_like)));
+        query =
+            query.filter(lower(colors::name).like(wrap_in_wildcards(&color_like.to_lowercase())));
     }
     if let Some(wine_type_like) = wine_type_like {
-        query = query.filter(wine_types::name.like(wrap_in_wildcards(&wine_type_like)));
+        query = query.filter(
+            lower(wine_types::name).like(wrap_in_wildcards(&wine_type_like.to_lowercase())),
+        );
     }
     if let Some(producer_like) = producer_like {
-        query = query.filter(producers::name.like(wrap_in_wildcards(&producer_like)));
+        query = query
+            .filter(lower(producers::name).like(wrap_in_wildcards(&producer_like.to_lowercase())));
     }
     if let Some(region_like) = region_like {
-        query = query.filter(regions::name.like(wrap_in_wildcards(&region_like)));
+        query =
+            query.filter(lower(regions::name).like(wrap_in_wildcards(&region_like.to_lowercase())));
     }
     if let Some(viti_area_like) = viti_area_like {
-        query = query.filter(viti_areas::name.like(wrap_in_wildcards(&viti_area_like)));
+        query = query.filter(
+            lower(viti_areas::name).like(wrap_in_wildcards(&viti_area_like.to_lowercase())),
+        );
     }
     query
         .select((

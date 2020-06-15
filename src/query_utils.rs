@@ -1,5 +1,6 @@
 use crate::error::{RestResult, VinotecaError};
 
+use diesel::sql_types::Text;
 use rocket_contrib::databases::diesel::PgConnection;
 use rocket_contrib::json::Json;
 
@@ -30,6 +31,8 @@ macro_rules! top_table {
             .map_err(VinotecaError::from)
     }};
 }
+
+sql_function!(fn lower(x: Text) -> Text);
 
 /// Database connection from connection pool.
 #[database("vinoteca")]
