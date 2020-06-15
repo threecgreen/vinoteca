@@ -2,7 +2,7 @@
 # Contains utility functions for vinoteca bash scripts
 
 # Print each line in continuous integration
-if [ $CI ]; then
+if [ "$CI" == "true" ]; then
     set -x
 fi
 
@@ -59,7 +59,11 @@ js_install_and_build()
     info_text "Building web application…"
     check_for_node
     cd "$root_dir/web"
-    npm ci || error_exit "Failed installing JavaScript dependencies"
+    if [ "$CI" == "true" ]; then
+        npm ci --dev || error_exit "Failed installing JavaScript dependencies"
+    else
+        npm ci || error_exit "Failed installing JavaScript dependencies"
+    fi
     npm run-script build || error_exit "Failed building webpack bundles"
     cd -
 }
