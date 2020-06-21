@@ -35,7 +35,7 @@ mod testing;
 /////////////////////
 // Rocket handlers //
 /////////////////////
-mod html;
+mod static_handlers;
 // Rest
 mod colors;
 mod grapes;
@@ -82,8 +82,15 @@ pub fn create_rocket() -> rocket::Rocket {
         .attach(DbConn::fairing())
         // Run embedded database migrations on startup
         .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
-        // TODO: persistent logger
-        .mount("/", routes![html::home, html::any_other, html::robots])
+        .mount(
+            "/",
+            routes![
+                static_handlers::home,
+                static_handlers::any_other,
+                static_handlers::robots,
+                static_handlers::sitemap
+            ],
+        )
         .mount(
             "/rest",
             routes![
