@@ -83,7 +83,9 @@ const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
     const location = useLocation();
     return (
         // Sidenav-close closes the sidenav on click
-        <li className={ location.pathname === to ? "active sidenav-close" : "sidenav-close" }>
+        <li className={ location.pathname === to ? "active sidenav-close" : "sidenav-close" }
+            aria-current={ location.pathname === to ? "page" : undefined }
+        >
             <Link to={ to }>
                 { props.children }
             </Link>
