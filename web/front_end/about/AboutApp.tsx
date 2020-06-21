@@ -1,9 +1,10 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useTitle } from "../../lib/widgets";
+import { useTitle, useDescription } from "../../lib/widgets";
 
 export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
     useTitle("About");
+    useDescription("History of vinoteca, changelog, and links to submit bugs and suggestions");
 
     return (
         <div className="container">

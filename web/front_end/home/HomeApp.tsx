@@ -8,10 +8,11 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
 import { Preloader } from "../../components/Preloader";
 import { useSetUser, useUser } from "../../components/UserContext";
-import { useTitle } from "../../lib/widgets";
+import { useTitle, useDescription } from "../../lib/widgets";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
+    useDescription("A simple, free wine purchase tracker");
 
     const user = useUser();
     const setUser = useSetUser();
@@ -38,7 +39,9 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
 
     return (
         <>
-            <ParallaxImg src="/static/img/bourgogne.jpg" alt="Vineyard" />
+            <ParallaxImg src="/static/img/bourgogne.jpg"
+                alt="Lush rows of grapevines with a small building in the distance in Burgundy, France"
+            />
             <div className="section white">
                 <div className="container">
                     <Row>

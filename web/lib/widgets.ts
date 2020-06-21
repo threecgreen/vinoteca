@@ -40,3 +40,13 @@ export function useTitle(title: string) {
 export function setTitle(title: string) {
     document.title = `vinoteca | ${title}`;
 }
+
+export function useDescription(desc: string) {
+    React.useEffect(() => {
+        setDescription(desc);
+    }, [desc]);
+}
+
+export function setDescription(desc: string) {
+    document.querySelector('meta[name="description"')?.setAttribute("content", desc);
+}
