@@ -8,8 +8,7 @@ import { IWine } from "../../lib/api/Rest";
 import { getWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
 import { useLogger } from "../../lib/Logger";
-import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
-import { getNameAndType } from "../../lib/utils";
+import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
 

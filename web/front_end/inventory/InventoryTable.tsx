@@ -5,6 +5,10 @@ import { Table } from "../../components/Table";
 import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
 import { IInventoryWine } from "../../lib/api/Rest";
+import { deserializeDate } from "../../lib/date";
+import { useLocalStorageReducer } from "../../lib/local_storage";
+
+const LOCAL_STORAGE_KEY = "InventoryTableSorting";
 
 export enum InventoryChange {
     Increase,
@@ -32,109 +36,44 @@ interface IState {
     sorting: SortingValue,
 }
 
-export class InventoryTable extends React.Component<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
-        this.state = {
-            ascending: true,
-            sorting: SortingValue.PurchaseDate,
-        };
-    }
+type Action =
+    | {type: "setAscending", ascending: boolean}
+    | {type: "setSorting", sorting: SortingValue};
 
-    public render() {
-        return (
-            <Table condensed>
-                <thead>
-                    <tr>
-                        <th>Modify</th>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Inventory)} isNumCol >
-                            Inventory
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.NameAndType)}>
-                            Name and Type
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Color)}>
-                            Color
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Producer)}>
-                            Producer
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Region)}>
-                            Region
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Vintage)} isNumCol>
-                            Vintage
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.PurchaseDate)}>
-                            Purchase Date
-                        </TableHeader>
-                        <TableHeader {...this.tableHeaderProps(SortingValue.Price)} isNumCol>
-                            Price
-                        </TableHeader>
-                    </tr>
-                </thead>
-                <tbody>
-                    { this.sortedWines.map((wine) => {
-                        return (
-                            <tr key={ wine.id }>
-                                <td className="inventory-plus-minus">
-                                    <FloatingBtn classes={ ["green-bg", "btn-small"] }
-                                        onClick={
-                                            () => this.props.onInventoryChange(
-                                                wine.id, InventoryChange.Increase
-                                            )
-                                        }
-                                    >
-                                        <MaterialIcon iconName="add_circle" />
-                                    </FloatingBtn>
-                                    <FloatingBtn classes={ ["red-bg", "btn-small"] }
-                                        onClick={
-                                            () => this.props.onInventoryChange(
-                                                wine.id, InventoryChange.Decrease
-                                            )
-                                        }
-                                    >
-                                        <MaterialIcon iconName="do_not_disturb_on" />
-                                    </FloatingBtn>
-                                </td>
-                                <NumCell num={ wine.inventory }
-                                    maxDecimals={ 0 }
-                                />
-                                <NameAndTypeCell id={ wine.id }
-                                    name={ wine.name }
-                                    wineType={wine.wineType}
-                                />
-                                <ColorCell color={ wine.color } />
-                                <ProducerCell id={ wine.producerId }
-                                    name={ wine.producer }
-                                />
-                                <RegionCell id={ wine.regionId }
-                                    name={ wine.region }
-                                />
-                                <YearCell year={ wine.lastPurchaseVintage } />
-                                <DateCell date={ wine.lastPurchaseDate } />
-                                <PriceCell price={ wine.lastPurchasePrice } />
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>
-        );
+const reducer: React.Reducer<IState, Action> = (state, action) => {
+    switch (action.type) {
+        case "setAscending":
+            return {...state, ascending: action.ascending};
+        case "setSorting":
+            return {
+                ...state,
+                sorting: action.sorting,
+                // Default to descending with dates, otherwise ascending
+                ascending: action.sorting !== SortingValue.PurchaseDate && action.sorting !== SortingValue.Vintage,
+            };
+        default:
+            return state;
     }
+}
 
-    private get sortedWines() {
-        const ascendingMultiplier = this.state.ascending ? 1 : -1;
-        switch (this.state.sorting) {
+export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => {
+    const [state, dispatch] = useLocalStorageReducer(LOCAL_STORAGE_KEY, reducer,
+        () => ({ascending: false, sorting: SortingValue.PurchaseDate}));
+
+    // TODO: combine with WinesTable logic
+    const getSortedWines = () => {
+        const ascendingMultiplier = state.ascending ? 1 : -1;
+        switch (state.sorting) {
             case SortingValue.Inventory:
-                return this.props.wines.sort((w1, w2) => {
-                    return (w1.inventory) > (w2.inventory) ? -ascendingMultiplier : ascendingMultiplier;
+                return wines.sort((w1, w2) => {
+                    return w1.inventory - w2.inventory * ascendingMultiplier;
                 });
             case SortingValue.Color:
-                return this.props.wines.sort((w1, w2) => {
+                return wines.sort((w1, w2) => {
                     return w1.color.localeCompare(w2.color) * ascendingMultiplier;
                 })
             case SortingValue.NameAndType:
-                return this.props.wines.sort((w1, w2) => {
+                return wines.sort((w1, w2) => {
                     // Sort by wineType then name
                     const wineTypeComparison = (w1.wineType ?? "").localeCompare(w2.wineType ?? "") * ascendingMultiplier;
                     if (wineTypeComparison === 0) {
@@ -152,55 +91,138 @@ export class InventoryTable extends React.Component<IProps, IState> {
                     return wineTypeComparison;
                 })
             case SortingValue.Producer:
-                return this.props.wines.sort((w1, w2) => {
+                return wines.sort((w1, w2) => {
                     return w1.producer.localeCompare(w2.producer) * ascendingMultiplier;
                 })
             case SortingValue.Region:
-                return this.props.wines.sort((w1, w2) => {
+                return wines.sort((w1, w2) => {
                     return w1.region.localeCompare(w2.region) * ascendingMultiplier;
                 })
             case SortingValue.Vintage:
-                return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchaseVintage ?? 0) > (w2.lastPurchaseVintage ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
+                return wines.sort((w1, w2) => {
+                    // Sort NV firt
+                    return (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000) * ascendingMultiplier;
                 });
             case SortingValue.PurchaseDate:
-                return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchaseDate ?? 0) > (w2.lastPurchaseDate ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
+                return wines.sort((w1, w2) => {
+                    // Wines with NULL purchase date should be considered the
+                    // least recent
+                    const defaultDateStr = "1900-01-01";
+                    const date1 = deserializeDate(w1.lastPurchaseDate ?? defaultDateStr);
+                    const date2 = deserializeDate(w2.lastPurchaseDate ?? defaultDateStr);
+                    return (date1.getTime() - date2.getTime()) * ascendingMultiplier;
                 });
             case SortingValue.Price:
-                return this.props.wines.sort((w1, w2) => {
-                    return (w1.lastPurchasePrice ?? 0) > (w2.lastPurchasePrice ?? 0) ? -ascendingMultiplier : ascendingMultiplier;
+                return wines.sort((w1, w2) => {
+                    return (w1.lastPurchasePrice ?? 0) - (w2.lastPurchasePrice ?? 0) * ascendingMultiplier;
                 });
             default:
-                return this.props.wines;
+                return wines;
         }
     }
 
-    private onHeaderClick(e: React.MouseEvent, sortingVal: SortingValue) {
+    const onHeaderClick = (e: React.MouseEvent, sorting: SortingValue) => {
         e.preventDefault();
-        if (sortingVal === this.state.sorting) {
-            this.setState((prevState) => ({ascending: !prevState.ascending}));
+        if (sorting === state.sorting) {
+            dispatch({type: "setAscending", ascending: !state.ascending});
         } else {
-            this.setState({
-                ascending: true,
-                sorting: sortingVal,
-            });
+            dispatch({type: "setSorting", sorting});
         }
     }
 
-    private tableHeaderProps(sortingVal: SortingValue):
-        {sortingState: SortingState, onClick: (e: React.MouseEvent) => void} {
+    const getTableHeaderProps = (sortingVal: SortingValue):
+        {sortingState: SortingState, onClick: (e: React.MouseEvent) => void} => {
 
-        if (this.state.sorting === sortingVal) {
-            const sortingState = this.state.ascending ? SortingState.Ascending : SortingState.Descending;
+        if (state.sorting === sortingVal) {
+            const sortingState = state.ascending ? SortingState.Ascending : SortingState.Descending;
             return {
                 sortingState,
-                onClick: (e) => this.onHeaderClick(e, sortingVal),
+                onClick: (e) => onHeaderClick(e, sortingVal),
             };
         }
         return {
             sortingState: SortingState.NotSorted,
-            onClick: (e) => this.onHeaderClick(e, sortingVal),
+            onClick: (e) => onHeaderClick(e, sortingVal),
         };
-    }
+    };
+
+    return (
+        <Table condensed>
+            <thead>
+                <tr>
+                    <th>Modify</th>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Inventory)} isNumCol >
+                        Inventory
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.NameAndType)}>
+                        Name and Type
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Color)}>
+                        Color
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Producer)}>
+                        Producer
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Region)}>
+                        Region
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Vintage)} isNumCol>
+                        Vintage
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.PurchaseDate)}>
+                        Purchase Date
+                    </TableHeader>
+                    <TableHeader {...getTableHeaderProps(SortingValue.Price)} isNumCol>
+                        Price
+                    </TableHeader>
+                </tr>
+            </thead>
+            <tbody>
+                { getSortedWines().map((wine) => {
+                    return (
+                        <tr key={ wine.id }>
+                            <td className="inventory-plus-minus">
+                                <FloatingBtn classes={ ["green-bg", "btn-small"] }
+                                    onClick={
+                                        () => onInventoryChange(
+                                            wine.id, InventoryChange.Increase
+                                        )
+                                    }
+                                >
+                                    <MaterialIcon iconName="add_circle" />
+                                </FloatingBtn>
+                                <FloatingBtn classes={ ["red-bg", "btn-small"] }
+                                    onClick={
+                                        () => onInventoryChange(
+                                            wine.id, InventoryChange.Decrease
+                                        )
+                                    }
+                                >
+                                    <MaterialIcon iconName="do_not_disturb_on" />
+                                </FloatingBtn>
+                            </td>
+                            <NumCell num={ wine.inventory }
+                                maxDecimals={ 0 }
+                            />
+                            <NameAndTypeCell id={ wine.id }
+                                name={ wine.name }
+                                wineType={wine.wineType}
+                            />
+                            <ColorCell color={ wine.color } />
+                            <ProducerCell id={ wine.producerId }
+                                name={ wine.producer }
+                            />
+                            <RegionCell id={ wine.regionId }
+                                name={ wine.region }
+                            />
+                            <YearCell year={ wine.lastPurchaseVintage } />
+                            <DateCell date={ wine.lastPurchaseDate } />
+                            <PriceCell price={ wine.lastPurchasePrice } />
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </Table>
+    );
 }
+InventoryTable.displayName = "InventoryTable";
