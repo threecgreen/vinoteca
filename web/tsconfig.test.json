@@ -1,6 +1,7 @@
 {
     "extends": "./tsconfig",
     "compilerOptions": {
-        "esModuleInterop": true
-    }
+        "esModuleInterop": true,
+        "allowJs": true
+    },
 }
