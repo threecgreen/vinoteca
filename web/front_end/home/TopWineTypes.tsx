@@ -15,5 +15,5 @@ export const TopWineTypes: React.FC<{}> = (_) => {
             />
         </RedCard>
     );
-}
+};
 TopWineTypes.displayName = "TopWineTypes";

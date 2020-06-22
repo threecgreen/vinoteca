@@ -37,5 +37,5 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
             </ModalFooter>
         </Modal>
     );
-}
-EditGrape.displayName = EditGrape.name
+};
+EditGrape.displayName = EditGrape.name;

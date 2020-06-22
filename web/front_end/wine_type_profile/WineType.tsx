@@ -50,6 +50,5 @@ export const WineType: React.FC<IProps> = (props) => {
             { props.isEditing ? renderEdit() : renderView() }
         </Row>
     );
-}
+};
 WineType.displayName = "WineType";
-

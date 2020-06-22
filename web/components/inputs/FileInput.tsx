@@ -17,7 +17,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
     const clear = () => {
         inputRef.current.value = "";
         onChange(null);
-    }
+    };
 
     return (
         <InputField s={ 12 } l={ 6 }

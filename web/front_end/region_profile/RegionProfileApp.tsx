@@ -36,7 +36,7 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
             region: undefined,
             wines: [],
             vitiAreas: [],
-        }
+        };
 
         this.logger = new Logger("RegionProfileApp");
     }
@@ -52,21 +52,6 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
         } catch (e) {
             this.logger.logWarning(`Failed to load region: ${e.message}`, {id: this.props.regionId});
         }
-    }
-
-    private async getAndSetRegion() {
-        const region = await getRegion({id: this.props.regionId});
-        this.setState({region, regionText: region.name});
-    }
-
-    private async getAndSetWines() {
-        const wines = await getWines({regionId: this.props.regionId});
-        this.setState({wines});
-    }
-
-    private async getAndSetVitiAreaStats() {
-        const vitiAreas = await getVitiAreaStats({regionId: this.props.regionId});
-        this.setState({vitiAreas: vitiAreas});
     }
 
     public render() {
@@ -92,5 +77,20 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
                 </Row>
             </div>
         );
+    }
+
+    private async getAndSetRegion() {
+        const region = await getRegion({id: this.props.regionId});
+        this.setState({region, regionText: region.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({regionId: this.props.regionId});
+        this.setState({wines});
+    }
+
+    private async getAndSetVitiAreaStats() {
+        const vitiAreas = await getVitiAreaStats({regionId: this.props.regionId});
+        this.setState({vitiAreas});
     }
 }

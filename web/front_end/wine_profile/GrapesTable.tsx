@@ -44,5 +44,5 @@ export const GrapesTable: React.FC<IProps> = ({grapes}) => {
             </TabPanel>
         </>
     );
-}
+};
 GrapesTable.displayName = "GrapesTable";

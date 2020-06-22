@@ -15,5 +15,5 @@ export const WineImg: React.FC<IProps> = ({path}) => {
             </div>
         </div>
     );
-}
+};
 WineImg.displayName = "WineImg";

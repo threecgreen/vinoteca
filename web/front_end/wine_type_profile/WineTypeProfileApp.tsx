@@ -6,8 +6,8 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { WinesTable } from "../../components/WinesTable";
 import { IWine, IWineType } from "../../lib/api/Rest";
-import { getWines } from "../../lib/api/wines";
 import { getWineType, updateWineType } from "../../lib/api/wine_types";
+import { getWines } from "../../lib/api/wines";
 import Logger from "../../lib/Logger";
 import { setTitle } from "../../lib/widgets";
 import { WineType } from "./WineType";
@@ -35,7 +35,7 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
             wineTypeText: "",
             wineType: undefined,
             wines: [],
-        }
+        };
 
         this.logger = new Logger("WineTypeProfileApp");
         this.onWineTypeChange = this.onWineTypeChange.bind(this);
@@ -52,18 +52,9 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
                 this.getAndSetWines(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to load wine type: ${e.message}`, {id: this.props.wineTypeId});
+            this.logger.logWarning(`Failed to load wine type: ${e.message}`,
+                {id: this.props.wineTypeId});
         }
-    }
-
-    private async getAndSetWineTypes() {
-        const wineType = await getWineType(this.props.wineTypeId);
-        this.setState({wineType: wineType, wineTypeText: wineType.name});
-    }
-
-    private async getAndSetWines() {
-        const wines = await getWines({wineTypeId: this.props.wineTypeId});
-        this.setState({wines});
     }
 
     public render() {
@@ -103,6 +94,16 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
         );
     }
 
+    private async getAndSetWineTypes() {
+        const wineType = await getWineType(this.props.wineTypeId);
+        this.setState({wineType, wineTypeText: wineType.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({wineTypeId: this.props.wineTypeId});
+        this.setState({wines});
+    }
+
     private onEditClick() {
         this.setState({isEditing: true});
     }
@@ -115,10 +116,13 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
 
     private async onConfirmClick() {
         try {
-            const wineType = await updateWineType({id: this.props.wineTypeId!, name: this.state.wineTypeText});
+            const wineType = await updateWineType({
+                id: this.props.wineTypeId!,
+                name: this.state.wineTypeText,
+            });
             this.setState({
                 isEditing: false,
-                wineType: wineType,
+                wineType,
             });
         } catch (err) {
             this.logger.logWarning(`Failed to save changes to database: ${err}`);
@@ -132,4 +136,3 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
         }));
     }
 }
-

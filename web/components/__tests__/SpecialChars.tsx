@@ -8,7 +8,7 @@ const setup = () => {
     const mockOnClick = jest.fn();
     render(<SpecialCharPicker onClick={ mockOnClick } />);
     return { mockOnClick };
-}
+};
 
 test("Clicking button should trigger onClick", () => {
     const { mockOnClick } = setup();
@@ -22,10 +22,10 @@ test("Shift button changes to uppercase and back to lowercase", () => {
     const { mockOnClick } = setup();
     const shiftBtn = screen.getByText("↑");
     expect(screen.queryByText("Ñ")).toBeFalsy();
-    fireEvent.mouseDown(shiftBtn)
+    fireEvent.mouseDown(shiftBtn);
     expect(screen.queryByText("Ñ")).toBeTruthy();
     expect(mockOnClick).toBeCalledTimes(0);
-    fireEvent.mouseDown(shiftBtn)
+    fireEvent.mouseDown(shiftBtn);
     expect(mockOnClick).toBeCalledTimes(0);
     expect(screen.getByText("ñ")).toBeTruthy();
 });

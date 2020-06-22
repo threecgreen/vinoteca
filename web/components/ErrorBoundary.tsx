@@ -2,8 +2,8 @@ import React from "react";
 import Logger from "../lib/Logger";
 
 interface IState {
-    hasThrown: boolean
-    error: Error | null,
+    hasThrown: boolean;
+    error: Error | null;
     errorInfo: React.ErrorInfo | null;
 }
 

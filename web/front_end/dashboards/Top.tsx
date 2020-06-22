@@ -20,7 +20,7 @@ export const TopProducers: React.FC<{}> = (_) => {
             />
         </RedCard>
     );
-}
+};
 TopProducers.displayName = "TopProducers";
 
 export const TopRegions: React.FC<{}> = (_) => {
@@ -33,7 +33,7 @@ export const TopRegions: React.FC<{}> = (_) => {
             />
         </YellowCard>
     );
-}
+};
 TopRegions.displayName = "TopRegions";
 
 export const TopVitiAreas: React.FC<{}> = (_) => {
@@ -47,7 +47,7 @@ export const TopVitiAreas: React.FC<{}> = (_) => {
             />
         </GreenCard>
     );
-}
+};
 TopVitiAreas.displayName = "TopVitiAreas";
 
 const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
@@ -56,7 +56,7 @@ const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
             { name }
         </td>
     );
-}
+};
 NonLinkCell.displayName = "NonLinkCell";
 
 export const TopGrapes: React.FC<{}> = (_) => {
@@ -68,8 +68,8 @@ export const TopGrapes: React.FC<{}> = (_) => {
                 preloaderColor={ SpinnerColor.WineRed }
             />
         </RedCard>
-    )
-}
+    );
+};
 
 export const TopColors: React.FC<{}> = (_) => {
     return (
@@ -84,5 +84,5 @@ export const TopColors: React.FC<{}> = (_) => {
                 preloaderColor={ SpinnerColor.WineRed }
             />
         </GreenCard>
-    )
-}
+    );
+};

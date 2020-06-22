@@ -1,15 +1,15 @@
 import { navigate } from "@reach/router";
 import format from "date-fns/esm/format";
 import React from "react";
+import { ChangePasswordForm } from "../../components/AuthModals";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
 import { useSetUser, useUser } from "../../components/UserContext";
 import { updateUser } from "../../lib/api/auth";
 import { IChangeUserForm } from "../../lib/api/Rest";
 import { useLogger } from "../../lib/Logger";
+import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 import { EditUser } from "./EditUser";
-import { ChangePasswordForm } from "../../components/AuthModals";
-import { useTitle, useCanonical, useDescription } from "../../lib/widgets";
 
 enum Mode {
     Display,
@@ -34,8 +34,8 @@ const UserProfileApp: React.FC<{}> = (_) => {
 
     const onSubmitChanges = async (form: IChangeUserForm) => {
         try {
-            const user = await updateUser(form);
-            user.map(setUser)
+            const updatedUser = await updateUser(form);
+            updatedUser.map(setUser)
                 // TODO: better graceful error handling
                 .mapErr((e) => logger.logWarning(`Failed to update profile: ${e}`));
         } catch (e) {
@@ -53,7 +53,7 @@ const UserProfileApp: React.FC<{}> = (_) => {
                 onCancel={ () => setMode(Mode.Display) }
             />
         );
-    } else if (mode == Mode.ChangePassword) {
+    } else if (mode === Mode.ChangePassword) {
         modal = (
             <ChangePasswordForm onFinish={ () => setMode(Mode.Display) } />
         );
@@ -86,6 +86,6 @@ const UserProfileApp: React.FC<{}> = (_) => {
             { modal }
         </div>
     );
-}
+};
 UserProfileApp.displayName = "UserProfileApp";
 export default UserProfileApp;

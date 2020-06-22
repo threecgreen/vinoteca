@@ -94,7 +94,9 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
-export function hasChanged(newObj: any, source: any, exclude: string[] = []): boolean {
+export function hasChanged<T extends IDict<any>, U extends IDict<any>>(
+    newObj: T, source: U, exclude: Array<keyof T> = []): boolean {
+
     const keysToExclude = new Set(exclude);
     for (const k of Object.keys(newObj)) {
         if (keysToExclude.has(k)) {

@@ -1,8 +1,8 @@
 import React from "react";
-import { SearchWinesResult } from "./SearchWinesResult";
 import { Preloader } from "../../components/Preloader";
-import { IWine } from "../../lib/api/Rest";
 import { SimpleTable } from "../../components/Table";
+import { IWine } from "../../lib/api/Rest";
+import { SearchWinesResult } from "./SearchWinesResult";
 
 interface ISearchWinesResultsProps {
     resultState: ResultState;
@@ -13,10 +13,10 @@ export enum ResultState {
     HasNotSearched,
     Searching,
     HasSearched,
-};
+}
 
 export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProps> = (props) => {
-    switch(props.resultState) {
+    switch (props.resultState) {
         case ResultState.HasNotSearched:
             return null;
         case ResultState.Searching:
@@ -32,7 +32,7 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
             return (
                 <SimpleTable columns={ ["Color", "Name and Type", "Producer", "Region", "Viticultural Area"] }>
                     { props.results.map((wine) =>
-                        <SearchWinesResult result={ wine } key={ wine.id } />
+                        <SearchWinesResult result={ wine } key={ wine.id } />,
                     ) }
                 </SimpleTable>
             );

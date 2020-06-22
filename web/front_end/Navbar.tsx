@@ -18,8 +18,8 @@ export const Navbar: React.FC<{}> = () => {
 
     const setUserAndHideModal = (user: IUser) => {
         setUser(user);
-        setModalState(ModalState.None)
-    }
+        setModalState(ModalState.None);
+    };
 
     return (
         <>
@@ -31,7 +31,7 @@ export const Navbar: React.FC<{}> = () => {
                 /> }
         </>
     );
-}
+};
 
 interface INavProps {
     setModalState: (newState: ModalState) => void;
@@ -61,7 +61,7 @@ const DesktopNavbar: React.FC<INavProps> = ({setModalState}) => {
             </div>
         </nav>
     );
-}
+};
 DesktopNavbar.displayName = "DesktopNavbar";
 
 const MobileNavbar: React.FC<INavProps> = (props) => {
@@ -76,7 +76,7 @@ const MobileNavbar: React.FC<INavProps> = (props) => {
             <MenuItems id="sidebar-dropdown" {...props} />
         </ul>
     );
-}
+};
 MobileNavbar.displayName = "MobileNavbar";
 
 const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
@@ -91,10 +91,10 @@ const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
             </Link>
         </li>
     );
-}
+};
 
 interface IMenuItemsProps extends INavProps {
-    id: string
+    id: string;
 }
 
 const MenuItems: React.FC<IMenuItemsProps> = (props) => {
@@ -105,7 +105,7 @@ const MenuItems: React.FC<IMenuItemsProps> = (props) => {
         ? <UserMenuItems {...props} user={ user } />
         : <NoUserMenuItems {...props} />
     );
-}
+};
 MenuItems.displayName = "MenuItems";
 
 interface IUserMenuItemsProps extends IMenuItemsProps {
@@ -131,7 +131,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
         await logout();
         setUser(null);
         navigate("/");
-    }
+    };
 
     return (
         <>
@@ -185,7 +185,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
             </li>
         </>
     );
-}
+};
 UserMenuItems.displayName = "UserMenuItems";
 
 const NoUserMenuItems: React.FC<IMenuItemsProps> = ({setModalState}) => (

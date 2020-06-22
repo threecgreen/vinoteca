@@ -23,7 +23,7 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
         ...purchase,
         store: purchase.store ?? "",
         memo: purchase.memo ?? "",
-        shouldAddToInventory: null
+        shouldAddToInventory: null,
     });
     const [isSaving, setIsSaving] = React.useState(false);
 
@@ -48,5 +48,5 @@ export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInvent
             </ModalFooter>
         </Modal>
     );
-}
+};
 ModifyPurchase.displayName = "ModifyPurchase";

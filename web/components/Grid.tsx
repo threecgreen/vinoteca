@@ -40,10 +40,10 @@ const GridComponentFactory = (className: string, displayName: string): React.FC<
     };
     component.displayName = displayName;
     return component;
-}
+};
 
 export const Row: React.FC<IAllGridProps> = GridComponentFactory("row", "Row");
 
 export const Col: React.FC<IAllGridProps> = GridComponentFactory("col", "Col");
 
-export const InputField: React.FC<IAllGridProps> = GridComponentFactory("input-field", "InputField")
+export const InputField: React.FC<IAllGridProps> = GridComponentFactory("input-field", "InputField");

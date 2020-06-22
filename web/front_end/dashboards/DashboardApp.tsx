@@ -35,6 +35,6 @@ const DashboardApp: React.FC<{}> = (_) => {
             </Row>
         </div>
     );
-}
+};
 DashboardApp.displayName = "DashboardApp";
 export default DashboardApp;

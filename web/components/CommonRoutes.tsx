@@ -26,7 +26,7 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
                 <NotFound />
             );
         }
-        let idNum: number = Number.parseInt(id);
+        const idNum: number = Number.parseInt(id, 10);
         // @ts-ignore
         return <AsyncComponent componentName={ componentName } id={ idNum } />;
     }
@@ -40,15 +40,17 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
             onCancel={ () => navigate("/") }
         />
     );
-}
+};
 
 interface IAuthenticatedRouteProps {
-    user: IUser | null,
-    setUser: (user: IUser | null) => void,
-    componentName: keyof typeof Components,
+    user: IUser | null;
+    setUser: (user: IUser | null) => void;
+    componentName: keyof typeof Components;
 }
 
-export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRouteProps>> = ({componentName, ...props}) => {
+export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRouteProps>> =
+    ({componentName, ...props}) => {
+
     if (!componentName) {
         throw new Error("Unexpected undefined or null componentName");
     }
@@ -69,7 +71,7 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
             onCancel={ () => navigate("/") }
         />
     );
-}
+};
 AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "../front_end/dashboards/DashboardApp"));
@@ -102,7 +104,11 @@ const Components = {
     WineTypeProfile,
 };
 
-export const AsyncComponent: React.FC<{componentName: keyof typeof Components}> = ({componentName, ...props}) => {
+interface IAsyncComponentProps {
+    componentName: keyof typeof Components;
+}
+
+export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, ...props}) => {
     const Component = Components[componentName];
     return (
         <Suspense fallback={ <Preloader /> }>
@@ -112,11 +118,11 @@ export const AsyncComponent: React.FC<{componentName: keyof typeof Components}> 
             }
         </Suspense>
     );
-}
+};
 
 export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
     const logger = useLogger("NotFound", false, false);
-    logger.logWarning("Client requested url that doesn't exist")
+    logger.logWarning("Client requested url that doesn't exist");
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>
@@ -126,5 +132,5 @@ export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
             <h4>Looks like you took a wrong turn in the cellar&hellip;</h4>
         </div>
     );
-}
+};
 NotFound.displayName = "NotFound";

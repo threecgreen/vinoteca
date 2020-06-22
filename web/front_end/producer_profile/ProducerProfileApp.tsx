@@ -19,7 +19,7 @@ import { Producer } from "./Producer";
 export enum ProducerProfileTextInput {
     Producer,
     Region,
-};
+}
 
 enum Mode {
     Display,
@@ -60,7 +60,7 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
                 ...state,
                 mode: Mode.Display,
                 producer: action.producer,
-                producerText: action.producer.name
+                producerText: action.producer.name,
             };
         case "setRegion":
             return {
@@ -81,7 +81,7 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
         default:
             return state;
     }
-}
+};
 
 interface IProps {
     producerId: number;
@@ -110,7 +110,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         } catch (e) {
             logger.logWarning(`Error getting producer data: ${e.message}`);
         }
-    }
+    };
 
     React.useEffect(() => {
         async function fetchData() {
@@ -137,7 +137,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 const producer = await updateProducer({
                     id: state.producer!.id,
                     name: state.producerText,
-                    regionId: regionId,
+                    regionId,
                 });
                 dispatch({type: "setProducer", producer});
             } else {
@@ -146,7 +146,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         } catch (err) {
             logger.logWarning(`Failed to save changes to the database: ${err.message}`);
         }
-    }
+    };
 
     const handleRegionChanges = async (): Promise<[boolean, number]> => {
         if ((state.regionText && !state.region)
@@ -175,7 +175,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
             return[false, state.region.id];
         }
         return [false, -1];
-    }
+    };
 
     const onDeleteClick = async () => {
         try {
@@ -185,7 +185,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         } catch (ex) {
             logger.logWarning(`Failed to delete producer: ${ex.message}`, {id: producerId});
         }
-    }
+    };
 
     if (!state.producer) {
         return <Preloader />;
@@ -235,6 +235,6 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         </div>
     );
 
-}
+};
 ProducerProfileApp.displayName = "ProducerProfileApp";
 export default ProducerProfileApp;

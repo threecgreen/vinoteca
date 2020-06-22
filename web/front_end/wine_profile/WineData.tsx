@@ -1,9 +1,9 @@
+import { Link } from "@reach/router";
 import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
-import { InventoryChange } from "../inventory/InventoryTable";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { capitalizeFirstLetter } from "../../lib/utils";
-import { Link } from "@reach/router";
+import { InventoryChange } from "../inventory/InventoryTable";
 
 interface IProps {
     color: string;
@@ -65,5 +65,5 @@ export const WineData: React.FC<IProps> = (props) => {
             }
         </>
     );
-}
+};
 WineData.displayName = "WineData";

@@ -1,6 +1,6 @@
 import React from "react";
-import { createUser, login, changePassword } from "../lib/api/auth";
-import { IUser, IChangePasswordForm } from "../lib/api/Rest";
+import { changePassword, createUser, login } from "../lib/api/auth";
+import { IChangePasswordForm, IUser } from "../lib/api/Rest";
 import { useLogger } from "../lib/Logger";
 import { CancelOrConfirmBtns } from "./Buttons";
 import { Form } from "./Form";
@@ -9,8 +9,8 @@ import { Modal, ModalContent, ModalFooter } from "./Modal";
 import { initUserInputData, userInputReducer, UserInputs } from "./UserInputs";
 
 interface IUserProps {
-    onFinish: (user: IUser) => void,
-    onCancel: () => void,
+    onFinish: (user: IUser) => void;
+    onCancel: () => void;
 }
 
 export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
@@ -28,7 +28,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 setPassword("");
                 switch (ve.type) {
                     case "NotFound":
-                        setEmail("")
+                        setEmail("");
                         // fallthrough
                     case "BadRequest":
                     case "Forbidden":
@@ -39,15 +39,15 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                         logger.logError(`Failed to login with ${ve.type} error: ${ve.message}`);
                 }
                 setIsSaving(false);
-            })
-    }
+            });
+    };
 
     const onKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
             onSubmit();
         }
-    }
+    };
 
     return (
         <Modal onClose={ onCancel }>
@@ -75,7 +75,7 @@ export const LoginForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
             </Form>
         </Modal>
     );
-}
+};
 LoginForm.displayName = "LoginForm";
 
 export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
@@ -101,7 +101,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
                 }
                 setIsSaving(false);
             });
-    }
+    };
 
     return (
         <Modal onClose={ onCancel }>
@@ -123,7 +123,7 @@ export const NewUserForm: React.FC<IUserProps> = ({onFinish, onCancel}) => {
             </Form>
         </Modal>
     );
-}
+};
 NewUserForm.displayName = "NewUserForm";
 
 type State = IChangePasswordForm & {newPassword2: string};
@@ -153,10 +153,10 @@ export const changePasswordReducer: React.Reducer<State, Action> = (state, actio
         default:
             return state;
     }
-}
+};
 
 export interface IChangePasswordProps {
-    onFinish: () => void,
+    onFinish: () => void;
 }
 
 export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) => {
@@ -192,7 +192,7 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                 setErrorMsg("New passwords must match");
             }
         }
-    }
+    };
 
     return (
         <Modal onClose={ onFinish }>
@@ -202,17 +202,20 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                     <PasswordInput name="Current password"
                         autocomplete="current-password"
                         value={ state.oldPassword }
-                        onChange={ (oldPassword) => dispatch({type: "setOldPassword", oldPassword}) }
+                        onChange={ (oldPassword) =>
+                            dispatch({type: "setOldPassword", oldPassword}) }
                     />
                     <PasswordInput name="New password"
                         autocomplete="new-password"
                         value={ state.newPassword }
-                        onChange={ (newPassword) => dispatch({type: "setNewPassword", newPassword}) }
+                        onChange={ (newPassword) =>
+                            dispatch({type: "setNewPassword", newPassword}) }
                     />
                     <PasswordInput name="Re-enter new password"
                         autocomplete="new-password"
                         value={ state.newPassword2 }
-                        onChange={ (newPassword2) => dispatch({type: "setNewPassword2", newPassword2}) }
+                        onChange={ (newPassword2) =>
+                            dispatch({type: "setNewPassword2", newPassword2}) }
                     />
                 </ModalContent>
                 <ModalFooter>
@@ -220,11 +223,12 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                         onConfirmClick={ checkAndSubmit }
                         onCancelClick={ onFinish }
                         isSaving={ isSaving }
-                        confirmDisabled={ !state.oldPassword || !state.newPassword || !state.newPassword2 || state.newPassword !== state.newPassword2 }
+                        confirmDisabled={ !state.oldPassword || !state.newPassword
+                            || !state.newPassword2 || state.newPassword !== state.newPassword2 }
                     />
                 </ModalFooter>
             </Form>
         </Modal>
     );
-}
+};
 ChangePasswordForm.displayName = "ChangePasswordForm";

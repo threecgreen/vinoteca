@@ -1,5 +1,5 @@
-import React from "react";
 import M from "materialize-css";
+import React from "react";
 import { Btn } from "./Buttons";
 import { IChildrenProp } from "./IProps";
 
@@ -14,7 +14,7 @@ export const Modal: React.FC<IModalProps> = ({children, onClose}) => {
         instance.open();
         // Returning function from useEffect will be called when the
         // component is unmounted
-        return () => instance?.close()
+        return () => instance?.close();
     }, [ref]);
 
     return (
@@ -22,21 +22,21 @@ export const Modal: React.FC<IModalProps> = ({children, onClose}) => {
             { children }
         </div>
     );
-}
+};
 Modal.displayName = "Modal";
 
 export const ModalContent: React.FC<IChildrenProp & any> = ({children, ...props}) => (
     <section className="modal-content" {...props}>
         { children }
     </section>
-)
+);
 ModalContent.displayName = "ModalContent";
 
 export const ModalFooter: React.FC<IChildrenProp> = ({children}) => (
     <section className="modal-footer">
         { children }
     </section>
-)
+);
 ModalFooter.displayName = "ModalFooter";
 
 interface IDeleteModalProps {
@@ -66,5 +66,5 @@ export const DeleteModal: React.FC<IDeleteModalProps> = ({item, onYesClick, onNo
             </ModalFooter>
         </Modal>
     );
-}
+};
 DeleteModal.displayName = "DeleteModal";

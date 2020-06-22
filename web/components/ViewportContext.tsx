@@ -28,7 +28,7 @@ export const ViewportProvider: React.FC<IChildrenProp> = ({children}) => {
             { children }
         </ViewportContext.Provider>
     );
-}
+};
 ViewportProvider.displayName = "ViewportProvider";
 
 export const useViewport = () => {
@@ -37,4 +37,4 @@ export const useViewport = () => {
         return viewport;
     }
     throw new Error("useViewport must be used within a ViewportProvider");
-}
+};

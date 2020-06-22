@@ -78,5 +78,5 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
             required={ required }
         />
     );
-}
+};
 RegionInput.displayName = "RegionInput";

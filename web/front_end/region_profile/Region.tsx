@@ -21,5 +21,5 @@ export const Region: React.FC<IRegionProps> = ({region}) => {
             </Col>
         </Row>
     );
-}
+};
 Region.displayName = "Region";

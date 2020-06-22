@@ -1,6 +1,6 @@
 import React from "react";
-import { MaterialIcon } from "./MaterialIcon";
 import { range } from "../lib/utils";
+import { MaterialIcon } from "./MaterialIcon";
 
 interface IProps {
     currentPage: number;
@@ -10,7 +10,7 @@ interface IProps {
 
 enum Arrow {
     Left,
-    Right
+    Right,
 }
 
 export class Pagination extends React.Component<IProps> {
@@ -27,7 +27,7 @@ export class Pagination extends React.Component<IProps> {
                         <li className={ this.props.currentPage === pgNum ? "active red-bg" : "waves-effect"}
                             key={ pgNum }
                         >
-                            <a onClick={ (e) => {e.preventDefault(); this.props.onClick(pgNum)} }>
+                            <a onClick={ (e) => {e.preventDefault(); this.props.onClick(pgNum); } }>
                                 { pgNum }
                             </a>
                         </li>
@@ -43,7 +43,7 @@ export class Pagination extends React.Component<IProps> {
     }
 
     private arrowIsEnabled(arrow: Arrow): boolean {
-        switch(arrow) {
+        switch (arrow) {
             case Arrow.Left:
                 return this.props.currentPage > 1;
             case Arrow.Right:

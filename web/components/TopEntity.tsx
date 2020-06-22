@@ -28,7 +28,7 @@ interface IProps<Entity> {
     preloaderColor: SpinnerColor;
 }
 export function TopEntity<Entity extends IEntity>({
-    name, EntityCell, fetchEntity, minQuantity, preloaderColor
+    name, EntityCell, fetchEntity, minQuantity, preloaderColor,
 }: IProps<Entity>) {
 
     minQuantity = minQuantity ?? 5;
@@ -50,7 +50,6 @@ export function TopEntity<Entity extends IEntity>({
 
         fetchTopEntities();
     }, [setHasLoaded, setTopEntities]);
-
 
     if (!hasLoaded) {
         return <PreloaderCirc color={ preloaderColor } />;
@@ -87,7 +86,7 @@ export function TopEntity<Entity extends IEntity>({
                                 <NumCell maxDecimals={0} num={entity.quantity} />
                                 <NumCell maxDecimals={0} num={entity.varieties} />
                                 <PriceCell price={entity.avgPrice} />
-                            </tr>
+                            </tr>,
                         )}
                     </SimpleTable>
                 </TabPanel>

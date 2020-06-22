@@ -15,7 +15,7 @@ export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rat
 
     React.useEffect(() => {
         if (ref) {
-            new Range(ref.current)
+            new Range(ref.current);
         }
     }, [ref]);
 
@@ -38,5 +38,5 @@ export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rat
             </p>
         </Col>
     );
-}
+};
 RatingInput.displayName = "RatingInput";

@@ -48,15 +48,17 @@ const deserializeFilters = (json: string): Map<WinesTableColumn, string> => {
         logger.logWarning(`Failed reading filters cookie with error: ${err}`);
         return new Map();
     }
-}
+};
 
-const parseAllFilters = (filterTexts: Map<WinesTableColumn, string>): Map<WinesTableColumn, FilterExpr> => {
-    const predicates = new Map<WinesTableColumn, FilterExpr>()
+const parseAllFilters = (filterTexts: Map<WinesTableColumn, string>):
+    Map<WinesTableColumn, FilterExpr> => {
+
+    const predicates = new Map<WinesTableColumn, FilterExpr>();
     for (const entry of filterTexts.entries()) {
         predicates.set(entry[0], FilterExpr.parse(entry[1]));
     }
     return predicates;
-}
+};
 
 const initState = (): IState => {
     const filterTexts = deserializeFilters(window.localStorage.getItem(LOCAL_STORAGE_KEY) ?? "");
@@ -67,7 +69,7 @@ const initState = (): IState => {
         status: Status.Initial,
         currentPage: 1,
         winesPerPage: 50,
-    }
+    };
 };
 
 const reducer: React.Reducer<IState, Action> = (state, action) => {
@@ -85,20 +87,20 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
         case "setCurrentPage":
             return { ...state, currentPage: action.currentPage };
         case "setError":
-            return { ...state, status: Status.Error }
+            return { ...state, status: Status.Error };
         default:
             return state;
     }
-}
+};
 
 const WinesApp: React.FC<{}> = (_) => {
     const logger = useLogger("WinesApp");
     useTitle("Wines");
 
-    const [state, dispatch] = React.useReducer(reducer, initState())
+    const [state, dispatch] = React.useReducer(reducer, initState());
 
     useTitle(`Wines`);
-    useDescription("All the wines you've entered into vinoteca")
+    useDescription("All the wines you've entered into vinoteca");
     useCanonical("/wines");
 
     React.useEffect(() => {
@@ -119,7 +121,7 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         if (state.filterTexts) {
             const predStrings = Array.from(state.filterTexts.entries());
-            logger.logInfo(`Filter texts: '${predStrings}'`)
+            logger.logInfo(`Filter texts: '${predStrings}'`);
             const serializedPredicates = JSON.stringify(predStrings);
             logger.logDebug(`Updating cookie to '${serializedPredicates}'`);
             window.localStorage.setItem(LOCAL_STORAGE_KEY, serializedPredicates);
@@ -132,7 +134,7 @@ const WinesApp: React.FC<{}> = (_) => {
     if (state.status === Status.Initial) {
         return <Preloader />;
     }
-    let winesComponent = undefined;
+    let winesComponent;
     if (state.status === Status.Error) {
         winesComponent = (
             <div className="center-align">
@@ -160,7 +162,7 @@ const WinesApp: React.FC<{}> = (_) => {
         const combinedPred = [...state.predicates.entries()]
             .reduceRight((prevVal, [column, filterExpr]) => {
                 return (wine) => prevVal(wine) && filterExpr.call(columnToVal(column, wine)!);
-            }, (_: IWine) => true);
+            }, (__: IWine) => true);
         const filteredWines = state.wines.filter(combinedPred);
 
         winesComponent = (
@@ -171,7 +173,8 @@ const WinesApp: React.FC<{}> = (_) => {
                 >
                     Reset Filters
                 </Btn>
-                <WinesTable onFilterChange={ (column, text) => dispatch({type: "setFilter", column, text}) }
+                <WinesTable
+                    onFilterChange={ (column, text) => dispatch({type: "setFilter", column, text}) }
                     wines={ filteredWines }
                     filterTexts={ state.filterTexts }
                     currentPage={ state.currentPage }
@@ -179,7 +182,7 @@ const WinesApp: React.FC<{}> = (_) => {
                 />
                 <Pagination currentPage={ state.currentPage }
                     pageCount={ Math.max(1,
-                        Math.ceil(filteredWines.length / state.winesPerPage )) }
+                        Math.ceil(filteredWines.length / state.winesPerPage)) }
                     onClick={ (currentPage) => dispatch({type: "setCurrentPage", currentPage}) }
                 />
             </>
@@ -194,6 +197,6 @@ const WinesApp: React.FC<{}> = (_) => {
             </Row>
         </div>
     );
-}
+};
 WinesApp.displayName = "WinesApp";
 export default WinesApp;

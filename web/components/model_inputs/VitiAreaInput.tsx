@@ -38,5 +38,5 @@ export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) =
             onChange={ onChange }
         />
     );
-}
+};
 VitiAreaInput.displayName = "VitiAreaInput";

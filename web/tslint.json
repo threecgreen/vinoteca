@@ -1,0 +1,28 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:latest"
+    ],
+    "jsRules": {},
+    "rules": {
+        "max-line-length": {
+            "options": [100]
+        },
+        "no-consecutive-blank-lines": true,
+        "no-reference": true,
+        "max-classes-per-file": false,
+        "no-string-literal": true,
+        "forin": false,
+        "no-console": false,
+        "object-literal-sort-keys": false,
+        "no-submodule-imports": false
+    },
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "**/node_modules/**",
+            "**/*.d.ts",
+            "**/__tests__/**"
+        ]
+    }
+}

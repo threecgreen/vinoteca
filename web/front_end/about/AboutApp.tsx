@@ -1,9 +1,9 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 
-export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
+export const AboutApp: React.FC<RouteComponentProps> = () => {
     useTitle("About");
     useDescription("History of vinoteca, changelog, and links to submit bugs and suggestions");
     useCanonical("/about");
@@ -18,7 +18,8 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             <div className="section">
                 <p>
                     Vinoteca grew out of an Excel spreadsheet used to track wine purchases into
-                    a Django web app with the SQLite database synced between machines using OneDrive.
+                    a Django web app with the SQLite database synced between machines using
+                    OneDrive.
                 </p>
 
                 <h5>Features</h5>
@@ -31,10 +32,16 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
                 <h5>Built with</h5>
                 <ul className="bullets">
                     <li><a href="https://rocket.rs" className="text-link">Rocket</a></li>
-                    <li><a className="text-link" href="https://www.postgresql.org/">PostgreSQL</a></li>
+                    <li><a className="text-link" href="https://www.postgresql.org/">
+                        PostgreSQL
+                    </a></li>
                     <li><a href="https://reactjs.org" className="text-link">React</a></li>
-                    <li><a className="text-link" href="https://materializecss.com/">Materialize CSS</a></li>
-                    <li><a className="text-link" href="https://github.com/stevenrskelton/flag-icon">Flags by Steven Skelton</a></li>
+                    <li><a className="text-link" href="https://materializecss.com/">
+                        Materialize CSS
+                    </a></li>
+                    <li><a className="text-link" href="https://github.com/stevenrskelton/flag-icon">
+                        Flags by Steven Skelton
+                    </a></li>
                     <li><a className="text-link" href="https://www.reddit.com/r/travel/comments/6z7cu0/loved_visiting_burgundy_right_before_harvest/">Cover photo from /u/CollideStorm</a></li>
                 </ul>
             </div>
@@ -67,8 +74,11 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
                     </a>
                 </h4>
                 <p>
-                    Send me an <a className="text-link" href={ `mailto:${addr}?subject=${subject}` }>email</a> with
-                    any issues or bugs you encounter and any suggestions for improvements.
+                    Send me an
+                    <a className="text-link" href={ `mailto:${addr}?subject=${subject}` }>
+                        email
+                    </a>
+                    with any issues or bugs you encounter and any suggestions for improvements.
                 </p>
 
                 <h6>Webmail links</h6>
@@ -99,4 +109,4 @@ export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
             </div>
         </div>
     );
-}
+};

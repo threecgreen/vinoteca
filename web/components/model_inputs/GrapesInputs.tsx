@@ -11,7 +11,7 @@ import { GrapeInput } from "./GrapeInput";
 
 export const wineGrapesToForm = async (wineGrapes: IWineGrape[], wineId: number) => {
     const wineGrapesForm: IWineGrapesForm = {
-        wineId: wineId,
+        wineId,
         grapes: await Promise.all(wineGrapes.map(async (wg) => {
             const grape = await getOrCreateGrape({name: wg.grape}, {name: wg.grape});
             return {
@@ -21,7 +21,7 @@ export const wineGrapesToForm = async (wineGrapes: IWineGrape[], wineId: number)
         })),
     };
     return wineGrapesForm;
-}
+};
 
 type Action =
     | { type: "addGrape" }
@@ -36,12 +36,13 @@ const remainingGrapePct = (grapes: IWineGrape[]): number => {
         if (sum <= 100) {
             return 100 - sum;
         } else {
-            new Logger("remainingGrapePct").logWarning("Total grape percentage is greater than 100%");
+            new Logger("remainingGrapePct")
+                .logWarning("Total grape percentage is greater than 100%");
             return 0;
         }
     }
     return 100;
-}
+};
 
 export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action) => {
     switch (action.type) {
@@ -63,7 +64,13 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
         case "modifyGrape":
             return grapes.map((grape) => (
                 (grape.grapeId === action.id)
-                    ? {id: action.id, percent: action.percent, grape: action.grape, grapeId: grape.grapeId, wineId: grape.wineId}
+                    ? {
+                        id: action.id,
+                        percent: action.percent,
+                        grape: action.grape,
+                        grapeId: grape.grapeId,
+                        wineId: grape.wineId,
+                    }
                     : grape
             ));
         case "setWineId":
@@ -76,7 +83,7 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
         default:
             return grapes;
     }
-}
+};
 
 interface IProps {
     grapes: IWineGrape[];
@@ -90,15 +97,15 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
     React.useEffect(() => {
         async function fetchGrapes() {
             try {
-                const completions = await getGrapes({});
-                setCompletions(toDict(completions));
+                const rawCompletions = await getGrapes({});
+                setCompletions(toDict(rawCompletions));
             } catch (e) {
                 logger.logWarning(`Failed to fetch grape autocompletions: ${e}`);
             }
         }
 
         fetchGrapes();
-    }, [setCompletions])
+    }, [setCompletions]);
 
     return (
         <Row>
@@ -112,7 +119,12 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
                     grape={ grape.grape }
                     percent={ grape.percent }
                     handleDelete={ (id) => dispatch({type: "deleteGrape", id}) }
-                    onChange={ (id, grape, percent) => dispatch({type: "modifyGrape", id, grape, percent}) }
+                    onChange={ (id, newGrape, percent) => dispatch({
+                        type: "modifyGrape",
+                        id,
+                        grape: newGrape,
+                        percent,
+                    }) }
                 />
             )) }
             <InputField classes={ ["col"] }>
@@ -124,5 +136,5 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
             </InputField>
         </Row>
     );
-}
+};
 GrapesInputs.displayName = "GrapesInputs";

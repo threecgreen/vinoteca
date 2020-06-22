@@ -56,7 +56,7 @@ export class TableHeader extends React.Component<IProps> {
                     { text }
                     { this.renderIcon() }
                 </>
-            )
+            );
     }
 
     private renderIcon() {
@@ -85,7 +85,7 @@ export const FilterHeader: React.FC<IFilterProps> = (props) => {
             />
         </td>
     );
-}
+};
 FilterHeader.displayName = "FilterHeader";
 
 export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
@@ -100,7 +100,7 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
             } catch (e) {
                 logger.logError(`Failed to get colors: ${e.message}`);
             }
-        })()
+        })();
     }, []);
 
     return (
@@ -116,5 +116,5 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
             </SelectInput>
         </td>
     );
-}
+};
 SelectFilterHeader.displayName = "SelectFilterHeader";

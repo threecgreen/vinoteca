@@ -6,14 +6,14 @@ export const Preloader: React.FC<{}> = (_) => {
             <div className="indeterminate"></div>
         </div>
     );
-}
+};
 Preloader.displayName = "Preloader";
 
 export enum CircleSize {
     Tiny = "tiny",
     Small = "small",
     Medium = "",
-    Large = "big"
+    Large = "big",
 }
 
 export enum SpinnerColor {
@@ -23,7 +23,7 @@ export enum SpinnerColor {
 }
 
 interface ICircProps {
-    color?: SpinnerColor,
+    color?: SpinnerColor;
     size?: CircleSize;
     className?: string;
 }
@@ -32,7 +32,7 @@ export const PreloaderCirc: React.FC<ICircProps> = ({color, className, size}) =>
     color = color ?? SpinnerColor.WineGreen;
     size = size ?? CircleSize.Medium;
     return (
-        <div className={ `preloader-wrapper active ${className ?? ''} ${size}` }>
+        <div className={ `preloader-wrapper active ${className ?? ""} ${size}` }>
             <div className={ `spinner-layer ${color}` }>
                 <div className="circle-clipper left">
                     <div className="circle"></div>
@@ -44,5 +44,5 @@ export const PreloaderCirc: React.FC<ICircProps> = ({color, className, size}) =>
             </div>
         </div>
     );
-}
+};
 PreloaderCirc.displayName = "PreloaderCirc";

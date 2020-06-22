@@ -37,7 +37,7 @@ const MaterializeSelect: React.FC<IProps> = (props) => {
     const formSelectInstance = React.useRef(null) as React.MutableRefObject<M.FormSelect | null>;
 
     React.useEffect(() => {
-        formSelectInstance.current = M.FormSelect.init(selectRef.current!)
+        formSelectInstance.current = M.FormSelect.init(selectRef.current!);
 
         return () => formSelectInstance.current?.destroy();
     }, [props.children]);
@@ -56,7 +56,7 @@ const MaterializeSelect: React.FC<IProps> = (props) => {
             </label>
         </>
     );
-}
+};
 MaterializeSelect.displayName = "MterializeSelect";
 
 const DefaultSelct: React.FC<IProps> = (props) => {
@@ -69,5 +69,5 @@ const DefaultSelct: React.FC<IProps> = (props) => {
             { props.children }
         </select>
     );
-}
+};
 DefaultSelct.displayName = "DefaultSelect";

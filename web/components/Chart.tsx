@@ -55,7 +55,7 @@ function splitData(data: IChartInput[]): [string[], number[]] {
 /** Helper function to determine whether to proceed with chart creation. */
 function validateChartInput(chartData: number[]) {
     // Only create chart if one or more grapes has a non-zero value
-    if (chartData.length === 0 || chartData.every(num => num === 0)) {
+    if (chartData.length === 0 || chartData.every((num) => num === 0)) {
         return false;
     }
     return true;
@@ -121,7 +121,7 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
             <canvas height={ "175px" } ref={ canvasRef } />
         </div>
     );
-}
+};
 PieChart.displayName = "PieChart";
 
 interface IBarChartProps {
@@ -198,7 +198,7 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
     return (
         <canvas height={height} ref={canvasRef} />
     );
-}
+};
 BarChart.displayName = "BarChart";
 
 interface ILineChartProps {
@@ -298,5 +298,5 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
             <canvas ref={canvasRef} height={ 300 } />
         </div>
     );
-}
+};
 LineChart.displayName = "LineChart";

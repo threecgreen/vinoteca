@@ -1,5 +1,5 @@
-import React from "react";
 import { Parallax } from "materialize-css";
+import React from "react";
 
 export const ParallaxImg: React.FC<{src: string, alt: string}> = ({src: imgSource, alt}) => {
     const ref = React.useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -14,5 +14,5 @@ export const ParallaxImg: React.FC<{src: string, alt: string}> = ({src: imgSourc
                 <img src={ imgSource } alt={ alt } />
             </div>
         </div>
-    )
-}
+    );
+};

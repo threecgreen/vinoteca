@@ -1,10 +1,10 @@
-import React from "react"
-import { IVitiAreaStats } from "../../lib/api/Rest";
+import React from "react";
 import { SimpleTable } from "../../components/Table";
 import { NumCell } from "../../components/TableCells";
+import { IVitiAreaStats } from "../../lib/api/Rest";
 
 interface IProps {
-    stats?: IVitiAreaStats
+    stats?: IVitiAreaStats;
 }
 
 export const VitiAreaStatsTable: React.FunctionComponent<IProps> = (props) => {
@@ -26,5 +26,5 @@ export const VitiAreaStatsTable: React.FunctionComponent<IProps> = (props) => {
                 <NumCell num={ props.stats.avgRating } maxDecimals={ 1 } />
             </tr>
         </SimpleTable>
-    )
-}
+    );
+};

@@ -1,6 +1,6 @@
-import React from "react";
-import { Row, Col } from "../../components/Grid";
 import { Link } from "@reach/router";
+import React from "react";
+import { Col, Row } from "../../components/Grid";
 
 interface IProps {
     name: string | null;
@@ -36,7 +36,13 @@ export const WineHeader: React.FC<IProps> = (props) => {
 };
 WineHeader.displayName = "WineHeader";
 
-const NameType: React.FC<{name: string | null, wineType: string, wineTypeId: number}> = ({name, wineType, wineTypeId}) => {
+interface INameTypeProps {
+    name: string | null;
+    wineType: string;
+    wineTypeId: number;
+}
+
+const NameType: React.FC<INameTypeProps> = ({name, wineType, wineTypeId}) => {
     const wineTypeElem = (
         <a href={ `/wine-types/${wineTypeId}/` }>
             { wineType }
@@ -50,5 +56,5 @@ const NameType: React.FC<{name: string | null, wineType: string, wineTypeId: num
         );
     }
     return <h3 className="bold">{ wineTypeElem }</h3>;
-}
+};
 NameType.displayName = "NameType";

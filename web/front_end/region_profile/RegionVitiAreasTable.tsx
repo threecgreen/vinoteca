@@ -33,5 +33,5 @@ export const RegionVitiAreasTable: React.FunctionComponent<IRegionWineTableProps
             }) }
         </SimpleTable>
     );
-}
-RegionVitiAreasTable.displayName = "RegionVitiAreasTable"
+};
+RegionVitiAreasTable.displayName = "RegionVitiAreasTable";

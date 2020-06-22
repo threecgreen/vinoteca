@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col } from "../../components/Grid";
+import { Col, Row } from "../../components/Grid";
 import RecentPurchases from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
 

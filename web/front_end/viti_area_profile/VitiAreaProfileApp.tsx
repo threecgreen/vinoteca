@@ -5,13 +5,13 @@ import { Col, Row } from "../../components/Grid";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Preloader } from "../../components/Preloader";
 import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
-import Logger from "../../lib/Logger";
 import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/api/Rest";
+import { getVitiArea, getVitiAreaStats, updateVitiArea } from "../../lib/api/viti_areas";
+import { getWines } from "../../lib/api/wines";
+import Logger from "../../lib/Logger";
 import { setTitle } from "../../lib/widgets";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
-import { getVitiArea, getVitiAreaStats, updateVitiArea } from "../../lib/api/viti_areas";
-import { getWines } from "../../lib/api/wines";
 
 interface IState {
     isEditing: boolean;
@@ -38,7 +38,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
             vitiArea: undefined,
             wines: [],
             stats: undefined,
-        }
+        };
 
         this.logger = new Logger("VitiAreaProfileApp");
         this.onVitiAreaChange = this.onVitiAreaChange.bind(this);
@@ -58,21 +58,6 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
         } catch (e) {
             this.logger.logWarning(`Failed to log viticultural area: ${e.message}`, {id: this.props.vitiAreaId});
         }
-    }
-
-    private async getAndSetVitiArea() {
-        const vitiArea = await getVitiArea(this.props.vitiAreaId);
-        this.setState({vitiArea, vitiAreaText: vitiArea.name});
-    }
-
-    private async getAndSetWines() {
-        const wines = await getWines({vitiAreaId: this.props.vitiAreaId});
-        this.setState({wines});
-    }
-
-    private async getAndSetStats() {
-        const stats: IVitiAreaStats[] = await getVitiAreaStats({id: this.props.vitiAreaId});
-        this.setState({stats: stats[0]});
     }
 
     public render() {
@@ -117,6 +102,21 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
         );
     }
 
+    private async getAndSetVitiArea() {
+        const vitiArea = await getVitiArea(this.props.vitiAreaId);
+        this.setState({vitiArea, vitiAreaText: vitiArea.name});
+    }
+
+    private async getAndSetWines() {
+        const wines = await getWines({vitiAreaId: this.props.vitiAreaId});
+        this.setState({wines});
+    }
+
+    private async getAndSetStats() {
+        const stats: IVitiAreaStats[] = await getVitiAreaStats({id: this.props.vitiAreaId});
+        this.setState({stats: stats[0]});
+    }
+
     private onEditClick() {
         this.setState({isEditing: true});
     }
@@ -137,7 +137,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
             });
             this.setState({
                 isEditing: false,
-                vitiArea: vitiArea,
+                vitiArea,
             });
         } catch (err) {
             this.logger.logWarning(`Failed to save changes to database: ${err}`);

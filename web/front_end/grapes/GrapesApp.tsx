@@ -35,15 +35,18 @@ const GrapesApp: React.FC<{}> = (_) => {
     const onSaveClick = async (grape: IGrapeForm) => {
         dispatch({type: "setToDisplay"});
         if (state.mode.type === "edit") {
-            const id = state.mode.id
+            const id = state.mode.id;
             try {
                 const updatedGrape = await updateGrape(id, grape);
-                dispatch({type: "setGrapes", grapes: state.grapes.map((g) => g.id === id ? updatedGrape : g)});
+                dispatch({
+                    type: "setGrapes",
+                    grapes: state.grapes.map((g) => g.id === id ? updatedGrape : g),
+                });
             } catch (e) {
                 logger.logWarning(`Failed to save grape change for grape with id ${id}: ${e.message}`);
             }
         }
-    }
+    };
 
     if (!state.hasLoaded) {
         return <Preloader />;
@@ -56,7 +59,7 @@ const GrapesApp: React.FC<{}> = (_) => {
                 onCancelClick={ onCancelClick }
                 onSaveClick={ onSaveClick }
             />
-        )
+        );
     }
     return (
         <div className="container">
@@ -71,6 +74,6 @@ const GrapesApp: React.FC<{}> = (_) => {
             </Row>
         </div>
     );
-}
+};
 GrapesApp.displayName = "GrapesApp";
 export default GrapesApp;

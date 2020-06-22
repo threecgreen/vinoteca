@@ -25,5 +25,5 @@ export const GrapesListItem: React.FC<IProps> = ({grape, onEditClick}) => {
             </td>
         </tr>
     );
-}
+};
 GrapesListItem.displayName = "GrapesListItem";

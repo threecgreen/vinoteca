@@ -8,8 +8,8 @@ import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/m
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
 import { createPurchase, deletePurchase } from "../../lib/api/purchases";
-import { createWine, deleteWine } from "../../lib/api/wines";
 import { createWineGrapes } from "../../lib/api/wine_grapes";
+import { createWine, deleteWine } from "../../lib/api/wines";
 import { useLocalStorageReducer } from "../../lib/local_storage";
 import { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
@@ -18,8 +18,10 @@ import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from 
 const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const logger = useLogger("NewWineApp");
     const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer("NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData);
-    const [wineState, wineDispatch, clearWineStorage] = useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData, ["file"]);
-    const [grapes, grapesDispatch, clearGrapesStorage] = useLocalStorageReducer("NewWineApp-Grapes", grapeReducer, () => []);
+    const [wineState, wineDispatch, clearWineStorage] =
+        useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData, ["file"]);
+    const [grapes, grapesDispatch, clearGrapesStorage] =
+        useLocalStorageReducer("NewWineApp-Grapes", grapeReducer, () => []);
     const [isSaving, setIsSaving] = React.useState(false);
 
     useTitle("New wine");
@@ -48,7 +50,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                         const purchase = await createPurchase(purchaseForm);
                         purchaseId = purchase.id;
                     }
-                }
+                },
             ].map((f) => f()));
 
             clearPurchaseStorage();
@@ -66,13 +68,13 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             }
             setIsSaving(false);
         }
-    }
+    };
 
     const onReset = () => {
         purchaseDispatch({type: "reset"});
         wineDispatch({type: "reset"});
         grapesDispatch({type: "reset"});
-    }
+    };
 
     return (
         <div className="container">
@@ -82,7 +84,9 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             >
                 Reset form
             </Btn>
-            <Form onSubmit={ () => !isSaving && wineState.producer && wineState.region && wineState.wineType && onSubmit() }>
+            <Form onSubmit={ () => !isSaving && wineState.producer && wineState.region
+                && wineState.wineType && onSubmit() }
+            >
                 <Row s={ 12 }>
                     <PurchaseInputs displayInventoryBtn
                         data={ purchaseState }
@@ -97,7 +101,8 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
                 />
                 <Btn classes={ ["green-bg"] }
                     onClick={ onSubmit }
-                    disabled={ isSaving || !wineState.producer || !wineState.region || !wineState.wineType }
+                    disabled={ isSaving || !wineState.producer || !wineState.region
+                        || !wineState.wineType }
                 >
                     Confirm
                     <MaterialIcon className="right" iconName="send" />
@@ -111,6 +116,6 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             </Form>
         </div>
     );
-}
+};
 NewWineApp.displayName = "NewWineApp";
 export default NewWineApp;

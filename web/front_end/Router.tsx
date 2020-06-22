@@ -21,7 +21,7 @@ const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
             <Footer />
         </div>
     );
-}
+};
 
 export const Router: React.FC<{}> = (_props) => (
     <ErrorBoundary>

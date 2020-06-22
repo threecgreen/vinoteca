@@ -9,7 +9,7 @@ const ConstInput: React.FC<{initValue: string, onChange: Function}> = ({initValu
     const onChangeImpl = (v: string) => {
         onChange();
         setValue(v);
-    }
+    };
     return (
         <div>
             <TextInput name="test input"
@@ -19,7 +19,7 @@ const ConstInput: React.FC<{initValue: string, onChange: Function}> = ({initValu
             />
         </div>
     );
-}
+};
 
 const setup = (initValue?: string) => {
     const mockOnChange = jest.fn();
@@ -28,7 +28,7 @@ const setup = (initValue?: string) => {
     />);
     const target = utils.getByLabelText("test input") as HTMLInputElement;
     return { target, mockOnChange };
-}
+};
 
 test("When the text input is in focus, special character buttons should appear", () => {
     const { target } = setup();

@@ -2,7 +2,8 @@ import React from "react";
 import { FloatingBtn } from "../../components/Buttons";
 import { MaterialIcon } from "../../components/MaterialIcon";
 import { Table } from "../../components/Table";
-import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, YearCell } from "../../components/TableCells";
+import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell,
+         RegionCell, YearCell } from "../../components/TableCells";
 import { SortingState, TableHeader } from "../../components/TableHeader";
 import { IInventoryWine } from "../../lib/api/Rest";
 import { deserializeDate } from "../../lib/date";
@@ -12,8 +13,8 @@ const LOCAL_STORAGE_KEY = "InventoryTableSorting";
 
 export enum InventoryChange {
     Increase,
-    Decrease
-};
+    Decrease,
+}
 
 enum SortingValue {
     Inventory,
@@ -24,41 +25,42 @@ enum SortingValue {
     Vintage,
     PurchaseDate,
     Price,
-};
+}
 
 interface IProps {
-    wines: IInventoryWine[],
-    onInventoryChange: (id: number, change: InventoryChange) => void,
+    wines: IInventoryWine[];
+    onInventoryChange: (id: number, change: InventoryChange) => void;
 }
 
 interface IState {
-    ascending: boolean,
-    sorting: SortingValue,
+    ascending: boolean;
+    sorting: SortingValue;
 }
 
 type Action =
-    | {type: "setAscending", ascending: boolean}
-    | {type: "setSorting", sorting: SortingValue};
+    | { type: "setAscending", ascending: boolean }
+    | { type: "setSorting", sorting: SortingValue };
 
 const reducer: React.Reducer<IState, Action> = (state, action) => {
     switch (action.type) {
         case "setAscending":
-            return {...state, ascending: action.ascending};
+            return { ...state, ascending: action.ascending };
         case "setSorting":
             return {
                 ...state,
                 sorting: action.sorting,
                 // Default to descending with dates, otherwise ascending
-                ascending: action.sorting !== SortingValue.PurchaseDate && action.sorting !== SortingValue.Vintage,
+                ascending: action.sorting !== SortingValue.PurchaseDate
+                    && action.sorting !== SortingValue.Vintage,
             };
         default:
             return state;
     }
-}
+};
 
-export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => {
+export const InventoryTable: React.FC<IProps> = ({ wines, onInventoryChange }) => {
     const [state, dispatch] = useLocalStorageReducer(LOCAL_STORAGE_KEY, reducer,
-        () => ({ascending: false, sorting: SortingValue.PurchaseDate}));
+        () => ({ ascending: false, sorting: SortingValue.PurchaseDate }));
 
     // TODO: combine with WinesTable logic
     const getSortedWines = () => {
@@ -71,15 +73,16 @@ export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => 
             case SortingValue.Color:
                 return wines.sort((w1, w2) => {
                     return w1.color.localeCompare(w2.color) * ascendingMultiplier;
-                })
+                });
             case SortingValue.NameAndType:
                 return wines.sort((w1, w2) => {
                     // Sort by wineType then name
-                    const wineTypeComparison = (w1.wineType ?? "").localeCompare(w2.wineType ?? "") * ascendingMultiplier;
+                    const wineTypeComparison = (w1.wineType ?? "").localeCompare(w2.wineType ?? "")
+                        * ascendingMultiplier;
                     if (wineTypeComparison === 0) {
                         // Name comparison
                         if (w1.name && w2.name) {
-                            return w1.name.localeCompare(w2.name) * ascendingMultiplier
+                            return w1.name.localeCompare(w2.name) * ascendingMultiplier;
                         }
                         if (w1.name) {
                             return ascendingMultiplier;
@@ -89,19 +92,20 @@ export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => 
                         }
                     }
                     return wineTypeComparison;
-                })
+                });
             case SortingValue.Producer:
                 return wines.sort((w1, w2) => {
                     return w1.producer.localeCompare(w2.producer) * ascendingMultiplier;
-                })
+                });
             case SortingValue.Region:
                 return wines.sort((w1, w2) => {
                     return w1.region.localeCompare(w2.region) * ascendingMultiplier;
-                })
+                });
             case SortingValue.Vintage:
                 return wines.sort((w1, w2) => {
                     // Sort NV firt
-                    return (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000) * ascendingMultiplier;
+                    return (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000)
+                        * ascendingMultiplier;
                 });
             case SortingValue.PurchaseDate:
                 return wines.sort((w1, w2) => {
@@ -114,24 +118,25 @@ export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => 
                 });
             case SortingValue.Price:
                 return wines.sort((w1, w2) => {
-                    return (w1.lastPurchasePrice ?? 0) - (w2.lastPurchasePrice ?? 0) * ascendingMultiplier;
+                    return (w1.lastPurchasePrice ?? 0) - (w2.lastPurchasePrice ?? 0)
+                        * ascendingMultiplier;
                 });
             default:
                 return wines;
         }
-    }
+    };
 
     const onHeaderClick = (e: React.MouseEvent, sorting: SortingValue) => {
         e.preventDefault();
         if (sorting === state.sorting) {
-            dispatch({type: "setAscending", ascending: !state.ascending});
+            dispatch({ type: "setAscending", ascending: !state.ascending });
         } else {
-            dispatch({type: "setSorting", sorting});
+            dispatch({ type: "setSorting", sorting });
         }
-    }
+    };
 
     const getTableHeaderProps = (sortingVal: SortingValue):
-        {sortingState: SortingState, onClick: (e: React.MouseEvent) => void} => {
+        { sortingState: SortingState, onClick: (e: React.MouseEvent) => void } => {
 
         if (state.sorting === sortingVal) {
             const sortingState = state.ascending ? SortingState.Ascending : SortingState.Descending;
@@ -178,51 +183,51 @@ export const InventoryTable: React.FC<IProps> = ({wines, onInventoryChange}) => 
                 </tr>
             </thead>
             <tbody>
-                { getSortedWines().map((wine) => {
+                {getSortedWines().map((wine) => {
                     return (
-                        <tr key={ wine.id }>
+                        <tr key={wine.id}>
                             <td className="inventory-plus-minus">
-                                <FloatingBtn classes={ ["green-bg", "btn-small"] }
+                                <FloatingBtn classes={["green-bg", "btn-small"]}
                                     onClick={
                                         () => onInventoryChange(
-                                            wine.id, InventoryChange.Increase
+                                            wine.id, InventoryChange.Increase,
                                         )
                                     }
                                 >
                                     <MaterialIcon iconName="add_circle" />
                                 </FloatingBtn>
-                                <FloatingBtn classes={ ["red-bg", "btn-small"] }
+                                <FloatingBtn classes={["red-bg", "btn-small"]}
                                     onClick={
                                         () => onInventoryChange(
-                                            wine.id, InventoryChange.Decrease
+                                            wine.id, InventoryChange.Decrease,
                                         )
                                     }
                                 >
                                     <MaterialIcon iconName="do_not_disturb_on" />
                                 </FloatingBtn>
                             </td>
-                            <NumCell num={ wine.inventory }
-                                maxDecimals={ 0 }
+                            <NumCell num={wine.inventory}
+                                maxDecimals={0}
                             />
-                            <NameAndTypeCell id={ wine.id }
-                                name={ wine.name }
+                            <NameAndTypeCell id={wine.id}
+                                name={wine.name}
                                 wineType={wine.wineType}
                             />
-                            <ColorCell color={ wine.color } />
-                            <ProducerCell id={ wine.producerId }
-                                name={ wine.producer }
+                            <ColorCell color={wine.color} />
+                            <ProducerCell id={wine.producerId}
+                                name={wine.producer}
                             />
-                            <RegionCell id={ wine.regionId }
-                                name={ wine.region }
+                            <RegionCell id={wine.regionId}
+                                name={wine.region}
                             />
-                            <YearCell year={ wine.lastPurchaseVintage } />
-                            <DateCell date={ wine.lastPurchaseDate } />
-                            <PriceCell price={ wine.lastPurchasePrice } />
+                            <YearCell year={wine.lastPurchaseVintage} />
+                            <DateCell date={wine.lastPurchaseDate} />
+                            <PriceCell price={wine.lastPurchasePrice} />
                         </tr>
                     );
                 })}
             </tbody>
         </Table>
     );
-}
+};
 InventoryTable.displayName = "InventoryTable";

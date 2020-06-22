@@ -48,5 +48,5 @@ export const VitiArea: React.FC<IProps> = (props) => {
             </Col>
         </Row>
     );
-}
+};
 VitiArea.displayName = "VitiArea";

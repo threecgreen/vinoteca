@@ -34,5 +34,5 @@ export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
             required={ props.required }
         />
     );
-}
+};
 WineTypeInput.displayName = "WineTypeInput";

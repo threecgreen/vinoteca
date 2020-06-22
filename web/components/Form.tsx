@@ -11,7 +11,7 @@ export const Form: React.FC<IProps> = ({classes, children, onSubmit, ...gridProp
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSubmit();
-    }
+    };
     return (
         <form className={ joinClasses(gridClasses(gridProps), classes) }
             autoComplete="off"
@@ -20,5 +20,5 @@ export const Form: React.FC<IProps> = ({classes, children, onSubmit, ...gridProp
             { children }
         </form>
     );
-}
+};
 Form.displayName = "Form";

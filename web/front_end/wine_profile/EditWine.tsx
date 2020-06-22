@@ -53,5 +53,5 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
             </ModalFooter>
         </Modal>
     );
-}
+};
 EditWine.displayName = "EditWine";

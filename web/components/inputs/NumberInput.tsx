@@ -19,7 +19,7 @@ export const NumberInput: React.FC<IProps> = (props) => {
         const int = parseInt(val, 10);
         // The highest level of precision we care about is 1/100ths (cents)
         props.onChange(float - 0.005 > int ? float : int);
-    }
+    };
 
     return (
         <Input inputType="number"

@@ -31,7 +31,9 @@ export const initPurchaseInputData: () => IPurchaseData = () => ({
     memo: "",
 });
 
-export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): Promise<IPurchaseForm | null> => {
+export const purchaseDataToForm = async (data: IPurchaseData, wineId: number):
+    Promise<IPurchaseForm | null> => {
+
     let store = null;
     if (data.store) {
         store = await getOrCreateStore({name: data.store}, {name: data.store});
@@ -46,9 +48,9 @@ export const purchaseDataToForm = async (data: IPurchaseData, wineId: number): P
         storeId: store?.id ?? null,
         price: data.price,
         vintage: data.vintage,
-        memo: data.memo || null
+        memo: data.memo || null,
     };
-}
+};
 
 type Action =
     | { type: "setDate", date: string | null }
@@ -81,7 +83,7 @@ export const purchaseInputReducer: React.Reducer<IPurchaseData, Action> = (state
         default:
             return state;
     }
-}
+};
 
 interface IProps {
     displayInventoryBtn: boolean;
@@ -95,7 +97,7 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
 
     const onStoreChange: (store: string) => void = (store) => {
         dispatch({type: "setStore", store});
-    }
+    };
 
     React.useEffect(() => {
         async function fetchStores() {
@@ -115,7 +117,8 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
         ? <CheckboxInput text="Add to Inventory" enabled
             name="add-to-inventory"
             isChecked={ data.shouldAddToInventory! }
-            onClick={ (checked) => dispatch({type: "setShouldAddToInventory", shouldAddToInventory: checked}) }
+            onClick={ (checked) =>
+                dispatch({type: "setShouldAddToInventory", shouldAddToInventory: checked}) }
             s={ 3 } l={ 1 }
         />
         : null;
@@ -123,7 +126,7 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
         <>
             <DateInput name="Purchase Date"
                 date={ data.date }
-                onChange={ (date) => dispatch({type: "setDate", date: date}) }
+                onChange={ (date) => dispatch({type: "setDate", date}) }
             />
             <NumberInput name="Quantity"
                 number={ data.quantity }
@@ -165,5 +168,5 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
         </>
     );
 
-}
+};
 PurchaseInputs.displayName = "PurchaseInputs";

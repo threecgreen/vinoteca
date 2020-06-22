@@ -26,7 +26,7 @@ export interface IWineData {
     vitiArea: string;
     description: string;
     notes: string;
-    file: File | null,
+    file: File | null;
 }
 
 export const initWineInputData = (): IWineData => ({
@@ -49,7 +49,7 @@ const getOrCreateVitiAreaForRegion = async (data: IWineData, regionId: number) =
         return getOrCreateVitiArea({name: data.vitiArea}, {name: data.vitiArea, regionId});
     }
     return null;
-}
+};
 
 const getProducerAndVitiArea = async (data: IWineData) => {
     const region = await getRegion({name: data.region});
@@ -57,14 +57,15 @@ const getProducerAndVitiArea = async (data: IWineData) => {
         getOrCreateProducer({name: data.producer}, {name: data.producer, regionId: region.id}),
         getOrCreateVitiAreaForRegion(data, region.id),
     ]);
-}
+};
 
 export const wineDataToForm = async (data: IWineData, inventory: number): Promise<IWineForm> => {
-    const [color, wineType, [producer, vitiArea]] = await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
-        getColor({name: data.color}),
-        getOrCreateWineType({name: data.wineType}, {name: data.wineType}),
-        getProducerAndVitiArea(data),
-    ]);
+    const [color, wineType, [producer, vitiArea]] =
+        await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
+            getColor({name: data.color}),
+            getOrCreateWineType({name: data.wineType}, {name: data.wineType}),
+            getProducerAndVitiArea(data),
+        ]);
     return {
         colorId: color.id,
         wineTypeId: wineType.id,
@@ -74,10 +75,10 @@ export const wineDataToForm = async (data: IWineData, inventory: number): Promis
         why: data.why || null,
         description: data.description || null,
         rating: data.isRatingEnabled ? data.rating : null,
-        inventory: inventory,
+        inventory,
         notes: data.notes || null,
     };
-}
+};
 
 type Action =
     | {type: "setColor", color: string}
@@ -125,11 +126,10 @@ export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action
         default:
             return state;
     }
-}
-
+};
 
 interface IProps {
-    data: IWineData,
+    data: IWineData;
     dispatch: React.Dispatch<Action>;
 }
 
@@ -160,7 +160,10 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => (
             producerText={ data.producer }
         />
         <RatingInput isChecked={ data.isRatingEnabled }
-            onIsCheckedChange={ (isRatingEnabled) => dispatch({type: "setIsRatingEnabled", isRatingEnabled}) }
+            onIsCheckedChange={ (isRatingEnabled) => dispatch({
+                type: "setIsRatingEnabled",
+                isRatingEnabled,
+            }) }
             rating={ data.rating }
             onRatingChange={ (rating) => dispatch({type: "setRating", rating}) }
         />

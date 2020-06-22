@@ -10,9 +10,9 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "../../
 import { Preloader } from "../../components/Preloader";
 import { useViewport } from "../../components/ViewportContext";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "../../lib/api/purchases";
-import { IPurchase, IWineGrape } from "../../lib/api/Rest";
-import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage } from "../../lib/api/wines";
+import { IPurchase, IWine, IWineGrape } from "../../lib/api/Rest";
 import { createWineGrapes, getWineGrapes } from "../../lib/api/wine_grapes";
+import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage } from "../../lib/api/wines";
 import { useLogger } from "../../lib/Logger";
 import { arrayHasChanged, getNameAndType, hasChanged } from "../../lib/utils";
 import { useTitle } from "../../lib/widgets";
@@ -45,15 +45,15 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         const wine = await getWine(id);
         // TODO: move to `RestResult`
         dispatch({type: "setWine", wine});
-    }
+    };
     const fetchPurchases = async () => {
         const purchases = await getPurchases({wineId: id});
         dispatch({type: "setPurchases", purchases});
-    }
+    };
     const fetchGrapes = async () => {
         const grapes = await getWineGrapes({wineId: id});
         dispatch({type: "setGrapes", grapes});
-    }
+    };
     // FetchInitialState
     React.useEffect(() => {
         async function fetchData() {
@@ -75,7 +75,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onInventoryChange = async (inventoryChange: InventoryChange) => {
         if (state.wine) {
             const copy = {...state.wine};
-            if (inventoryChange == InventoryChange.Increase) {
+            if (inventoryChange === InventoryChange.Increase) {
                 copy.inventory += 1;
             } else {
                 copy.inventory -= 1;
@@ -87,7 +87,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning(`Failed to change inventory. ${e.message}`, {id});
             }
         }
-    }
+    };
 
     const onUpdateFile = async (editedFile: File | null) => {
         if (state.wine?.image && editedFile === null) {
@@ -99,20 +99,24 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning(`Failed to delete wine image: ${e.message}`, {id});
             }
         } else if (editedFile && state.wine?.image !== editedFile?.name) {
-            logger.logInfo(`Updating wine image`, {id, oldImage: state.wine?.image, newImage: editedFile?.name})
+            logger.logInfo(`Updating wine image`,
+                {id, oldImage: state.wine?.image, newImage: editedFile?.name});
             try {
-                const image_path = await uploadWineImage(id, editedFile);
+                const imagePath = await uploadWineImage(id, editedFile);
                 // Potential race condition
-                dispatch({type: "setWine", wine: {...state.wine!, image: image_path}});
+                dispatch({type: "setWine", wine: {...state.wine!, image: imagePath}});
             } catch (e) {
                 logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
             }
         }
-    }
+    };
 
     const onUpdateWine = async (editedWine: IWineData) => {
-        if (hasChanged({...editedWine, rating: editedWine.isRatingEnabled ? editedWine.rating : null} as IWineData,
-                       state.wine, ["file"])) {
+        if (hasChanged<IWineData, IWine>({
+            ...editedWine,
+            rating: editedWine.isRatingEnabled ? editedWine.rating : 5},
+            state.wine!, ["file"])) {
+
             logger.logInfo("Wine changed; saving to server", {editedWine, wine: state.wine, id});
             try {
                 const wineForm = await wineDataToForm(editedWine, state.wine?.inventory ?? 0);
@@ -123,7 +127,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                                 {editedWine, id});
             }
         }
-    }
+    };
 
     const onUpdateGrapes = async (editedGrapes: IWineGrape[]) => {
         if (arrayHasChanged(editedGrapes, state.grapes)) {
@@ -132,13 +136,13 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 // Always update wine grapes, even if there are none, because this
                 // is also how we handle deleting existing wine-grape relations
                 const updatedGrapes = await createWineGrapes(grapesForm);
-                dispatch({type: "setGrapes", grapes: updatedGrapes})
+                dispatch({type: "setGrapes", grapes: updatedGrapes});
             } catch (e) {
                 logger.logWarning(`Failed to update wine grapes. ${e.message}`,
                                   {editedGrapes, id});
             }
         }
-    }
+    };
 
     const onSubmitWineEdit = async (editedWine: IWineData, editedGrapes: IWineGrape[]) => {
         try {
@@ -152,7 +156,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         } catch (e) {
             logger.logError(`Error in updating wine and grapes: ${e.message}`, {id});
         }
-    }
+    };
 
     const onDeleteWine = async () => {
         try {
@@ -161,44 +165,50 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         } catch (e) {
             logger.logWarning(`Failed to delete wine. ${e.message}`);
         }
-    }
+    };
 
     const onSubmitPurchaseEdit = async (purchase: IPurchaseData) => {
         // @ts-ignore
         const purchaseId = state.mode.id;
-        if (hasChanged(purchase, state.purchases.find((p) => p.id === purchaseId),
-                       ["shouldAddToInventory"])) {
+        if (hasChanged<IPurchaseData, IPurchase>(
+            purchase, state.purchases.find((p) => p.id === purchaseId)!,
+            ["shouldAddToInventory"])) {
+
             try {
                 const form = await purchaseDataToForm(purchase, id);
                 if (form) {
                     const updatedPurchase = await updatePurchase(purchaseId, form);
-                    dispatch({type: "setPurchases", purchases: state.purchases.map((purchase) => {
-                        if (purchase.id === purchaseId) {
+                    dispatch({type: "setPurchases", purchases: state.purchases.map((p) => {
+                        if (p.id === purchaseId) {
                             return updatedPurchase;
                         }
-                        return purchase;
+                        return p;
                     })});
                 } else {
                     logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
                 }
             } catch (err) {
-                logger.logWarning(`Failed to update purchase: ${err.message}`, {wineId: id, purchaseId});
+                logger.logWarning(`Failed to update purchase: ${err.message}`,
+                    {wineId: id, purchaseId});
             }
         }
         dispatch({type: "setMode", mode: {type: "display"}});
-    }
+    };
 
     const onDeletePurchase = async (purchaseId: number) => {
         try {
             await deletePurchase(purchaseId);
-            dispatch({type: "setPurchases", purchases: state.purchases.filter((p) => p.id !== purchaseId)});
+            dispatch({
+                type: "setPurchases",
+                purchases: state.purchases.filter((p) => p.id !== purchaseId),
+            });
         } catch (e) {
             logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`,
                               {wineId: id, purchaseId});
         } finally {
-            dispatch({type: "setMode", mode: {"type": "display"}});
+            dispatch({type: "setMode", mode: {type: "display"}});
         }
-    }
+    };
 
     const onSubmitNewPurchase = async (purchase: IPurchaseData) => {
         try {
@@ -212,15 +222,15 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     const wine = await updateWine(id, copy, null);
                     dispatch({type: "setWine", wine});
                 }
-                dispatch({type: "setMode", mode: {"type": "display"}});
+                dispatch({type: "setMode", mode: {type: "display"}});
             } else {
                 logger.logWarning("Not submitting new purchase form. Form is invalid");
             }
         } catch (err) {
             logger.logWarning(`Failed to create new purchase: ${err.message}`, {wineId: id});
-            dispatch({type: "setMode", mode: {"type": "display"}});
+            dispatch({type: "setMode", mode: {type: "display"}});
         }
-    }
+    };
 
     // Render helpers
     const renderWineData = () => (
@@ -285,7 +295,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 { renderWineData() }
             </Col>
         );
-    }
+    };
 
     // Displays relevant modal for editing/deleting
     const renderModal = () => {
@@ -306,7 +316,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                         onYesClick={ onDeleteWine }
                         onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />
-                )
+                );
             }
         } else if (state.mode.type === "editPurchase") {
             const purchaseId = state.mode.id;
@@ -332,7 +342,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                         onYesClick={ () => onDeletePurchase(purchaseId) }
                         onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                     />
-                )
+                );
             }
             return null;
         } else if (state.mode.type === "addPurchase") {
@@ -354,7 +364,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         } else {
             return null;
         }
-    }
+    };
 
     if (!state.wine) {
         return <Preloader />;
@@ -367,7 +377,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const fixedActionButtons = (
         <Col s={ 12 } m={ 3 } classes={ ["fixed-action-div"] } key="fixedActionBtns">
             <FixedActionList>
-                <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
+                <FloatingBtn
+                    onClick={ () => dispatch({type: "setMode", mode: {type: "addPurchase"}}) }
                     classes={ ["green-bg"] }
                 >
                     <MaterialIcon iconName="add" />
@@ -377,7 +388,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 >
                     <MaterialIcon iconName="edit" />
                 </FloatingBtn>
-                <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "deleteWine"}}) }
+                <FloatingBtn
+                    onClick={ () => dispatch({type: "setMode", mode: {type: "deleteWine"}}) }
                     classes={ ["red-bg"] }
                 >
                     <MaterialIcon iconName="delete" />
@@ -405,14 +417,14 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 }
                 <Col s={ 12 } key="purchases">
                     <Purchases purchases={ state.purchases }
-                        onEditClick={ (id) => dispatch({type: "setMode", mode: {type: "editPurchase", id}}) }
-                        onDeleteClick={ (id) => dispatch({type: "setMode", mode: {type: "deletePurchase", id}}) }
+                        onEditClick={ (purchaseId) => dispatch({type: "setMode", mode: {type: "editPurchase", id: purchaseId}}) }
+                        onDeleteClick={ (purchaseId) => dispatch({type: "setMode", mode: {type: "deletePurchase", id: purchaseId}}) }
                     />
                 </Col>
             </Row>
             { renderModal() }
         </div>
     );
-}
+};
 WineProfileApp.displayName = "WineProfileApp";
 export default WineProfileApp;

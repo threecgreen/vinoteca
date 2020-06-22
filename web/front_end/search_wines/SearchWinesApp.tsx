@@ -14,7 +14,7 @@ export enum SearchWinesInput {
     Producer,
     Region,
     VitiArea,
-};
+}
 
 export enum SearchWinesTextInput {
     WineType,
@@ -49,7 +49,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
     constructor(props: {}) {
         super(props);
         this.state = SearchWinesApp.defaultState;
-        this.logger = new Logger("SearchWinesApp"),
+        this.logger = new Logger("SearchWinesApp");
         this.querySearchResults = this.querySearchResults.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onResetClick = this.onResetClick.bind(this);
@@ -112,7 +112,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         // Check if all form items are empty
         const allEmpty = [
             this.state.colorSelection, this.state.wineTypeText, this.state.producerText,
-            this.state.regionText, this.state.vitiAreaText
+            this.state.regionText, this.state.vitiAreaText,
         ].every((s) => s.length === 0);
         if (allEmpty) {
             this.setState({resultState: ResultState.HasNotSearched});
@@ -128,7 +128,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         });
         try {
             this.setState({
-                results: results,
+                results,
                 resultState: ResultState.HasSearched,
             });
         } catch (error) {

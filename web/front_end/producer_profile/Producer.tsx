@@ -14,7 +14,7 @@ interface IProducerProps {
     producer: IProducer;
     onProducerChange: (val: string) => void;
     regionText: string;
-    region?: IRegion
+    region?: IRegion;
     onRegionChange: (text: string) => void;
     onConfirmClick: () => Promise<void>;
     onCancelClick: () => void;
@@ -68,5 +68,5 @@ export const Producer: React.FC<IProducerProps> = (props) => {
         </Col>
         </Row>
     );
-}
+};
 Producer.displayName = "Producer";

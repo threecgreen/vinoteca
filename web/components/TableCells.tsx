@@ -1,8 +1,8 @@
 import { Link } from "@reach/router";
 import format from "date-fns/esm/format";
 import React from "react";
-import { capitalizeFirstLetter, EN_DASH, getNameAndType } from "../lib/utils";
 import { deserializeDate } from "../lib/date";
+import { capitalizeFirstLetter, EN_DASH, getNameAndType } from "../lib/utils";
 
 interface ITextCellProps {
     default?: string;
@@ -12,12 +12,12 @@ interface ITextCellProps {
 export class TextCell extends React.Component<ITextCellProps> {
     public static defaultProps = {
         default: "",
-    }
+    };
 
     public render() {
         return <td>{ this.props.text ?? this.props.default }</td>;
     }
-};
+}
 
 interface INumCellProps {
     num: number | null;
@@ -49,7 +49,7 @@ export const PriceCell: React.FC<IPriceCellProps> = (props) => {
             maxDecimals={ 2 }
         />
     );
-}
+};
 PriceCell.displayName = "PriceCell";
 
 export const YearCell: React.FC<{year: number | null}> = (props) => {
@@ -59,7 +59,7 @@ export const YearCell: React.FC<{year: number | null}> = (props) => {
             { year }
         </td>
     );
-}
+};
 YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
@@ -71,7 +71,7 @@ export const DateCell: React.FC<IDateCellProps> = (props) => {
     return (
         <td>{ dateStr }</td>
     );
-}
+};
 DateCell.displayName = "DateCell";
 
 interface IColorCellProps {
@@ -101,8 +101,8 @@ const LinkedCell: React.FC<ILinkedCellProps> = (props) => {
             </Link>
         </td>
     );
-}
-LinkedCell.displayName = "LinkedCell"
+};
+LinkedCell.displayName = "LinkedCell";
 
 interface INameAndTypeProps {
     id: number;
@@ -137,8 +137,8 @@ export const ProducerCell: React.FC<{id: number, name: string}> = (props) => {
             name={ props.name }
         />
     );
-}
-ProducerCell.displayName = "ProducerCell"
+};
+ProducerCell.displayName = "ProducerCell";
 
 export const RegionCell: React.FC<{id: number, name: string}> = (props) => {
     return (
@@ -147,8 +147,8 @@ export const RegionCell: React.FC<{id: number, name: string}> = (props) => {
             name={ props.name }
         />
     );
-}
-RegionCell.displayName = "RegionCell"
+};
+RegionCell.displayName = "RegionCell";
 
 export const VitiAreaCell: React.FC<{id: number | null, name: string | null}> = (props) => {
     if (!props.id || !props.name) {
@@ -160,8 +160,8 @@ export const VitiAreaCell: React.FC<{id: number | null, name: string | null}> = 
             name={ props.name }
         />
     );
-}
-VitiAreaCell.displayName = "VitiAreaCell"
+};
+VitiAreaCell.displayName = "VitiAreaCell";
 
 export const WineTypeCell: React.FC<{id: number, name: string}> = (props) => {
     return (
@@ -170,5 +170,5 @@ export const WineTypeCell: React.FC<{id: number, name: string}> = (props) => {
             name={ props.name }
         />
     );
-}
+};
 WineTypeCell.displayName = "WineTypeCell";

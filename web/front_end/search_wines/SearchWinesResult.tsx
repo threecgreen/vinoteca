@@ -3,7 +3,7 @@ import { ColorCell, NameAndTypeCell, TextCell } from "../../components/TableCell
 import { IWine } from "../../lib/api/Rest";
 
 interface ISearchWinesResultProps {
-    result: IWine
+    result: IWine;
 }
 
 export class SearchWinesResult extends React.Component<ISearchWinesResultProps, {}> {

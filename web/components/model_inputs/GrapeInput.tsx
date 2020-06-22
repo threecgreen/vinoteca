@@ -20,7 +20,7 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
-        autocomplete(inputRef, completions, (s) => onChange(id, s, percent))
+        autocomplete(inputRef, completions, (s) => onChange(id, s, percent));
     }, [inputRef, completions, onChange, id, percent]);
 
     return (
@@ -50,5 +50,5 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
             />
         </Col>
     );
-}
+};
 GrapeInput.displayName = "GrapeInput";

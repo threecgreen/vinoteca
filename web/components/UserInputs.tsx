@@ -1,6 +1,6 @@
 import React from "react";
 import { IUserForm } from "../lib/api/Rest";
-import { EmailInput, SimpleTextInput, PasswordInput } from "./inputs/TextInput";
+import { EmailInput, PasswordInput, SimpleTextInput } from "./inputs/TextInput";
 
 type Action =
     | {type: "setEmail", email: string}
@@ -24,7 +24,7 @@ export const userInputReducer: React.Reducer<IUserForm, Action> = (state, action
         default:
             return state;
     }
-}
+};
 
 interface IProps {
     data: IUserForm;

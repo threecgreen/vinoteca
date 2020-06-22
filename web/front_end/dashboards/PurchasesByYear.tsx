@@ -27,7 +27,7 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     }, [setHasLoaded, setYearsPurchases]);
 
     return [hasLoaded, yearsPurchases];
-}
+};
 
 export const PurchasesByYearGraph: React.FC<{}> = (_) => {
     const logger = useLogger("PurchasesByYearGraph");
@@ -41,7 +41,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
             <LineChart data={[
                     yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.quantity })),
                     yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.totalPrice ?? 0.0 })),
-                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.avgPrice ?? 0.0 }))
+                    yearsPurchases.map((y) => ({ label: `${y.year}`, value: y.avgPrice ?? 0.0 })),
                 ]}
                 seriesLabels={["Bottle", "Total Spent", "Avg Price"]}
             />
@@ -54,7 +54,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
             {content}
         </GreenCard>
     );
-}
+};
 PurchasesByYearGraph.displayName = "PurchasesByYearGraph";
 
 export const PurchasesByYearTable: React.FC<{}> = (_) => {
@@ -77,7 +77,7 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
                         <NumCell num={ year.quantity } maxDecimals={ 0 } />
                         <PriceCell price={ year.totalPrice } />
                         <PriceCell price={ year.avgPrice } />
-                    </tr>
+                    </tr>,
                 )}
             </SimpleTable>
         );
@@ -89,4 +89,4 @@ export const PurchasesByYearTable: React.FC<{}> = (_) => {
             { content }
         </RedCard>
     );
-}
+};

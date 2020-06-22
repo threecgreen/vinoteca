@@ -67,6 +67,6 @@ const RecentPurchases: React.FC<{}> = (_) => {
             { content }
         </GreenCard>
     );
-}
+};
 RecentPurchases.displayName = "RecentPurchases";
 export default RecentPurchases;

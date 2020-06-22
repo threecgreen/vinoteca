@@ -38,6 +38,6 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange, required}) => 
             onChange={ onChange }
             required={ required }
         />
-    )
+    );
 };
 ProducerInput.displayName = "ProducerInput";

@@ -23,14 +23,14 @@ const InventoryApp: React.FC<{}> = (_) => {
 
     const updateInventory = async () => {
         try {
-            const wines: IInventoryWine[] = await getInventory();
-            setWines(wines);
+            const newInventory: IInventoryWine[] = await getInventory();
+            setWines(newInventory);
         } catch (err) {
             logger.logError(`Failed to load inventory: ${err.message}`);
         } finally {
             setHasLoaded(true);
         }
-    }
+    };
 
     const onInventoryChange = async (id: number, change: InventoryChange) => {
         try {
@@ -44,7 +44,9 @@ const InventoryApp: React.FC<{}> = (_) => {
                 }
                 const updatedWine = await partUpdateWine(id, {inventory: newInventory});
                 if (newInventory > 0) {
-                    setWines((prevWines) => prevWines.map((w) => w.id === id ? {...w, inventory: updatedWine.inventory} : w))
+                    setWines((prevWines) => prevWines.map((w) => w.id === id
+                        ? {...w, inventory: updatedWine.inventory}
+                        : w));
                 } else {
                     updateInventory();
                 }
@@ -52,13 +54,13 @@ const InventoryApp: React.FC<{}> = (_) => {
         } catch (err) {
             logger.logWarning(`Failed to update inventory: ${err.message}`);
         }
-    }
+    };
     const downloadInventory = () => {
         download(`vinoteca_inventory_${serializeDate(new Date())}.csv`,
                  generateCSV(wines, [
                      "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
-                     "lastPurchaseDate", "lastPurchasePrice"
-                 ], {"lastPurchasedDate": serializeDate}));
+                     "lastPurchaseDate", "lastPurchasePrice",
+                 ], {lastPurchasedDate: serializeDate}));
     };
 
     if (!hasLoaded) {
@@ -87,6 +89,6 @@ const InventoryApp: React.FC<{}> = (_) => {
             </Row>
         </div>
     );
-}
+};
 InventoryApp.displayName = "InventoryApp";
 export default InventoryApp;

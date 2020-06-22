@@ -8,7 +8,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
 import { Preloader } from "../../components/Preloader";
 import { useSetUser, useUser } from "../../components/UserContext";
-import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
+import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
@@ -60,12 +60,12 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
                 </div>
             </div>
             { showNewUserModal && <NewUserForm onCancel={ () => setShowNewUserModal(false) }
-                onFinish={ (user) => {
-                    setUser!(user);
+                onFinish={ (updatedUser) => {
+                    setUser!(updatedUser);
                     setShowNewUserModal(false);
                 }}
             /> }
         </>
     );
-}
+};
 HomeApp.displayName = "HomeApp";

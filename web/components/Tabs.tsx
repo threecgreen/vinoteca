@@ -1,6 +1,6 @@
+import { Tabs as MTabs } from "materialize-css";
 import React, { useEffect } from "react";
 import { IChildrenProp } from "./IProps";
-import { Tabs as MTabs } from "materialize-css"
 
 export enum TabColor {
     Green = "wine-green-tab",
@@ -17,7 +17,7 @@ export const Tabs: React.FC<IChildrenProp> = ({children}) => {
             { ...children }
         </ul>
     );
-}
+};
 Tabs.displayName = "Tabs";
 
 export function indexFactory(name: string) {
@@ -26,7 +26,7 @@ export function indexFactory(name: string) {
 
 interface ITabProps extends IChildrenProp {
     target: string;
-    color: TabColor,
+    color: TabColor;
     enabled?: boolean;
 }
 
@@ -40,7 +40,7 @@ export const Tab: React.FC<ITabProps> = ({children, color, target, enabled}) => 
             </a>
         </li>
     );
-}
+};
 Tab.displayName = "Tab";
 
 interface ITabPanelProps extends IChildrenProp {
@@ -53,5 +53,5 @@ export const TabPanel: React.FC<ITabPanelProps> = ({children, id}) => {
             { ...children }
         </div>
     );
-}
+};
 TabPanel.displayName = "TabPanel";

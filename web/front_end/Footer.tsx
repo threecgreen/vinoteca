@@ -78,5 +78,5 @@ export const Footer: React.FC<{}> = (_) => {
             </div>
         </footer>
     );
-}
+};
 Footer.displayName = "Footer";

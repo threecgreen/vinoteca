@@ -14,24 +14,24 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchData() {
             await Promise.all([
-                async() => {
+                async () => {
                     const tl = await getTotalLiters();
                     setTotalLiters(tl.totalLiters);
                 },
-                async() => {
+                async () => {
                     const mcd = await getMostCommonPurchaseDate();
                     if (mcd.mostCommonPurchaseDate) {
                         setMostCommonPurchaseDate(mcd.mostCommonPurchaseDate);
                     }
                 },
-                async() => {
+                async () => {
                     const v = await getWineVarieties();
                     setTotalVarieties(v.count);
                 },
-                async() => {
+                async () => {
                     const pc = await getPurchaseCount();
                     setTotalPurchases(pc.count);
-                }
+                },
             ].map((f) => f()));
             setHasLoaded(true);
         }
@@ -64,6 +64,6 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
         <YellowCard title="By the numbers">
             <PreloaderCirc />
         </YellowCard>
-    )
-}
+    );
+};
 ByTheNumbers.displayName = "ByTheNumbers";

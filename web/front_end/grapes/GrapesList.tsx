@@ -28,11 +28,11 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
             case SortingValue.Wines:
                 return grapes.sort((g1, g2) => {
                     return (g1.wineCount || 0) > (g2.wineCount || 0) ? -ascendingMultiplier : ascendingMultiplier;
-                })
+                });
             default:
                 return grapes;
         }
-    }
+    };
 
     const onHeaderClick = (e: React.MouseEvent, clickedHeader: SortingValue) => {
         e.preventDefault();
@@ -42,14 +42,14 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
             setIsAscending(true);
             setSortingValue(clickedHeader);
         }
-    }
+    };
 
     const sortingStateForHeader = (header: SortingValue): SortingState => {
         if (sortingValue === header) {
             return isAscending ? SortingState.Ascending : SortingState.Descending;
         }
         return SortingState.NotSorted;
-    }
+    };
 
     return (
         <Table condensed>
@@ -82,5 +82,5 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
             </tbody>
         </Table>
     );
-}
+};
 GrapesList.displayName = "GrapesList";

@@ -18,13 +18,13 @@ export const FloatingBtn: React.FC<IFloatingBtnProps> = (props) => {
     const classes = combineClasses(props.classes);
     const mouseDown = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         if (props.onMouseDown) {
-            props.onMouseDown(e)
+            props.onMouseDown(e);
         }
-    }
+    };
     const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         props.onClick();
-    }
+    };
 
     return (
         <a href="#"
@@ -54,7 +54,7 @@ export const Btn: React.FC<IBtnProps> = (props) => {
     const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         props.onClick();
-    }
+    };
 
     return (
         <button className={ `${noRbtn ? "" : "rbtn"} waves-effect waves-light btn ${classes}` }
@@ -65,7 +65,7 @@ export const Btn: React.FC<IBtnProps> = (props) => {
             { props.children }
         </button>
     );
-}
+};
 Btn.displayName = "Btn";
 
 interface IBtnLinkProps extends IChildrenProp, IClassesProp {
@@ -82,7 +82,7 @@ export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
             { props.children }
         </Link>
     );
-}
+};
 BtnLink.displayName = "BtnLink";
 
 interface ICancelOrConfirmProps {
@@ -117,5 +117,5 @@ export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
             </Btn>
         </Col>
     );
-}
+};
 CancelOrConfirmBtns.displayName = "CancelOrConfirmBtns";

@@ -46,7 +46,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
         clearTimeout(timeoutId);
         setIsActive(true);
         const position = inputRef.current?.selectionStart ?? props.value.length - 1;
-        props.onChange(insertCharAt(props.value, char, position))
+        props.onChange(insertCharAt(props.value, char, position));
         setTimeout(() => inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     };
 
@@ -61,19 +61,18 @@ export const TextInput: React.FC<ITextProps> = (props) => {
     const onChange = (val: string) => {
         setIsActive(true);
         props.onChange(val);
-    }
+    };
 
     const onFocus = () => {
         clearTimeout(timeoutId);
         setIsActive(true);
         props.onFocus?.();
-    }
-
+    };
 
     const onShowPicker = () => {
         clearTimeout(timeoutId);
         setShowPicker(!showPicker);
-    }
+    };
 
     return (
         <div onFocus={ (_) => onFocus() }
@@ -104,7 +103,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
             /> }
          </div>
     );
-}
+};
 TextInput.displayName = "TextInput";
 
 interface ISimpleProps extends IGridProps {
@@ -123,7 +122,7 @@ export const EmailInput: React.FC<ISimpleProps> = (props) => {
             autocomplete="email"
         />
     );
-}
+};
 EmailInput.displayName = "EmailInput";
 
 export const PasswordInput: React.FC<ISimpleProps & {autocomplete: string}> = (props) => {
@@ -133,7 +132,7 @@ export const PasswordInput: React.FC<ISimpleProps & {autocomplete: string}> = (p
             required={ true }
         />
     );
-}
+};
 PasswordInput.displayName = "PasswordInput";
 
 interface IIntSimpleProps {

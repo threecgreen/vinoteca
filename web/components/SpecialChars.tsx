@@ -26,7 +26,7 @@ export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
             setCase(Case.Lower);
             setChars(chars.map((char) => char.toLowerCase()));
         }
-    }
+    };
 
     return (
         <aside className="special-char-picker">
@@ -47,11 +47,11 @@ export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
             }) }
         </aside>
     );
-}
+};
 
 export const insertCharAt = (val: string, char: string, position: number): string => {
     if (isNaN(position)) {
         return val + char;
     }
     return val.substr(0, position) + char + val.substr(position);
-}
+};

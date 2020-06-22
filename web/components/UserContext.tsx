@@ -5,7 +5,7 @@ import { IChildrenProp } from "./IProps";
 
 const UserContext = React.createContext<IUser | null>(null);
 UserContext.displayName = "UserContext";
-const SetUserContext = React.createContext<((user: IUser | null) => void )| null>(null);
+const SetUserContext = React.createContext<((user: IUser | null) => void) | null>(null);
 SetUserContext.displayName = "SetUserContext";
 
 export const UserProvider: React.FC<IChildrenProp> = ({children}) => {
@@ -27,7 +27,7 @@ export const UserProvider: React.FC<IChildrenProp> = ({children}) => {
             </SetUserContext.Provider>
         </UserContext.Provider>
     );
-}
+};
 UserProvider.displayName = "UserProvider";
 
 export const useUser = () => {
@@ -36,7 +36,7 @@ export const useUser = () => {
         throw new Error("useUser must be used within a UserProvider");
     }
     return user;
-}
+};
 
 export const useSetUser = () => {
     const setUser = React.useContext(SetUserContext);
@@ -44,4 +44,4 @@ export const useSetUser = () => {
         return setUser;
     }
     throw new Error("useSetUser must be used within a UserProvider");
-}
+};
