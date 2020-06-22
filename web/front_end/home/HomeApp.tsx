@@ -8,11 +8,12 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { ParallaxImg } from "../../components/ParallaxImg";
 import { Preloader } from "../../components/Preloader";
 import { useSetUser, useUser } from "../../components/UserContext";
-import { useTitle, useDescription } from "../../lib/widgets";
+import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");
     useDescription("A simple, free wine purchase tracker");
+    useCanonical("");
 
     const user = useUser();
     const setUser = useSetUser();

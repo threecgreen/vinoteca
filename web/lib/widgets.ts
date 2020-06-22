@@ -38,7 +38,7 @@ export function useTitle(title: string) {
 }
 
 export function setTitle(title: string) {
-    document.title = `vinoteca | ${title}`;
+    document.title = `${title} | vinoteca`;
 }
 
 export function useDescription(desc: string) {
@@ -48,5 +48,16 @@ export function useDescription(desc: string) {
 }
 
 export function setDescription(desc: string) {
-    document.querySelector('meta[name="description"')?.setAttribute("content", desc);
+    document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
+}
+
+export function useCanonical(url: string) {
+    React.useEffect(() => {
+        setCanonical(url);
+    });
+}
+
+const BASE_URL = "https://vinote.ca";
+export function setCanonical(url: string) {
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", `${BASE_URL}${url}`);
 }

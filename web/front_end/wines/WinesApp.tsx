@@ -8,7 +8,8 @@ import { IWine } from "../../lib/api/Rest";
 import { getWines } from "../../lib/api/wines";
 import FilterExpr from "../../lib/FilterExpr";
 import { useLogger } from "../../lib/Logger";
-import { useTitle } from "../../lib/widgets";
+import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
+import { getNameAndType } from "../../lib/utils";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
 
@@ -96,6 +97,10 @@ const WinesApp: React.FC<{}> = (_) => {
     useTitle("Wines");
 
     const [state, dispatch] = React.useReducer(reducer, initState())
+
+    useTitle(`Wines`);
+    useDescription("All the wines you've entered into vinoteca")
+    useCanonical("/wines");
 
     React.useEffect(() => {
         async function fetchWines() {

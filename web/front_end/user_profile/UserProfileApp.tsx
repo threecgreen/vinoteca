@@ -9,6 +9,7 @@ import { IChangeUserForm } from "../../lib/api/Rest";
 import { useLogger } from "../../lib/Logger";
 import { EditUser } from "./EditUser";
 import { ChangePasswordForm } from "../../components/AuthModals";
+import { useTitle, useCanonical, useDescription } from "../../lib/widgets";
 
 enum Mode {
     Display,
@@ -26,6 +27,10 @@ const UserProfileApp: React.FC<{}> = (_) => {
         navigate("/");
         return null;
     }
+
+    useTitle(`${user}'s profile`);
+    useDescription(`${user}'s profile. The current user`);
+    useCanonical("/profile");
 
     const onSubmitChanges = async (form: IChangeUserForm) => {
         try {

@@ -1,11 +1,12 @@
 import { RouteComponentProps } from "@reach/router";
 import React from "react";
-import { useTitle, useDescription } from "../../lib/widgets";
+import { useTitle, useDescription, useCanonical } from "../../lib/widgets";
 import { MaterialIcon } from "../../components/MaterialIcon";
 
 export const AboutApp: React.FC<RouteComponentProps> = (_props) => {
     useTitle("About");
     useDescription("History of vinoteca, changelog, and links to submit bugs and suggestions");
+    useCanonical("/about");
 
     const addr = "crtrgreen" + "@" + "gmail" + ".com";
     const subject = "vinoteca bug";
