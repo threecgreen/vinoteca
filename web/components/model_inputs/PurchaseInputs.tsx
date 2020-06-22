@@ -2,7 +2,7 @@ import React from "react";
 import { toDict } from "../../lib/api/common";
 import { IPurchaseForm, IStore } from "../../lib/api/Rest";
 import { getOrCreateStore, getStores } from "../../lib/api/stores";
-import { dateToStr } from "../../lib/date";
+import { serializeDate } from "../../lib/date";
 import { useLogger } from "../../lib/Logger";
 import { defaultVintageYear } from "../../lib/utils";
 import { autocomplete } from "../../lib/widgets";
@@ -22,7 +22,7 @@ export interface IPurchaseData {
 }
 
 export const initPurchaseInputData: () => IPurchaseData = () => ({
-    date: dateToStr(new Date()),
+    date: serializeDate(new Date()),
     quantity: 1,
     shouldAddToInventory: true,
     price: null,

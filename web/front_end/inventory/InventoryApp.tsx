@@ -1,4 +1,3 @@
-import format from "date-fns/esm/format";
 import React from "react";
 import { Btn } from "../../components/Buttons";
 import { Col, Row } from "../../components/Grid";
@@ -6,7 +5,7 @@ import { Preloader } from "../../components/Preloader";
 import { IInventoryWine } from "../../lib/api/Rest";
 import { getInventory, partUpdateWine } from "../../lib/api/wines";
 import { download, generateCSV } from "../../lib/csv";
-import { dateToStr } from "../../lib/date";
+import { serializeDate } from "../../lib/date";
 import { useLogger } from "../../lib/Logger";
 import { useTitle } from "../../lib/widgets";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
@@ -55,11 +54,11 @@ const InventoryApp: React.FC<{}> = (_) => {
         }
     }
     const downloadInventory = () => {
-        download(`vinoteca_inventory_${format(new Date(), 'yyyy-MM-dd')}.csv`,
+        download(`vinoteca_inventory_${serializeDate(new Date())}.csv`,
                  generateCSV(wines, [
                      "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
                      "lastPurchaseDate", "lastPurchasePrice"
-                 ], {"lastPurchasedDate": dateToStr}));
+                 ], {"lastPurchasedDate": serializeDate}));
     };
 
     if (!hasLoaded) {
