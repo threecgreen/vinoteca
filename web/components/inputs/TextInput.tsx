@@ -45,7 +45,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
     const onSpecialCharClick = (char: string) => {
         clearTimeout(timeoutId);
         setIsActive(true);
-        const position = inputRef.current?.selectionStart ?? NaN;
+        const position = inputRef.current?.selectionStart ?? props.value.length - 1;
         props.onChange(insertCharAt(props.value, char, position))
         setTimeout(() => inputRef.current.setSelectionRange(position + 1, position + 1), 10);
     };
@@ -100,7 +100,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                 </Btn> }
             </UseCol>
             { showPicker && <SpecialCharPicker
-                onClick={ (c) => onSpecialCharClick(c) }
+                onClick={ onSpecialCharClick }
             /> }
          </div>
     );

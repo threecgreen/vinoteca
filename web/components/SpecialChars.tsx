@@ -41,7 +41,7 @@ export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
                 return (
                     <SpecialCharBtn char={ char }
                         key={ char }
-                        onClick={ (c) => onClick(c) }
+                        onClick={ onClick }
                     />
                 );
             }) }
