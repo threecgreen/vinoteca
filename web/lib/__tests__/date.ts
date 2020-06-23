@@ -2,7 +2,6 @@ import { format } from "date-fns/esm";
 import { deserializeDate } from "../date";
 
 test("Deserialize naive date string without timezone", () => {
-    process.env.TZ = "America/Chicago";
     expect((new Date()).getTimezoneOffset()).toBeGreaterThan(0);
 
     const date = deserializeDate("2019-04-01");
@@ -12,7 +11,6 @@ test("Deserialize naive date string without timezone", () => {
 });
 
 test("Format to date string after deserializing keeps naive date", () => {
-    process.env.TZ = "America/Chicago";
     expect((new Date()).getTimezoneOffset()).toBeGreaterThan(0);
 
     let dateStr = format(deserializeDate("2019-04-01"), "MMM dd, yyyy");
