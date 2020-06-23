@@ -89,6 +89,8 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
                             &nbsp;
                             <a className="text-link"
                                 href={ `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${subject}` }
+                                // Open in new tab
+                                target="_blank"
                             >
                                 Gmail
                             </a>
@@ -100,6 +102,8 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
                             &nbsp;
                             <a className="text-link"
                                 href={ `https://outlook.live.com/owa/?to=${addr}&subject=${subject}&path=/mail/action/compose` }
+                                // Open in new tab
+                                target="_blank"
                             >
                                 Outlook
                             </a>
