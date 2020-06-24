@@ -10,11 +10,15 @@ interface IProps {
     onRatingChange: (rating: number) => void;
 }
 
-export const RatingInput: React.FC<IProps> = ({isChecked, onIsCheckedChange, rating, onRatingChange})  => {
+export const RatingInput: React.FC<IProps> = ({
+    isChecked, onIsCheckedChange, rating, onRatingChange,
+}) => {
+
     const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
         if (ref) {
+            // tslint:disable-next-line no-unused-expression
             new Range(ref.current);
         }
     }, [ref]);

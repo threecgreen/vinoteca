@@ -65,7 +65,8 @@ export const Footer: React.FC<{}> = (_) => {
                         </div>
                         <div className="col s12 l4">
                             <p className={ width > MOBILE_CUTOFF ? "center" : undefined }>
-                                This software and its source code are distributed under the MIT License.
+                                This software and its source code are distributed under the MIT
+                                License.
                             </p>
                         </div>
                         <div className="col s12 l4">

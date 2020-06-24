@@ -41,7 +41,9 @@ export class ErrorBoundary extends React.Component<{}, IState> {
 
                     <br />
 
-                    <h4><strong>{ this.state.error?.name }:</strong> { this.state.error?.message }</h4>
+                    <h4>
+                        <strong>{ this.state.error?.name }:</strong> { this.state.error?.message }
+                    </h4>
                     <h6 className="bold">Traceback</h6>
                     {/* Render \n as newlines */}
                     <p style={ {whiteSpace: "pre-wrap", fontFamily: "monospace"} }>

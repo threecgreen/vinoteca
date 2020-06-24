@@ -37,7 +37,13 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
         }
 
         fetchData();
-    }, [setTotalLiters, setMostCommonPurchaseDate, setTotalLiters, setTotalVarieties, setHasLoaded]);
+    }, [
+        setTotalLiters,
+        setMostCommonPurchaseDate,
+        setTotalLiters,
+        setTotalVarieties,
+        setHasLoaded,
+    ]);
     if (hasLoaded) {
         return (
             <YellowCard title="By the numbers">

@@ -6,11 +6,17 @@ interface IViewport {
     width: number;
 }
 
-const ViewportContext = React.createContext<IViewport>({height: window.innerHeight, width: window.innerWidth});
+const ViewportContext = React.createContext<IViewport>({
+    height: window.innerHeight,
+    width: window.innerWidth,
+});
 ViewportContext.displayName = "ViewportContext";
 
 export const ViewportProvider: React.FC<IChildrenProp> = ({children}) => {
-    const [viewport, setViewport] = React.useState({height: window.innerHeight, width: window.innerWidth});
+    const [viewport, setViewport] = React.useState({
+        height: window.innerHeight,
+        width: window.innerWidth,
+    });
 
     const handleResize = () => {
         setViewport({height: window.innerHeight, width: window.innerWidth});

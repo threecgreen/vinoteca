@@ -14,8 +14,8 @@ export const UserProvider: React.FC<IChildrenProp> = ({children}) => {
     React.useEffect(() => {
         async function checkIfLoggedIn() {
             // Will return `null` if there's any error
-            const user = await getCurrentUser();
-            setUser(user);
+            const updatedUser = await getCurrentUser();
+            setUser(updatedUser);
         }
         checkIfLoggedIn();
     }, []);

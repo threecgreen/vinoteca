@@ -23,7 +23,7 @@ const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     );
 };
 
-export const Router: React.FC<{}> = (_props) => (
+export const Router: React.FC<{}> = () => (
     <ErrorBoundary>
         <UserProvider>
             <ViewportProvider>

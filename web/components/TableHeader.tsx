@@ -95,8 +95,8 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
     React.useEffect(() => {
         (async () => {
             try {
-                const colors: IColor[] = await getColors({});
-                setColors(colors.map((color) => color.name));
+                const rawColors: IColor[] = await getColors({});
+                setColors(rawColors.map((color) => color.name));
             } catch (e) {
                 logger.logError(`Failed to get colors: ${e.message}`);
             }

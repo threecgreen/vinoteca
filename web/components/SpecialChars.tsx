@@ -12,6 +12,7 @@ interface IProps {
 }
 
 export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
+    // tslint:disable-next-line variable-name
     const [case_, setCase] = React.useState(Case.Lower);
     const [chars, setChars] = React.useState([
         "à", "á", "â", "ã", "æ", "č", "ç", "è", "é", "ê", "ë", "í", "î",

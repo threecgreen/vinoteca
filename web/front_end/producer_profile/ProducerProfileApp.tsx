@@ -218,7 +218,8 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                         >
                             <MaterialIcon iconName="edit" />
                         </FloatingBtn>
-                        <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: Mode.Delete}) }
+                        <FloatingBtn
+                            onClick={ () => dispatch({type: "setMode", mode: Mode.Delete}) }
                             classes={ ["red-bg"] }
                         >
                             <MaterialIcon iconName="delete" />

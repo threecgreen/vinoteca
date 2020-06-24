@@ -56,7 +56,8 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
                 this.getAndSetStats(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to log viticultural area: ${e.message}`, {id: this.props.vitiAreaId});
+            this.logger.logWarning(`Failed to log viticultural area: ${e.message}`,
+                {id: this.props.vitiAreaId});
         }
     }
 

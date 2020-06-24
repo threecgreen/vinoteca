@@ -45,7 +45,8 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns
-                    onConfirmClick={ handleSubmit(() => onSubmit(mutableWine, mutableGrapes), setIsSaving) }
+                    onConfirmClick={ handleSubmit(() =>
+                        onSubmit(mutableWine, mutableGrapes), setIsSaving) }
                     onCancelClick={ onCancel }
                     isSaving={ isSaving }
                     confirmDisabled={ !wine.producer || !wine.region || !wine.wineType }

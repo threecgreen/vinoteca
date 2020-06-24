@@ -40,7 +40,9 @@ export const GrapesTable: React.FC<IProps> = ({grapes}) => {
                 </SimpleTable>
             </TabPanel>
             <TabPanel id={tabIdxer(1)}>
-                <PieChart data={ grapes.map((grape) => ({label: grape.grape, value: grape.percent || 0})) } />
+                <PieChart data={ grapes.map((grape) =>
+                    ({label: grape.grape, value: grape.percent || 0})) }
+                />
             </TabPanel>
         </>
     );

@@ -28,7 +28,9 @@ export const Producer: React.FC<IProducerProps> = (props) => {
             <Row>
                 <Col s={ 12 }>
                     <h3 className="bold">{ `Edit Producer ${props.producer.name}` }</h3>
-                    <Form onSubmit={ () => props.producerText && props.regionText && props.onConfirmClick() }>
+                    <Form onSubmit={ () => props.producerText && props.regionText
+                        && props.onConfirmClick() }
+                    >
                         <ProducerInput value={ props.producerText }
                             onChange={ props.onProducerChange }
                             required={ true }

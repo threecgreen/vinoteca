@@ -50,7 +50,8 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
                 this.getAndSetVitiAreaStats(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to load region: ${e.message}`, {id: this.props.regionId});
+            this.logger.logWarning(`Failed to load region: ${e.message}`,
+                {id: this.props.regionId});
         }
     }
 

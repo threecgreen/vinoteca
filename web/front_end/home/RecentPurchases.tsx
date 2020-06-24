@@ -14,8 +14,8 @@ const RecentPurchases: React.FC<{}> = (_) => {
     useEffect(() => {
         async function fetchPurchases() {
             try {
-                const purchases = await getRecentPurchases();
-                setPurchases(purchases);
+                const updatedPurchases = await getRecentPurchases();
+                setPurchases(updatedPurchases);
             } catch (e) {
                 logger.logError(`Error fetching recent purchases: ${e.message}`);
             } finally {
@@ -32,7 +32,8 @@ const RecentPurchases: React.FC<{}> = (_) => {
     } else if (purchases.length > 0) {
         content = (
             <SimpleTable columns={ ["Date", "Name and Type", "Producer", "Region", "Store",
-                                    {name: "Price", isNumCol: true}, {name: "Quantity", isNumCol: true}] }
+                                    {name: "Price", isNumCol: true},
+                                    {name: "Quantity", isNumCol: true}] }
                 condensed={ false }
             >
                 { purchases.map((purchase) => {

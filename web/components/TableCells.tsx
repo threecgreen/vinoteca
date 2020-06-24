@@ -67,7 +67,9 @@ interface IDateCellProps {
     format?: string;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
-    const dateStr = props.date ? format(deserializeDate(props.date), props.format ?? "MMM dd, yyyy") : EN_DASH;
+    const dateStr = props.date
+        ? format(deserializeDate(props.date), props.format ?? "MMM dd, yyyy")
+        : EN_DASH;
     return (
         <td>{ dateStr }</td>
     );

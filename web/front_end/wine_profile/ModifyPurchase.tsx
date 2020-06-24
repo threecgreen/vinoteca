@@ -18,7 +18,9 @@ interface IProps {
  * Used for creating a new purchase as well as editing an existing one, hence
  * `ModifyPurchase`
  */
-export const ModifyPurchase: React.FC<IProps> = ({title, purchase, displayInventoryBtn, onCancel, onSubmit}) => {
+export const ModifyPurchase: React.FC<IProps> = ({
+    title, purchase, displayInventoryBtn, onCancel, onSubmit,
+}) => {
     const [state, dispatch] = React.useReducer(purchaseInputReducer, {
         ...purchase,
         store: purchase.store ?? "",

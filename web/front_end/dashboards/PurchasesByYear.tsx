@@ -14,8 +14,8 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     React.useEffect(() => {
         async function fetchYearsPurchases() {
             try {
-                const yearsPurchases = await getPurchasesByYear();
-                setYearsPurchases(yearsPurchases);
+                const updatedYearsPurchases = await getPurchasesByYear();
+                setYearsPurchases(updatedYearsPurchases);
             } catch (e) {
                 logger.logError(`Error fetching purchases by year: ${e.message}`);
             } finally {

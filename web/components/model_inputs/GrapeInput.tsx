@@ -16,7 +16,9 @@ interface IProps {
     onChange: (id: number, name: string, percent: number | null) => void;
 }
 
-export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, handleDelete, onChange}) => {
+export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent,
+                                              handleDelete, onChange}) => {
+
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
@@ -45,7 +47,7 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent, h
                 useCol={ false }
                 className="col autocomplete"
                 value={ grape }
-                onChange={ (grape) => onChange(id, grape, percent) }
+                onChange={ (updatedGrape) => onChange(id, updatedGrape, percent) }
                 inputRef={ inputRef }
             />
         </Col>

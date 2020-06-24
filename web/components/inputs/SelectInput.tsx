@@ -17,7 +17,8 @@ interface IProps extends IChildrenProp {
 export const SelectInput: React.FC<IProps> = (props) => {
     const {width} = useViewport();
 
-    const renderOption = (child: React.ReactElement<HTMLOptionElement>) => React.cloneElement(child, {key: child.props.value});
+    const renderOption = (child: React.ReactElement<HTMLOptionElement>) =>
+        React.cloneElement(child, {key: child.props.value});
 
     const Select = width > MOBILE_CUTOFF ? MaterializeSelect : DefaultSelct;
     return (
