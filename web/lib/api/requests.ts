@@ -10,6 +10,8 @@ const HEADERS = {
 };
 
 export type IQueryParams = IDict<string | number | boolean>;
+type Serializer<T> = (value: T) => string;
+type Parser<T> = (text: string) => T;
 
 function encodeParams(params: IQueryParams): string {
     if (isEmpty(params)) {
@@ -18,12 +20,15 @@ function encodeParams(params: IQueryParams): string {
     return "?" + Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
 }
 
-function encodeJson(obj: object): string {
-    return JSON.stringify(obj);
+function encodeJson<T>(obj: T, fun?: (val: T) => string): string {
+    return (fun ?? JSON.stringify)(obj);
 }
 
-async function decodeJsonIfAny(response: Response) {
+async function decodeJsonIfAny(response: Response, parser?: (text: string)  => any) {
     if (response.headers.get("content-type") === APP_JSON) {
+        if (parser) {
+            return parser(await response.text());
+        }
         return response.json();
     }
 }
@@ -47,7 +52,7 @@ function isVinotecaError(obj: any): obj is VinotecaError {
     return false;
 }
 
-async function checkResponse(response: Response): Promise<any> {
+async function checkResponse(response: Response, parser?: (text: string) => any): Promise<any> {
     if (response.status > 310) {
         const message = await decodeJsonIfAny(response);
         if (isVinotecaError(message)) {
@@ -59,14 +64,16 @@ async function checkResponse(response: Response): Promise<any> {
     if (response.status === 204) {
         return [];
     }
-    const json = decodeJsonIfAny(response);
+    const json = decodeJsonIfAny(response, parser);
     if (json !== undefined) {
         return json;
     }
     throw Error(await response.text());
 }
 
-async function checkResult(response: Response): Promise<RestResult<any>> {
+async function checkResult(
+    response: Response, parser?: (text: string) => any,
+): Promise<RestResult<any>> {
     if (response.status > 310) {
         const message = await decodeJsonIfAny(response);
         if (isVinotecaError(message)) {
@@ -75,7 +82,7 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
         throw Error(message);
     }
     try {
-        const json = await decodeJsonIfAny(response);
+        const json = await decodeJsonIfAny(response, parser);
         if (json !== undefined) {
             return Result.Ok(json);
         }
@@ -90,11 +97,14 @@ async function checkResult(response: Response): Promise<RestResult<any>> {
  * the JSON response.
  * @param url A URL to request
  * @param params An optional dictionary of parameters to their values
+ * @param parser An optional custom JSON parser such as for deserializing dates
  * @returns parsed JSON response
  */
-export async function get<T>(url: string, params: IQueryParams = {}): Promise<T> {
+export async function get<R>(
+    url: string, params: IQueryParams = {}, parser?: Parser<any>,
+): Promise<R> {
     const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
-    return checkResponse(response);
+    return checkResponse(response, parser);
 }
 
 /**
@@ -102,11 +112,14 @@ export async function get<T>(url: string, params: IQueryParams = {}): Promise<T>
  * the JSON result.
  * @param url A URL to request
  * @param params An optional dictionary of parameters to their values
+ * @param parser An optional custom JSON parser such as for deserializing dates
  * @returns RestResult
  */
-export async function getResult<T>(url: string, params: IQueryParams = {}): Promise<RestResult<T>> {
+export async function getResult<T>(
+    url: string, params: IQueryParams = {}, parser?: Parser<T>,
+): Promise<RestResult<T>> {
     const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
-    return checkResult(response);
+    return checkResult(response, parser);
 }
 
 /**
@@ -115,15 +128,22 @@ export async function getResult<T>(url: string, params: IQueryParams = {}): Prom
  * @param url A URL to request
  * @param body JSON object to encode and send to the server
  * @param params An optional dictionary of parameters to their values
+ * @param serializer An option @c JSON.stringify() replacement for serializing
+ * the request body
+ * @param parser An optional custom JSON parser such as for deserializing dates
  * @returns parsed JSON response
  */
-export async function post<T>(url: string, body: object, params: IQueryParams = {}): Promise<T> {
+export async function post<B, R>(
+    url: string, body: B, params: IQueryParams = {},
+    serializer?: Serializer<B>,
+    parser?: Parser<R>,
+): Promise<R> {
     const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body),
+        body: encodeJson(body, serializer),
         headers: HEADERS,
         method: "POST",
     });
-    return checkResponse(response);
+    return checkResponse(response, parser);
 }
 
 /**
@@ -132,17 +152,22 @@ export async function post<T>(url: string, body: object, params: IQueryParams = 
  * @param url A URL to request
  * @param body JSON object to encode and send to the server
  * @param params An optional dictionary of parameters to their values
+ * @param serializer An option @c JSON.stringify() replacement for serializing
+ * the request body
+ * @param parser An optional custom JSON parser such as for deserializing dates
  * @returns RestResult
  */
-export async function postResult<T>(url: string, body: object,
-                                    params: IQueryParams = {}): Promise<RestResult<T>> {
+export async function postResult<B, R>(
+    url: string, body: B, params: IQueryParams = {},
+    serializer?: Serializer<B>, parser?: Parser<R>,
+): Promise<RestResult<R>> {
 
     const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body),
+        body: encodeJson(body, serializer),
         headers: HEADERS,
         method: "POST",
     });
-    return checkResult(response);
+    return checkResult(response, parser);
 }
 
 export async function postForm<T>(url: string, form: FormData,
@@ -161,27 +186,34 @@ export async function postForm<T>(url: string, form: FormData,
  * @param url A URL to request
  * @param body JSON object to encode and send to the server
  * @param params An optional dictionary of parameters and their values
+ * @param serializer An option @c JSON.stringify() replacement for serializing
+ * the request body
+ * @param parser An optional custom JSON parser such as for deserializing dates
  * @returns parsed JSON response
  */
-export async function put<Response>(url: string, body: object,
-                                    params: IQueryParams = {}): Promise<Response> {
+export async function put<B, R>(
+    url: string, body: B, params: IQueryParams = {},
+    serializer?: (val: B) => string,
+    parser?: (text: string) => R,
+): Promise<R> {
     const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body),
+        body: encodeJson(body, serializer),
         headers: HEADERS,
         method: "PUT",
     });
-    return checkResponse(response);
+    return checkResponse(response, parser);
 }
 
-export async function putResult<T>(url: string, body: object,
-                                   params: IQueryParams = {}): Promise<RestResult<T>> {
-
+export async function putResult<B, R>(
+    url: string, body: B, params: IQueryParams = {},
+    serializer?: Serializer<B>, parser?: Parser<R>,
+): Promise<RestResult<R>> {
     const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body),
+        body: encodeJson(body, serializer),
         headers: HEADERS,
         method: "PUT",
     });
-    return checkResult(response);
+    return checkResult(response, parser);
 }
 
 export async function putForm<Response>(url: string, form: FormData,

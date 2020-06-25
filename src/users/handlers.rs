@@ -138,7 +138,7 @@ fn add_auth_cookie(cookies: &mut Cookies, user_id: i32) {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    // use super::*;
 
     #[test]
     #[ignore]

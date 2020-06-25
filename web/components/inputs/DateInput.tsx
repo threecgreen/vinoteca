@@ -1,16 +1,17 @@
 import format from "date-fns/esm/format";
 import { Datepicker } from "materialize-css";
 import React from "react";
-import { deserializeDate, serializeDate } from "../../lib/date";
+import { useLogger } from "../../lib/Logger";
 import { Input } from "./Input";
 
 interface IProps {
-    date: string | null;
+    date: Date | null;
     name: string;
-    onChange: (date: string | null) => void;
+    onChange: (date: Date | null) => void;
 }
 
 export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
+    const logger = useLogger("DateInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
     React.useEffect(() => {
@@ -21,7 +22,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
             // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
                 if (datepicker.date) {
-                    onChange(serializeDate(datepicker.date));
+                    onChange(datepicker.date);
                 } else {
                     onChange(null);
                 }
@@ -30,7 +31,13 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
         });
     }, [inputRef]);
 
-    const dateString = date ? format(deserializeDate(date), "MMM dd, yyyy") : "";
+    let dateString = "";
+    try {
+        dateString = date ? format(date, "MMM dd, yyyy") : "";
+    } catch (e) {
+        logger.logWarning("Failed to format date", {name, date});
+        onChange(null);
+    }
     const isValueSet = date !== null;
 
     return (

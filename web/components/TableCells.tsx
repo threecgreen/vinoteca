@@ -63,12 +63,12 @@ export const YearCell: React.FC<{year: number | null}> = (props) => {
 YearCell.displayName = "YearCell";
 
 interface IDateCellProps {
-    date: string | null;
+    date: Date | null;
     format?: string;
 }
 export const DateCell: React.FC<IDateCellProps> = (props) => {
     const dateStr = props.date
-        ? format(deserializeDate(props.date), props.format ?? "MMM dd, yyyy")
+        ? format(props.date, props.format ?? "MMM dd, yyyy")
         : EN_DASH;
     return (
         <td>{ dateStr }</td>

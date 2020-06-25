@@ -1,11 +1,13 @@
 import { RestResult } from "../error";
 import { getResult, postResult, putResult } from "./requests";
 import { IChangePasswordForm, IChangeUserForm, ILoginForm, IUser, IUserForm } from "./Rest";
+import { Json } from "./serde";
 
 const BASE_URL = "/rest/users";
 
+const parseUser = (t: string): IUser => Json.parse(t, {dateTimeKeys: ["createdAt", "lastLogin"]});
 async function getUser(): Promise<RestResult<IUser>> {
-    return getResult(BASE_URL);
+    return getResult(BASE_URL, {}, parseUser);
 }
 
 export const getCurrentUser = async (): Promise<IUser | null> => {
@@ -18,11 +20,11 @@ export const getCurrentUser = async (): Promise<IUser | null> => {
 };
 
 export async function login(form: ILoginForm): Promise<RestResult<IUser>> {
-    return postResult(`${BASE_URL}/login`, form);
+    return postResult(`${BASE_URL}/login`, form, {}, undefined, parseUser);
 }
 
 export async function createUser(form: IUserForm): Promise<RestResult<IUser>> {
-    return postResult(BASE_URL, form);
+    return postResult(BASE_URL, form, {}, undefined, parseUser);
 }
 
 export async function changePassword(form: IChangePasswordForm): Promise<RestResult<void>> {

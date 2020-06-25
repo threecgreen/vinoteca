@@ -4,6 +4,7 @@ import {
     IMostCommonPurchaseDate, IPurchase, IPurchaseCount, IPurchaseForm, IRecentPurchase,
     ITotalLiters, IYearsPurchases,
 } from "./Rest";
+import { Json } from "./serde";
 
 const BASE_URL = "/rest/purchases";
 
@@ -11,18 +12,25 @@ interface IGetPurchasesParams {
     wineId?: number;
 }
 
+const stringifyPurchaseForm = (v: IPurchaseForm) => Json.stringify(v, {dateKeys: ["date"]});
+const parsePurchase = (t: string): IPurchase => Json.parse(t, {dateKeys: ["date"]});
+
 export async function getPurchases({wineId}: IGetPurchasesParams): Promise<IPurchase[]> {
     const nonNullParams = nonNulls({ wine_id: wineId });
-    const purchases = await get<IPurchase[]>(BASE_URL, nonNullParams);
+    const purchases = await get<IPurchase[]>(BASE_URL, nonNullParams, parsePurchase);
     return purchases;
 }
 
 export async function createPurchase(purchase: IPurchaseForm): Promise<IPurchase> {
-    return post(BASE_URL, purchase);
+    return post(BASE_URL, purchase, {},
+                stringifyPurchaseForm,
+                parsePurchase);
 }
 
 export async function updatePurchase(id: number, purchase: IPurchaseForm): Promise<IPurchase> {
-    return put(`${BASE_URL}/${id}`, purchase);
+    return put(`${BASE_URL}/${id}`, purchase, {},
+               (v) => Json.stringify(v, {dateKeys: ["date"]}),
+               (t) => Json.parse(t, {dateKeys: ["date"]}));
 }
 
 export async function deletePurchase(id: number): Promise<void> {
@@ -46,5 +54,5 @@ export async function getPurchasesByYear(): Promise<IYearsPurchases[]> {
 }
 
 export async function getRecentPurchases(): Promise<IRecentPurchase[]> {
-    return get(`${BASE_URL}/recent`);
+    return get(`${BASE_URL}/recent`, {}, (t) => Json.parse(t, {dateKeys: ["date"]}));
 }

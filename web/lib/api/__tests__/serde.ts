@@ -17,7 +17,6 @@ test("Serializing nullable Date leaves null alone", () => {
 test("(De)serialize date", () => {
     const obj = {date: new Date(2006, 12, 25), fruit: "peach", count: -3};
 
-    console.log(obj);
     const objString = Json.stringify(obj, {dateKeys: ["date"]});
     const result = Json.parse(objString, {dateKeys: ["date"]}) as typeof obj;
     expect(result).toStrictEqual(obj);

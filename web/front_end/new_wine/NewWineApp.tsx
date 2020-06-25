@@ -8,6 +8,7 @@ import { grapeReducer, GrapesInputs, wineGrapesToForm } from "../../components/m
 import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "../../components/Preloader";
 import { createPurchase, deletePurchase } from "../../lib/api/purchases";
+import { Json } from "../../lib/api/serde";
 import { createWineGrapes } from "../../lib/api/wine_grapes";
 import { createWine, deleteWine } from "../../lib/api/wines";
 import { useLocalStorageReducer } from "../../lib/local_storage";
@@ -17,9 +18,13 @@ import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from 
 
 const NewWineApp: React.FC<RouteComponentProps> = (_) => {
     const logger = useLogger("NewWineApp");
-    const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer("NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData);
+    const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer(
+        "NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData,
+        (v) => Json.stringify(v, {dateKeys: ["date"]}),
+        (t) => Json.parse(t, {dateKeys: ["date"]}));
     const [wineState, wineDispatch, clearWineStorage] =
-        useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData, ["file"]);
+        useLocalStorageReducer("NewWineApp-Wine", wineInputReducer, initWineInputData,
+                               JSON.stringify, JSON.parse, ["file"]);
     const [grapes, grapesDispatch, clearGrapesStorage] =
         useLocalStorageReducer("NewWineApp-Grapes", grapeReducer, () => []);
     const [isSaving, setIsSaving] = React.useState(false);

@@ -2,7 +2,6 @@ import React from "react";
 import { toDict } from "../../lib/api/common";
 import { IPurchaseForm, IStore } from "../../lib/api/Rest";
 import { getOrCreateStore, getStores } from "../../lib/api/stores";
-import { serializeDate } from "../../lib/date";
 import { useLogger } from "../../lib/Logger";
 import { defaultVintageYear } from "../../lib/utils";
 import { autocomplete } from "../../lib/widgets";
@@ -12,7 +11,7 @@ import { NumberInput } from "../inputs/NumberInput";
 import { TextInput } from "../inputs/TextInput";
 
 export interface IPurchaseData {
-    date: string | null;
+    date: Date | null;
     quantity: number;
     shouldAddToInventory: boolean | null;
     price: number | null;
@@ -22,7 +21,7 @@ export interface IPurchaseData {
 }
 
 export const initPurchaseInputData: () => IPurchaseData = () => ({
-    date: serializeDate(new Date()),
+    date: new Date(),
     quantity: 1,
     shouldAddToInventory: true,
     price: null,
@@ -53,7 +52,7 @@ export const purchaseDataToForm = async (data: IPurchaseData, wineId: number):
 };
 
 type Action =
-    | { type: "setDate", date: string | null }
+    | { type: "setDate", date: Date | null }
     | { type: "setQuantity", quantity: number }
     | { type: "setShouldAddToInventory", shouldAddToInventory: boolean }
     | { type: "setPrice", price: number }

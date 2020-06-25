@@ -112,8 +112,8 @@ export const InventoryTable: React.FC<IProps> = ({ wines, onInventoryChange }) =
                     // Wines with NULL purchase date should be considered the
                     // least recent
                     const defaultDateStr = "1900-01-01";
-                    const date1 = deserializeDate(w1.lastPurchaseDate ?? defaultDateStr);
-                    const date2 = deserializeDate(w2.lastPurchaseDate ?? defaultDateStr);
+                    const date1 = w1.lastPurchaseDate ?? new Date(defaultDateStr);
+                    const date2 = w2.lastPurchaseDate ?? new Date(defaultDateStr);
                     return (date1.getTime() - date2.getTime()) * ascendingMultiplier;
                 });
             case SortingValue.Price:

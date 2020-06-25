@@ -38,6 +38,8 @@ export function useLocalStorage<V>(key: string, initValue: V,
 export function useLocalStorageReducer<S, A>(
     key: string, reducer: React.Reducer<S, A>,
     initializer: () => S,
+    serializer: (v: S) => string = JSON.stringify,
+    parser: (t: string) => S = JSON.parse,
     exclude: Array<keyof S> = [],
 ): [S, React.Dispatch<A>, () => void] {
 
@@ -55,7 +57,7 @@ export function useLocalStorageReducer<S, A>(
             } else {
                 stateToSerialize = newState;
             }
-            const serializedValue = JSON.stringify(newState);
+            const serializedValue = serializer(newState);
             window.localStorage.setItem(key, serializedValue);
         } catch (err) {
             logger.logWarning(`Failed to update local storage with error: ${err.message}`);
@@ -68,7 +70,7 @@ export function useLocalStorageReducer<S, A>(
         const json = window.localStorage.getItem(key);
         if (json) {
             try {
-                return JSON.parse(json);
+                return parser(json);
             } catch (err) {
                 window.localStorage.removeItem(key);
                 logger.logWarning(`Failed to read local storage with error: ${err}`);

@@ -66,7 +66,8 @@ const UserProfileApp: React.FC<{}> = (_) => {
                     <h3>Welcome back { user.name }</h3>
 
                     <h6><b>Email:</b> { user.email }</h6>
-                    <h6><b>Account created at: </b>{ format(new Date(user.createdAt), "PPpp") }</h6>
+                    <h6><b>Account created at: </b>{ format(user.createdAt, "PPpp") }</h6>
+                    <h6><b>Last login: </b>{ format(user.lastLogin, "PPpp") }</h6>
                 </Col>
             </Row>
             <Row>

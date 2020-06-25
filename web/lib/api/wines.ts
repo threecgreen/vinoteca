@@ -1,6 +1,7 @@
 import { nonNulls } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
 import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
+import { Json } from "./serde";
 
 const BASE_URL = "/rest/wines";
 
@@ -76,7 +77,8 @@ export async function getWineVarieties(): Promise<IWineCount> {
 }
 
 export async function getInventory(): Promise<IInventoryWine[]> {
-    return get(`${BASE_URL}/inventory`);
+    return get(`${BASE_URL}/inventory`, {},
+               (t) => Json.parse(t, {dateKeys: ["lastPurchaseDate"]}));
 }
 
 export async function uploadWineImage(id: number, image: File): Promise<string> {

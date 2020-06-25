@@ -15,7 +15,7 @@ interface IStringifyParams<T> {
 export class Json {
     public static parse<T>(
         text: string, { dateKeys, dateTimeKeys }: Partial<IParseParams<T>> = {},
-    ): T | T[] {
+    ): T {
         if (dateKeys || dateTimeKeys) {
             return JSON.parse(
                 text,
@@ -29,7 +29,7 @@ export class Json {
     }
 
     public static stringify<T>(
-        value: T | T[], { dateKeys }: Partial<IStringifyParams<T>> = {},
+        value: T, { dateKeys }: Partial<IStringifyParams<T>> = {},
     ): string {
         if (dateKeys) {
             return JSON.stringify(

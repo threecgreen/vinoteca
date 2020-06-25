@@ -102,7 +102,7 @@ pub struct Purchase {
     pub store: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
-    #[ts(ts_type = "string | null")]
+    #[ts(ts_type = "Date | null")]
     pub date: Option<NaiveDate>,
 }
 
@@ -121,7 +121,7 @@ pub struct PurchaseForm {
     pub memo: Option<String>,
     pub store_id: Option<i32>,
     pub wine_id: i32,
-    #[ts(ts_type = "string | null")]
+    #[ts(ts_type = "Date | null")]
     pub date: Option<NaiveDate>,
 }
 
@@ -189,9 +189,9 @@ pub struct User {
     pub email: String,
     pub name: String,
     pub image: Option<String>,
-    #[ts(ts_type = "string")]
+    #[ts(ts_type = "Date")]
     pub created_at: DateTime<Utc>,
-    #[ts(ts_type = "string")]
+    #[ts(ts_type = "Date")]
     pub last_login: DateTime<Utc>,
 }
 

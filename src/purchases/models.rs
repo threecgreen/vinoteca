@@ -14,7 +14,7 @@ pub struct RecentPurchase {
     pub vintage: Option<i32>,
     pub memo: Option<String>,
     pub store: Option<String>,
-    #[ts(ts_type = "string | null")]
+    #[ts(ts_type = "Date | null")]
     pub date: Option<NaiveDate>,
     pub wine_id: i32,
     pub wine_name: Option<String>,

@@ -52,7 +52,7 @@ pub struct InventoryWine {
     pub region: String,
     #[sql_type = "Nullable<Integer>"]
     pub last_purchase_vintage: Option<i32>,
-    #[ts(ts_type = "string | null")]
+    #[ts(ts_type = "Date | null")]
     #[sql_type = "Nullable<Date>"]
     pub last_purchase_date: Option<NaiveDate>,
     #[sql_type = "Integer"]
