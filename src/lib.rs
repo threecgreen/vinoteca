@@ -3,6 +3,8 @@
 #[macro_use]
 extern crate diesel;
 #[macro_use]
+extern crate lazy_static;
+#[macro_use]
 extern crate log;
 #[macro_use]
 extern crate rocket_contrib;
@@ -10,10 +12,6 @@ extern crate rocket_contrib;
 extern crate rocket;
 #[macro_use]
 extern crate validator_derive;
-
-#[cfg(test)]
-#[macro_use]
-extern crate lazy_static;
 
 // Diesel modules
 pub mod models;
@@ -45,6 +43,7 @@ pub mod purchases;
 pub mod regions;
 mod stores;
 pub mod users;
+pub mod version;
 pub mod viti_areas;
 pub mod wine_grapes;
 mod wine_types;
@@ -126,6 +125,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 users::logout,
                 users::modify_profile,
                 users::change_password,
+                version::get,
                 viti_areas::get,
                 viti_areas::get_one,
                 viti_areas::put,
