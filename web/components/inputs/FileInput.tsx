@@ -1,5 +1,5 @@
+import { nameToId } from "lib/utils";
 import React from "react";
-import { nameToId } from "../../lib/utils";
 import { Btn } from "../Buttons";
 import { InputField } from "../Grid";
 

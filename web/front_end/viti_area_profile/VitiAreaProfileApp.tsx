@@ -1,15 +1,15 @@
+import { FloatingBtn } from "components/Buttons";
+import { FixedActionList } from "components/FixedActionList";
+import { Col, Row } from "components/Grid";
+import { MaterialIcon } from "components/MaterialIcon";
+import { Preloader } from "components/Preloader";
+import { ColumnToExclude, WinesTable } from "components/WinesTable";
+import { IVitiArea, IVitiAreaStats, IWine } from "lib/api/Rest";
+import { getVitiArea, getVitiAreaStats, updateVitiArea } from "lib/api/viti_areas";
+import { getWines } from "lib/api/wines";
+import Logger from "lib/Logger";
+import { setTitle } from "lib/widgets";
 import React from "react";
-import { FloatingBtn } from "../../components/Buttons";
-import { FixedActionList } from "../../components/FixedActionList";
-import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { Preloader } from "../../components/Preloader";
-import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
-import { IVitiArea, IVitiAreaStats, IWine } from "../../lib/api/Rest";
-import { getVitiArea, getVitiAreaStats, updateVitiArea } from "../../lib/api/viti_areas";
-import { getWines } from "../../lib/api/wines";
-import Logger from "../../lib/Logger";
-import { setTitle } from "../../lib/widgets";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 

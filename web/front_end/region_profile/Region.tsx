@@ -1,7 +1,7 @@
+import { Flag } from "components/Flag";
+import { Col, Row } from "components/Grid";
+import { IRegion } from "lib/api/Rest";
 import React from "react";
-import { Flag } from "../../components/Flag";
-import { Col, Row } from "../../components/Grid";
-import { IRegion } from "../../lib/api/Rest";
 
 interface IRegionProps {
     region: IRegion;

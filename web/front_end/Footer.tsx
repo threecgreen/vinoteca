@@ -1,9 +1,9 @@
 import { Link } from "@reach/router";
+import { MOBILE_CUTOFF } from "components/constants";
+import { useUser } from "components/context/UserContext";
+import { useViewport } from "components/context/ViewportContext";
+import { VERSION } from "lib/constants";
 import React from "react";
-import { MOBILE_CUTOFF } from "../components/constants";
-import { useUser } from "../components/UserContext";
-import { useViewport } from "../components/ViewportContext";
-import { VERSION } from "../lib/constants";
 
 export const Footer: React.FC<{}> = (_) => {
     const thisYear = new Date().getFullYear();

@@ -1,11 +1,11 @@
+import { Btn } from "components/Buttons";
+import { Col, Row } from "components/Grid";
+import { MaterialIcon } from "components/MaterialIcon";
+import { Table } from "components/Table";
+import { DateCell, NumCell, PriceCell, TextCell, YearCell } from "components/TableCells";
+import { SortingState, TableHeader } from "components/TableHeader";
+import { IPurchase } from "lib/api/Rest";
 import React from "react";
-import { Btn } from "../../components/Buttons";
-import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { Table } from "../../components/Table";
-import { DateCell, NumCell, PriceCell, TextCell, YearCell } from "../../components/TableCells";
-import { SortingState, TableHeader } from "../../components/TableHeader";
-import { IPurchase } from "../../lib/api/Rest";
 
 enum SortingValue {
     Date,

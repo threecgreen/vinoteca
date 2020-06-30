@@ -1,5 +1,5 @@
+import { nameToId } from "lib/utils";
 import React from "react";
-import { nameToId } from "../../lib/utils";
 import { IGridProps, InputField } from "../Grid";
 
 type IInputValue = string | number | string[];

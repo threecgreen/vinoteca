@@ -1,7 +1,7 @@
+import { Table } from "components/Table";
+import { SortingState, TableHeader } from "components/TableHeader";
+import { IGrape } from "lib/api/Rest";
 import React from "react";
-import { Table } from "../../components/Table";
-import { SortingState, TableHeader } from "../../components/TableHeader";
-import { IGrape } from "../../lib/api/Rest";
 import { GrapesListItem } from "./GrapesListItem";
 
 enum SortingValue {

@@ -1,11 +1,11 @@
 import { Link, navigate, useLocation } from "@reach/router";
+import { LoginForm } from "components/AuthModals";
+import { useSetUser, useUser } from "components/context/UserContext";
+import { MaterialIcon } from "components/MaterialIcon";
+import { logout } from "lib/api/auth";
+import { IUser } from "lib/api/Rest";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
-import { LoginForm } from "../components/AuthModals";
-import { MaterialIcon } from "../components/MaterialIcon";
-import { useSetUser, useUser } from "../components/UserContext";
-import { logout } from "../lib/api/auth";
-import { IUser } from "../lib/api/Rest";
 
 enum ModalState {
     None,

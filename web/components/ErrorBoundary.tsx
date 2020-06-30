@@ -1,5 +1,5 @@
+import Logger from "lib/Logger";
 import React from "react";
-import Logger from "../lib/Logger";
 
 interface IState {
     hasThrown: boolean;

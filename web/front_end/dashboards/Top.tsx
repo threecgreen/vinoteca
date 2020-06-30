@@ -1,14 +1,14 @@
+import { GreenCard, RedCard, YellowCard } from "components/Cards";
+import { SpinnerColor } from "components/Preloader";
+import { ProducerCell, RegionCell, VitiAreaCell } from "components/TableCells";
+import { TopEntity } from "components/TopEntity";
+import { getTopColors } from "lib/api/colors";
+import { getTopGrapes } from "lib/api/grapes";
+import { getTopProducers } from "lib/api/producers";
+import { getTopRegions } from "lib/api/regions";
+import { getTopVitiAreas } from "lib/api/viti_areas";
+import { capitalizeFirstLetter } from "lib/utils";
 import React from "react";
-import { GreenCard, RedCard, YellowCard } from "../../components/Cards";
-import { SpinnerColor } from "../../components/Preloader";
-import { ProducerCell, RegionCell, VitiAreaCell } from "../../components/TableCells";
-import { TopEntity } from "../../components/TopEntity";
-import { getTopColors } from "../../lib/api/colors";
-import { getTopGrapes } from "../../lib/api/grapes";
-import { getTopProducers } from "../../lib/api/producers";
-import { getTopRegions } from "../../lib/api/regions";
-import { getTopVitiAreas } from "../../lib/api/viti_areas";
-import { capitalizeFirstLetter } from "../../lib/utils";
 
 export const TopProducers: React.FC<{}> = (_) => {
     return (

@@ -1,14 +1,14 @@
 import { navigate } from "@reach/router";
+import { ChangePasswordForm } from "components/AuthModals";
+import { Btn } from "components/Buttons";
+import { useSetUser, useUser } from "components/context/UserContext";
+import { Col, Row } from "components/Grid";
 import format from "date-fns/esm/format";
+import { updateUser } from "lib/api/auth";
+import { IChangeUserForm } from "lib/api/Rest";
+import { useLogger } from "lib/Logger";
+import { useCanonical, useDescription, useTitle } from "lib/widgets";
 import React from "react";
-import { ChangePasswordForm } from "../../components/AuthModals";
-import { Btn } from "../../components/Buttons";
-import { Col, Row } from "../../components/Grid";
-import { useSetUser, useUser } from "../../components/UserContext";
-import { updateUser } from "../../lib/api/auth";
-import { IChangeUserForm } from "../../lib/api/Rest";
-import { useLogger } from "../../lib/Logger";
-import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 import { EditUser } from "./EditUser";
 
 enum Mode {

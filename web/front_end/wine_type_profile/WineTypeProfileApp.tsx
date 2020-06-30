@@ -1,15 +1,15 @@
+import { FloatingBtn } from "components/Buttons";
+import { FixedActionList } from "components/FixedActionList";
+import { Col, Row } from "components/Grid";
+import { MaterialIcon } from "components/MaterialIcon";
+import { Preloader } from "components/Preloader";
+import { WinesTable } from "components/WinesTable";
+import { IWine, IWineType } from "lib/api/Rest";
+import { getWines } from "lib/api/wines";
+import { getWineType, updateWineType } from "lib/api/wine_types";
+import Logger from "lib/Logger";
+import { setTitle } from "lib/widgets";
 import React from "react";
-import { FloatingBtn } from "../../components/Buttons";
-import { FixedActionList } from "../../components/FixedActionList";
-import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { Preloader } from "../../components/Preloader";
-import { WinesTable } from "../../components/WinesTable";
-import { IWine, IWineType } from "../../lib/api/Rest";
-import { getWineType, updateWineType } from "../../lib/api/wine_types";
-import { getWines } from "../../lib/api/wines";
-import Logger from "../../lib/Logger";
-import { setTitle } from "../../lib/widgets";
 import { WineType } from "./WineType";
 
 interface IState {

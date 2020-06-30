@@ -1,6 +1,6 @@
+import { useLogger } from "lib/Logger";
+import { nameToId } from "lib/utils";
 import React from "react";
-import { useLogger } from "../lib/Logger";
-import { nameToId } from "../lib/utils";
 import { BarChart } from "./Chart";
 import { PreloaderCirc, SpinnerColor } from "./Preloader";
 import { SimpleTable } from "./Table";

@@ -1,10 +1,10 @@
+import { CancelOrConfirmBtns } from "components/Buttons";
+import { Row } from "components/Grid";
+import { Modal, ModalContent, ModalFooter } from "components/Modal";
+import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "components/model_inputs/PurchaseInputs";
+import { IPurchase } from "lib/api/Rest";
+import { handleSubmit } from "lib/utils";
 import React from "react";
-import { CancelOrConfirmBtns } from "../../components/Buttons";
-import { Row } from "../../components/Grid";
-import { Modal, ModalContent, ModalFooter } from "../../components/Modal";
-import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "../../components/model_inputs/PurchaseInputs";
-import { IPurchase } from "../../lib/api/Rest";
-import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     title: string;

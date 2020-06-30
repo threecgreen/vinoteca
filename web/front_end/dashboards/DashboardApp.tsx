@@ -1,6 +1,6 @@
+import { Col, Row } from "components/Grid";
+import { useTitle } from "lib/widgets";
 import React from "react";
-import { Col, Row } from "../../components/Grid";
-import { useTitle } from "../../lib/widgets";
 import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYearGraph, PurchasesByYearTable } from "./PurchasesByYear";
 import { TopColors, TopGrapes, TopProducers, TopRegions, TopVitiAreas } from "./Top";

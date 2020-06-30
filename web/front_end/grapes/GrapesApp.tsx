@@ -1,10 +1,10 @@
+import { Col, Row } from "components/Grid";
+import { Preloader } from "components/Preloader";
+import { getGrapes, updateGrape } from "lib/api/grapes";
+import { IGrape, IGrapeForm } from "lib/api/Rest";
+import { useLogger } from "lib/Logger";
+import { useTitle } from "lib/widgets";
 import React from "react";
-import { Col, Row } from "../../components/Grid";
-import { Preloader } from "../../components/Preloader";
-import { getGrapes, updateGrape } from "../../lib/api/grapes";
-import { IGrape, IGrapeForm } from "../../lib/api/Rest";
-import { useLogger } from "../../lib/Logger";
-import { useTitle } from "../../lib/widgets";
 import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";

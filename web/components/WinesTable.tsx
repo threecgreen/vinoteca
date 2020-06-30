@@ -1,9 +1,11 @@
+import { IWine } from "lib/api/Rest";
+import { getNameAndType } from "lib/utils";
 import React from "react";
-import { IWine } from "../lib/api/Rest";
-import { getNameAndType } from "../lib/utils";
 import { Table } from "./Table";
-import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
-         YearCell } from "./TableCells";
+import {
+    ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
+    YearCell
+} from "./TableCells";
 import { FilterHeader, SelectFilterHeader, SortingState, TableHeader } from "./TableHeader";
 
 export enum WinesTableColumn {

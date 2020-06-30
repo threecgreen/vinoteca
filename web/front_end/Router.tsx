@@ -1,11 +1,10 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import React, { Suspense } from "react";
-import { AuthenticatedRoute, NotFound, RouteById } from "../components/CommonRoutes";
-import { ErrorBoundary } from "../components/ErrorBoundary";
-import { IChildrenProp } from "../components/IProps";
-import { Preloader } from "../components/Preloader";
-import { UserProvider } from "../components/UserContext";
-import { ViewportProvider } from "../components/ViewportContext";
+import { AuthenticatedRoute, NotFound, RouteById } from "components/CommonRoutes";
+import { UserProvider } from "components/context/UserContext";
+import { ViewportProvider } from "components/context/ViewportContext";
+import { ErrorBoundary } from "components/ErrorBoundary";
+import { IChildrenProp } from "components/IProps";
+import React from "react";
 import { AboutApp } from "./about/AboutApp";
 import { Footer } from "./Footer";
 import { HomeApp } from "./home/HomeApp";

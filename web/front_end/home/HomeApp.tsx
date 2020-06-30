@@ -1,14 +1,14 @@
 import { RouteComponentProps } from "@reach/router";
+import { NewUserForm } from "components/AuthModals";
+import { Btn, BtnLink } from "components/Buttons";
+import { AsyncComponent } from "components/CommonRoutes";
+import { useSetUser, useUser } from "components/context/UserContext";
+import { Col, Row } from "components/Grid";
+import { MaterialIcon } from "components/MaterialIcon";
+import { ParallaxImg } from "components/ParallaxImg";
+import { Preloader } from "components/Preloader";
+import { useCanonical, useDescription, useTitle } from "lib/widgets";
 import React, { Suspense } from "react";
-import { NewUserForm } from "../../components/AuthModals";
-import { Btn, BtnLink } from "../../components/Buttons";
-import { AsyncComponent } from "../../components/CommonRoutes";
-import { Col, Row } from "../../components/Grid";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { ParallaxImg } from "../../components/ParallaxImg";
-import { Preloader } from "../../components/Preloader";
-import { useSetUser, useUser } from "../../components/UserContext";
-import { useCanonical, useDescription, useTitle } from "../../lib/widgets";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useTitle("Wine purchase tracker");

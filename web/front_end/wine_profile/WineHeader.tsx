@@ -1,6 +1,6 @@
 import { Link } from "@reach/router";
 import React from "react";
-import { Col, Row } from "../../components/Grid";
+import { Col, Row } from "components/Grid";
 
 interface IProps {
     name: string | null;

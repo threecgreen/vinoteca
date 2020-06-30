@@ -1,6 +1,6 @@
 import Chart from "chart.js";
+import { useLogger } from "lib/Logger";
 import React from "react";
-import { useLogger } from "../lib/Logger";
 
 export interface IChartInput {
     label: string;

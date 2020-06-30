@@ -1,5 +1,5 @@
 import React from "react";
-import { IChildrenProp } from "./IProps";
+import { IChildrenProp } from "../IProps";
 
 interface IViewport {
     height: number;

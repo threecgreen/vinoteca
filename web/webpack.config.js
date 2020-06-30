@@ -1,5 +1,6 @@
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TsConfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 
 const inputPath = __dirname + "/front_end/";
 const outputPath = __dirname + "/static";
@@ -90,6 +91,7 @@ module.exports = (env, argv) => {
             ),
         ],
         resolve: {
+            plugins: [new TsConfigPathsPlugin({configFile: isProd ? "tsconfig.prod.json" : "tsconfig.json"})],
             extensions: [".js", ".json", ".ts", ".tsx"],
         },
     };

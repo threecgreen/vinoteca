@@ -1,10 +1,10 @@
+import { CancelOrConfirmBtns } from "components/Buttons";
+import { Form } from "components/Form";
+import { Col, Row } from "components/Grid";
+import { VitiAreaInput } from "components/model_inputs/VitiAreaInput";
+import { IVitiArea } from "lib/api/Rest";
+import { handleSubmit } from "lib/utils";
 import React from "react";
-import { CancelOrConfirmBtns } from "../../components/Buttons";
-import { Form } from "../../components/Form";
-import { Col, Row } from "../../components/Grid";
-import { VitiAreaInput } from "../../components/model_inputs/VitiAreaInput";
-import { IVitiArea } from "../../lib/api/Rest";
-import { handleSubmit } from "../../lib/utils";
 
 interface IProps {
     isEditing: boolean;

@@ -1,7 +1,7 @@
+import { changePassword, createUser, login } from "lib/api/auth";
+import { IChangePasswordForm, IUser } from "lib/api/Rest";
+import { useLogger } from "lib/Logger";
 import React from "react";
-import { changePassword, createUser, login } from "../lib/api/auth";
-import { IChangePasswordForm, IUser } from "../lib/api/Rest";
-import { useLogger } from "../lib/Logger";
 import { CancelOrConfirmBtns } from "./Buttons";
 import { Form } from "./Form";
 import { EmailInput, PasswordInput } from "./inputs/TextInput";

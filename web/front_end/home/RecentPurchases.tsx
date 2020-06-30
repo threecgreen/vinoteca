@@ -1,11 +1,11 @@
+import { GreenCard } from "components/Cards";
+import { PreloaderCirc, SpinnerColor } from "components/Preloader";
+import { SimpleTable } from "components/Table";
+import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "components/TableCells";
+import { getRecentPurchases } from "lib/api/purchases";
+import { IRecentPurchase } from "lib/api/Rest";
+import { useLogger } from "lib/Logger";
 import React, { useEffect, useState } from "react";
-import { GreenCard } from "../../components/Cards";
-import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
-import { SimpleTable } from "../../components/Table";
-import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "../../components/TableCells";
-import { getRecentPurchases } from "../../lib/api/purchases";
-import { IRecentPurchase } from "../../lib/api/Rest";
-import { useLogger } from "../../lib/Logger";
 
 const RecentPurchases: React.FC<{}> = (_) => {
     const logger = useLogger("RecentPurchases");

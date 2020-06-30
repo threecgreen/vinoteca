@@ -1,8 +1,7 @@
 import { Link } from "@reach/router";
 import format from "date-fns/esm/format";
+import { capitalizeFirstLetter, EN_DASH, getNameAndType } from "lib/utils";
 import React from "react";
-import { deserializeDate } from "../lib/date";
-import { capitalizeFirstLetter, EN_DASH, getNameAndType } from "../lib/utils";
 
 interface ITextCellProps {
     default?: string;

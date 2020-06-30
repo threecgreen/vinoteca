@@ -1,5 +1,5 @@
+import { Col, Row } from "components/Grid";
 import React from "react";
-import { Col, Row } from "../../components/Grid";
 import RecentPurchases from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
 

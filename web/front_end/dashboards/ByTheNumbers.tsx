@@ -1,8 +1,8 @@
+import { YellowCard } from "components/Cards";
+import { PreloaderCirc } from "components/Preloader";
+import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters } from "lib/api/purchases";
+import { getWineVarieties } from "lib/api/wines";
 import React from "react";
-import { YellowCard } from "../../components/Cards";
-import { PreloaderCirc } from "../../components/Preloader";
-import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters } from "../../lib/api/purchases";
-import { getWineVarieties } from "../../lib/api/wines";
 
 export const ByTheNumbers: React.FC<{}> = (_) => {
     const [totalLiters, setTotalLiters] = React.useState(0);

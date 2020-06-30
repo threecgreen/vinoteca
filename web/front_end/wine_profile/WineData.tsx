@@ -1,8 +1,8 @@
 import { Link } from "@reach/router";
+import { FloatingBtn } from "components/Buttons";
+import { MaterialIcon } from "components/MaterialIcon";
+import { capitalizeFirstLetter } from "lib/utils";
 import React from "react";
-import { FloatingBtn } from "../../components/Buttons";
-import { MaterialIcon } from "../../components/MaterialIcon";
-import { capitalizeFirstLetter } from "../../lib/utils";
 import { InventoryChange } from "../inventory/InventoryTable";
 
 interface IProps {

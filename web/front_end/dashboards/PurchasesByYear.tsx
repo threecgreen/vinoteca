@@ -1,12 +1,12 @@
+import { GreenCard, RedCard } from "components/Cards";
+import { LineChart } from "components/Chart";
+import { PreloaderCirc, SpinnerColor } from "components/Preloader";
+import { SimpleTable } from "components/Table";
+import { NumCell, PriceCell, YearCell } from "components/TableCells";
+import { getPurchasesByYear } from "lib/api/purchases";
+import { IYearsPurchases } from "lib/api/Rest";
+import Logger, { useLogger } from "lib/Logger";
 import React from "react";
-import { GreenCard, RedCard } from "../../components/Cards";
-import { LineChart } from "../../components/Chart";
-import { PreloaderCirc, SpinnerColor } from "../../components/Preloader";
-import { SimpleTable } from "../../components/Table";
-import { NumCell, PriceCell, YearCell } from "../../components/TableCells";
-import { getPurchasesByYear } from "../../lib/api/purchases";
-import { IYearsPurchases } from "../../lib/api/Rest";
-import Logger, { useLogger } from "../../lib/Logger";
 
 const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);

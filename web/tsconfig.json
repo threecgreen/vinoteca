@@ -8,7 +8,8 @@
         "noUnusedParameters": true,
         "strict": true,
         "jsx": "react",
-        "downlevelIteration": true  // ES6-style generators
+        "downlevelIteration": true,  // ES6-style generators
+        "baseUrl": "."
     },
     "include": [
         "front_end",

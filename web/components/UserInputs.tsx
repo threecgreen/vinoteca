@@ -1,5 +1,5 @@
+import { IUserForm } from "lib/api/Rest";
 import React from "react";
-import { IUserForm } from "../lib/api/Rest";
 import { EmailInput, PasswordInput, SimpleTextInput } from "./inputs/TextInput";
 
 type Action =

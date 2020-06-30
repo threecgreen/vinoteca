@@ -4,7 +4,7 @@ import { IUser } from "../lib/api/Rest";
 import { useLogger } from "../lib/Logger";
 import { LoginForm } from "./AuthModals";
 import { Preloader } from "./Preloader";
-import { useSetUser, useUser } from "./UserContext";
+import { useSetUser, useUser } from "./context/UserContext";
 
 interface IRouteByIdProps {
     id: string;

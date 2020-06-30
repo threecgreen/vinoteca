@@ -1,7 +1,7 @@
+import { SimpleTable } from "components/Table";
+import { NumCell } from "components/TableCells";
+import { IVitiAreaStats } from "lib/api/Rest";
 import React from "react";
-import { SimpleTable } from "../../components/Table";
-import { NumCell } from "../../components/TableCells";
-import { IVitiAreaStats } from "../../lib/api/Rest";
 
 interface IProps {
     stats?: IVitiAreaStats;

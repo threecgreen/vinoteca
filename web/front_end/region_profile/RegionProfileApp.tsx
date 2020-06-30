@@ -1,13 +1,13 @@
+import { Col, Row } from "components/Grid";
+import { Preloader } from "components/Preloader";
+import { ColumnToExclude, WinesTable } from "components/WinesTable";
+import { getRegion } from "lib/api/regions";
+import { IRegion, IVitiAreaStats, IWine } from "lib/api/Rest";
+import { getVitiAreaStats } from "lib/api/viti_areas";
+import { getWines } from "lib/api/wines";
+import Logger from "lib/Logger";
+import { setTitle } from "lib/widgets";
 import React from "react";
-import { Col, Row } from "../../components/Grid";
-import { Preloader } from "../../components/Preloader";
-import { ColumnToExclude, WinesTable } from "../../components/WinesTable";
-import { getRegion } from "../../lib/api/regions";
-import { IRegion, IVitiAreaStats, IWine } from "../../lib/api/Rest";
-import { getVitiAreaStats } from "../../lib/api/viti_areas";
-import { getWines } from "../../lib/api/wines";
-import Logger from "../../lib/Logger";
-import { setTitle } from "../../lib/widgets";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
 
