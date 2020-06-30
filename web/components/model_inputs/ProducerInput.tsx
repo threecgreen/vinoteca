@@ -1,9 +1,9 @@
+import { IProducer } from "generated/rest";
+import { toDict } from "lib/api/common";
+import { getProducers } from "lib/api/producers";
+import { useLogger } from "lib/Logger";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { toDict } from "../../lib/api/common";
-import { getProducers } from "../../lib/api/producers";
-import { IProducer } from "../../lib/api/Rest";
-import { useLogger } from "../../lib/Logger";
-import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";
 

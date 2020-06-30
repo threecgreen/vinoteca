@@ -44,8 +44,8 @@ Rocket.toml
 *.deb
 
 # Generated
-web/lib/api/Rest.d.ts
-web/lib/constants.ts
+web/generated/rest.d.ts
+web/generated/constants.ts
 
 # Migration
 **/migration_conf.json

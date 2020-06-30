@@ -4,7 +4,7 @@ import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { Preloader } from "components/Preloader";
 import { ColumnToExclude, WinesTable } from "components/WinesTable";
-import { IVitiArea, IVitiAreaStats, IWine } from "lib/api/Rest";
+import { IVitiArea, IVitiAreaStats, IWine } from "generated/rest";
 import { getVitiArea, getVitiAreaStats, updateVitiArea } from "lib/api/viti_areas";
 import { getWines } from "lib/api/wines";
 import Logger from "lib/Logger";

@@ -1,6 +1,6 @@
+import { IStore, IStoreForm } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
 import { get, post } from "./requests";
-import { IStore, IStoreForm } from "./Rest";
 
 const BASE_URL = "/rest/stores";
 

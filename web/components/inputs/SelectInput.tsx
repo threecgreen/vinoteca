@@ -1,9 +1,9 @@
+import { useViewport } from "components/context/ViewportContext";
+import { nameToId } from "lib/utils";
 import React from "react";
-import { nameToId } from "../../lib/utils";
 import { MOBILE_CUTOFF } from "../constants";
 import { InputField } from "../Grid";
 import { IChildrenProp } from "../IProps";
-import { useViewport } from "components/context/ViewportContext";
 
 interface IProps extends IChildrenProp {
     name: string;

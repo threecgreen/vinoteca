@@ -1,6 +1,6 @@
+import { IProducer, IProducerForm, ITopEntity } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
 import { delete_, get, post, put } from "./requests";
-import { IProducer, IProducerForm, ITopEntity } from "./Rest";
 
 const BASE_URL = "/rest/producers";
 

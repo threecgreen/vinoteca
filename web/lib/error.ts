@@ -1,4 +1,4 @@
-import { VinotecaError } from "./api/Rest";
+import { VinotecaError } from "generated/rest";
 
 type Inner<T, E> =
     | {type: "ok", value: T}

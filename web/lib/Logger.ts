@@ -1,6 +1,6 @@
+import { GIT_SHA, LOG_LEVEL, VERSION } from "generated/constants";
 import React from "react";
 import { postLog } from "./api/logs";
-import { GIT_SHA, LOG_LEVEL, VERSION } from "./constants";
 import { IDict } from "./utils";
 import { toast } from "./widgets";
 

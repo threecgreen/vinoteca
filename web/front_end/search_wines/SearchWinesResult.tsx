@@ -1,5 +1,5 @@
 import { ColorCell, NameAndTypeCell, TextCell } from "components/TableCells";
-import { IWine } from "lib/api/Rest";
+import { IWine } from "generated/rest";
 import React from "react";
 
 interface ISearchWinesResultProps {

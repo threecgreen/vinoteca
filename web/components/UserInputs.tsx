@@ -1,4 +1,4 @@
-import { IUserForm } from "lib/api/Rest";
+import { IUserForm } from "generated/rest";
 import React from "react";
 import { EmailInput, PasswordInput, SimpleTextInput } from "./inputs/TextInput";
 

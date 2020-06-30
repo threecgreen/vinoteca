@@ -1,4 +1,4 @@
-import { IGrape } from "lib/api/Rest";
+import { IGrape } from "generated/rest";
 
 export type Mode =
     | {type: "display"}

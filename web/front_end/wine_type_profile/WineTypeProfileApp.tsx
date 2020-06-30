@@ -4,7 +4,7 @@ import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { Preloader } from "components/Preloader";
 import { WinesTable } from "components/WinesTable";
-import { IWine, IWineType } from "lib/api/Rest";
+import { IWine, IWineType } from "generated/rest";
 import { getWines } from "lib/api/wines";
 import { getWineType, updateWineType } from "lib/api/wine_types";
 import Logger from "lib/Logger";

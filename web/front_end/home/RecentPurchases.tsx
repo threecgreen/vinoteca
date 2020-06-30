@@ -2,8 +2,8 @@ import { GreenCard } from "components/Cards";
 import { PreloaderCirc, SpinnerColor } from "components/Preloader";
 import { SimpleTable } from "components/Table";
 import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "components/TableCells";
+import { IRecentPurchase } from "generated/rest";
 import { getRecentPurchases } from "lib/api/purchases";
-import { IRecentPurchase } from "lib/api/Rest";
 import { useLogger } from "lib/Logger";
 import React, { useEffect, useState } from "react";
 

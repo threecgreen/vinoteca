@@ -1,6 +1,6 @@
 import { Table } from "components/Table";
 import { SortingState, TableHeader } from "components/TableHeader";
-import { IGrape } from "lib/api/Rest";
+import { IGrape } from "generated/rest";
 import React from "react";
 import { GrapesListItem } from "./GrapesListItem";
 

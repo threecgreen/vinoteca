@@ -2,7 +2,7 @@ import { CancelOrConfirmBtns } from "components/Buttons";
 import { Form } from "components/Form";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { userInputReducer, UserInputs } from "components/UserInputs";
-import { IChangeUserForm, IUser } from "lib/api/Rest";
+import { IChangeUserForm, IUser } from "generated/rest";
 import { handleSubmit } from "lib/utils";
 import React from "react";
 

@@ -1,6 +1,6 @@
+import { IChangePasswordForm, IChangeUserForm, ILoginForm, IUser, IUserForm } from "generated/rest";
 import { RestResult } from "../error";
 import { getResult, postResult, putResult } from "./requests";
-import { IChangePasswordForm, IChangeUserForm, ILoginForm, IUser, IUserForm } from "./Rest";
 import { Json } from "./serde";
 
 const BASE_URL = "/rest/users";

@@ -1,6 +1,6 @@
 import { Flag } from "components/Flag";
 import { Col, Row } from "components/Grid";
-import { IRegion } from "lib/api/Rest";
+import { IRegion } from "generated/rest";
 import React from "react";
 
 interface IRegionProps {

@@ -2,7 +2,7 @@ import { CancelOrConfirmBtns } from "components/Buttons";
 import { Row } from "components/Grid";
 import { TextInput } from "components/inputs/TextInput";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
-import { IGrapeForm } from "lib/api/Rest";
+import { IGrapeForm } from "generated/rest";
 import { handleSubmit } from "lib/utils";
 import React from "react";
 

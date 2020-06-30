@@ -1,6 +1,6 @@
+import { IDict } from "lib/utils";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { IDict } from "../../lib/utils";
-import { autocomplete } from "../../lib/widgets";
 import { FloatingBtn } from "../Buttons";
 import { Col, InputField } from "../Grid";
 import { NumberInput } from "../inputs/NumberInput";

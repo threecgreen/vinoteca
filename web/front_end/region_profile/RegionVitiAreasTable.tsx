@@ -1,6 +1,6 @@
 import { SimpleTable } from "components/Table";
 import { NumCell, PriceCell, VitiAreaCell } from "components/TableCells";
-import { IVitiAreaStats } from "lib/api/Rest";
+import { IVitiAreaStats } from "generated/rest";
 import React from "react";
 
 interface IRegionWineTableProps {

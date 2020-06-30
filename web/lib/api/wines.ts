@@ -1,6 +1,6 @@
+import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "generated/rest";
 import { nonNulls } from "./common";
 import { delete_, get, patch, postForm, putForm } from "./requests";
-import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "./Rest";
 import { Json } from "./serde";
 
 const BASE_URL = "/rest/wines";

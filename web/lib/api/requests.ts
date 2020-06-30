@@ -1,6 +1,6 @@
+import { VinotecaError } from "generated/rest";
 import { RestResult, Result } from "../error";
 import { IDict, isEmpty } from "../utils";
-import { VinotecaError } from "./Rest";
 
 const APP_JSON = "application/json";
 

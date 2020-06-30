@@ -1,9 +1,9 @@
+import { IVitiArea } from "generated/rest";
+import { toDict } from "lib/api/common";
+import { getVitiAreas } from "lib/api/viti_areas";
+import { useLogger } from "lib/Logger";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { toDict } from "../../lib/api/common";
-import { IVitiArea } from "../../lib/api/Rest";
-import { getVitiAreas } from "../../lib/api/viti_areas";
-import { useLogger } from "../../lib/Logger";
-import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";
 

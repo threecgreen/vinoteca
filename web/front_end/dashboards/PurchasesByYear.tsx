@@ -3,8 +3,8 @@ import { LineChart } from "components/Chart";
 import { PreloaderCirc, SpinnerColor } from "components/Preloader";
 import { SimpleTable } from "components/Table";
 import { NumCell, PriceCell, YearCell } from "components/TableCells";
+import { IYearsPurchases } from "generated/rest";
 import { getPurchasesByYear } from "lib/api/purchases";
-import { IYearsPurchases } from "lib/api/Rest";
 import Logger, { useLogger } from "lib/Logger";
 import React from "react";
 

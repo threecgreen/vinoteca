@@ -1,6 +1,6 @@
+import { IWineGrape, IWineGrapesForm } from "generated/rest";
 import { nonNulls } from "./common";
 import { get, post } from "./requests";
-import { IWineGrape, IWineGrapesForm } from "./Rest";
 
 const BASE_URL = "/rest/wine-grapes";
 

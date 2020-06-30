@@ -1,12 +1,10 @@
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
 import { Table } from "components/Table";
-import {
-    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell,
-    RegionCell, YearCell
-} from "components/TableCells";
+import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell,
+         RegionCell, YearCell } from "components/TableCells";
 import { SortingState, TableHeader } from "components/TableHeader";
-import { IInventoryWine } from "lib/api/Rest";
+import { IInventoryWine } from "generated/rest";
 import { useLocalStorageReducer } from "lib/local_storage";
 import React from "react";
 

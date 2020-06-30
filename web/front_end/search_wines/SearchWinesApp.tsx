@@ -1,6 +1,6 @@
 import { Btn } from "components/Buttons";
 import { Row } from "components/Grid";
-import { IWine } from "lib/api/Rest";
+import { IWine } from "generated/rest";
 import { searchWines } from "lib/api/wines";
 import Logger from "lib/Logger";
 import { setTitle } from "lib/widgets";

@@ -1,6 +1,6 @@
+import { ITopEntity, IWineType, IWineTypeForm } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
-import { ITopEntity, IWineType, IWineTypeForm } from "./Rest";
 
 const BASE_URL = "/rest/wine-types";
 

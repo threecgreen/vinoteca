@@ -1,6 +1,6 @@
+import { IRegion, ITopEntity } from "generated/rest";
 import { nonNulls, singleEntityGetter } from "./common";
 import { get } from "./requests";
-import { IRegion, ITopEntity } from "./Rest";
 
 const BASE_URL = "/rest/regions";
 

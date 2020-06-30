@@ -1,9 +1,7 @@
+import { IMostCommonPurchaseDate, IPurchase, IPurchaseCount, IPurchaseForm, IRecentPurchase,
+         ITotalLiters, IYearsPurchases } from "generated/rest";
 import { nonNulls } from "./common";
 import { delete_, get, post, put } from "./requests";
-import {
-    IMostCommonPurchaseDate, IPurchase, IPurchaseCount, IPurchaseForm, IRecentPurchase,
-    ITotalLiters, IYearsPurchases,
-} from "./Rest";
 import { Json } from "./serde";
 
 const BASE_URL = "/rest/purchases";

@@ -1,6 +1,6 @@
 import { Preloader } from "components/Preloader";
 import { SimpleTable } from "components/Table";
-import { IWine } from "lib/api/Rest";
+import { IWine } from "generated/rest";
 import React from "react";
 import { SearchWinesResult } from "./SearchWinesResult";
 

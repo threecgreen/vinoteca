@@ -1,5 +1,5 @@
+import { IColor } from "generated/rest";
 import { getColors } from "lib/api/colors";
-import { IColor } from "lib/api/Rest";
 import { useLogger } from "lib/Logger";
 import { capitalizeFirstLetter } from "lib/utils";
 import React from "react";

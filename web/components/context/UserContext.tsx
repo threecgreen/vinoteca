@@ -1,5 +1,5 @@
+import { IUser } from "generated/rest";
 import { getCurrentUser } from "lib/api/auth";
-import { IUser } from "lib/api/Rest";
 import React from "react";
 import { IChildrenProp } from "../IProps";
 

@@ -1,10 +1,10 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import React, { lazy, Suspense } from "react";
-import { IUser } from "../lib/api/Rest";
+import { IUser } from "../generated/rest";
 import { useLogger } from "../lib/Logger";
 import { LoginForm } from "./AuthModals";
-import { Preloader } from "./Preloader";
 import { useSetUser, useUser } from "./context/UserContext";
+import { Preloader } from "./Preloader";
 
 interface IRouteByIdProps {
     id: string;

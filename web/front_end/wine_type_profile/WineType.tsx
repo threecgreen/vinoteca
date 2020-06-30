@@ -2,7 +2,7 @@ import { CancelOrConfirmBtns } from "components/Buttons";
 import { Form } from "components/Form";
 import { Col, Row } from "components/Grid";
 import { WineTypeInput } from "components/model_inputs/WineTypeInput";
-import { IWineType } from "lib/api/Rest";
+import { IWineType } from "generated/rest";
 import { handleSubmit } from "lib/utils";
 import React from "react";
 

@@ -1,6 +1,6 @@
+/// Generates an API contract TypeScript type definition file (web/generated/rest.d.ts) and
+/// a shared constants file (web/generated/constants.ts).
 use vinoteca::error::VinotecaError;
-/// Generates an API contract TypeScript type definition file,
-/// in web/lib/Restd.d.ts
 use vinoteca::logs::{LogForm, LogResponse};
 use vinoteca::models::*;
 use vinoteca::purchases::{
@@ -44,7 +44,7 @@ fn write_log_level(writer: &mut BufWriter<&File>) -> io::Result<()> {
 
 fn write_contracts() -> Result<(), Box<dyn error::Error>> {
     let const_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/constants.ts"))?;
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/generated/constants.ts"))?;
     let mut const_writer = BufWriter::new(&const_file);
     let vinoteca::version::Version { version, git_sha } = vinoteca::version::get().into_inner();
     write_const(&mut const_writer, "VERSION", &version)?;
@@ -55,7 +55,7 @@ fn write_contracts() -> Result<(), Box<dyn error::Error>> {
 fn main() -> Result<(), Box<dyn error::Error>> {
     // Truncate file if it already exists
     let type_def_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/lib/api/Rest.d.ts"))?;
+        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/generated/rest.d.ts"))?;
     let mut type_def_writer = BufWriter::new(&type_def_file);
     // Main db models
     write_interface(&mut type_def_writer, Color::type_script_ify())?;

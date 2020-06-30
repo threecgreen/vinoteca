@@ -1,10 +1,10 @@
+import { IPurchaseForm, IStore } from "generated/rest";
+import { toDict } from "lib/api/common";
+import { getOrCreateStore, getStores } from "lib/api/stores";
+import { useLogger } from "lib/Logger";
+import { defaultVintageYear } from "lib/utils";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { toDict } from "../../lib/api/common";
-import { IPurchaseForm, IStore } from "../../lib/api/Rest";
-import { getOrCreateStore, getStores } from "../../lib/api/stores";
-import { useLogger } from "../../lib/Logger";
-import { defaultVintageYear } from "../../lib/utils";
-import { autocomplete } from "../../lib/widgets";
 import { CheckboxInput } from "../inputs/CheckboxInput";
 import { DateInput } from "../inputs/DateInput";
 import { NumberInput } from "../inputs/NumberInput";

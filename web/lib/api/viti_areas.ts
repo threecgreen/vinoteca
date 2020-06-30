@@ -1,6 +1,6 @@
+import { ITopEntity, IVitiArea, IVitiAreaForm, IVitiAreaStats } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
-import { ITopEntity, IVitiArea, IVitiAreaForm, IVitiAreaStats } from "./Rest";
 
 const BASE_URL = "/rest/viti-areas";
 

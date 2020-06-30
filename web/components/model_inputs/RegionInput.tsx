@@ -1,10 +1,10 @@
+import { IRegion } from "generated/rest";
+import { EmptyResultError } from "lib/api/common";
+import { getRegions } from "lib/api/regions";
+import { useLogger } from "lib/Logger";
+import { IDict } from "lib/utils";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { EmptyResultError } from "../../lib/api/common";
-import { getRegions } from "../../lib/api/regions";
-import { IRegion } from "../../lib/api/Rest";
-import { useLogger } from "../../lib/Logger";
-import { IDict } from "../../lib/utils";
-import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";
 

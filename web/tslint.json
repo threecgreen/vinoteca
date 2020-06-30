@@ -15,7 +15,8 @@
         "forin": false,
         "no-console": false,
         "object-literal-sort-keys": false,
-        "no-submodule-imports": false
+        "no-submodule-imports": false,
+        "no-implicit-dependencies": [true, ["components", "front_end", "generated", "lib"]]
     },
     "rulesDirectory": [],
     "linterOptions": {

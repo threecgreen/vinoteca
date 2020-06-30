@@ -1,7 +1,7 @@
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
 import { NumCell, TextCell } from "components/TableCells";
-import { IGrape } from "lib/api/Rest";
+import { IGrape } from "generated/rest";
 import React from "react";
 
 interface IProps {

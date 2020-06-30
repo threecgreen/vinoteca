@@ -1,7 +1,7 @@
 import { Btn } from "components/Buttons";
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
-import { IInventoryWine } from "lib/api/Rest";
+import { IInventoryWine } from "generated/rest";
 import { getInventory, partUpdateWine } from "lib/api/wines";
 import { download, generateCSV } from "lib/csv";
 import { serializeDate } from "lib/date";

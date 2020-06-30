@@ -1,6 +1,6 @@
+import { IGrape, IGrapeForm, ITopEntity } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
 import { get, post, put } from "./requests";
-import { IGrape, IGrapeForm, ITopEntity } from "./Rest";
 
 const BASE_URL = "/rest/grapes";
 

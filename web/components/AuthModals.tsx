@@ -1,5 +1,5 @@
+import { IChangePasswordForm, IUser } from "generated/rest";
 import { changePassword, createUser, login } from "lib/api/auth";
-import { IChangePasswordForm, IUser } from "lib/api/Rest";
 import { useLogger } from "lib/Logger";
 import React from "react";
 import { CancelOrConfirmBtns } from "./Buttons";

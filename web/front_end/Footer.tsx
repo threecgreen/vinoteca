@@ -2,7 +2,7 @@ import { Link } from "@reach/router";
 import { MOBILE_CUTOFF } from "components/constants";
 import { useUser } from "components/context/UserContext";
 import { useViewport } from "components/context/ViewportContext";
-import { VERSION } from "lib/constants";
+import { VERSION } from "generated/constants";
 import React from "react";
 
 export const Footer: React.FC<{}> = (_) => {

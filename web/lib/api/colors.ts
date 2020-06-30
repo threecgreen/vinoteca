@@ -1,6 +1,6 @@
+import { IColor, ITopEntity } from "generated/rest";
 import { EmptyResultError, nonNulls, singleEntityGetter } from "./common";
 import { get } from "./requests";
-import { IColor, ITopEntity } from "./Rest";
 
 const BASE_URL = "/rest/colors";
 

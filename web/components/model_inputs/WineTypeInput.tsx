@@ -1,8 +1,8 @@
+import { IWineType } from "generated/rest";
+import { toDict } from "lib/api/common";
+import { getWineTypes } from "lib/api/wine_types";
+import { autocomplete } from "lib/widgets";
 import React from "react";
-import { toDict } from "../../lib/api/common";
-import { IWineType } from "../../lib/api/Rest";
-import { getWineTypes } from "../../lib/api/wine_types";
-import { autocomplete } from "../../lib/widgets";
 import { TextInput } from "../inputs/TextInput";
 import { IOnChange } from "../IProps";
 

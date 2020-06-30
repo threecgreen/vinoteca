@@ -1,4 +1,4 @@
-import { IPurchase, IWine, IWineGrape } from "lib/api/Rest";
+import { IPurchase, IWine, IWineGrape } from "generated/rest";
 import React from "react";
 
 export interface IState {
