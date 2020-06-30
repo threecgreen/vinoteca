@@ -1,8 +1,7 @@
 import { RouteComponentProps } from "@reach/router";
-import { NewUserForm } from "components/AuthModals";
-import { Btn, BtnLink } from "components/Buttons";
+import { BtnLink } from "components/Buttons";
 import { AsyncComponent } from "components/CommonRoutes";
-import { useSetUser, useUser } from "components/context/UserContext";
+import { useUser } from "components/context/UserContext";
 import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { ParallaxImg } from "components/ParallaxImg";
@@ -16,9 +15,6 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     useCanonical("");
 
     const user = useUser();
-    const setUser = useSetUser();
-
-    const [showNewUserModal, setShowNewUserModal] = React.useState(false);
 
     const homeDashboards = user ? (
             <Suspense fallback={ <Preloader /> }>
@@ -32,10 +28,10 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
             add wine
         </BtnLink>
     ) : (
-        <Btn classes={ ["yellow-bg"] } onClick={ () => setShowNewUserModal(true) }>
+        <BtnLink classes={ ["yellow-bg"] } to="/register">
             <MaterialIcon iconName="add_circle" />
-            create account
-        </Btn>
+            register
+        </BtnLink>
     );
 
     return (
@@ -59,12 +55,6 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
                     { homeDashboards }
                 </div>
             </div>
-            { showNewUserModal && <NewUserForm onCancel={ () => setShowNewUserModal(false) }
-                onFinish={ (updatedUser) => {
-                    setUser!(updatedUser);
-                    setShowNewUserModal(false);
-                }}
-            /> }
         </>
     );
 };

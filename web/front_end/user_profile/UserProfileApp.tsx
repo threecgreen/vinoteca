@@ -1,5 +1,4 @@
 import { navigate } from "@reach/router";
-import { ChangePasswordForm } from "components/AuthModals";
 import { Btn } from "components/Buttons";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { Col, Row } from "components/Grid";
@@ -9,6 +8,7 @@ import { updateUser } from "lib/api/auth";
 import { useLogger } from "lib/Logger";
 import { useCanonical, useDescription, useTitle } from "lib/widgets";
 import React from "react";
+import { ChangePasswordForm } from "./ChangePasswordForm";
 import { EditUser } from "./EditUser";
 
 enum Mode {

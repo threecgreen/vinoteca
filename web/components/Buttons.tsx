@@ -85,6 +85,30 @@ export const BtnLink: React.FC<IBtnLinkProps> = (props) => {
 };
 BtnLink.displayName = "BtnLink";
 
+interface IConfirmProps {
+    onClick: () => void;
+    isSaving: boolean;
+    disabled?: boolean;
+}
+
+export const ConfirmBtn: React.FC<IConfirmProps> = ({onClick, isSaving, disabled}) => {
+    const isConfirmDisabled = disabled || isSaving;
+    return (
+        <Btn classes={ ["green-bg"] }
+            onClick={ onClick }
+            disabled={ isConfirmDisabled }
+            type="submit"
+        >
+            Confirm
+            { isSaving
+                ? <PreloaderCirc size={ CircleSize.Tiny } className="confirm" />
+                : <MaterialIcon iconName="send" className="right" />
+            }
+        </Btn>
+    );
+}
+ConfirmBtn.displayName = "ConfirmBtn";
+
 interface ICancelOrConfirmProps {
     onConfirmClick: () => void;
     onCancelClick: () => void;
@@ -94,21 +118,13 @@ interface ICancelOrConfirmProps {
 
 export const CancelOrConfirmBtns: React.FC<ICancelOrConfirmProps> =
     ({onConfirmClick, onCancelClick, isSaving, confirmDisabled}) => {
-    const isConfirmDisabled = confirmDisabled || isSaving;
 
     return (
         <Col s={ 12 }>
-            <Btn classes={ ["green-bg"] }
-                onClick={ onConfirmClick }
-                disabled={ isConfirmDisabled }
-                type="submit"
-            >
-                Confirm
-                { isSaving
-                    ? <PreloaderCirc size={ CircleSize.Tiny } className="confirm" />
-                    : <MaterialIcon iconName="send" className="right" />
-                }
-            </Btn>
+            <ConfirmBtn onClick={ onConfirmClick }
+                isSaving={ isSaving }
+                disabled={ confirmDisabled }
+            />
             <Btn classes={ ["red-bg"] }
                 onClick={ onCancelClick }
                 disabled={ isSaving }

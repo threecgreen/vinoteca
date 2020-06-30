@@ -1,5 +1,4 @@
 import { Link, navigate, useLocation } from "@reach/router";
-import { LoginForm } from "components/AuthModals";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { MaterialIcon } from "components/MaterialIcon";
 import { IUser } from "generated/rest";
@@ -7,37 +6,17 @@ import { logout } from "lib/api/auth";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 
-enum ModalState {
-    None,
-    Login,
-}
-
 export const Navbar: React.FC<{}> = () => {
-    const [modalState, setModalState] = React.useState(ModalState.None);
-    const setUser = useSetUser();
-
-    const setUserAndHideModal = (user: IUser) => {
-        setUser(user);
-        setModalState(ModalState.None);
-    };
 
     return (
         <>
-            <DesktopNavbar setModalState={ setModalState } />
-            <MobileNavbar setModalState={ setModalState } />
-            { modalState === ModalState.Login &&
-                <LoginForm onCancel={ () => setModalState(ModalState.None) }
-                    onFinish={ setUserAndHideModal }
-                /> }
+            <DesktopNavbar />
+            <MobileNavbar />
         </>
     );
 };
 
-interface INavProps {
-    setModalState: (newState: ModalState) => void;
-}
-
-const DesktopNavbar: React.FC<INavProps> = ({setModalState}) => {
+const DesktopNavbar: React.FC = () => {
     return (
         <nav>
             <div className="nav-wrapper pink darken-4">
@@ -55,7 +34,7 @@ const DesktopNavbar: React.FC<INavProps> = ({setModalState}) => {
                         <MaterialIcon iconName="menu" />
                     </a>
                     <ul className="right hide-on-med-and-down">
-                        <MenuItems id="top-dropdown" setModalState={ setModalState } />
+                        <MenuItems id="top-dropdown" />
                     </ul>
                 </div>
             </div>
@@ -64,7 +43,7 @@ const DesktopNavbar: React.FC<INavProps> = ({setModalState}) => {
 };
 DesktopNavbar.displayName = "DesktopNavbar";
 
-const MobileNavbar: React.FC<INavProps> = (props) => {
+const MobileNavbar: React.FC = (props) => {
     const sideNavRef = React.useRef() as React.MutableRefObject<HTMLUListElement>;
     React.useEffect(() => {
         // tslint:disable-next-line no-unused-expression
@@ -93,7 +72,7 @@ const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
     );
 };
 
-interface IMenuItemsProps extends INavProps {
+interface IMenuItemsProps {
     id: string;
 }
 
@@ -188,12 +167,16 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
 };
 UserMenuItems.displayName = "UserMenuItems";
 
-const NoUserMenuItems: React.FC<IMenuItemsProps> = ({setModalState}) => (
-    <li id="login-nav" className={ ModalState.Login ? "active" : "" } >
-        <a onClick={ () => setModalState(ModalState.Login) }>
+const NoUserMenuItems: React.FC = () => (
+    <>
+        <NavLink to="/login">
             <MaterialIcon className="left" iconName="account_circle" />
             Login
-        </a>
-    </li>
+        </NavLink>
+        <NavLink to="/register">
+            <MaterialIcon className="left" iconName="add_circle" />
+            Register
+        </NavLink>
+    </>
 );
 NoUserMenuItems.displayName = "NoUserMenuItems";

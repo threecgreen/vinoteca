@@ -2,12 +2,18 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://vinote.ca</loc>
-        <lastmod>2020-06-22</lastmod>
         <changefreq>weekly</changefreq>
     </url>
     <url>
         <loc>https://vinote.ca/about</loc>
-        <lastmod>2020-06-23</lastmod>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
+        <loc>https://vinote.ca/login</loc>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
+        <loc>https://vinote.ca/register</loc>
         <changefreq>weekly</changefreq>
     </url>
 </urlset>

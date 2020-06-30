@@ -1,9 +1,8 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate, redirectTo, RouteComponentProps } from "@reach/router";
 import React, { lazy, Suspense } from "react";
 import { IUser } from "../generated/rest";
 import { useLogger } from "../lib/Logger";
-import { LoginForm } from "./AuthModals";
-import { useSetUser, useUser } from "./context/UserContext";
+import { useUser } from "./context/UserContext";
 import { Preloader } from "./Preloader";
 
 interface IRouteByIdProps {
@@ -16,10 +15,8 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
     if (!componentName) {
         throw new Error("Unexpected undefined or null componentName");
     }
-    const [creationTime, _] = React.useState(new Date().getTime());
 
     const user = useUser();
-    const setUser = useSetUser();
     if (user) {
         if (id === undefined || id === null) {
             return (
@@ -30,16 +27,10 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
         // @ts-ignore
         return <AsyncComponent componentName={ componentName } id={ idNum } />;
     }
-    // Wait 500ms before showing login screen
-    if (new Date().getTime() - creationTime < 500)  {
-        return null;
-    }
-    // TODO: better support for creating an account as well
-    return (
-        <LoginForm onFinish={ setUser }
-            onCancel={ () => navigate("/") }
-        />
-    );
+
+    redirectTo("/login");
+    // never
+    return null;
 };
 
 interface IAuthenticatedRouteProps {
@@ -54,23 +45,15 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
     if (!componentName) {
         throw new Error("Unexpected undefined or null componentName");
     }
-    const [creationTime, _] = React.useState(new Date().getTime());
 
     const user = useUser();
-    const setUser = useSetUser();
     if (user) {
         return <AsyncComponent componentName={ componentName } {...props} />;
     }
-    // Wait 500ms before showing login screen
-    if (new Date().getTime() - creationTime < 500)  {
-        return null;
-    }
-    // TODO: better support for creating an account as well
-    return (
-        <LoginForm onFinish={ setUser! }
-            onCancel={ () => navigate("/") }
-        />
-    );
+
+    navigate("/login");
+    // never
+    return null;
 };
 AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
