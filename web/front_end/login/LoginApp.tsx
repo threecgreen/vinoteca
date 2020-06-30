@@ -15,8 +15,8 @@ export const LoginApp: React.FC<RouteComponentProps> = () => {
     }
 
     const setUser = useSetUser();
-    const onFinish = (user: IUser) => {
-        setUser(user);
+    const onFinish = (updatedUser: IUser) => {
+        setUser(updatedUser);
         navigate("/");
     }
 

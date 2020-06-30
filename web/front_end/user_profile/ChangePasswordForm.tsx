@@ -113,4 +113,3 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
     );
 };
 ChangePasswordForm.displayName = "ChangePasswordForm";
-

@@ -59,4 +59,3 @@ export const LoginForm: React.FC<IProps> = ({onFinish}) => {
     );
 };
 LoginForm.displayName = "LoginForm";
-

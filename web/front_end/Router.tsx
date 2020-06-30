@@ -45,7 +45,9 @@ export const Router: React.FC<{}> = () => (
                         <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
 
                         <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
-                        <AuthenticatedRoute componentName="RegionProfile" path="regions/:regionId" />
+                        <AuthenticatedRoute componentName="RegionProfile"
+                            path="regions/:regionId"
+                        />
                         <AuthenticatedRoute componentName="UserProfile" path="profile" />
                         <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
                         <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />

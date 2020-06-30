@@ -15,8 +15,8 @@ export const RegisterApp: React.FC<RouteComponentProps> = () => {
     }
 
     const setUser = useSetUser();
-    const onFinish = (user: IUser) => {
-        setUser(user);
+    const onFinish = (newUser: IUser) => {
+        setUser(newUser);
         navigate("/");
     }
 
