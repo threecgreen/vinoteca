@@ -1,10 +1,14 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
+import { useDescription, useTitle } from "lib/widgets";
 import React from "react";
 import { LoginForm } from "./LoginForm";
 
 export const LoginApp: React.FC<RouteComponentProps> = () => {
+    useTitle("Login");
+    useDescription("Login to an existing vinoteca account");
+
     const user = useUser();
     if (user) {
         return (
