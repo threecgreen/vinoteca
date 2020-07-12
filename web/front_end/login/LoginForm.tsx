@@ -52,6 +52,7 @@ export const LoginForm: React.FC<IProps> = ({onFinish}) => {
                 onChange={ setPassword }
             />
             <ConfirmBtn onClick={ onSubmit }
+                text="Submit"
                 isSaving={ isSaving }
                 disabled={ !password || !email }
             />

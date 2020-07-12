@@ -89,9 +89,10 @@ interface IConfirmProps {
     onClick: () => void;
     isSaving: boolean;
     disabled?: boolean;
+    text?: string
 }
 
-export const ConfirmBtn: React.FC<IConfirmProps> = ({onClick, isSaving, disabled}) => {
+export const ConfirmBtn: React.FC<IConfirmProps> = ({onClick, isSaving, disabled, text}) => {
     const isConfirmDisabled = disabled || isSaving;
     return (
         <Btn classes={ ["green-bg"] }
@@ -99,7 +100,7 @@ export const ConfirmBtn: React.FC<IConfirmProps> = ({onClick, isSaving, disabled
             disabled={ isConfirmDisabled }
             type="submit"
         >
-            Confirm
+            { text ?? "Confirm" }
             { isSaving
                 ? <PreloaderCirc size={ CircleSize.Tiny } className="confirm" />
                 : <MaterialIcon iconName="send" className="right" />
