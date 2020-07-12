@@ -49,7 +49,7 @@ pub fn get(
 #[get("/viti-areas/<id>")]
 pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<VitiArea> {
     let viti_area = get(auth, Some(id), None, None, None, connection)?;
-    viti_area.into_first(&format!("Viticultural area with id {}", id))
+    viti_area.into_first(&format!("No viticultural area with id {}", id))
 }
 
 #[derive(Queryable, Serialize, TypeScriptify, Debug)]

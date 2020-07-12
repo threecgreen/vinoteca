@@ -118,7 +118,7 @@ pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
         None,
         connection,
     )?;
-    wines.into_first(&format!("wine with id {}", id))
+    wines.into_first(&format!("No wine with id {}", id))
 }
 
 #[get("/wines/inventory")]

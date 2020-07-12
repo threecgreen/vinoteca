@@ -26,6 +26,7 @@ import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
+import { ErrorHandler } from "components/ErrorHandler";
 
 interface IProps {
     id: number;
@@ -42,9 +43,13 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     // Data fetchers
     const fetchWine = async () => {
-        const wine = await getWine(id);
-        // TODO: move to `RestResult`
-        dispatch({type: "setWine", wine});
+        const wineResult = await getWine(id);
+        wineResult.map((wine) => dispatch({type: "setWine", wine}))
+            .mapErr((error) => {
+                dispatch({type: "setError", error});
+                // cancel other requests
+                throw error;
+            });
     };
     const fetchPurchases = async () => {
         const purchases = await getPurchases({wineId: id});
@@ -58,7 +63,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     React.useEffect(() => {
         async function fetchData() {
             try {
-                Promise.all([
+                await Promise.all([
                     fetchWine(),
                     fetchPurchases(),
                     fetchGrapes(),
@@ -366,6 +371,9 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     };
 
+    if (state.error) {
+        return <ErrorHandler error={ state.error } />;
+    }
     if (!state.wine) {
         return <Preloader />;
     }

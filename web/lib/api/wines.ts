@@ -1,6 +1,7 @@
 import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "generated/rest";
+import { RestResult } from "lib/error";
 import { nonNulls } from "./common";
-import { delete_, get, patch, postForm, putForm } from "./requests";
+import { delete_, get, getResult, patch, postForm, putForm } from "./requests";
 import { Json } from "./serde";
 
 const BASE_URL = "/rest/wines";
@@ -23,8 +24,8 @@ export async function getWines(
     return get(BASE_URL, nonNullParams);
 }
 
-export async function getWine(id: number): Promise<IWine> {
-    return get(`${BASE_URL}/${id}`);
+export async function getWine(id: number): Promise<RestResult<IWine>> {
+    return getResult(`${BASE_URL}/${id}`);
 }
 
 const createWineHttpForm = (wine: IWineForm, file: File | null) => {

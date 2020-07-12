@@ -36,7 +36,7 @@ pub fn get(
 #[get("/wine-types/<id>")]
 pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<WineType> {
     let wine_types = get(auth, Some(id), None, connection)?;
-    wine_types.into_first(&format!("Wine type with id {}", id))
+    wine_types.into_first(&format!("No wine type with id {}", id))
 }
 
 #[get("/wine-types/top?<limit>")]

@@ -1,9 +1,11 @@
-import { navigate, redirectTo, RouteComponentProps } from "@reach/router";
+import { navigate, redirectTo, RouteComponentProps, Link } from "@reach/router";
 import React, { lazy, Suspense } from "react";
 import { IUser } from "../generated/rest";
 import { useLogger } from "../lib/Logger";
 import { useUser } from "./context/UserContext";
 import { Preloader } from "./Preloader";
+import { BtnLink } from "./Buttons";
+import { MaterialIcon } from "./MaterialIcon";
 
 interface IRouteByIdProps {
     id: string;
@@ -103,9 +105,9 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
     );
 };
 
-export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
+export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
     const logger = useLogger("NotFound", false, false);
-    logger.logWarning("Client requested url that doesn't exist");
+    logger.logWarning("Client requested a resource that doesn't exist");
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>
@@ -113,7 +115,39 @@ export const NotFound: React.FC<RouteComponentProps<{}>> = () => {
             </h1>
             <br />
             <h4>Looks like you took a wrong turn in the cellar&hellip;</h4>
+            <p>{ info }</p>
         </div>
     );
 };
 NotFound.displayName = "NotFound";
+
+export const Unauthorized: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+    return (
+        <div className="container">
+            <h1 className="light center big">You need to log in to access this</h1>
+            <br />
+            <p>{ info }</p>
+            <BtnLink classes={["green-bg"]} to="/login">
+                <MaterialIcon iconName="account_circle" />
+                login
+            </BtnLink>
+            <BtnLink classes={["yellow-bg"]} to="/register">
+                <MaterialIcon iconName="add_circle" />
+                register
+            </BtnLink>
+        </div>
+    )
+}
+Unauthorized.displayName = "Unauthorized";
+
+export const Forbidden: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+    const logger = useLogger("Forbidden", false, false);
+    logger.logWarning("Client requested a forbidden resource");
+    return (
+        <div className="container">
+            <h1 className="light center big">Forbidden</h1>
+            <p>{ info }</p>
+        </div>
+    );
+}
+Forbidden.displayName = "Forbidden";

@@ -1,4 +1,4 @@
-import { IPurchase, IWine, IWineGrape } from "generated/rest";
+import { IPurchase, IWine, IWineGrape, VinotecaError } from "generated/rest";
 import React from "react";
 
 export interface IState {
@@ -6,6 +6,7 @@ export interface IState {
     grapes: IWineGrape[];
     wine?: IWine;
     purchases: IPurchase[];
+    error: VinotecaError | null;
 }
 
 /**
@@ -24,13 +25,15 @@ export const initState = (): IState => ({
     grapes: [],
     wine: undefined,
     purchases: [],
+    error: null,
 });
 
 export type Action =
     | {type: "setMode", mode: Mode}
     | {type: "setGrapes", grapes: IWineGrape[]}
     | {type: "setWine", wine: IWine}
-    | {type: "setPurchases", purchases: IPurchase[]};
+    | {type: "setPurchases", purchases: IPurchase[]}
+    | {type: "setError", error: VinotecaError};
 
 export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
     switch (action.type) {
@@ -42,6 +45,8 @@ export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
             return {...state, wine: action.wine};
         case "setPurchases":
             return {...state, purchases: action.purchases};
+        case "setError":
+            return {...state, error: action.error};
         default:
             return state;
     }
