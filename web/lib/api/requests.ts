@@ -52,26 +52,7 @@ function isVinotecaError(obj: any): obj is VinotecaError {
     return false;
 }
 
-async function checkResponse(response: Response, parser?: (text: string) => any): Promise<any> {
-    if (response.status > 310) {
-        const message = await decodeJsonIfAny(response);
-        if (isVinotecaError(message)) {
-            // TODO: create own error type in JS?
-            throw Error(`${message.type}: ${message.message}`);
-        }
-        throw Error(message);
-    }
-    if (response.status === 204) {
-        return [];
-    }
-    const json = decodeJsonIfAny(response, parser);
-    if (json !== undefined) {
-        return json;
-    }
-    throw Error(await response.text());
-}
-
-async function checkResult(
+async function checkResponse(
     response: Response, parser?: (text: string) => any,
 ): Promise<RestResult<any>> {
     if (response.status > 310) {
@@ -81,15 +62,11 @@ async function checkResult(
         }
         throw Error(message);
     }
-    try {
-        const json = await decodeJsonIfAny(response, parser);
-        if (json !== undefined) {
-            return Result.Ok(json);
-        }
-        throw Error();
-    } catch (err) {
-        throw Error(await response.text());
+    const json = await decodeJsonIfAny(response, parser);
+    if (json !== undefined) {
+        return Result.Ok(json);
     }
+    throw Error("Empty response");
 }
 
 /**
@@ -104,7 +81,7 @@ export async function get<R>(
     url: string, params: IQueryParams = {}, parser?: Parser<any>,
 ): Promise<R> {
     const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
-    return checkResponse(response, parser);
+    return (await checkResponse(response, parser)).unwrap();
 }
 
 /**
@@ -119,7 +96,7 @@ export async function getResult<T>(
     url: string, params: IQueryParams = {}, parser?: Parser<T>,
 ): Promise<RestResult<T>> {
     const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
-    return checkResult(response, parser);
+    return checkResponse(response, parser);
 }
 
 /**
@@ -143,7 +120,7 @@ export async function post<B, R>(
         headers: HEADERS,
         method: "POST",
     });
-    return checkResponse(response, parser);
+    return (await checkResponse(response, parser)).unwrap();
 }
 
 /**
@@ -167,7 +144,7 @@ export async function postResult<B, R>(
         headers: HEADERS,
         method: "POST",
     });
-    return checkResult(response, parser);
+    return checkResponse(response, parser);
 }
 
 export async function postForm<T>(url: string, form: FormData,
@@ -177,7 +154,7 @@ export async function postForm<T>(url: string, form: FormData,
         body: form,
         method: "POST",
     });
-    return checkResponse(response);
+    return (await checkResponse(response)).unwrap();
 }
 
 /**
@@ -201,7 +178,7 @@ export async function put<B, R>(
         headers: HEADERS,
         method: "PUT",
     });
-    return checkResponse(response, parser);
+    return (await checkResponse(response, parser)).unwrap();
 }
 
 export async function putResult<B, R>(
@@ -213,7 +190,7 @@ export async function putResult<B, R>(
         headers: HEADERS,
         method: "PUT",
     });
-    return checkResult(response, parser);
+    return checkResponse(response, parser);
 }
 
 export async function putForm<Response>(url: string, form: FormData,
@@ -222,7 +199,7 @@ export async function putForm<Response>(url: string, form: FormData,
         body: form,
         method: "PUT",
     });
-    return checkResponse(response);
+    return (await checkResponse(response)).unwrap();
 }
 
 export async function patch<Response>(url: string, body: object,
@@ -232,7 +209,7 @@ export async function patch<Response>(url: string, body: object,
         headers: HEADERS,
         method: "PATCH",
     });
-    return checkResponse(response);
+    return (await checkResponse(response)).unwrap();
 }
 
 export async function delete_<Response>(url: string, params: IQueryParams = {}): Promise<Response> {
@@ -240,5 +217,5 @@ export async function delete_<Response>(url: string, params: IQueryParams = {}):
         headers: HEADERS,
         method: "DELETE",
     });
-    return checkResponse(response);
+    return (await checkResponse(response)).unwrap();
 }

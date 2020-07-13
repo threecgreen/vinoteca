@@ -178,3 +178,14 @@ export function handleSubmit(save: () => Promise<void>,
         setIsSaving(false);
     };
 }
+
+/**
+ * Check for the existence of a property on an object. This function is defined
+ * to help TypeScript narrow the type.
+ * @param obj object to check
+ * @param prop property name to check
+ */
+export function hasOwnProperty<X extends object, Y extends PropertyKey>
+  (obj: X, prop: Y): obj is X & Record<Y, unknown> {
+  return obj.hasOwnProperty(prop)
+}

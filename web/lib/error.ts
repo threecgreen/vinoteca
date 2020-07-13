@@ -1,18 +1,19 @@
 import { VinotecaError } from "generated/rest";
+import { hasOwnProperty } from "./utils";
 
 type Inner<T, E> =
-    | {type: "ok", value: T}
-    | {type: "err", value: E};
+    | { type: "ok", value: T }
+    | { type: "err", value: E };
 
 export type RestResult<T> = Result<T, VinotecaError>;
 
-export class Result<T, E> {
-    public static Ok<T, E>(value: T): Result<T, E> {
-        return new Result({type: "ok", value});
+export class Result<T, E extends object> {
+    public static Ok<T, E extends object>(value: T): Result<T, E> {
+        return new Result({ type: "ok", value });
     }
 
-    public static Err<T, E>(value: E): Result<T, E> {
-        return new Result({type: "err", value});
+    public static Err<T, E extends object>(value: E): Result<T, E> {
+        return new Result({ type: "err", value });
     }
 
     private constructor(private inner: Inner<T, E>) {
@@ -33,7 +34,7 @@ export class Result<T, E> {
         return Result.Err(this.inner.value);
     }
 
-    public mapErr<F>(fun: (v: E) => F): Result<T, F> {
+    public mapErr<F extends object>(fun: (v: E) => F): Result<T, F> {
         if (this.inner.type === "err") {
             return Result.Err(fun(this.inner.value));
         }
@@ -51,12 +52,18 @@ export class Result<T, E> {
         if (this.inner.type === "ok") {
             return this.inner.value;
         }
+        // VinotecaError specialization
+        if (hasOwnProperty(this.inner.value, "type")
+            && hasOwnProperty(this.inner.value, "message")) {
+            throw new Error(`${this.inner.value.type}: ${this.inner.value.message}`)
+        }
+        // Any other error
         throw this.inner.value;
     }
 
     public unwrapOr(defaultVal: T | (() => T)): T {
         if (this.inner.type === "ok") {
-            return this .inner.value;
+            return this.inner.value;
         }
         if (defaultVal instanceof Function) {
             return defaultVal();
