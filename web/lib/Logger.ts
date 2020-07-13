@@ -1,7 +1,6 @@
 import { GIT_SHA, LOG_LEVEL, VERSION } from "generated/constants";
 import React from "react";
 import { postLog } from "./api/logs";
-import { IDict } from "./utils";
 import { toast } from "./widgets";
 
 /** Provides logging functionality for client-side JavaScript errors. */
@@ -17,7 +16,7 @@ interface ILogResult {
     success: boolean;
 }
 
-type LogTags = IDict<string | number | Date | object | undefined | null>;
+type LogTags = Record<string, string | number | Date | object | undefined | null>;
 
 export default class Logger {
     private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning,

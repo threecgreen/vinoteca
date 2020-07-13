@@ -1,4 +1,3 @@
-import { IDict } from "lib/utils";
 import { autocomplete } from "lib/widgets";
 import React from "react";
 import { FloatingBtn } from "../Buttons";
@@ -9,7 +8,7 @@ import { MaterialIcon } from "../MaterialIcon";
 
 interface IProps {
     id: number;
-    completions: IDict<string | null>;
+    completions: Record<string, string | null>;
     grape: string;
     percent: number | null;
     handleDelete: (id: number) => void;

@@ -1,14 +1,6 @@
 /** Basic type that corresponds to the response JSON of many asynchronous requests. */
 import Logger from "./Logger";
 
-/**
- * Key-value store where the key must be a string, but the value is of any type
- * T.
- */
-export interface IDict<T> {
-    [key: string]: T;
-}
-
 export const EN_DASH: string = "–";
 
 /**
@@ -94,7 +86,7 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
-export function hasChanged<T extends IDict<any>, U extends IDict<any>>(
+export function hasChanged<T extends Record<string, any>, U extends Record<string, any>>(
     newObj: T, source: U, exclude: Array<keyof T> = []): boolean {
 
     const keysToExclude = new Set(exclude);
@@ -107,7 +99,7 @@ export function hasChanged<T extends IDict<any>, U extends IDict<any>>(
             if (!newObj[k] && !source[k]) {
                 continue;
             }
-            (new Logger("hasChanged", false, false)).logWarning(`Key that changed`, {key: k});
+            (new Logger("hasChanged", false, false)).logWarning(`Key that changed`, { key: k });
             return true;
         }
     }
@@ -186,6 +178,6 @@ export function handleSubmit(save: () => Promise<void>,
  * @param prop property name to check
  */
 export function hasOwnProperty<X extends object, Y extends PropertyKey>
-  (obj: X, prop: Y): obj is X & Record<Y, unknown> {
-  return obj.hasOwnProperty(prop)
+    (obj: X, prop: Y): obj is X & Record<Y, unknown> {
+    return obj.hasOwnProperty(prop)
 }

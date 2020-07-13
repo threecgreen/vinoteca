@@ -1,5 +1,4 @@
 import Logger from "../Logger";
-import { IDict } from "../utils";
 import { IQueryParams } from "./requests";
 
 interface IRestModel {
@@ -7,8 +6,8 @@ interface IRestModel {
     name: string;
 }
 
-export function toDict(models: IRestModel[]): IDict<string | null> {
-    const result: IDict<string | null> = {};
+export function toDict(models: IRestModel[]): Record<string, string | null> {
+    const result: Record<string, string | null> = {};
     models.forEach((model) => {
         result[model.name] = null;
     });
@@ -28,7 +27,7 @@ export class EmptyResultError extends Error {
     }
 }
 
-export function nonNulls(obj: IDict<string | number | boolean | undefined>): IQueryParams {
+export function nonNulls(obj: Record<string, string | number | boolean | undefined>): IQueryParams {
     const q: IQueryParams = {};
     Object.keys(obj).filter((k) => Boolean(obj[k])).forEach((k) => {
         q[k] = obj[k] as string | number | boolean;

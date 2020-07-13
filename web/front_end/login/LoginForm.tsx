@@ -36,6 +36,7 @@ export const LoginForm: React.FC<IProps> = ({onFinish}) => {
                         logger.logError(`Failed to login with ${ve.type} error: ${ve.message}`);
                 }
                 setIsSaving(false);
+                return ve;
             });
     };
 

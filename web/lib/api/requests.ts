@@ -1,6 +1,6 @@
 import { VinotecaError } from "generated/rest";
 import { RestResult, Result } from "../error";
-import { IDict, isEmpty } from "../utils";
+import { isEmpty } from "../utils";
 
 const APP_JSON = "application/json";
 
@@ -9,7 +9,7 @@ const HEADERS = {
     "Content-Type": APP_JSON,
 };
 
-export type IQueryParams = IDict<string | number | boolean>;
+export type IQueryParams = Record<string, string | number | boolean>;
 type Serializer<T> = (value: T) => string;
 type Parser<T> = (text: string) => T;
 

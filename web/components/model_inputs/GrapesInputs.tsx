@@ -2,7 +2,7 @@ import { IWineGrape, IWineGrapesForm } from "generated/rest";
 import { toDict } from "lib/api/common";
 import { getGrapes, getOrCreateGrape } from "lib/api/grapes";
 import Logger, { useLogger } from "lib/Logger";
-import { IDict, maxBy, sumBy } from "lib/utils";
+import { maxBy, sumBy } from "lib/utils";
 import React from "react";
 import { FloatingBtn } from "../Buttons";
 import { Col, InputField, Row } from "../Grid";
@@ -91,7 +91,7 @@ interface IProps {
 }
 
 export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
-    const [completions, setCompletions] = React.useState<IDict<string | null>>({});
+    const [completions, setCompletions] = React.useState<Record<string, string | null>>({});
     const logger = useLogger("GrapesInputs");
 
     React.useEffect(() => {

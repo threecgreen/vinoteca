@@ -2,7 +2,6 @@ import { IRegion } from "generated/rest";
 import { EmptyResultError } from "lib/api/common";
 import { getRegions } from "lib/api/regions";
 import { useLogger } from "lib/Logger";
-import { IDict } from "lib/utils";
 import { autocomplete } from "lib/widgets";
 import React from "react";
 import { TextInput } from "../inputs/TextInput";
@@ -25,7 +24,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
         async function fetchAutocompleteOptions() {
             try {
                 const regions: IRegion[] = await getRegions({});
-                const result: IDict<string> = {};
+                const result: Record<string, string> = {};
                 regions.forEach((region) => {
                     result[region.name] = `/static/img/flags/${region.name}.svg`;
                 });

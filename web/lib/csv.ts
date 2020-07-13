@@ -1,7 +1,5 @@
-import { IDict } from "./utils";
-
 export function generateCSV<O>(objects: O[], columnOrder: Array<keyof O>,
-                               hooks: IDict<(val: any) => string> = {}): string {
+                               hooks: Record<string, (val: any) => string> = {}): string {
     return objects.reduceRight((acc, obj) => {
         const fields = columnOrder.map((col) => {
             if (col in hooks) {

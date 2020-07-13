@@ -62,6 +62,7 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                         logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
                 setIsSaving(false);
+                return ve;
             });
     };
 

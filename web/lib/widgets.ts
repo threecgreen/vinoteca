@@ -1,12 +1,11 @@
 import { Autocomplete } from "materialize-css";
 import React from "react";
-import { IDict } from "./utils";
 
 type OnChange = (e: string) => void;
 
 /** Setup autocompletion with provided completion options. */
 export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
-                             completions: IDict<string | null>,
+                             completions: Record<string, string | null>,
                              onChange: OnChange, minLength = 1, limit = 5) {
     if (elem.current) {
         // tslint:disable-next-line no-unused-expression
