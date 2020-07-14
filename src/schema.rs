@@ -94,6 +94,7 @@ table! {
         producer_id -> Int4,
         viti_area_id -> Nullable<Int4>,
         user_id -> Int4,
+        is_in_shopping_list -> Bool,
     }
 }
 
