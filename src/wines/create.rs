@@ -1,10 +1,9 @@
 use super::image::handle_image;
 use super::models::RawWineForm;
-use super::read::get;
+use super::read::get_one;
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
-use crate::query_utils::IntoFirst;
 use crate::schema::wines;
 use crate::users::Auth;
 use crate::DbConn;
@@ -37,23 +36,7 @@ pub fn post(
             }
             wine_id
         })
-        .and_then(|wine_id| {
-            get(
-                auth,
-                Some(wine_id),
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                connection,
-            )?
-            .into_first("Newly-created wine")
-        })
+        .and_then(|wine_id| get_one(auth, wine_id, connection))
 }
 
 #[cfg(test)]

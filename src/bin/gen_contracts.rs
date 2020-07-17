@@ -87,8 +87,9 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         "{}",
         AssociatedGrape::type_script_ify()
     )?;
-    // Write normally because it's a discriminated union
+    // Write discriminated unions normally
     writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
+    writeln!(&mut type_def_writer, "{}", WinePatchForm::type_script_ify())?;
     // Other models
     write_interface(&mut type_def_writer, ChangePasswordForm::type_script_ify())?;
     write_interface(&mut type_def_writer, ChangeUserForm::type_script_ify())?;
@@ -106,7 +107,6 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, TotalLiters::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiAreaStats::type_script_ify())?;
     write_interface(&mut type_def_writer, WineCount::type_script_ify())?;
-    write_interface(&mut type_def_writer, WinePatchForm::type_script_ify())?;
     write_interface(&mut type_def_writer, WineGrapesForm::type_script_ify())?;
     write_interface(&mut type_def_writer, YearsPurchases::type_script_ify())?;
 

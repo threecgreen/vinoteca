@@ -287,6 +287,7 @@ pub struct Wine {
     pub wine_type: String,
     pub last_purchase_vintage: Option<i32>,
     pub image: Option<String>,
+    pub is_in_shopping_list: bool,
 }
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]

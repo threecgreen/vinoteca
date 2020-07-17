@@ -33,29 +33,10 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::error::RestResult;
-    use crate::models::Wine;
     use crate::storage::MockStorage;
-    use crate::wines::get;
+    use crate::wines::get_one;
 
     use rocket_contrib::json::Json;
-
-    fn get_by_id(auth: Auth, id: i32, connection: DbConn) -> RestResult<Vec<Wine>> {
-        get(
-            auth,
-            Some(id),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            connection,
-        )
-    }
 
     #[test]
     fn delete_removes_wine() {
@@ -66,15 +47,15 @@ mod test {
             let config = State::from(&rocket).unwrap();
 
             let auth = Auth { id: 1 };
-            let wines = get_by_id(auth, 1, connection);
-            assert!(matches!(wines, Ok(Json(wines)) if wines.len() == 1));
+            let wines = get_one(auth, 1, connection);
+            assert!(matches!(wines, Ok(Json(wines)) if wines.id == 1));
             let connection = DbConn::get_one(&rocket).expect("database connection");
             let response = delete(auth, 1, connection, config);
             dbg!(&response);
             assert!(response.is_ok());
             let connection = DbConn::get_one(&rocket).expect("database connection");
-            let wines = get_by_id(auth, 1, connection);
-            assert!(matches!(wines, Ok(Json(wines)) if wines.is_empty()));
+            let res = get_one(auth, 1, connection);
+            assert!(matches!(res, Err(VinotecaError::NotFound(_))));
         })
     }
 }

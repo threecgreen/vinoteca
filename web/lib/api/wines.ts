@@ -1,4 +1,4 @@
-import { IInventoryWine, IWine, IWineCount, IWineForm, IWinePatchForm } from "generated/rest";
+import { IInventoryWine, IWine, IWineCount, IWineForm, WinePatchForm } from "generated/rest";
 import { RestResult } from "lib/error";
 import { nonNulls } from "./common";
 import { delete_, get, getResult, patch, postForm, putForm } from "./requests";
@@ -47,8 +47,8 @@ export async function updateWine(id: number, wine: IWineForm, file: File | null)
     return putForm(`${BASE_URL}/${id}`, form);
 }
 
-export async function partUpdateWine(id: number, wine: IWinePatchForm): Promise<IWine> {
-    return patch(`${BASE_URL}/${id}`, wine);
+export async function partUpdateWine(id: number, winePatch: WinePatchForm): Promise<IWine> {
+    return patch(`${BASE_URL}/${id}`, winePatch);
 }
 
 export async function deleteWine(id: number): Promise<void> {

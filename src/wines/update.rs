@@ -1,10 +1,9 @@
-use super::get;
+use super::get_one;
 use super::image::handle_image;
 use super::models::{RawWineForm, WinePatchForm};
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
-use crate::query_utils::IntoFirst;
 use crate::schema::wines;
 use crate::users::Auth;
 use crate::DbConn;
@@ -22,14 +21,22 @@ pub fn patch(
     connection: DbConn,
 ) -> RestResult<Wine> {
     let wine_patch_form = wine_patch_form.into_inner();
-    wine_patch_form.validate()?;
     validate_owns_wine(auth, id, &connection)?;
-
-    diesel::update(wines::table.filter(wines::id.eq(id)))
-        .set(wines::inventory.eq(wine_patch_form.inventory))
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| get_wine_by_id(auth, id, connection))
+    match wine_patch_form {
+        WinePatchForm::Inventory(inventory) if inventory > 0 =>
+            diesel::update(wines::table.filter(wines::id.eq(id)))
+                .set(wines::inventory.eq(inventory))
+                .execute(&*connection)
+                .map_err(VinotecaError::from)
+                .and_then(|_| get_one(auth, id, connection)),
+        WinePatchForm::Inventory(_invalid_inventory) => Err(VinotecaError::BadRequest("Invalid inventory value".to_owned())),
+        WinePatchForm::IsInShoppingList(is_in_shopping_list) =>
+            diesel::update(wines::table.filter(wines::id.eq(id)))
+                .set(wines::is_in_shopping_list.eq(is_in_shopping_list))
+                .execute(&*connection)
+                .map_err(VinotecaError::from)
+                .and_then(|_| get_one(auth, id, connection)),
+    }
 }
 
 #[put("/wines/<id>", data = "<raw_wine_form>")]
@@ -57,7 +64,7 @@ pub fn put(
                 }
             }
         })
-        .and_then(|_| get_wine_by_id(auth, id, connection))
+        .and_then(|_| get_one(auth, id, connection))
 }
 
 pub fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
@@ -67,24 +74,6 @@ pub fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<()
         .select(wines::id)
         .first::<i32>(&**connection)?;
     Ok(())
-}
-
-fn get_wine_by_id(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
-    get(
-        auth,
-        Some(id),
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        None,
-        connection,
-    )?
-    .into_first("Edited wine")
 }
 
 #[cfg(test)]

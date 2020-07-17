@@ -18,7 +18,7 @@ fn add_wildcards(query: &str) -> String {
 
 /// Contains all information used in the wine table
 #[allow(clippy::too_many_arguments)]
-#[get("/wines?<id>&<producer_id>&<region_id>&<viti_area_id>&<wine_type_id>&<color>&<wine_type>&<producer>&<region>&<viti_area>")]
+#[get("/wines?<id>&<producer_id>&<region_id>&<viti_area_id>&<wine_type_id>&<color>&<is_in_shopping_list>&<wine_type>&<producer>&<region>&<viti_area>")]
 pub fn get(
     auth: Auth,
     // Exact match parameters
@@ -27,6 +27,7 @@ pub fn get(
     region_id: Option<i32>,
     viti_area_id: Option<i32>,
     wine_type_id: Option<i32>,
+    is_in_shopping_list: Option<bool>,
     // Fuzzy parameters for search
     color: Option<String>,
     wine_type: Option<String>,
@@ -58,6 +59,9 @@ pub fn get(
     }
     if let Some(wine_type_id) = wine_type_id {
         query = query.filter(wines::wine_type_id.eq(wine_type_id));
+    }
+    if let Some(is_in_shopping_list) = is_in_shopping_list {
+        query = query.filter(wines::is_in_shopping_list.eq(is_in_shopping_list));
     }
     if let Some(color) = color {
         query = query.filter(colors::name.like(add_wildcards(&color)));
@@ -96,6 +100,7 @@ pub fn get(
             wine_types::name,
             recent_purchases::vintage.nullable(),
             wines::image,
+            wines::is_in_shopping_list,
         ))
         .load::<Wine>(&*connection)
         .map(Json)
@@ -107,6 +112,7 @@ pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<Wine> {
     let wines = get(
         auth,
         Some(id),
+        None,
         None,
         None,
         None,
@@ -196,6 +202,7 @@ pub fn search(
             wine_types::name,
             recent_purchases::vintage.nullable(),
             wines::image,
+            wines::is_in_shopping_list,
         ))
         .load::<Wine>(&*connection)
         .map(Json)

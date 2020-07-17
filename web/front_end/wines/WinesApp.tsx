@@ -161,7 +161,8 @@ const WinesApp: React.FC<{}> = (_) => {
         // Reduce predicates
         const combinedPred = [...state.predicates.entries()]
             .reduceRight((prevVal, [column, filterExpr]) => {
-                return (wine) => prevVal(wine) && filterExpr.call(columnToVal(column, wine)!);
+                return (wine) => prevVal(wine)
+                    && filterExpr.call(columnToVal(column, wine) as string | number);
             }, (__: IWine) => true);
         const filteredWines = state.wines.filter(combinedPred);
 
