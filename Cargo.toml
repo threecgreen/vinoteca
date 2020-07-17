@@ -12,32 +12,32 @@ categories = ["web-programming"]
 
 [dependencies]
 # AWS access for file storage
-aws-creds = "0.22.0"
+aws-creds = "0.22.1"
 aws-region = "0.21.0"
 # Password encryption
 bcrypt = "0.8.0"
 # Datetime functionality
 chrono = { version = "0.4.11", features = ["serde"] }
 # basic ORM
-diesel = { version = "1.4.4", features = ["postgres", "chrono"] }
+diesel = { version = "1.4.5", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 # Image handling
-image = "0.23.4"
+image = "0.23.6"
 kamadak-exif = "0.5.1"
 lazy_static = "1.4.0"
 log = "0.4.8"
 rocket_codegen = "0.4.5"
-rocket-multipart-form-data = "0.9.2"
+rocket-multipart-form-data = "0.9.3"
 # AWS S3 access
-rust-s3 = "0.22.4"
+rust-s3 = "0.22.9"
 # (De)serialization
-serde = { version = "1.0.111", features = ["derive"] }
-serde_json = "1.0.53"
+serde = { version = "1.0.114", features = ["derive"] }
+serde_json = "1.0.55"
 time = "0.1.42"
 uuid = { version = "0.8.1", features = ["v4"] }
 # Input validation
-validator = "0.10.0"
-validator_derive = "0.10.0"
+validator = "0.10.1"
+validator_derive = "0.10.1"
 
 [dependencies.rocket]
 version = "0.4.5"
