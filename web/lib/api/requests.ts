@@ -44,6 +44,7 @@ function isVinotecaError(obj: any): obj is VinotecaError {
             case "MissingConstraint":
             case "BadRequest":
             case "Forbidden":
+            case "Unauthorized":
                 return true;
             default:
                 return false;

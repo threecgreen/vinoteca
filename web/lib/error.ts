@@ -19,11 +19,11 @@ export class Result<T, E extends object> {
     private constructor(private inner: Inner<T, E>) {
     }
 
-    public get isOk() {
+    public isOk() {
         return this.inner.type === "ok";
     }
 
-    public get isErr() {
+    public isErr() {
         return this.inner.type === "err";
     }
 
@@ -69,5 +69,12 @@ export class Result<T, E extends object> {
             return defaultVal();
         }
         return defaultVal;
+    }
+
+    public unwrapErr(): E {
+        if (this.isErr()) {
+            return this.inner.value as E;
+        }
+        throw new Error("Tried to unwrapErr with Ok result");
     }
 }
