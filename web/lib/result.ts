@@ -75,6 +75,6 @@ export class Result<T, E extends object> {
         if (this.isErr()) {
             return this.inner.value as E;
         }
-        throw new Error("Tried to unwrapErr with Ok result");
+        throw new Error("Tried to unwrapErr with Ok Result");
     }
 }
