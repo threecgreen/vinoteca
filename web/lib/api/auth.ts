@@ -1,5 +1,5 @@
 import { IChangePasswordForm, IChangeUserForm, ILoginForm, IUser, IUserForm } from "generated/rest";
-import { RestResult } from "../error";
+import { RestResult } from "../result";
 import { getResult, postResult, putResult } from "./requests";
 import { Json } from "./serde";
 

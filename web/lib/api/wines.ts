@@ -1,5 +1,5 @@
 import { IInventoryWine, IWine, IWineCount, IWineForm, WinePatchForm } from "generated/rest";
-import { RestResult } from "lib/error";
+import { RestResult } from "lib/result";
 import { nonNulls } from "./common";
 import { delete_, get, getResult, patch, postForm, putForm } from "./requests";
 import { Json } from "./serde";
