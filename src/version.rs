@@ -1,7 +1,8 @@
 use rocket_contrib::json::Json;
 use serde::Serialize;
+use typescript_definitions::TypeScriptify;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Version {
     pub version: &'static str,

@@ -7,6 +7,7 @@ use vinoteca::purchases::{
     MostCommonPurchaseDate, PurchaseCount, RecentPurchase, TotalLiters, YearsPurchases,
 };
 use vinoteca::users::{ChangePasswordForm, ChangeUserForm, LoginForm};
+use vinoteca::version::Version;
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
 use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
@@ -72,6 +73,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, StoreForm::type_script_ify())?;
     write_interface(&mut type_def_writer, User::type_script_ify())?;
     write_interface(&mut type_def_writer, UserForm::type_script_ify())?;
+    write_interface(&mut type_def_writer, Version::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiArea::type_script_ify())?;
     write_interface(&mut type_def_writer, VitiAreaForm::type_script_ify())?;
     write_interface(&mut type_def_writer, Wine::type_script_ify())?;
