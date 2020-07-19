@@ -17,7 +17,8 @@
         "object-literal-sort-keys": false,
         "no-submodule-imports": false,
         "no-implicit-dependencies": [true, ["components", "front_end", "generated", "lib"]],
-        "array-type": [true, "array-simple"]
+        "array-type": [true, "array-simple"],
+        "no-empty": [true, "allow-empty-functions"]
     },
     "rulesDirectory": [],
     "linterOptions": {
