@@ -17,7 +17,9 @@ typescript()
 # Runs typescript linter called tslint
 {
     info_text "Running Typescript linter."
+    cd "$root_dir/web"
     npm run lint || error_exit "TSLint error(s)"
+    cd -
 }
 
 case $# in

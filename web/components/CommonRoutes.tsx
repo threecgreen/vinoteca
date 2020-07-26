@@ -121,7 +121,13 @@ export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info})
 };
 NotFound.displayName = "NotFound";
 
-export const Unauthorized: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => { return ( <div className="container"> <h1 className="light center big">You need to log in to access this</h1> <br /> <p>{ info }</p> <BtnLink classes={["green-bg"]} to="/login">
+export const Unauthorized: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+    return (
+        <div className="container">
+            <h1 className="light center big">You need to log in to access this</h1>
+            <br />
+            <p>{ info }</p>
+            <BtnLink classes={["green-bg"]} to="/login">
                 <MaterialIcon iconName="account_circle" />
                 login
             </BtnLink>
