@@ -1,0 +1,47 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+  CI: true
+  ROCKET_TEST_DB: ${{ secrets.ROCKET_TEST_DB }}
+
+jobs:
+  rust:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build
+    - name: Test
+      run: cargo test
+    - name: Lint
+      run: |
+        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || exit 0
+        cargo clippy
+
+  js:
+    name: JS
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate contracts
+      run: cargo run --bin gen_contracts
+    - name: Build
+      run: |
+        cd web
+        npm ci --dev
+        npm run build
+    - name: Test
+      run: |
+        cd web
+        npm run test
+    - name: Lint
+      run: |
+        cd web
+        npm run lint
