@@ -71,6 +71,7 @@ mod test {
                 viti_area_id: None,
                 name: None,
                 wine_type_id: 1,
+                is_in_shopping_list: false,
             },
         }
     }
