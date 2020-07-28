@@ -5,21 +5,18 @@ fn run() {
     vinoteca::create_rocket().launch();
 }
 
-// TODO: convert to returning result
 fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {
         run()
     } else {
-        let subcommand = &args[1];
-
-        match subcommand.as_ref() {
-            "-h" | "--help" | "help" => print_help(),
-            "-v" | "--version" => print_version(),
-            "run" => run(),
+        let option = &args[1];
+        match option.as_str() {
+            "-h" | "--help" => print_help(),
+            "-V" | "--version" => print_version(),
             _ => {
-                print_error(&format!("Unknown subcommand '{}'", subcommand));
-                print_subcommands();
+                print_error(&format!("Unknown option '{}'", option));
+                print_options();
                 process::exit(1);
             }
         };
@@ -31,19 +28,18 @@ fn print_error(text: &str) {
     eprintln!("\x1b[1;31m{}\x1b[0m", text);
 }
 
-fn print_subcommands() {
-    println!("Available subcommands:");
-    println!("    help: display help text");
-    println!("    run [--no-tab]: run the web server");
-    println!("    update [--force]: download and extract the latest version of vinoteca");
+fn print_options() {
+    println!("OPTIONS:");
+    println!("    -h, --help: display help text");
+    println!("    -V, --version: display current version");
 }
 
 fn print_help() {
     println!("vinoteca is a wine purchase tracking system.");
     println!();
-    println!("Perform an action using the following format:");
-    println!("    $ vinoteca SUBCOMMAND [...ARGS]");
-    print_subcommands();
+    println!("Calling this command starts the web server");
+    println!("    $ vinoteca [OPTIONS]");
+    print_options();
 }
 
 fn print_version() {
