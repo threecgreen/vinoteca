@@ -113,7 +113,9 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
     );
 };
 
-export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = ({componentName, ...props}) => (
+export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = ({
+    componentName, ...props
+}) => (
     <AsyncComponent componentName={ componentName } { ...props } />
 )
 
