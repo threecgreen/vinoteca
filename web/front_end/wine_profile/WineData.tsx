@@ -15,6 +15,7 @@ interface IProps {
     vitiArea: string | null;
     vitiAreaId: number | null;
     why: string | null;
+    isInShoppingList: boolean;
     // Handlers
     onInventoryChange: (changeType: InventoryChange) => void;
 }
@@ -63,6 +64,8 @@ export const WineData: React.FC<IProps> = (props) => {
             { props.why &&
                 <h6><b>Why:</b> { props.why }</h6>
             }
+            {/* TODO: editable */}
+            <h6>{ props.isInShoppingList ? "In" : "Not in" } shopping list</h6>
         </>
     );
 };

@@ -313,6 +313,7 @@ pub struct WineForm {
     #[serde(deserialize_with = "trim_opt_string")]
     pub name: Option<String>,
     pub wine_type_id: i32,
+    pub is_in_shopping_list: bool,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]

@@ -1,6 +1,7 @@
 import { navigate } from "@reach/router";
 import { FloatingBtn } from "components/Buttons";
 import { useViewport } from "components/context/ViewportContext";
+import { ErrorHandler } from "components/ErrorHandler";
 import { FixedActionList } from "components/FixedActionList";
 import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
@@ -26,7 +27,6 @@ import { initState, wineReducer } from "./state";
 import { WineData } from "./WineData";
 import { WineHeader } from "./WineHeader";
 import { WineImg } from "./WineImg";
-import { ErrorHandler } from "components/ErrorHandler";
 
 interface IProps {
     id: number;
@@ -250,6 +250,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             vitiArea={ state.wine!.vitiArea }
             vitiAreaId={ state.wine!.vitiAreaId }
             why={ state.wine!.why }
+            isInShoppingList={ state.wine!.isInShoppingList }
         />
     );
 

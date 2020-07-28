@@ -13,6 +13,7 @@ import { getRegion } from "lib/api/regions";
 import { getOrCreateVitiArea } from "lib/api/viti_areas";
 import { getOrCreateWineType } from "lib/api/wine_types";
 import React from "react";
+import { CheckboxInput } from "components/inputs/CheckboxInput";
 
 export interface IWineData {
     color: string;
@@ -27,6 +28,7 @@ export interface IWineData {
     description: string;
     notes: string;
     file: File | null;
+    isInShoppingList: boolean;
 }
 
 export const initWineInputData = (): IWineData => ({
@@ -42,6 +44,7 @@ export const initWineInputData = (): IWineData => ({
     description: "",
     notes: "",
     file: null,
+    isInShoppingList: false,
 });
 
 const getOrCreateVitiAreaForRegion = async (data: IWineData, regionId: number) => {
@@ -77,6 +80,7 @@ export const wineDataToForm = async (data: IWineData, inventory: number): Promis
         rating: data.isRatingEnabled ? data.rating : null,
         inventory,
         notes: data.notes || null,
+        isInShoppingList: data.isInShoppingList,
     };
 };
 
@@ -93,6 +97,7 @@ type Action =
     | {type: "setDescription", description: string}
     | {type: "setNotes", notes: string}
     | {type: "setFile", file: File | null}
+    | {type: "setIsInShoppingList", isInShoppingList: boolean}
     | {type: "reset" };
 
 export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action) => {
@@ -121,6 +126,8 @@ export const wineInputReducer: React.Reducer<IWineData, Action> = (state, action
             return { ...state, notes: action.notes };
         case "setFile":
             return { ...state, file: action.file };
+        case "setIsInShoppingList":
+            return { ...state, isInShoppingList: action.isInShoppingList };
         case "reset":
             return initWineInputData();
         default:
@@ -185,6 +192,13 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => (
             onChange={ (file) => dispatch({type: "setFile", file}) }
             // This to display something while editing if the wine already has an image
             fileName={ data.file?.name }
+        />
+        <CheckboxInput s={ 6 } l={ 3 }
+            name="is-in-shopping-list"
+            text="Add to shopping list"
+            isChecked={ data.isInShoppingList }
+            onClick={ (isInShoppingList) =>
+                dispatch({type: "setIsInShoppingList", isInShoppingList}) }
         />
     </>
 );
