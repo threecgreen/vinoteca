@@ -30,7 +30,7 @@ macro_rules! fmt_str {
 pub fn post(auth: Option<Auth>, log_form: Json<LogForm>) -> Json<LogResponse> {
     let log_form = log_form.into_inner();
     let tags = fmt_tags(auth, log_form.tags);
-    match &log_form.level as &str {
+    match log_form.level.as_str() {
         "critical" | "error" => error!(
             fmt_str!(),
             log_form.module, log_form.url, log_form.message, tags
