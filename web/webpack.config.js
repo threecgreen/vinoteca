@@ -83,9 +83,7 @@ module.exports = (env, argv) => {
                 /moment[\/\\]locale$/,
                 new RegExp(`[/\\\\\](${supportedLocales.join('|')})[/\\\\\]`)
             ),
-            new CompressionPlugin({
-                deleteOriginalAssets: true
-            })
+            new CompressionPlugin()
         ],
         resolve: {
             plugins: [new TsConfigPathsPlugin({ configFile: isProd ? "tsconfig.prod.json" : "tsconfig.json" })],
