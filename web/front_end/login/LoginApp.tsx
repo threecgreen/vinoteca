@@ -5,7 +5,7 @@ import { useDescription, useTitle, useCanonical } from "lib/widgets";
 import React from "react";
 import { LoginForm } from "./LoginForm";
 
-export const LoginApp: React.FC<RouteComponentProps> = () => {
+const LoginApp: React.FC<RouteComponentProps> = () => {
     useTitle("Login");
     useCanonical("/login");
     useDescription("Login to an existing vinoteca account");
@@ -36,3 +36,4 @@ export const LoginApp: React.FC<RouteComponentProps> = () => {
     );
 }
 LoginApp.displayName = "LoginApp";
+export default LoginApp;

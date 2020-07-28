@@ -1,5 +1,5 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import { AuthenticatedRoute, NotFound, RouteById } from "components/CommonRoutes";
+import { AuthenticatedRoute, NotFound, RouteById, AsyncComponent, AsyncRoute } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";
 import { ViewportProvider } from "components/context/ViewportContext";
@@ -9,9 +9,7 @@ import React from "react";
 import { AboutApp } from "./about/AboutApp";
 import { Footer } from "./Footer";
 import { HomeApp } from "./home/HomeApp";
-import { LoginApp } from "./login/LoginApp";
 import { Navbar } from "./Navbar";
-import { RegisterApp } from "./register/RegisterApp";
 
 const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
@@ -34,8 +32,8 @@ export const Router: React.FC<{}> = () => (
                         <App path="/">
                             <HomeApp path="/" />
                             <AboutApp path="/about" />
-                            <LoginApp path="/login" />
-                            <RegisterApp path="/register" />
+                            <AsyncRoute path="/login" componentName="Login" />
+                            <AsyncRoute path="/register" componentName="Register" />
 
                             <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
                             <AuthenticatedRoute componentName="Grapes" path="grapes" />

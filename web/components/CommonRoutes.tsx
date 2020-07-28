@@ -59,6 +59,10 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
 };
 AuthenticatedRoute.displayName = "AuthenticatedRoute";
 
+// Prefetched components
+const Login = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "login" */ "../front_end/login/LoginApp"))
+const Register = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "register" */ "../front_end/register/RegisterApp"))
+// Normal async components
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "../front_end/dashboards/DashboardApp"));
 const Grapes = lazy(() => import(/* webpackChunkName: "grapes" */ "../front_end/grapes/GrapesApp"));
 const HomeDashboard = lazy(() => import(/* webpackChunkName: "home_dashboard" */ "../front_end/home/HomeDashboard"));
@@ -74,6 +78,10 @@ const Wines = lazy(() => import(/* webpackChunkName: "wines" */ "../front_end/wi
 const WineTypeProfile = lazy(() => import(/* webpackChunkName: "wine_type_profile" */ "../front_end/wine_type_profile/WineTypeProfileApp"));
 
 const Components = {
+    // Prefetch
+    Login,
+    Register,
+    // Normal
     Dashboard,
     Grapes,
     HomeDashboard,
@@ -104,6 +112,10 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
         </Suspense>
     );
 };
+
+export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = ({componentName, ...props}) => (
+    <AsyncComponent componentName={ componentName } { ...props } />
+)
 
 export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
     const logger = useLogger("NotFound", false, false);

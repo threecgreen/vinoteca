@@ -5,7 +5,7 @@ import { useDescription, useTitle, useCanonical } from "lib/widgets";
 import React from "react";
 import { NewUserForm } from "./NewUserForm";
 
-export const RegisterApp: React.FC<RouteComponentProps> = () => {
+const RegisterApp: React.FC<RouteComponentProps> = () => {
     useTitle("Register for an account");
     useCanonical("/register")
     useDescription("Create a new vinoteca account");
@@ -36,3 +36,4 @@ export const RegisterApp: React.FC<RouteComponentProps> = () => {
     );
 }
 RegisterApp.displayName = "RegisterApp";
+export default RegisterApp;
