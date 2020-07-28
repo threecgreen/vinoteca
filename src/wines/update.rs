@@ -23,19 +23,23 @@ pub fn patch(
     let wine_patch_form = wine_patch_form.into_inner();
     validate_owns_wine(auth, id, &connection)?;
     match wine_patch_form {
-        WinePatchForm::Inventory(inventory) if inventory > 0 =>
+        WinePatchForm::Inventory(inventory) if inventory > 0 => {
             diesel::update(wines::table.filter(wines::id.eq(id)))
                 .set(wines::inventory.eq(inventory))
                 .execute(&*connection)
                 .map_err(VinotecaError::from)
-                .and_then(|_| get_one(auth, id, connection)),
-        WinePatchForm::Inventory(_invalid_inventory) => Err(VinotecaError::BadRequest("Invalid inventory value".to_owned())),
-        WinePatchForm::IsInShoppingList(is_in_shopping_list) =>
+                .and_then(|_| get_one(auth, id, connection))
+        }
+        WinePatchForm::Inventory(_invalid_inventory) => Err(VinotecaError::BadRequest(
+            "Invalid inventory value".to_owned(),
+        )),
+        WinePatchForm::IsInShoppingList(is_in_shopping_list) => {
             diesel::update(wines::table.filter(wines::id.eq(id)))
                 .set(wines::is_in_shopping_list.eq(is_in_shopping_list))
                 .execute(&*connection)
                 .map_err(VinotecaError::from)
-                .and_then(|_| get_one(auth, id, connection)),
+                .and_then(|_| get_one(auth, id, connection))
+        }
     }
 }
 

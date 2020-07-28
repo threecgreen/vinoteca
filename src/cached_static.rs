@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CacheControl, CacheDirective};
+use rocket::http::hyper::header::{CacheControl, CacheDirective, ContentEncoding, Encoding};
 use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
@@ -44,8 +44,26 @@ impl<'r> Responder<'r> for CachedFile {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
         let mut response = self.1.respond_to(req)?;
         if let Some(ext) = self.0.extension() {
-            if let Some(ct) = ContentType::from_extension(&ext.to_string_lossy()) {
-                response.set_header(ct);
+            if ext == "gz" {
+                if let Some(content_type) = self
+                    .0
+                    .file_stem()
+                    .and_then(|stem| {
+                        let stem_path = PathBuf::from(stem);
+                        stem_path.extension().map(|x| x.to_owned())
+                    })
+                    .and_then(|inner_ext| ContentType::from_extension(&inner_ext.to_string_lossy()))
+                {
+                    // Support for gzipped code, e.g. js or css
+                    response.set_header(content_type);
+                    response.set_header(ContentEncoding(vec![Encoding::Gzip]));
+                } else {
+                    response.set_header(ContentType::new("application", "gzip"));
+                }
+            }
+            // Normal content type detection
+            else if let Some(content_type) = ContentType::from_extension(&ext.to_string_lossy()) {
+                response.set_header(content_type);
             }
         }
         let epoch: DateTime<Utc> = {

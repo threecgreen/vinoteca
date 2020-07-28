@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TsConfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 const inputPath = __dirname + "/front_end/";
 const outputPath = __dirname + "/static";
@@ -58,13 +59,6 @@ module.exports = (env, argv) => {
             splitChunks: {
                 chunks: "all",
                 minChunks: 2,
-        //         cacheGroups: {
-        //             vendors: {
-        //                 name: "vendors",
-        //                 test: /[\\/]node_modules[\\/]/,
-        //                 chunks: "initial",
-        //             },
-        //         },
             },
         },
         output: {
@@ -89,9 +83,12 @@ module.exports = (env, argv) => {
                 /moment[\/\\]locale$/,
                 new RegExp(`[/\\\\\](${supportedLocales.join('|')})[/\\\\\]`)
             ),
+            new CompressionPlugin({
+                deleteOriginalAssets: true
+            })
         ],
         resolve: {
-            plugins: [new TsConfigPathsPlugin({configFile: isProd ? "tsconfig.prod.json" : "tsconfig.json"})],
+            plugins: [new TsConfigPathsPlugin({ configFile: isProd ? "tsconfig.prod.json" : "tsconfig.json" })],
             extensions: [".js", ".json", ".ts", ".tsx"],
         },
     };
