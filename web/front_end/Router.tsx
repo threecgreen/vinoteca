@@ -43,14 +43,23 @@ export const Router: React.FC<{}> = () => (
                             <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
                             <AuthenticatedRoute componentName="NewWine" path="wines/new" />
                             <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
+                            <AuthenticatedRoute componentName="ShoppingList"
+                                path="wines/shopping-list"
+                            />
 
-                            <AuthenticatedRoute componentName="ProducerProfile" path="producers/:producerId" />
+                            <AuthenticatedRoute componentName="ProducerProfile"
+                                path="producers/:producerId"
+                            />
                             <AuthenticatedRoute componentName="RegionProfile"
                                 path="regions/:regionId"
                             />
                             <AuthenticatedRoute componentName="UserProfile" path="profile" />
-                            <AuthenticatedRoute componentName="VitiAreaProfile" path="viti-areas/:vitiAreaId" />
-                            <AuthenticatedRoute componentName="WineTypeProfile" path="wine-types/:wineTypeId" />
+                            <AuthenticatedRoute componentName="VitiAreaProfile"
+                                path="viti-areas/:vitiAreaId"
+                            />
+                            <AuthenticatedRoute componentName="WineTypeProfile"
+                                path="wine-types/:wineTypeId"
+                            />
 
                             {/* <PleaseCrash path="/crash/please" /> */}
                             <NotFound default />

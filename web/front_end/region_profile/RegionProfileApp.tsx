@@ -86,7 +86,7 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
     }
 
     private async getAndSetWines() {
-        const wines = await getWines({regionId: this.props.regionId});
+        const wines = (await getWines({regionId: this.props.regionId})).unwrap();
         this.setState({wines});
     }
 

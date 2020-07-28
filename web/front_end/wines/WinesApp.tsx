@@ -106,7 +106,8 @@ const WinesApp: React.FC<{}> = (_) => {
     React.useEffect(() => {
         async function fetchWines() {
             try {
-                const wines = await getWines({});
+                // TODO: migrate to `RestResult`
+                const wines = (await getWines({})).unwrap();
                 dispatch({type: "setWines", wines});
             } catch (e) {
                 logger.logError(`Failed to get wines: ${e.message}`);

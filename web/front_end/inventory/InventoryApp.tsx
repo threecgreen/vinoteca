@@ -23,7 +23,7 @@ const InventoryApp: React.FC<{}> = (_) => {
 
     const updateInventory = async () => {
         try {
-            const newInventory: IInventoryWine[] = await getInventory();
+            const newInventory = await getInventory();
             setWines(newInventory);
         } catch (err) {
             logger.logError(`Failed to load inventory: ${err.message}`);

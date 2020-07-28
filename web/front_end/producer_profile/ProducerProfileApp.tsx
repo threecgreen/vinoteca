@@ -119,7 +119,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                     getProducerData(),
                     getWines({producerId}),
                 ]);
-                dispatch({type: "setWines", wines});
+                dispatch({type: "setWines", wines: wines.unwrap()});
             } catch (e) {
                 logger.logWarning(`Failed to load producer: ${e.message}`, {id: producerId});
             }

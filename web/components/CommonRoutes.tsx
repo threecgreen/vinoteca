@@ -71,6 +71,7 @@ const NewWine = lazy(() => import(/* webpackChunkName: "new_wine" */ "../front_e
 const ProducerProfile = lazy(() => import(/* webpackChunkName: "producer_profile" */ "../front_end/producer_profile/ProducerProfileApp"));
 const RegionProfile = lazy(() => import(/* webpackChunkName: "region_profile" */ "../front_end/region_profile/RegionProfileApp"));
 const SearchWines = lazy(() => import(/* webpackChunkName: "search_wines" */ "../front_end/search_wines/SearchWinesApp"));
+const ShoppingList = lazy(() => import(/* webpackChunkName: "shopping_list" */ "../front_end/shopping_list/ShoppingListApp"))
 const UserProfile = lazy(() => import(/* webpackChunkName: "user_profile" */ "../front_end/user_profile/UserProfileApp"));
 const VitiAreaProfile = lazy(() => import(/* webpackChunkName: "viti_area_profile" */ "../front_end/viti_area_profile/VitiAreaProfileApp"));
 const WineProfile = lazy(() => import(/* webpackChunkName: "wine_profile" */ "../front_end/wine_profile/WineProfileApp"));
@@ -90,6 +91,7 @@ const Components = {
     ProducerProfile,
     RegionProfile,
     SearchWines,
+    ShoppingList,
     UserProfile,
     VitiAreaProfile,
     WineProfile,

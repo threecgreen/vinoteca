@@ -109,7 +109,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
     }
 
     private async getAndSetWines() {
-        const wines = await getWines({vitiAreaId: this.props.vitiAreaId});
+        const wines = (await getWines({vitiAreaId: this.props.vitiAreaId})).unwrap();
         this.setState({wines});
     }
 

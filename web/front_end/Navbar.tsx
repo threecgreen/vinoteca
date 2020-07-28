@@ -96,6 +96,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
 
     const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
     const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
+    const winesDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
     React.useEffect(() => {
         // tslint:disable-next-line no-unused-expression
         new Dropdown(addDropdownRef.current);
@@ -104,6 +105,10 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
         // tslint:disable-next-line no-unused-expression
         new Dropdown(userDropdownRef.current);
     }, [userDropdownRef]);
+    React.useEffect(() => {
+        // tslint:disable-next-line no-unused-expression
+        new Dropdown(winesDropdownRef.current);
+    }, [winesDropdownRef]);
 
     const onLogout = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -117,13 +122,13 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
             <li>
                 <ul id={ `${id}-add` } className="dropdown-content">
                     <NavLink to="/wines/new">
-                        New Wine
+                        New wine
                     </NavLink>
                     <NavLink to="/wines/search">
-                        Purchased Again
+                        Purchased again
                     </NavLink>
                 </ul>
-                <a href="#!" className="dropdown-trigger" data-target={ `${id}-add` }
+                <a className="dropdown-trigger" data-target={ `${id}-add` }
                     ref={ addDropdownRef }
                 >
                     <MaterialIcon className="left" iconName="add_circle" />
@@ -131,18 +136,37 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
                     <MaterialIcon className="right" iconName="arrow_drop_down" />
                 </a>
             </li>
-            <NavLink to="/wines">
-                <MaterialIcon className="left" iconName="reorder" />
+            <li>
+                <ul id={ `${id}-wines` } className="dropdown-content">
+                    <NavLink to="/wines">
+                        All wines
+                    </NavLink>
+                    <NavLink to="/wines/inventory">
+                        Inventory
+                    </NavLink>
+                    <NavLink to="/wines/shopping-list">
+                        Shopping list
+                    </NavLink>
+                </ul>
+                <a className="dropdown-trigger" data-target={ `${id}-wines` }
+                    ref={ winesDropdownRef }
+                >
+                    <MaterialIcon className="left" iconName="reorder" />
+                    Wines
+                    <MaterialIcon className="right" iconName="arrow_drop_down" />
+                </a>
+            </li>
+            {/* <NavLink to="/wines">
                 Wines
-            </NavLink>
+            </NavLink> */}
             <NavLink to="/dashboards">
                 <MaterialIcon className="left" iconName="dashboard" />
                 Dashboards
             </NavLink>
-            <NavLink to="/wines/inventory">
+            {/* <NavLink to="/wines/inventory">
                 <MaterialIcon className="left" iconName="view_comfy" />
                 Inventory
-            </NavLink>
+            </NavLink> */}
             <li>
                 <ul id={ `${id}-user` } className="dropdown-content">
                     <NavLink to="/profile">
@@ -154,7 +178,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
                         </a>
                     </li>
                 </ul>
-                <a href="#!" className="dropdown-trigger" data-target={ `${id}-user` }
+                <a className="dropdown-trigger" data-target={ `${id}-user` }
                     ref={ userDropdownRef }
                 >
                     <MaterialIcon className="left" iconName="account_circle" />

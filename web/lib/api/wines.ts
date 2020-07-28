@@ -12,16 +12,18 @@ interface IGetWinesParams {
     regionId?: number;
     vitiAreaId?: number;
     wineTypeId?: number;
+    isInShoppingList?: boolean;
 }
 
 export async function getWines(
-    { id, producerId, regionId, vitiAreaId, wineTypeId }: IGetWinesParams,
-): Promise<IWine[]> {
+    { id, producerId, regionId, vitiAreaId, wineTypeId, isInShoppingList }: IGetWinesParams,
+): Promise<RestResult<IWine[]>> {
     const nonNullParams = nonNulls({
         id, region_id: regionId, producer_id: producerId,
         viti_area_id: vitiAreaId, wine_type_id: wineTypeId,
+        is_in_shopping_list: isInShoppingList,
     });
-    return get(BASE_URL, nonNullParams);
+    return getResult(BASE_URL, nonNullParams);
 }
 
 export async function getWine(id: number): Promise<RestResult<IWine>> {
