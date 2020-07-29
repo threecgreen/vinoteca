@@ -330,6 +330,7 @@ pub struct NewWine {
     pub name: Option<String>,
     pub wine_type_id: i32,
     pub user_id: i32,
+    pub is_in_shopping_list: bool,
 }
 
 impl From<(Auth, WineForm)> for NewWine {
@@ -346,6 +347,7 @@ impl From<(Auth, WineForm)> for NewWine {
             name: form.name,
             wine_type_id: form.wine_type_id,
             user_id: auth.id,
+            is_in_shopping_list: form.is_in_shopping_list,
         }
     }
 }

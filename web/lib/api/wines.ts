@@ -49,7 +49,7 @@ export async function updateWine(id: number, wine: IWineForm, file: File | null)
     return putForm(`${BASE_URL}/${id}`, form);
 }
 
-export async function partUpdateWine(id: number, winePatch: WinePatchForm): Promise<IWine> {
+export async function patchWine(id: number, winePatch: WinePatchForm): Promise<IWine> {
     return patch(`${BASE_URL}/${id}`, winePatch);
 }
 

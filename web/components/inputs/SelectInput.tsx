@@ -58,7 +58,7 @@ const MaterializeSelect: React.FC<IProps> = (props) => {
         </>
     );
 };
-MaterializeSelect.displayName = "MterializeSelect";
+MaterializeSelect.displayName = "MaterializeSelect";
 
 const DefaultSelct: React.FC<IProps> = (props) => {
     return (

@@ -11,7 +11,7 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "compon
 import { Preloader } from "components/Preloader";
 import { IPurchase, IWine, IWineGrape } from "generated/rest";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "lib/api/purchases";
-import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage } from "lib/api/wines";
+import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage, patchWine } from "lib/api/wines";
 import { createWineGrapes, getWineGrapes } from "lib/api/wine_grapes";
 import { useLogger } from "lib/Logger";
 import { arrayHasChanged, getNameAndType, hasChanged } from "lib/utils";
@@ -79,20 +79,31 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Event handlers
     const onInventoryChange = async (inventoryChange: InventoryChange) => {
         if (state.wine) {
-            const copy = {...state.wine};
+            let inventory = state.wine.inventory;
             if (inventoryChange === InventoryChange.Increase) {
-                copy.inventory += 1;
+                inventory += 1;
             } else {
-                copy.inventory -= 1;
+                inventory -= 1;
             }
             try {
-                const wine = await updateWine(id, copy, null);
+                const wine = await patchWine(id, {inventory});
                 dispatch({type: "setWine", wine});
             } catch (e) {
                 logger.logWarning(`Failed to change inventory. ${e.message}`, {id});
             }
         }
     };
+
+    const onIsInShoppingListChange = async (isInShoppingList: boolean) => {
+        if (state.wine) {
+            try {
+                const wine = await patchWine(id, {isInShoppingList});
+                dispatch({type: "setWine", wine})
+            } catch (e) {
+                logger.logWarning(`Failed to change isInShoppingList. ${e.message}`, {id});
+            }
+        }
+    }
 
     const onUpdateFile = async (editedFile: File | null) => {
         if (state.wine?.image && editedFile === null) {
@@ -243,7 +254,6 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             color={ state.wine!.color }
             description={ state.wine!.description }
             inventory={ state.wine!.inventory }
-            onInventoryChange={ (ic) => onInventoryChange(ic) }
             lastPurchaseVintage={ state.wine!.lastPurchaseVintage }
             notes={ state.wine!.notes }
             rating={ state.wine!.rating }
@@ -251,6 +261,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             vitiAreaId={ state.wine!.vitiAreaId }
             why={ state.wine!.why }
             isInShoppingList={ state.wine!.isInShoppingList }
+            onInventoryChange={ onInventoryChange }
+            onIsInShoppingListChange={ onIsInShoppingListChange }
         />
     );
 

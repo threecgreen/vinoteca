@@ -23,7 +23,7 @@ pub fn patch(
     let wine_patch_form = wine_patch_form.into_inner();
     validate_owns_wine(auth, id, &connection)?;
     match wine_patch_form {
-        WinePatchForm::Inventory(inventory) if inventory > 0 => {
+        WinePatchForm::Inventory(inventory) if inventory >= 0 => {
             diesel::update(wines::table.filter(wines::id.eq(id)))
                 .set(wines::inventory.eq(inventory))
                 .execute(&*connection)

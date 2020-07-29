@@ -2,7 +2,7 @@ import { Btn } from "components/Buttons";
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
 import { IInventoryWine } from "generated/rest";
-import { getInventory, partUpdateWine } from "lib/api/wines";
+import { getInventory, patchWine } from "lib/api/wines";
 import { download, generateCSV } from "lib/csv";
 import { serializeDate } from "lib/date";
 import { useLogger } from "lib/Logger";
@@ -42,7 +42,7 @@ const InventoryApp: React.FC<{}> = (_) => {
                 } else if (wine.inventory > 0) {
                     newInventory -= 1;
                 }
-                const updatedWine = await partUpdateWine(id, {inventory: newInventory});
+                const updatedWine = await patchWine(id, {inventory: newInventory});
                 if (newInventory > 0) {
                     setWines((prevWines) => prevWines.map((w) => w.id === id
                         ? {...w, inventory: updatedWine.inventory}
