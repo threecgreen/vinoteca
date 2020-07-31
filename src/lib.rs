@@ -81,15 +81,7 @@ pub fn create_rocket() -> rocket::Rocket {
         .attach(DbConn::fairing())
         // Run embedded database migrations on startup
         .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
-        .mount(
-            "/",
-            routes![
-                static_handlers::home,
-                static_handlers::any_other,
-                static_handlers::robots,
-                static_handlers::sitemap
-            ],
-        )
+        .mount("/", static_handlers::get_routes())
         .mount(
             "/rest",
             routes![
