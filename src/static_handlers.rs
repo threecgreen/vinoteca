@@ -3,10 +3,27 @@ use crate::users::Auth;
 use rocket::response::content::{Html, Plain, Xml};
 
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![home, robots, sitemap, about, login, register, dashboards, grapes,
-        wines, wine_profile, inventory, new_wine, search_wines, shopping_list,
-        producer_profile, region_profile, user_profile, viti_area_profile,
-        wine_type_profile]
+    routes![
+        home,
+        robots,
+        sitemap,
+        about,
+        login,
+        register,
+        dashboards,
+        grapes,
+        wines,
+        wine_profile,
+        inventory,
+        new_wine,
+        search_wines,
+        shopping_list,
+        producer_profile,
+        region_profile,
+        user_profile,
+        viti_area_profile,
+        wine_type_profile
+    ]
 }
 // Keep in sync with Router.tsx
 
@@ -42,7 +59,7 @@ pub fn wines(_auth: Auth) -> Html<&'static str> {
 pub fn wine_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
     home()
 }
-#[get("/inventory")]
+#[get("/wines/inventory")]
 pub fn inventory(_auth: Auth) -> Html<&'static str> {
     home()
 }
