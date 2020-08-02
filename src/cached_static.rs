@@ -7,7 +7,6 @@ use rocket::{Data, Request, Route};
 use std::borrow::Cow;
 use std::fs::{self, File};
 use std::io;
-use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -22,18 +21,22 @@ impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
 
 #[derive(Debug)]
 /// A file that we want to avoid reserving by setting the last-modified header
-pub struct CachedFile(PathBuf, File);
+pub struct CachedFile {
+    path: PathBuf,
+    file: File,
+}
 
 impl CachedFile {
     /// Attempts to open a file in read-only mode.
-    pub fn open(path: impl AsRef<Path>) -> io::Result<CachedFile> {
-        let file = File::open(path.as_ref())?;
-        Ok(CachedFile(path.as_ref().to_path_buf(), file))
+    pub fn open(path: impl Into<PathBuf>) -> io::Result<CachedFile> {
+        let path = path.into();
+        let file = File::open(&path)?;
+        Ok(CachedFile { path, file })
     }
 
     /// Retrieve the underlying `File`.
     pub fn file(&self) -> &File {
-        &self.1
+        &self.file
     }
 }
 
@@ -42,11 +45,11 @@ impl CachedFile {
 /// recognized.
 impl<'r> Responder<'r> for CachedFile {
     fn respond_to(self, req: &Request) -> response::Result<'r> {
-        let mut response = self.1.respond_to(req)?;
-        if let Some(ext) = self.0.extension() {
+        let mut response = self.file.respond_to(req)?;
+        if let Some(ext) = self.path.extension() {
             if ext == "gz" {
                 if let Some(content_type) = self
-                    .0
+                    .path
                     .file_stem()
                     .and_then(|stem| {
                         let stem_path = PathBuf::from(stem);
@@ -67,7 +70,7 @@ impl<'r> Responder<'r> for CachedFile {
             }
         }
         let epoch: DateTime<Utc> = {
-            let metadata = fs::metadata(&self.0.as_path()).unwrap();
+            let metadata = fs::metadata(&self.path).unwrap();
             metadata.modified().unwrap().into()
         };
         response.set_header(Header {
@@ -90,33 +93,19 @@ impl<'r> Responder<'r> for CachedFile {
     }
 }
 
-impl Deref for CachedFile {
-    type Target = File;
-
-    fn deref(&self) -> &File {
-        &self.1
-    }
-}
-
-impl DerefMut for CachedFile {
-    fn deref_mut(&mut self) -> &mut File {
-        &mut self.1
-    }
-}
-
 impl io::Read for CachedFile {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        self.file().read(buf)
+        self.file.read(buf)
     }
 
     fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
-        self.file().read_to_end(buf)
+        self.file.read_to_end(buf)
     }
 }
 
 /// Modified version of `rocket_contrib::serve::StaticFiles` that sets last
 /// modified time and caching
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct CachedStaticFiles {
     root: PathBuf,
     rank: isize,
@@ -167,7 +156,23 @@ impl Handler for CachedStaticFiles {
 
         match &path {
             Some(path) if path.is_dir() => Outcome::forward(data),
-            Some(path) if path.exists() => Outcome::from(req, CachedFile::open(path).ok()),
+            Some(path) if path.exists() => {
+                let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
+                let accept_encoding: Option<std::collections::HashSet<String>> = req
+                    .headers()
+                    .get_one("Accept-Encoding")
+                    .map(|s| s.split(",").map(|t| t.trim().to_owned()).collect());
+                if gz_path.exists()
+                    && accept_encoding
+                        .map(|enc| enc.contains("gzip"))
+                        .unwrap_or(false)
+                {
+                    // TODO: make CachedGzFile struct
+                    Outcome::from(req, CachedFile::open(gz_path).ok())
+                } else {
+                    Outcome::from(req, CachedFile::open(path).ok())
+                }
+            }
             Some(path) => {
                 warn!(
                     "Request received for static file that doesn't exist at path '{:?}'",
