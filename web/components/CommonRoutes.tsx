@@ -124,6 +124,11 @@ export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = 
 export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
     const logger = useLogger("NotFound", false, false);
     logger.logWarning("Client requested a resource that doesn't exist");
+    // Keep google at bay
+    const metaRobots = document.createElement("meta");
+    metaRobots.name = "robots";
+    metaRobots.content = "noindex";
+    document.head.appendChild(metaRobots);
     return (
         <div className="container" style={ {maxWidth: "750px"} }>
             <h1 className="light center big" style={ {fontSize: "80px" } }>
