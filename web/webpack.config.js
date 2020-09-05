@@ -68,6 +68,7 @@ module.exports = (env, argv) => {
             publicPath: "/static/",
             path: outputPath,
         },
+        mode: isProd ? "production" : "development",
         plugins: [
             new MiniCssExtractPlugin({
                 filename: "[name].bundle.css",
