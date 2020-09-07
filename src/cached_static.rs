@@ -161,7 +161,7 @@ impl Handler for CachedStaticFiles {
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
                     .headers()
                     .get_one("Accept-Encoding")
-                    .map(|s| s.split(",").map(|t| t.trim().to_owned()).collect());
+                    .map(|s| s.split(',').map(|t| t.trim().to_owned()).collect());
                 if gz_path.exists()
                     && accept_encoding
                         .map(|enc| enc.contains("gzip"))
