@@ -15,24 +15,24 @@ categories = ["web-programming"]
 aws-creds = "0.22.1"
 aws-region = "0.21.0"
 # Password encryption
-bcrypt = "0.8.1"
+bcrypt = "0.8.2"
 # Datetime functionality
-chrono = { version = "0.4.11", features = ["serde"] }
+chrono = { version = "0.4.15", features = ["serde"] }
 # basic ORM
 diesel = { version = "1.4.5", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 # Image handling
-image = "0.23.6"
-kamadak-exif = "0.5.1"
+image = "0.23.9"
+kamadak-exif = "0.5.2"
 lazy_static = "1.4.0"
-log = "0.4.8"
+log = "0.4.11"
 rocket_codegen = "0.4.5"
-rocket-multipart-form-data = "0.9.4"
+rocket-multipart-form-data = "0.9.5"
 # AWS S3 access
 rust-s3 = "0.22.10"
 # (De)serialization
-serde = { version = "1.0.114", features = ["derive"] }
-serde_json = "1.0.55"
+serde = { version = "1.0.115", features = ["derive"] }
+serde_json = "1.0.57"
 time = "0.1.42"
 uuid = { version = "0.8.1", features = ["v4"] }
 # Input validation
@@ -56,4 +56,4 @@ version = "0.1.10"
 features = ["export-typescript"]
 
 [dev-dependencies]
-mockall = "0.7.1"
+mockall = "0.8.0"
