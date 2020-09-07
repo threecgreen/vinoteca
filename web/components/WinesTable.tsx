@@ -224,12 +224,12 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             case WinesTableColumn.Vintage:
                 // Sort NV first
                 return this.props.wines.sort((w1, w2) =>
-                    (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000)
+                    ((w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000))
                         * ascendingMultiplier,
                 );
             case WinesTableColumn.Rating:
                 return this.props.wines.sort((w1, w2) =>
-                    (w1.rating ?? 0) - (w2.rating ?? 0) * ascendingMultiplier,
+                    ((w1.rating ?? 0) - (w2.rating ?? 0)) * ascendingMultiplier,
                 );
             default:
                 return this.props.wines;
