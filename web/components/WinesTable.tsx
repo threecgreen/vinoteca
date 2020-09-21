@@ -77,6 +77,16 @@ const defaultProps = {
     winesPerPage: 250,
 };
 
+const compareNums = (x: number, y: number): number => {
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
 export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
     public static defaultProps = defaultProps;
 
@@ -224,12 +234,11 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             case WinesTableColumn.Vintage:
                 // Sort NV first
                 return this.props.wines.sort((w1, w2) =>
-                    ((w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000))
-                        * ascendingMultiplier,
+                    compareNums(w1.lastPurchaseVintage ?? 3000, w2.lastPurchaseVintage ?? 3000) * ascendingMultiplier
                 );
             case WinesTableColumn.Rating:
                 return this.props.wines.sort((w1, w2) =>
-                    ((w1.rating ?? 0) - (w2.rating ?? 0)) * ascendingMultiplier,
+                    compareNums(w1.rating ?? 0, w2.rating ?? 0) * ascendingMultiplier
                 );
             default:
                 return this.props.wines;
