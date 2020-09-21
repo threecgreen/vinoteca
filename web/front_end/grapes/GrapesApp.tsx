@@ -38,10 +38,7 @@ const GrapesApp: React.FC<{}> = (_) => {
             const id = state.mode.id;
             try {
                 const updatedGrape = await updateGrape(id, grape);
-                dispatch({
-                    type: "setGrapes",
-                    grapes: state.grapes.map((g) => g.id === id ? updatedGrape : g),
-                });
+                dispatch({type: "updateGrape", grape: updatedGrape});
             } catch (e) {
                 logger.logWarning(`Failed to save grape change for grape with id ${id}: ${e.message}`);
             }
@@ -53,9 +50,9 @@ const GrapesApp: React.FC<{}> = (_) => {
     }
     let editComponent = null;
     if (state.mode.type === "edit") {
-        const id = state.mode.id;
+        const grape = state.grapes[state.mode.id];
         editComponent = (
-            <EditGrape name={ state.grapes.find((g) => g.id === id)?.name ?? "" }
+            <EditGrape name={ grape?.name ?? "" }
                 onCancelClick={ onCancelClick }
                 onSaveClick={ onSaveClick }
             />
@@ -66,7 +63,7 @@ const GrapesApp: React.FC<{}> = (_) => {
             <Row>
                 <Col s={ 12 }>
                     <h3 className="page-title">Grapes</h3>
-                    <GrapesList grapes={ state.grapes }
+                    <GrapesList grapes={ Object.values(state.grapes) }
                         onEditClick={ onEditClick }
                     />
                     { editComponent }

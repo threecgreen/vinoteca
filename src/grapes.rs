@@ -92,3 +92,15 @@ pub fn put(
         .map_err(VinotecaError::from)
         .and_then(|_| get(auth, Some(id), None, connection)?.into_first("Edited grape"))
 }
+
+#[delete("/grapes/<id>")]
+pub fn delete(auth: Auth, id: i32, connection: DbConn) -> RestResult<()> {
+    diesel::delete(
+        grapes::table
+            .filter(grapes::id.eq(id))
+            .filter(grapes::user_id.eq(auth.id)),
+    )
+    .execute(&*connection)
+    .map(|_| Json(()))
+    .map_err(VinotecaError::from)
+}

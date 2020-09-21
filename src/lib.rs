@@ -90,6 +90,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 grapes::get,
                 grapes::post,
                 grapes::put,
+                grapes::delete,
                 grapes::top,
                 logs::post,
                 producers::get,

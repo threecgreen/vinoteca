@@ -25,9 +25,8 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
     }
     diesel::delete(wines::table.filter(wines::id.eq(id)))
         .execute(&*connection)
-        .map(|_| ())
-        .map_err(VinotecaError::from)?;
-    Ok(Json(()))
+        .map(|_| Json(()))
+        .map_err(VinotecaError::from)
 }
 
 #[cfg(test)]

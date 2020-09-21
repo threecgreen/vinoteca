@@ -1,6 +1,6 @@
 import { IGrape, IGrapeForm, ITopEntity } from "generated/rest";
 import { getOrCreate, nonNulls } from "./common";
-import { get, post, put } from "./requests";
+import { delete_, get, post, put } from "./requests";
 
 const BASE_URL = "/rest/grapes";
 
@@ -27,4 +27,8 @@ export async function updateGrape(id: number, grape: IGrapeForm): Promise<IGrape
 export async function getTopGrapes(limit?: number): Promise<ITopEntity[]> {
     const nonNullParams = nonNulls({limit});
     return get(`${BASE_URL}/top`, nonNullParams);
+}
+
+export async function deleteGrape(id: number): Promise<void> {
+    return delete_(`${BASE_URL}/${id}`);
 }
