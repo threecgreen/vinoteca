@@ -17,6 +17,5 @@
     "python.pythonPath": "~/.envs/migration/bin/python",
     "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
-    "tslint.configFile": "tslint.json",
-    "tslint.alwaysShowRuleFailuresAsWarnings": true,
+    "eslint.workingDirectories": ["./web"]
 }

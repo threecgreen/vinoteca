@@ -18,7 +18,7 @@ typescript()
 {
     info_text "Running Typescript linter."
     cd "$root_dir/web"
-    npm run lint || error_exit "TSLint error(s)"
+    npm run lint || error_exit "ESLint error(s)"
     cd -
 }
 
