@@ -32,10 +32,10 @@ export const grapeStateReducer: React.Reducer<IGrapeState, Action> = (state, act
         case "setToEdit":
             return { ...state, mode: {type: "edit", id: action.id} };
         case "setGrapes": {
-            const grapes = action.grapes.reduce((acc, grape) => {
+            const grapes = action.grapes.reduce((acc: Record<number, IGrape>, grape) => {
                 acc[grape.id] = grape;
                 return acc;
-            }, {} as Record<number, IGrape>);
+            }, {});
             return { ...state, grapes};
         }
         case "updateGrape": {

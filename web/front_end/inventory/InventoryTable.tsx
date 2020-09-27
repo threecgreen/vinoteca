@@ -1,10 +1,13 @@
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
 import { Table } from "components/Table";
-import { ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell,
-         RegionCell, YearCell } from "components/TableCells";
+import {
+    ColorCell, DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell,
+    RegionCell, YearCell
+} from "components/TableCells";
 import { SortingState, TableHeader } from "components/TableHeader";
 import { IInventoryWine } from "generated/rest";
+import { compareNums } from "lib/component_utils";
 import { useLocalStorageReducer } from "lib/local_storage";
 import React from "react";
 
@@ -101,23 +104,23 @@ export const InventoryTable: React.FC<IProps> = ({ wines, onInventoryChange }) =
                     return w1.region.localeCompare(w2.region) * ascendingMultiplier;
                 });
             case SortingValue.Vintage:
-                return wines.sort((w1, w2) => {
+                return wines.sort((w1, w2) =>
                     // Sort NV firt
-                    return (w1.lastPurchaseVintage ?? 3000) - (w2.lastPurchaseVintage ?? 3000)
-                        * ascendingMultiplier;
-                });
+                    compareNums(w1.lastPurchaseVintage ?? 3000, w2.lastPurchaseVintage ?? 3000)
+                        * ascendingMultiplier
+                );
             case SortingValue.PurchaseDate:
                 return wines.sort((w1, w2) => {
                     // Wines with NULL purchase date should be considered the
                     // least recent
-                    const defaultDateStr = "1900-01-01";
-                    const date1 = w1.lastPurchaseDate ?? new Date(defaultDateStr);
-                    const date2 = w2.lastPurchaseDate ?? new Date(defaultDateStr);
-                    return (date1.getTime() - date2.getTime()) * ascendingMultiplier;
+                    const date1 = w1.lastPurchaseDate;
+                    const date2 = w2.lastPurchaseDate;
+                    return compareNums(date1?.getTime() ?? 0, date2?.getTime() ?? 0)
+                        * ascendingMultiplier;
                 });
             case SortingValue.Price:
                 return wines.sort((w1, w2) => {
-                    return (w1.lastPurchasePrice ?? 0) - (w2.lastPurchasePrice ?? 0)
+                    return compareNums(w1.lastPurchasePrice ?? 0, w2.lastPurchasePrice ?? 0)
                         * ascendingMultiplier;
                 });
             default:

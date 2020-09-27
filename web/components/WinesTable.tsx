@@ -2,8 +2,10 @@ import { IWine } from "generated/rest";
 import { compareNums, getNameAndType } from "lib/component_utils";
 import React from "react";
 import { Table } from "./Table";
-import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
-         YearCell } from "./TableCells";
+import {
+    ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
+    YearCell
+} from "./TableCells";
 import { FilterHeader, SelectFilterHeader, SortingState, TableHeader } from "./TableHeader";
 
 export enum WinesTableColumn {
@@ -224,7 +226,8 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
             case WinesTableColumn.Vintage:
                 // Sort NV first
                 return this.props.wines.sort((w1, w2) =>
-                    compareNums(w1.lastPurchaseVintage ?? 3000, w2.lastPurchaseVintage ?? 3000) * ascendingMultiplier
+                    compareNums(w1.lastPurchaseVintage ?? 3000, w2.lastPurchaseVintage ?? 3000)
+                        * ascendingMultiplier
                 );
             case WinesTableColumn.Rating:
                 return this.props.wines.sort((w1, w2) =>

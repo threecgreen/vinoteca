@@ -31,6 +31,13 @@ export function handleSubmit(save: () => Promise<void>,
     };
 }
 
+/**
+ * Comparison function for sorting an array of numbers or an array of objects based on a number
+ * property.
+ *
+ * Comparing numbers for sorting should be as easy as `x - y`, however this approach does not
+ * work in mobile Safari.
+ */
 export const compareNums = (x: number, y: number): number => {
     if (x < y) {
         return -1;

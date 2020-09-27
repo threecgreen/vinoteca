@@ -1,6 +1,7 @@
 import { Table } from "components/Table";
 import { SortingState, TableHeader } from "components/TableHeader";
 import { IGrape } from "generated/rest";
+import { compareNums } from "lib/component_utils";
 import React from "react";
 import { GrapesListItem } from "./GrapesListItem";
 
@@ -22,15 +23,11 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
         const ascendingMultiplier = isAscending ? 1 : -1;
         switch (sortingValue) {
             case SortingValue.Name:
-                return grapes.sort((g1, g2) => {
-                    return g1.name.localeCompare(g2.name) * ascendingMultiplier;
-                });
+                return grapes.sort((g1, g2) =>
+                    g1.name.localeCompare(g2.name) * ascendingMultiplier);
             case SortingValue.Wines:
-                return grapes.sort((g1, g2) => {
-                    return (g1.wineCount || 0) > (g2.wineCount || 0)
-                        ? -ascendingMultiplier
-                        : ascendingMultiplier;
-                });
+                return grapes.sort((g1, g2) =>
+                    compareNums(g1.wineCount ?? 0, g2.wineCount ?? 0) * ascendingMultiplier);
             default:
                 return grapes;
         }
