@@ -41,6 +41,20 @@ export class Result<T, E extends object> {
         return Result.Ok(this.inner.value);
     }
 
+    public do(fun: (v: T) => void): Result<T, E> {
+        if (this.inner.type === "ok") {
+            fun(this.inner.value);
+        }
+        return this;
+    }
+
+    public doErr(fun: (v: E) => void): Result<T, E> {
+        if (this.inner.type === "err") {
+            fun(this.inner.value);
+        }
+        return this;
+    }
+
     public bind<U>(fun: (v: T) => Result<U, E>): Result<U, E> {
         if (this.inner.type === "ok") {
             return fun(this.inner.value);

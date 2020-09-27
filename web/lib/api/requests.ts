@@ -94,7 +94,7 @@ export async function get<R>(
  * @returns RestResult
  */
 export async function getResult<T>(
-    url: string, params: IQueryParams = {}, parser?: Parser<T>,
+    url: string, params: IQueryParams = {}, parser?: Parser<any>,
 ): Promise<RestResult<T>> {
     const response = await fetch(url + encodeParams(params), {headers: {Accept: APP_JSON}});
     return checkResponse(response, parser);

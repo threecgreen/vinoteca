@@ -1,90 +1,91 @@
 import { Btn } from "components/Buttons";
+import { ErrorHandler } from "components/ErrorHandler";
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
-import { IInventoryWine } from "generated/rest";
 import { getInventory, patchWine } from "lib/api/wines";
 import { download, generateCSV } from "lib/csv";
 import { serializeDate } from "lib/date";
-import { useTitle } from "lib/hooks";
+import { useDescription, useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import React from "react";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
+import { initState, reducer } from "./state";
 
 const InventoryApp: React.FC<{}> = (_) => {
     const logger = useLogger("InventoryApp");
     useTitle("Inventory");
+    useDescription("List of wines you currently own");
 
-    const [wines, setWines] = React.useState<IInventoryWine[]>([]);
-    const [hasLoaded, setHasLoaded] = React.useState(false);
+    const [state, dispatch] = React.useReducer(reducer, [], initState);
 
     React.useEffect(() => {
         updateInventory();
     }, []);
 
     const updateInventory = async () => {
-        try {
-            const newInventory = await getInventory();
-            setWines(newInventory);
-        } catch (err) {
-            logger.logError(`Failed to load inventory: ${err.message}`);
-        } finally {
-            setHasLoaded(true);
-        }
+        const winesResult = await getInventory();
+        winesResult
+            .do((wines) => dispatch({type: "setWines", wines}))
+            .doErr((error) => dispatch({type: "setError", error}));
     };
 
     const onInventoryChange = async (id: number, change: InventoryChange) => {
+        if (!(id in state.wines)) {
+            return;
+        }
+        const wine = state.wines[id];
+        let newInventory = wine.inventory;
+        if (change === InventoryChange.Increase) {
+            newInventory += 1;
+        } else if (wine.inventory > 0) {
+            newInventory -= 1;
+        }
         try {
-            const wine = wines.find((w) => w.id === id);
-            if (wine) {
-                let newInventory = wine.inventory;
-                if (change === InventoryChange.Increase) {
-                    newInventory += 1;
-                } else if (wine.inventory > 0) {
-                    newInventory -= 1;
-                }
-                const updatedWine = await patchWine(id, {inventory: newInventory});
-                if (newInventory > 0) {
-                    setWines((prevWines) => prevWines.map((w) => w.id === id
-                        ? {...w, inventory: updatedWine.inventory}
-                        : w));
-                } else {
-                    updateInventory();
-                }
-            }
+            const updatedWine = await patchWine(id, {inventory: newInventory});
+            dispatch({type: "updateWineInventory", id, inventory: updatedWine.inventory})
         } catch (err) {
             logger.logWarning(`Failed to update inventory: ${err.message}`);
         }
     };
     const downloadInventory = () => {
         download(`vinoteca_inventory_${serializeDate(new Date())}.csv`,
-                 generateCSV(wines, [
+                 generateCSV(Object.values(state.wines), [
                      "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
                      "lastPurchaseDate", "lastPurchasePrice",
                  ], {lastPurchasedDate: serializeDate}));
     };
 
-    if (!hasLoaded) {
-        return <Preloader />;
+    const wines = Object.values(state.wines);
+
+    let content;
+    if (state.hasLoaded) {
+        if (state.error) {
+            content = <ErrorHandler error={ state.error } />
+        } else if (wines.length > 0) {
+            content = (
+                <>
+                    <Btn classes={ ["green-bg"] }
+                        onClick={ downloadInventory }
+                    >
+                        Export to CSV
+                    </Btn>
+                    <InventoryTable wines={ wines }
+                        onInventoryChange={ onInventoryChange }
+                    />
+                </>
+            );
+        } else {
+            content = <h6 className="bold center-align">Your inventory is currently empty.</h6>;
+        }
+    } else {
+        content = <Preloader />;
     }
-    const table = wines.length > 0
-        ? (
-            <>
-                <Btn classes={ ["green-bg"] }
-                    onClick={ downloadInventory }
-                >
-                    Export to CSV
-                </Btn>
-                <InventoryTable wines={ wines }
-                    onInventoryChange={ onInventoryChange }
-                />
-            </>
-        ) : <h6 className="bold center-align">Your inventory is currently empty.</h6>;
     return (
         <div className="container">
             <Row>
                 <Col s={ 12 }>
                     <h3 className="page-title">Current inventory</h3>
-                    { table }
+                    { content }
                 </Col>
             </Row>
         </div>

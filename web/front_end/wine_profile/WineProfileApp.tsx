@@ -45,8 +45,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Data fetchers
     const fetchWine = async () => {
         const wineResult = await getWine(id);
-        wineResult.map((wine) => dispatch({type: "setWine", wine}))
-            .mapErr((error) => {
+        wineResult.do((wine) => dispatch({type: "setWine", wine}))
+            .doErr((error) => {
                 dispatch({type: "setError", error});
                 // cancel other requests
                 throw error;

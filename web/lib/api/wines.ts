@@ -79,9 +79,9 @@ export async function getWineVarieties(): Promise<IWineCount> {
     return get(`${BASE_URL}/count`);
 }
 
-export async function getInventory(): Promise<IInventoryWine[]> {
-    return get(`${BASE_URL}/inventory`, {},
-               (t) => Json.parse(t, {dateKeys: ["lastPurchaseDate"]}));
+export async function getInventory(): Promise<RestResult<IInventoryWine[]>> {
+    return getResult(`${BASE_URL}/inventory`, {},
+        (t) => Json.parse(t, {dateKeys: ["lastPurchaseDate"]}));
 }
 
 export async function uploadWineImage(id: number, image: File): Promise<string> {
