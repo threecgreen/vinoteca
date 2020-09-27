@@ -3,7 +3,7 @@ import { Row } from "components/Grid";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { grapeReducer, GrapesInputs } from "components/model_inputs/GrapesInputs";
 import { IWine, IWineGrape } from "generated/rest";
-import { handleSubmit } from "lib/utils";
+import { handleSubmit } from "lib/component_utils";
 import React from "react";
 import { IWineData, wineInputReducer, WineInputs } from "../new_wine/WineInputs";
 

@@ -1,4 +1,4 @@
-import { nameToId } from "lib/utils";
+import { nameToId } from "lib/component_utils";
 import React from "react";
 import { IGridProps, InputField } from "../Grid";
 

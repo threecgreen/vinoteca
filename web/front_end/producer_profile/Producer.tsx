@@ -5,7 +5,7 @@ import { Col, Row } from "components/Grid";
 import { ProducerInput } from "components/model_inputs/ProducerInput";
 import { RegionInput } from "components/model_inputs/RegionInput";
 import { IProducer, IRegion } from "generated/rest";
-import { handleSubmit } from "lib/utils";
+import { handleSubmit } from "lib/component_utils";
 import React from "react";
 
 interface IProducerProps {

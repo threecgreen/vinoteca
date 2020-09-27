@@ -1,5 +1,5 @@
 import { useLogger } from "lib/Logger";
-import { nameToId } from "lib/utils";
+import { nameToId } from "lib/component_utils";
 import React from "react";
 import { BarChart } from "./Chart";
 import { PreloaderCirc, SpinnerColor } from "./Preloader";

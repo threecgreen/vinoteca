@@ -1,4 +1,4 @@
-import { isEmpty, capitalizeFirstLetter, nameToId } from "../utils";
+import { isEmpty, capitalizeFirstLetter } from "../utils";
 
 test("isEmpty works with arrays", () => {
     expect(isEmpty([])).toBeTruthy();
@@ -16,8 +16,4 @@ test("capitalizeFirstLetter works with empty string", () => {
 
 test("capitalizeFirstLetter to capitalize only the first letter", () => {
     expect(capitalizeFirstLetter("lastPurchaseDate")).toBe("LastPurchaseDate");
-});
-
-test("nameToId converts to kabob case", () => {
-    expect(nameToId("grape    4")).toBe("grape-4");
 });

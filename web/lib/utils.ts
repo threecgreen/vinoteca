@@ -1,16 +1,4 @@
-/** Basic type that corresponds to the response JSON of many asynchronous requests. */
 import Logger from "./Logger";
-
-export const EN_DASH: string = "–";
-
-/**
- * Returns the default vintage year, which is two years prior to the current
- * year. This function duplicates the Python function
- * vinoteca.utils.default_vintage_year
- */
-export function defaultVintageYear(): number {
-    return new Date().getFullYear() - 2;
-}
 
 /**
  * Checks if an object is empty, i.e. has no keys.
@@ -26,14 +14,6 @@ export function isEmpty(obj: object): boolean {
  */
 export function capitalizeFirstLetter(s: string): string {
     return s.length > 0 ? s[0].toUpperCase() + s.substring(1) : "";
-}
-
-/**
- * Converts a display name to an html id
- * @param name A component display name
- */
-export function nameToId(name: string): string {
-    return name.replace(/(\s)+/g, "-").toLowerCase();
 }
 
 /**
@@ -139,10 +119,6 @@ export function* range({ start, stop, step }: IRangeArgs): IterableIterator<numb
     }
 }
 
-export function getNameAndType(name: string | null, wineType: string): string {
-    return `${(name ? name + " " : "")}${wineType}`;
-}
-
 export function onLoad(fun: () => void) {
     document.addEventListener("DOMContentLoaded", fun);
 }
@@ -159,16 +135,6 @@ export async function onError(
             `A top-level error occured at line ${line}:${col} of ${source}: ${error?.message},`
             + ` event: ${event.toString()}`);
     }
-}
-
-export function handleSubmit(save: () => Promise<void>,
-                             setIsSaving: (isSaving: boolean) => void): () => Promise<void> {
-
-    return async () => {
-        setIsSaving(true);
-        await save();
-        setIsSaving(false);
-    };
 }
 
 /**

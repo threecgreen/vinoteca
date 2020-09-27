@@ -11,10 +11,11 @@ import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "compon
 import { Preloader } from "components/Preloader";
 import { IPurchase, IWine, IWineGrape } from "generated/rest";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "lib/api/purchases";
-import { deleteWine, deleteWineImage, getWine, updateWine, uploadWineImage, patchWine } from "lib/api/wines";
+import { deleteWine, deleteWineImage, getWine, patchWine, updateWine, uploadWineImage } from "lib/api/wines";
 import { createWineGrapes, getWineGrapes } from "lib/api/wine_grapes";
+import { getNameAndType } from "lib/component_utils";
 import { useLogger } from "lib/Logger";
-import { arrayHasChanged, getNameAndType, hasChanged } from "lib/utils";
+import { arrayHasChanged, hasChanged } from "lib/utils";
 import { useTitle } from "lib/widgets";
 import React from "react";
 import { InventoryChange } from "../inventory/InventoryTable";

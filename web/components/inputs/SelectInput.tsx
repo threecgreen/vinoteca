@@ -1,5 +1,5 @@
 import { useViewport } from "components/context/ViewportContext";
-import { nameToId } from "lib/utils";
+import { nameToId } from "lib/component_utils";
 import React from "react";
 import { MOBILE_CUTOFF } from "../constants";
 import { InputField } from "../Grid";

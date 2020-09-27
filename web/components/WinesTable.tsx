@@ -1,5 +1,5 @@
 import { IWine } from "generated/rest";
-import { getNameAndType } from "lib/utils";
+import { compareNums, getNameAndType } from "lib/component_utils";
 import React from "react";
 import { Table } from "./Table";
 import { ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
@@ -76,16 +76,6 @@ const defaultProps = {
     currentPage: 1,
     winesPerPage: 250,
 };
-
-const compareNums = (x: number, y: number): number => {
-    if (x < y) {
-        return -1;
-    }
-    if (x > y) {
-        return 1;
-    }
-    return 0;
-}
 
 export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
     public static defaultProps = defaultProps;

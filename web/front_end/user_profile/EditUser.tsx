@@ -3,7 +3,7 @@ import { Form } from "components/Form";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { userInputReducer, UserInputs } from "components/UserInputs";
 import { IChangeUserForm, IUser } from "generated/rest";
-import { handleSubmit } from "lib/utils";
+import { handleSubmit } from "lib/component_utils";
 import React from "react";
 
 interface IProps {

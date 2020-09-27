@@ -1,8 +1,8 @@
 import { IPurchaseForm, IStore } from "generated/rest";
 import { toDict } from "lib/api/common";
 import { getOrCreateStore, getStores } from "lib/api/stores";
+import { defaultVintageYear } from "lib/component_utils";
 import { useLogger } from "lib/Logger";
-import { defaultVintageYear } from "lib/utils";
 import { autocomplete } from "lib/widgets";
 import React from "react";
 import { CheckboxInput } from "../inputs/CheckboxInput";
