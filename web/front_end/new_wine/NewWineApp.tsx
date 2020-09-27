@@ -10,9 +10,9 @@ import { createPurchase, deletePurchase } from "lib/api/purchases";
 import { Json } from "lib/api/serde";
 import { createWine, deleteWine } from "lib/api/wines";
 import { createWineGrapes } from "lib/api/wine_grapes";
+import { useTitle } from "lib/hooks";
 import { useLocalStorageReducer } from "lib/local_storage";
 import { useLogger } from "lib/Logger";
-import { useTitle } from "lib/widgets";
 import React from "react";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 

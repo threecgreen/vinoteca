@@ -11,8 +11,8 @@ import { EmptyResultError } from "lib/api/common";
 import { deleteProducer, getProducer, updateProducer } from "lib/api/producers";
 import { getRegion } from "lib/api/regions";
 import { getWines } from "lib/api/wines";
+import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
-import { useTitle } from "lib/widgets";
 import React from "react";
 import { Producer } from "./Producer";
 

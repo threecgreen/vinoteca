@@ -1,13 +1,13 @@
 import { RouteComponentProps } from "@reach/router";
+import { ErrorHandler } from "components/ErrorHandler";
+import { Col, Row } from "components/Grid";
+import { Preloader } from "components/Preloader";
+import { WinesTable } from "components/WinesTable";
 import { getWines } from "lib/api/wines";
+import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
-import { useTitle } from "lib/widgets";
 import React from "react";
 import { initState, reducer } from "./state";
-import { ErrorHandler } from "components/ErrorHandler";
-import { Preloader } from "components/Preloader";
-import { Row, Col } from "components/Grid";
-import { WinesTable } from "components/WinesTable";
 
 const ShoppingListApp: React.FC<RouteComponentProps> = () => {
     const logger = useLogger("ShoppingListApp");

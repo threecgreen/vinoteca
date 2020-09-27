@@ -1,5 +1,4 @@
 import { Autocomplete } from "materialize-css";
-import React from "react";
 
 type OnChange = (e: string) => void;
 
@@ -30,30 +29,12 @@ export function toast(message: string) {
     });
 }
 
-export function useTitle(title: string) {
-    React.useEffect(() => {
-        setTitle(title);
-    }, [title]);
-}
-
 export function setTitle(title: string) {
     document.title = `${title} | vinoteca`;
 }
 
-export function useDescription(desc: string) {
-    React.useEffect(() => {
-        setDescription(desc);
-    }, [desc]);
-}
-
 export function setDescription(desc: string) {
     document.querySelector('meta[name="description"]')?.setAttribute("content", desc);
-}
-
-export function useCanonical(url: string) {
-    React.useEffect(() => {
-        setCanonical(url);
-    });
 }
 
 const BASE_URL = "https://vinote.ca";

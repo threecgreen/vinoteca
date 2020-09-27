@@ -5,8 +5,8 @@ import { IInventoryWine } from "generated/rest";
 import { getInventory, patchWine } from "lib/api/wines";
 import { download, generateCSV } from "lib/csv";
 import { serializeDate } from "lib/date";
+import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
-import { useTitle } from "lib/widgets";
 import React from "react";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 

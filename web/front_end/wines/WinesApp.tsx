@@ -6,8 +6,8 @@ import { columnToVal, WinesTable, WinesTableColumn } from "components/WinesTable
 import { IWine } from "generated/rest";
 import { getWines } from "lib/api/wines";
 import FilterExpr from "lib/FilterExpr";
+import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
-import { useCanonical, useDescription, useTitle } from "lib/widgets";
 import React from "react";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";

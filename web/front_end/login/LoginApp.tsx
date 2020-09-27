@@ -1,7 +1,7 @@
 import { navigate, RouteComponentProps } from "@reach/router";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
-import { useDescription, useTitle, useCanonical } from "lib/widgets";
+import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 import { LoginForm } from "./LoginForm";
 

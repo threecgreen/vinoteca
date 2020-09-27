@@ -1,6 +1,6 @@
 import { RouteComponentProps } from "@reach/router";
 import { MaterialIcon } from "components/MaterialIcon";
-import { useCanonical, useDescription, useTitle } from "lib/widgets";
+import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 
 export const AboutApp: React.FC<RouteComponentProps> = () => {

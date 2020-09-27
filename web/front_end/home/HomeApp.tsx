@@ -6,7 +6,7 @@ import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { ParallaxImg } from "components/ParallaxImg";
 import { Preloader } from "components/Preloader";
-import { useCanonical, useDescription, useTitle } from "lib/widgets";
+import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React, { Suspense } from "react";
 
 export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
