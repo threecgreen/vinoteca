@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Preloader: React.FC<{}> = (_) => {
+export const Preloader: React.FC = (_) => {
     return (
         <div className="progress">
             <div className="indeterminate"></div>

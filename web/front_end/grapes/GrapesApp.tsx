@@ -9,7 +9,7 @@ import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 import { grapeStateReducer, initGrapeState } from "./state";
 
-const GrapesApp: React.FC<{}> = (_) => {
+const GrapesApp: React.FC = (_) => {
     const logger = useLogger("GrapesApp");
     const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
 
@@ -27,8 +27,8 @@ const GrapesApp: React.FC<{}> = (_) => {
             }
         }
 
-        fetchGrapes();
-    }, []);
+        void fetchGrapes();
+    }, [logger]);
 
     const onEditClick = (id: number) => dispatch({type: "setToEdit", id});
     const onCancelClick  = () => dispatch({type: "setToDisplay"});
@@ -40,7 +40,8 @@ const GrapesApp: React.FC<{}> = (_) => {
                 const updatedGrape = await updateGrape(id, grape);
                 dispatch({type: "updateGrape", grape: updatedGrape});
             } catch (e) {
-                logger.logWarning(`Failed to save grape change for grape with id ${id}: ${e.message}`);
+                logger.logWarning(
+                    `Failed to save grape change for grape with id ${id}: ${e.message}`);
             }
         }
     };

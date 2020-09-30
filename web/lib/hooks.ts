@@ -1,19 +1,19 @@
-import React from "react";
+import React, { MutableRefObject } from "react";
 import { setTitle, setDescription, setCanonical } from "./widgets";
 
-export function useTitle(title: string) {
+export function useTitle(title: string): void {
     React.useEffect(() => {
         setTitle(title);
     }, [title]);
 }
 
-export function useDescription(desc: string) {
+export function useDescription(desc: string): void {
     React.useEffect(() => {
         setDescription(desc);
     }, [desc]);
 }
 
-export function useCanonical(url: string) {
+export function useCanonical(url: string): void {
     React.useEffect(() => {
         setCanonical(url);
     });

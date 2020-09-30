@@ -7,7 +7,7 @@ import { getVitiAreaStats } from "lib/api/viti_areas";
 import { getWines } from "lib/api/wines";
 import Logger from "lib/Logger";
 import { setTitle } from "lib/widgets";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Region } from "./Region";
 import { RegionVitiAreasTable } from "./RegionVitiAreasTable";
 
@@ -41,7 +41,7 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
         this.logger = new Logger("RegionProfileApp");
     }
 
-    public async componentDidMount() {
+    public async componentDidMount(): Promise<void> {
         setTitle(this.state.region?.name ?? "Region profile");
         try {
             await Promise.all([
@@ -55,7 +55,7 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
         }
     }
 
-    public render() {
+    public render(): ReactElement {
         if (!this.state.region) {
             return <Preloader />;
         }

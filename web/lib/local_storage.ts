@@ -1,9 +1,9 @@
 import React from "react";
 import { useLogger } from "./Logger";
 
-export function useLocalStorage<V>(key: string, initValue: V,
-                                   posthook = (x: any): V => x,
-                                   prehook = (x: V): any => x) {
+export function useLocalStorage<S>(key: string, initValue: S,
+                                   posthook = (x: S): S => x,
+                                   prehook = (x: S): S => x): [S, (s: S) => void] {
     const logger = useLogger(`useLocalStorage<${key}>`);
     const [storedValue, setStoredValue] = React.useState(() => {
         const json = window.localStorage.getItem(key);
@@ -20,7 +20,7 @@ export function useLocalStorage<V>(key: string, initValue: V,
         return initValue;
     });
 
-    const setAndStoreValue = (newValue: V) => {
+    const setAndStoreValue = (newValue: S) => {
         try {
             const value = newValue instanceof Function ? newValue(storedValue) : newValue;
             setStoredValue(value);

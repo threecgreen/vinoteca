@@ -29,7 +29,8 @@ export const NewUserForm: React.FC<IProps> = ({onFinish}) => {
                         setErrorMsg(ve.message);
                         break;
                     default:
-                        logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
+                        logger.logError(
+                            `Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
                 setIsSaving(false);
                 return ve;

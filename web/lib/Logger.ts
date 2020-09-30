@@ -16,7 +16,7 @@ interface ILogResult {
     success: boolean;
 }
 
-type LogTags = Record<string, string | number | Date | object | undefined | null>;
+type LogTags = Record<string, unknown>;
 
 export default class Logger {
     private static logLevelOrdering = [LogLevel.Debug, LogLevel.Info, LogLevel.Warning,
@@ -34,30 +34,30 @@ export default class Logger {
     constructor(private module: string, private toConsole = false, private shouldToast = true) {
     }
 
-    public logCritical(message: string, tags: LogTags = {}) {
+    public logCritical(message: string, tags: LogTags = {}): void {
         const level = LogLevel.Critical;
         this.toast(level, message);
-        return this.log(level, message, tags);
+        void this.log(level, message, tags);
     }
 
-    public logError(message: string, tags: LogTags = {}) {
+    public logError(message: string, tags: LogTags = {}): void {
         const level = LogLevel.Error;
         this.toast(level, message);
-        return this.log(level, message, tags);
+        void this.log(level, message, tags);
     }
 
-    public logWarning(message: string, tags: LogTags = {}) {
+    public logWarning(message: string, tags: LogTags = {}): void {
         const level = LogLevel.Warning;
         this.toast(level, message);
-        return this.log(level, message, tags);
+        void this.log(level, message, tags);
     }
 
-    public logInfo(message: string, tags: LogTags = {}) {
-        return this.log(LogLevel.Info, message, tags);
+    public logInfo(message: string, tags: LogTags = {}): void {
+        void this.log(LogLevel.Info, message, tags);
     }
 
-    public logDebug(message: string, tags: LogTags = {}) {
-        return this.log(LogLevel.Debug, message, tags);
+    public logDebug(message: string, tags: LogTags = {}): void {
+        void this.log(LogLevel.Debug, message, tags);
     }
 
     private async log(level: LogLevel, message: string, tags: LogTags) {
@@ -69,8 +69,7 @@ export default class Logger {
             try {
                 const response: ILogResult = await postLog({
                     level,
-                    // @ts-ignore
-                    message: message instanceof Object ? "" : message,
+                    message: (message as unknown) instanceof Object ? "" : message,
                     module: this.module,
                     url: window.location.pathname,
                     tags,
@@ -99,7 +98,7 @@ export default class Logger {
  * @param toConsole whether to also print messages to the console
  * @param shouldToast whether to display a toast message
  */
-export const useLogger = (module: string, toConsole = false, shouldToast = false) => {
+export const useLogger = (module: string, toConsole = false, shouldToast = false): Logger => {
     const [logger, _] = React.useState(new Logger(module, toConsole, shouldToast));
     return logger;
 };

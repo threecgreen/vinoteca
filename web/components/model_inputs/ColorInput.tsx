@@ -19,7 +19,7 @@ export const ColorInput: React.FC<IProps> = (props) => {
     const [colors, setColors] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        (async () => {
+        void (async () => {
             try {
                 const rawColors: IColor[] = await getColors({});
                 setColors(rawColors.map((color) => color.name));
@@ -27,7 +27,7 @@ export const ColorInput: React.FC<IProps> = (props) => {
                 logger.logError(`Failed to get colors: ${e.message}`);
             }
         })();
-    }, []);
+    }, [logger]);
 
     return (
         <SelectInput name="Color"

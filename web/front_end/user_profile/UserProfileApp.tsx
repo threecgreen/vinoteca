@@ -17,27 +17,27 @@ enum Mode {
     ChangePassword,
 }
 
-const UserProfileApp: React.FC<{}> = (_) => {
+const UserProfileApp: React.FC = (_) => {
     const logger = useLogger("UserProfileApp");
     const [mode, setMode] = React.useState(Mode.Display);
 
     const user = useUser();
     const setUser = useSetUser();
-    if (!user) {
-        navigate("/");
-        return null;
-    }
-
     useTitle(`${user}'s profile`);
     useDescription(`${user}'s profile. The current user`);
     useCanonical("/profile");
+
+    if (!user) {
+        void navigate("/");
+        return null;
+    }
 
     const onSubmitChanges = async (form: IChangeUserForm) => {
         try {
             const updatedUser = await updateUser(form);
             updatedUser.map(setUser)
                 // TODO: better graceful error handling
-                .mapErr((e) => logger.logWarning(`Failed to update profile: ${e}`));
+                .doErr((e) => logger.logWarning(`Failed to update profile: ${e}`));
         } catch (e) {
             logger.logWarning(`Failed to update profile: ${e.message}`, {form});
         } finally {

@@ -1,7 +1,9 @@
 import { CancelOrConfirmBtns } from "components/Buttons";
 import { Row } from "components/Grid";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
-import { IPurchaseData, purchaseInputReducer, PurchaseInputs } from "components/model_inputs/PurchaseInputs";
+import {
+    IPurchaseData, purchaseInputReducer, PurchaseInputs
+} from "components/model_inputs/PurchaseInputs";
 import { IPurchase } from "generated/rest";
 import { handleSubmit } from "lib/component_utils";
 import React from "react";

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { navigate, redirectTo, RouteComponentProps, Link } from "@reach/router";
 import React, { lazy, Suspense } from "react";
 import { IUser } from "../generated/rest";
@@ -26,6 +27,7 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
             );
         }
         const idNum: number = Number.parseInt(id, 10);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return <AsyncComponent componentName={ componentName } id={ idNum } />;
     }
@@ -53,7 +55,7 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
         return <AsyncComponent componentName={ componentName } {...props} />;
     }
 
-    navigate("/login");
+    void navigate("/login");
     // never
     return null;
 };
@@ -108,6 +110,7 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
     return (
         <Suspense fallback={ <Preloader /> }>
             {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 <Component {...props} />
             }

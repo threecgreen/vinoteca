@@ -3,7 +3,7 @@ import React from "react";
 import RecentPurchases from "./RecentPurchases";
 import { TopWineTypes } from "./TopWineTypes";
 
-const HomeDashboard: React.FC<{}> = (_) => (
+const HomeDashboard: React.FC = (_) => (
     <Row>
         <Col s={12} xl={7}>
             <RecentPurchases />

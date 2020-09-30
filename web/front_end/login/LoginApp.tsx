@@ -11,6 +11,7 @@ const LoginApp: React.FC<RouteComponentProps> = () => {
     useDescription("Login to an existing vinoteca account");
 
     const user = useUser();
+    const setUser = useSetUser();
     if (user) {
         return (
             <div className="container">
@@ -19,10 +20,9 @@ const LoginApp: React.FC<RouteComponentProps> = () => {
         );
     }
 
-    const setUser = useSetUser();
     const onFinish = (updatedUser: IUser) => {
         setUser(updatedUser);
-        navigate("/");
+        void navigate("/");
     }
 
     return (

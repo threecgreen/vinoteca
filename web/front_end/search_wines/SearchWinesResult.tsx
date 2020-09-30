@@ -1,13 +1,13 @@
 import { ColorCell, NameAndTypeCell, TextCell } from "components/TableCells";
 import { IWine } from "generated/rest";
-import React from "react";
+import React, { ReactElement } from "react";
 
 interface ISearchWinesResultProps {
     result: IWine;
 }
 
-export class SearchWinesResult extends React.Component<ISearchWinesResultProps, {}> {
-    public render() {
+export class SearchWinesResult extends React.Component<ISearchWinesResultProps> {
+    public render(): ReactElement {
         const result = this.props.result;
         return <tr>
             <ColorCell color={ result.color } />

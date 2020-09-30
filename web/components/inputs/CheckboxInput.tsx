@@ -1,5 +1,5 @@
 import { nameToId } from "lib/component_utils";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Col, IGridProps } from "../Grid";
 
 interface IProps extends IGridProps {
@@ -15,7 +15,7 @@ export class CheckboxInput extends React.Component<IProps> {
         enabled: true,
     };
 
-    public render() {
+    public render(): ReactElement {
         const id = nameToId(this.props.name);
         return (
             <Col { ...this.props }>

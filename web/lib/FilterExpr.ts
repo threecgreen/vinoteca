@@ -1,4 +1,4 @@
-// tslint:disable:no-eval
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type BinaryPred = (l: any, r: any) => boolean;
 const operators: Map<string, BinaryPred> = new Map();
 operators.set("==", (l, r) => l === r);
@@ -9,7 +9,6 @@ operators.set("<=", (l, r) => l <= r);
 operators.set("<", (l, r) => l < r);
 operators.set(">=", (l, r) => l >= r);
 operators.set(">", (l, r) => l > r);
-// tslint:disable:no-construct
 operators.set("INCLUDES", (l, r) => new String(l).toLowerCase().includes(r));
 
 export default class FilterExpr {
@@ -28,12 +27,12 @@ export default class FilterExpr {
         return new FilterExpr(obj.funName, obj.rhs);
     }
 
-    private constructor(private readonly funName: string, private readonly rhs: any) {
+    private constructor(private readonly funName: string, private readonly rhs: string) {
     }
 
     public call(val: string | number): boolean {
-        const operatorFun = operators.get(this.funName)!;
-        return operatorFun(val, this.rhs);
+        const operatorFun = operators.get(this.funName);
+        return operatorFun ? operatorFun(val, this.rhs) : false;
     }
 
     /**

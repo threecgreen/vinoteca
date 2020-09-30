@@ -4,7 +4,10 @@ import Logger from "./Logger";
  * Checks if an object is empty, i.e. has no keys.
  * @param obj An object
  */
-export function isEmpty(obj: object): boolean {
+export function isEmpty(obj: unknown[] | Record<string, unknown>): boolean {
+    if (obj instanceof Array) {
+        return obj.length === 0;
+    }
     return Object.keys(obj).length === 0;
 }
 
@@ -52,7 +55,7 @@ export function sumBy<T>(arr: T[], accessor: (elem: T) => number): number {
  * @param a An object
  * @param b An object
  */
-export function areEqual(a: any, b: any): boolean {
+export function areEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) {
@@ -66,6 +69,7 @@ export function areEqual(a: any, b: any): boolean {
     return true;
 }
 
+// eslint-disable-next-line
 export function hasChanged<T extends Record<string, any>, U extends Record<string, any>>(
     newObj: T, source: U, exclude: Array<keyof T> = []): boolean {
 
@@ -86,6 +90,7 @@ export function hasChanged<T extends Record<string, any>, U extends Record<strin
     return false;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function arrayHasChanged(newArr: any[], source: any[], exclude: string[] = []): boolean {
     if (newArr.length !== source.length) {
         return true;
@@ -119,16 +124,17 @@ export function* range({ start, stop, step }: IRangeArgs): IterableIterator<numb
     }
 }
 
-export function onLoad(fun: () => void) {
+export function onLoad(fun: () => void): void {
     document.addEventListener("DOMContentLoaded", fun);
 }
 
 export async function onError(
     event: Event | string, source?: string, line?: number, col?: number, error?: Error,
-) {
+): Promise<void> {
     const logger = new Logger("window", false, false);
     if (error && error.message.startsWith("Loading chunk ")) {
-        await logger.logError(`A top-level error occured loading chunk: ${error.message}. Reloading...`);
+        await logger.logError(
+            `A top-level error occured loading chunk: ${error.message}. Reloading...`);
         location.reload();
     } else {
         logger.logCritical(
@@ -143,7 +149,7 @@ export async function onError(
  * @param obj object to check
  * @param prop property name to check
  */
-export function hasOwnProperty<X extends object, Y extends PropertyKey>
+export function hasOwnProperty<X extends Record<string, unknown>, Y extends PropertyKey>
     (obj: X, prop: Y): obj is X & Record<Y, unknown> {
     return obj.hasOwnProperty(prop)
 }

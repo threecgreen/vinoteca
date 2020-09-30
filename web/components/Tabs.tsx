@@ -21,7 +21,7 @@ export const Tabs: React.FC<IChildrenProp> = ({children}) => {
 Tabs.displayName = "Tabs";
 
 export function indexFactory(name: string) {
-    return (idx: number) => `${name}-${idx}`;
+    return (idx: number): string => `${name}-${idx}`;
 }
 
 interface ITabProps extends IChildrenProp {

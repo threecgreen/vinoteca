@@ -1,6 +1,6 @@
 import { IWine } from "generated/rest";
 import { compareNums, getNameAndType } from "lib/component_utils";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Table } from "./Table";
 import {
     ColorCell, NameAndTypeCell, NumCell, ProducerCell, RegionCell, VitiAreaCell,
@@ -49,7 +49,9 @@ function columnToKeyOf(column: WinesTableColumn): keyof IWine | "nameAndType" {
     }
 }
 
-export function columnToVal(column: WinesTableColumn, wine: IWine) {
+export function columnToVal(
+    column: WinesTableColumn, wine: IWine
+): string | number | boolean | null {
     return getProp(wine, columnToKeyOf(column));
 }
 
@@ -91,7 +93,7 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
         };
     }
 
-    public render() {
+    public render(): ReactElement {
         const filterHeader = this.props.filterTexts
             ? (
                 <tr key="filters">
@@ -275,8 +277,9 @@ export class WinesTable extends React.Component<IProps & DefaultProps, IState> {
 
         // This should only be called if both props exist
         return {
-            onChange: (filterExpr) => this.props.onFilterChange!(columnName, filterExpr),
-            text: this.props.filterTexts!.get(columnName) ?? "",
+            onChange: (filterExpr) =>
+                this.props.onFilterChange && this.props.onFilterChange(columnName, filterExpr),
+            text: this.props.filterTexts?.get(columnName) ?? "",
         };
     }
 }

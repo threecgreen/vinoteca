@@ -10,7 +10,7 @@ import { getTopVitiAreas } from "lib/api/viti_areas";
 import { capitalizeFirstLetter } from "lib/utils";
 import React from "react";
 
-export const TopProducers: React.FC<{}> = (_) => {
+export const TopProducers: React.FC = (_) => {
     return (
         <RedCard title="Top producers">
             <TopEntity name="Producers"
@@ -23,7 +23,7 @@ export const TopProducers: React.FC<{}> = (_) => {
 };
 TopProducers.displayName = "TopProducers";
 
-export const TopRegions: React.FC<{}> = (_) => {
+export const TopRegions: React.FC = (_) => {
     return (
         <YellowCard title="Top regions">
             <TopEntity name="Region"
@@ -36,10 +36,11 @@ export const TopRegions: React.FC<{}> = (_) => {
 };
 TopRegions.displayName = "TopRegions";
 
-export const TopVitiAreas: React.FC<{}> = (_) => {
+export const TopVitiAreas: React.FC = (_) => {
     return (
         <GreenCard title="Top viticultural areas">
             <TopEntity name="Viti area"
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore viti area ids won't be null here
                 EntityCell={ VitiAreaCell }
                 fetchEntity={ getTopVitiAreas }
@@ -59,7 +60,7 @@ const NonLinkCell: React.FC<{id: number, name: string}> = ({name}) => {
 };
 NonLinkCell.displayName = "NonLinkCell";
 
-export const TopGrapes: React.FC<{}> = (_) => {
+export const TopGrapes: React.FC = (_) => {
     return (
         <RedCard title="Top grapes">
             <TopEntity name="Grape"
@@ -71,7 +72,7 @@ export const TopGrapes: React.FC<{}> = (_) => {
     );
 };
 
-export const TopColors: React.FC<{}> = (_) => {
+export const TopColors: React.FC = (_) => {
     return (
         <GreenCard title="Purchases by color">
             <TopEntity name="Color"

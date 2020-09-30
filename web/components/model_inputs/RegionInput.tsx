@@ -14,10 +14,15 @@ interface IProps extends IOnChange {
 }
 
 // TODO: validate region exists
-export const RegionInput: React.FC<IProps> = ({value, producerText, required, onChange}) => {
+export const RegionInput: React.FC<IProps> = ({value, producerText, required, ...props}) => {
     const logger = useLogger("RegionInput");
 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+
+    const onChangeRef = React.useRef((_: string) => { return; });
+    React.useEffect(() => {
+        onChangeRef.current = props.onChange;
+    }, [props.onChange]);
 
     // Get autocomplete options
     React.useEffect(() => {
@@ -28,13 +33,13 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
                 regions.forEach((region) => {
                     result[region.name] = `/static/img/flags/${region.name}.svg`;
                 });
-                autocomplete(inputRef, result, onChange);
+                autocomplete(inputRef, result, onChangeRef.current);
             } catch (e) {
                 logger.logError(`Failed to get region autocomplete options. ${e.message}`);
             }
         }
-        fetchAutocompleteOptions();
-    }, [inputRef]);
+        void fetchAutocompleteOptions();
+    }, [inputRef, logger]);
 
     const [enabled, setEnabled] = React.useState(true);
 
@@ -45,7 +50,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
                 logger.logInfo("Updating region autocomplete options");
                 const regions = await getRegions({producerName: producerText});
                 if (regions.length === 1) {
-                    onChange(regions[0].name);
+                    onChangeRef.current(regions[0].name);
                     setEnabled(false);
                 } else {
                     setEnabled(true);
@@ -60,11 +65,11 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
         }
 
         if (producerText) {
-            fetchProducerRegion();
+            void fetchProducerRegion();
         } else {
             setEnabled(true);
         }
-    }, [producerText, setEnabled]);
+    }, [logger, producerText, setEnabled]);
 
     return (
         <TextInput name="Region"
@@ -73,7 +78,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
             inputRef={ inputRef }
             enabled={ enabled }
             value={ value }
-            onChange={ onChange }
+            onChange={ onChangeRef.current }
             required={ required }
         />
     );

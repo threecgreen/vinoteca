@@ -11,6 +11,7 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
     useDescription("Create a new vinoteca account");
 
     const user = useUser();
+    const setUser = useSetUser();
     if (user) {
         return (
             <div className="container">
@@ -19,10 +20,9 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
         );
     }
 
-    const setUser = useSetUser();
     const onFinish = (newUser: IUser) => {
         setUser(newUser);
-        navigate("/");
+        void navigate("/");
     }
 
     return (

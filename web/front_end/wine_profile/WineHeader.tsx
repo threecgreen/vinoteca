@@ -1,8 +1,9 @@
 import { Link } from "@reach/router";
 import { Col, Row } from "components/Grid";
+import { IChildrenProp } from "components/IProps";
 import React from "react";
 
-interface IProps {
+interface IProps extends IChildrenProp {
     name: string | null;
     producer: string;
     producerId: number;
@@ -10,7 +11,6 @@ interface IProps {
     regionId: number;
     wineType: string;
     wineTypeId: number;
-    children: any;
 }
 
 export const WineHeader: React.FC<IProps> = (props) => {
@@ -30,7 +30,7 @@ export const WineHeader: React.FC<IProps> = (props) => {
                     </Link>
                 </h4>
             </Col>
-            { ...props.children }
+            { props.children }
         </Row>
     );
 };

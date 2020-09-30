@@ -16,18 +16,19 @@ const ShoppingListApp: React.FC<RouteComponentProps> = () => {
     const [state, dispatch] = React.useReducer(reducer, [], initState);
 
     React.useEffect(() => {
-        updateShoppingList();
-    }, []);
+        const updateShoppingList = async () => {
+            const newWines = await getWines({isInShoppingList: true});
+            newWines.map((wines) => dispatch({type: "setWines", wines}))
+                .mapErr((error) => {
+                    logger.logError(`Failed to load shopping list: ${error.message}`);
+                    dispatch({type: "setError", error});
+                    return error;
+                });
+        }
 
-    const updateShoppingList = async () => {
-        const newWines = await getWines({isInShoppingList: true});
-        newWines.map((wines) => dispatch({type: "setWines", wines}))
-            .mapErr((error) => {
-                logger.logError(`Failed to load shopping list: ${error.message}`);
-                dispatch({type: "setError", error});
-                return error;
-            });
-    }
+        void updateShoppingList();
+    }, [logger]);
+
     if (state.error.isSome()) {
         return <ErrorHandler error={ state.error.unwrap() } />;
     }

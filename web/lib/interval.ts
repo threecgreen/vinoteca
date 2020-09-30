@@ -7,10 +7,11 @@ import React from "react";
  * @param callback Function to be called periodically
  * @param delay Interval between calls of @p callback in milliseconds
  */
-export function useInterval(callback: () => void, delay: number | null = null) {
-    const savedCallback = React.useRef(() => {});
+export function useInterval(callback: () => void, delay: number | null = null): void {
+    const savedCallback = React.useRef(() => { return; });
 
-    // Remember the latest callback.
+    // Remember the latest callback without having to re-run use effect every
+    // time the callback changes
     React.useEffect(() => {
         savedCallback.current = callback;
     }, [callback]);

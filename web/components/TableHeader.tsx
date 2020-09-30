@@ -2,7 +2,7 @@ import { IColor } from "generated/rest";
 import { getColors } from "lib/api/colors";
 import { useLogger } from "lib/Logger";
 import { capitalizeFirstLetter } from "lib/utils";
-import React from "react";
+import React, { ReactElement } from "react";
 import { SelectInput } from "./inputs/SelectInput";
 import { MaterialIcon } from "./MaterialIcon";
 
@@ -28,9 +28,13 @@ export class TableHeader extends React.Component<IProps> {
         super(props);
     }
 
-    public render() {
+    public render(): ReactElement {
         return (
-            <th className={ (this.props.className || "") + `${this.props.isNumCol ? " num-col" : "" }` }>
+            <th className={ (this.props.className || "") + `${this.props.isNumCol
+                    ? " num-col"
+                    : "" }`
+                }
+            >
                 { this.renderContent() }
             </th>
         );
@@ -93,7 +97,7 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
     const [colors, setColors] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        (async () => {
+        void (async () => {
             try {
                 const rawColors: IColor[] = await getColors({});
                 setColors(rawColors.map((color) => color.name));
@@ -101,7 +105,7 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
                 logger.logError(`Failed to get colors: ${e.message}`);
             }
         })();
-    }, []);
+    }, [logger]);
 
     return (
         <td>

@@ -9,7 +9,9 @@ import { Col, InputField, Row } from "../Grid";
 import { MaterialIcon } from "../MaterialIcon";
 import { GrapeInput } from "./GrapeInput";
 
-export const wineGrapesToForm = async (wineGrapes: IWineGrape[], wineId: number) => {
+export const wineGrapesToForm = async (
+    wineGrapes: IWineGrape[], wineId: number
+): Promise<IWineGrapesForm> => {
     const wineGrapesForm: IWineGrapesForm = {
         wineId,
         grapes: await Promise.all(wineGrapes.map(async (wg) => {
@@ -104,8 +106,8 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
             }
         }
 
-        fetchGrapes();
-    }, [setCompletions]);
+        void fetchGrapes();
+    }, [logger, setCompletions]);
 
     return (
         <Row>

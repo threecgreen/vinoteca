@@ -7,17 +7,21 @@ import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { DeleteModal } from "components/Modal";
 import { wineGrapesToForm } from "components/model_inputs/GrapesInputs";
-import { initPurchaseInputData, IPurchaseData, purchaseDataToForm } from "components/model_inputs/PurchaseInputs";
+import {
+    initPurchaseInputData, IPurchaseData, purchaseDataToForm
+} from "components/model_inputs/PurchaseInputs";
 import { Preloader } from "components/Preloader";
 import { IPurchase, IWine, IWineGrape } from "generated/rest";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "lib/api/purchases";
-import { deleteWine, deleteWineImage, getWine, patchWine, updateWine, uploadWineImage } from "lib/api/wines";
+import {
+    deleteWine, deleteWineImage, getWine, patchWine, updateWine, uploadWineImage
+} from "lib/api/wines";
 import { createWineGrapes, getWineGrapes } from "lib/api/wine_grapes";
 import { getNameAndType } from "lib/component_utils";
 import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import { arrayHasChanged, hasChanged } from "lib/utils";
-import React from "react";
+import React, { StrictMode } from "react";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
 import { EditWine } from "./EditWine";
@@ -42,26 +46,27 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     useTitle(state.wine ? getNameAndType(state.wine.name, state.wine.wineType) : "Wine profile");
 
-    // Data fetchers
-    const fetchWine = async () => {
-        const wineResult = await getWine(id);
-        wineResult.do((wine) => dispatch({type: "setWine", wine}))
-            .doErr((error) => {
-                dispatch({type: "setError", error});
-                // cancel other requests
-                throw error;
-            });
-    };
-    const fetchPurchases = async () => {
-        const purchases = await getPurchases({wineId: id});
-        dispatch({type: "setPurchases", purchases});
-    };
-    const fetchGrapes = async () => {
-        const grapes = await getWineGrapes({wineId: id});
-        dispatch({type: "setGrapes", grapes});
-    };
     // FetchInitialState
     React.useEffect(() => {
+        // Data fetchers
+        const fetchWine = async () => {
+            const wineResult = await getWine(id);
+            wineResult.do((wine) => dispatch({type: "setWine", wine}))
+                .doErr((error) => {
+                    dispatch({type: "setError", error});
+                    // cancel other requests
+                    throw error;
+                });
+        };
+        const fetchPurchases = async () => {
+            const purchases = await getPurchases({wineId: id});
+            dispatch({type: "setPurchases", purchases});
+        };
+        const fetchGrapes = async () => {
+            const grapes = await getWineGrapes({wineId: id});
+            dispatch({type: "setGrapes", grapes});
+        };
+
         async function fetchData() {
             try {
                 await Promise.all([
@@ -74,8 +79,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             }
         }
 
-        fetchData();
-    }, [id]);
+        void fetchData();
+    }, [id, logger]);
 
     // Event handlers
     const onInventoryChange = async (inventoryChange: InventoryChange) => {
@@ -107,11 +112,14 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     }
 
     const onUpdateFile = async (editedFile: File | null) => {
+        if (!state.wine) {
+            return;
+        }
         if (state.wine?.image && editedFile === null) {
             try {
                 await deleteWineImage(id);
                 // Potential race condition
-                dispatch({type: "setWine", wine: {...state.wine!, image: null}});
+                dispatch({type: "setWine", wine: {...state.wine, image: null}});
             } catch (e) {
                 logger.logWarning(`Failed to delete wine image: ${e.message}`, {id});
             }
@@ -121,7 +129,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             try {
                 const imagePath = await uploadWineImage(id, editedFile);
                 // Potential race condition
-                dispatch({type: "setWine", wine: {...state.wine!, image: imagePath}});
+                dispatch({type: "setWine", wine: {...state.wine, image: imagePath}});
             } catch (e) {
                 logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
             }
@@ -129,10 +137,10 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     };
 
     const onUpdateWine = async (editedWine: IWineData) => {
-        if (hasChanged<IWineData, IWine>({
+        if (state.wine && hasChanged<IWineData, IWine>({
             ...editedWine,
             rating: editedWine.isRatingEnabled ? editedWine.rating : 5},
-            state.wine!, ["file"])) {
+            state.wine, ["file"])) {
 
             logger.logInfo("Wine changed; saving to server", {editedWine, wine: state.wine, id});
             try {
@@ -178,18 +186,22 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
-            navigate("/wines");
+            void navigate("/wines");
         } catch (e) {
             logger.logWarning(`Failed to delete wine. ${e.message}`);
         }
     };
 
     const onSubmitPurchaseEdit = async (purchase: IPurchaseData) => {
-        // @ts-ignore
+        if (state.mode.type !== "editPurchase" ) {
+            return;
+        }
         const purchaseId = state.mode.id;
-        if (hasChanged<IPurchaseData, IPurchase>(
-            purchase, state.purchases.find((p) => p.id === purchaseId)!,
-            ["shouldAddToInventory"])) {
+        const statePurchase = state.purchases.find((p) => p.id === purchaseId);
+        if (statePurchase
+            && hasChanged<IPurchaseData, IPurchase>(
+                purchase, statePurchase, ["shouldAddToInventory"]
+            )) {
 
             try {
                 const form = await purchaseDataToForm(purchase, id);
@@ -268,7 +280,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     );
 
     const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
-    const renderWineImg = () => <WineImg path={ state.wine?.image! } />;
+    const renderWineImg = () => <WineImg path={ state.wine?.image ?? "" } />;
     const renderWineDetails = () => {
         if (state.wine?.image && state.grapes.length) {
             return (
@@ -439,8 +451,16 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 }
                 <Col s={ 12 } key="purchases">
                     <Purchases purchases={ state.purchases }
-                        onEditClick={ (purchaseId) => dispatch({type: "setMode", mode: {type: "editPurchase", id: purchaseId}}) }
-                        onDeleteClick={ (purchaseId) => dispatch({type: "setMode", mode: {type: "deletePurchase", id: purchaseId}}) }
+                        onEditClick={ (purchaseId) =>
+                            dispatch({
+                                type: "setMode",
+                                mode: {type: "editPurchase", id: purchaseId}
+                            }) }
+                        onDeleteClick={ (purchaseId) =>
+                            dispatch({
+                                type: "setMode",
+                                mode: {type: "deletePurchase", id: purchaseId}
+                            }) }
                     />
                 </Col>
             </Row>

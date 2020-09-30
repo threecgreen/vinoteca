@@ -23,13 +23,13 @@ const usePurchasesByYear = (logger: Logger): [boolean, IYearsPurchases[]] => {
             }
         }
 
-        fetchYearsPurchases();
-    }, [setHasLoaded, setYearsPurchases]);
+        void fetchYearsPurchases();
+    }, [logger, setHasLoaded, setYearsPurchases]);
 
     return [hasLoaded, yearsPurchases];
 };
 
-export const PurchasesByYearGraph: React.FC<{}> = (_) => {
+export const PurchasesByYearGraph: React.FC = (_) => {
     const logger = useLogger("PurchasesByYearGraph");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 
@@ -57,7 +57,7 @@ export const PurchasesByYearGraph: React.FC<{}> = (_) => {
 };
 PurchasesByYearGraph.displayName = "PurchasesByYearGraph";
 
-export const PurchasesByYearTable: React.FC<{}> = (_) => {
+export const PurchasesByYearTable: React.FC = (_) => {
     const logger = useLogger("PurchasesByYearTable");
     const [hasLoaded, yearsPurchases] = usePurchasesByYear(logger);
 

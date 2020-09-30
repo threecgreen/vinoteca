@@ -6,7 +6,7 @@ import { logout } from "lib/api/auth";
 import { Dropdown, Sidenav } from "materialize-css";
 import React from "react";
 
-export const Navbar: React.FC<{}> = () => {
+export const Navbar: React.FC = () => {
 
     return (
         <>
@@ -46,7 +46,6 @@ DesktopNavbar.displayName = "DesktopNavbar";
 const MobileNavbar: React.FC = (props) => {
     const sideNavRef = React.useRef() as React.MutableRefObject<HTMLUListElement>;
     React.useEffect(() => {
-        // tslint:disable-next-line no-unused-expression
         new Sidenav(sideNavRef.current);
     }, [sideNavRef]);
 
@@ -98,15 +97,12 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
     const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
     const winesDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
     React.useEffect(() => {
-        // tslint:disable-next-line no-unused-expression
         new Dropdown(addDropdownRef.current);
     }, [addDropdownRef]);
     React.useEffect(() => {
-        // tslint:disable-next-line no-unused-expression
         new Dropdown(userDropdownRef.current);
     }, [userDropdownRef]);
     React.useEffect(() => {
-        // tslint:disable-next-line no-unused-expression
         new Dropdown(winesDropdownRef.current);
     }, [winesDropdownRef]);
 
@@ -114,7 +110,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
         e.preventDefault();
         await logout();
         setUser(null);
-        navigate("/");
+        void navigate("/");
     };
 
     return (

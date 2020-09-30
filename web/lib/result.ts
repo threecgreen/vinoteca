@@ -7,23 +7,23 @@ type Inner<T, E> =
 
 export type RestResult<T> = Result<T, VinotecaError>;
 
-export class Result<T, E extends object> {
-    public static Ok<T, E extends object>(value: T): Result<T, E> {
+export class Result<T, E extends Record<string, unknown>> {
+    public static Ok<T, E extends Record<string, unknown>>(value: T): Result<T, E> {
         return new Result({ type: "ok", value });
     }
 
-    public static Err<T, E extends object>(value: E): Result<T, E> {
+    public static Err<T, E extends Record<string, unknown>>(value: E): Result<T, E> {
         return new Result({ type: "err", value });
     }
 
     private constructor(private inner: Inner<T, E>) {
     }
 
-    public isOk() {
+    public isOk(): boolean {
         return this.inner.type === "ok";
     }
 
-    public isErr() {
+    public isErr(): boolean {
         return this.inner.type === "err";
     }
 
@@ -34,7 +34,7 @@ export class Result<T, E extends object> {
         return Result.Err(this.inner.value);
     }
 
-    public mapErr<F extends object>(fun: (v: E) => F): Result<T, F> {
+    public mapErr<F extends Record<string, unknown>>(fun: (v: E) => F): Result<T, F> {
         if (this.inner.type === "err") {
             return Result.Err(fun(this.inner.value));
         }
@@ -67,8 +67,7 @@ export class Result<T, E extends object> {
             return this.inner.value;
         }
         // VinotecaError specialization
-        if (hasOwnProperty(this.inner.value, "type")
-            && hasOwnProperty(this.inner.value, "message")) {
+        if ("type" in this.inner.value && "message" in this.inner.value) {
             throw new Error(`${this.inner.value.type}: ${this.inner.value.message}`)
         }
         // Any other error

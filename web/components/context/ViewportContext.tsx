@@ -37,7 +37,7 @@ export const ViewportProvider: React.FC<IChildrenProp> = ({children}) => {
 };
 ViewportProvider.displayName = "ViewportProvider";
 
-export const useViewport = () => {
+export const useViewport = (): IViewport => {
     const viewport = React.useContext(ViewportContext);
     if (viewport) {
         return viewport;

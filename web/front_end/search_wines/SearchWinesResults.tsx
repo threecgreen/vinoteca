@@ -30,7 +30,10 @@ export const SearchWinesResults: React.FunctionComponent<ISearchWinesResultsProp
                 );
             }
             return (
-                <SimpleTable columns={ ["Color", "Name and Type", "Producer", "Region", "Viticultural Area"] }>
+                <SimpleTable columns={ [
+                        "Color", "Name and Type", "Producer", "Region", "Viticultural Area"
+                    ] }
+                >
                     { props.results.map((wine) =>
                         <SearchWinesResult result={ wine } key={ wine.id } />,
                     ) }

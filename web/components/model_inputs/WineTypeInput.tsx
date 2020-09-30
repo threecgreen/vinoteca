@@ -13,13 +13,19 @@ interface IWineTypeInputProps extends IOnChange {
 
 export const WineTypeInput: React.FC<IWineTypeInputProps> = (props) => {
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    // Keep track of onChange without having to refetch wine types and recreate the
+    // `Autocomplete` object though `autocomplete`
+    const onChangeRef = React.useRef((_: string) => { return; });
+    React.useEffect(() => {
+        onChangeRef.current = props.onChange;
+    }, [props.onChange]);
 
     React.useEffect(() => {
         async function fetchWineTypes() {
             const wineTypes: IWineType[] = await getWineTypes({});
-            autocomplete(inputRef, toDict(wineTypes), props.onChange);
+            autocomplete(inputRef, toDict(wineTypes), onChangeRef.current);
         }
-        fetchWineTypes();
+        void fetchWineTypes();
     }, []);
 
     return (

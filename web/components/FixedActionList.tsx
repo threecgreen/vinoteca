@@ -8,7 +8,6 @@ export const FixedActionList: React.FC<IChildrenProp> = (props) => {
     const divRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
     React.useEffect(() => {
-        // tslint:disable-next-line no-unused-expression
         new FloatingActionButton(divRef.current, {direction: "left"});
     }, [divRef]);
 

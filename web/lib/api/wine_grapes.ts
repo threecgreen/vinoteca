@@ -9,8 +9,9 @@ interface IGetWineGrapesParams {
     grapeId?: number;
 }
 
-// tslint:disable-next-line max-line-length
-export async function getWineGrapes({ wineId, grapeId }: IGetWineGrapesParams): Promise<IWineGrape[]> {
+export async function getWineGrapes({
+    wineId, grapeId
+}: IGetWineGrapesParams): Promise<IWineGrape[]> {
     const nonNullParams = nonNulls({ wine_id: wineId, grape_id: grapeId });
     const wineGrapes: IWineGrape[] = await get(BASE_URL, nonNullParams);
     return wineGrapes;

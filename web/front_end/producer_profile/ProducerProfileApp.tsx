@@ -101,18 +101,18 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
 
     useTitle(state.producer?.name ?? "Producer profile");
 
-    const getProducerData = async () => {
-        try {
-            const producer = await getProducer(producerId);
-            dispatch({type: "setProducer", producer});
-            const region = await getRegion({id: producer.regionId});
-            dispatch({type: "setRegion", region});
-        } catch (e) {
-            logger.logWarning(`Error getting producer data: ${e.message}`);
-        }
-    };
-
     React.useEffect(() => {
+        const getProducerData = async () => {
+            try {
+                const producer = await getProducer(producerId);
+                dispatch({type: "setProducer", producer});
+                const region = await getRegion({id: producer.regionId});
+                dispatch({type: "setRegion", region});
+            } catch (e) {
+                logger.logWarning(`Error getting producer data: ${e.message}`);
+            }
+        };
+
         async function fetchData() {
             try {
                 const [_, wines] = await Promise.all([
@@ -125,8 +125,8 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
             }
         }
 
-        fetchData();
-    }, []);
+        void fetchData();
+    }, [logger, producerId]);
 
     const onConfirmClick = async () => {
         try {
@@ -135,7 +135,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 && (state.producerText !== state.producer.name || regionChanged)) {
 
                 const producer = await updateProducer({
-                    id: state.producer!.id,
+                    id: producerId,
                     name: state.producerText,
                     regionId,
                 });
@@ -179,9 +179,9 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
 
     const onDeleteClick = async () => {
         try {
-            await deleteProducer(producerId!);
+            await deleteProducer(producerId);
             // Redirect home
-            navigate("/");
+            void navigate("/");
         } catch (ex) {
             logger.logWarning(`Failed to delete producer: ${ex.message}`, {id: producerId});
         }

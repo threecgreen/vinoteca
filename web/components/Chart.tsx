@@ -9,18 +9,18 @@ export interface IChartInput {
 
 const FONT_FAMILY = "'Roboto', sans-serif";
 
-const COLORS = new Map<string, string>([
-    ["red", "rgba(230, 25, 75, 0.8)"],
-    ["orange", "rgba(245, 130, 48, 0.8)"],
-    ["yellow", "rgba(255, 225, 25, 0.8)"],
-    ["lime", "rgba(210, 245, 60, 0.8)"],
-    ["green", "rgba(60, 180, 75, 0.8)"],
-    ["cyan", "rgba(70, 240, 240, 0.8)"],
-    ["blue", "rgba(0, 130, 200, 0.8)"],
-    ["navy", "rgba(0, 0, 128, 0.8)"],
-    ["magenta", "rgba(240, 50, 230, 0.8)"],
-    ["purple", "rgba(145, 30, 180, 0.8)"],
-]);
+const COLORS: Record<string, string> = {
+    red: "rgba(230, 25, 75, 0.8)",
+    orange: "rgba(245, 130, 48, 0.8)",
+    yellow: "rgba(255, 225, 25, 0.8)",
+    lime: "rgba(210, 245, 60, 0.8)",
+    green: "rgba(60, 180, 75, 0.8)",
+    cyan: "rgba(70, 240, 240, 0.8)",
+    blue: "rgba(0, 130, 200, 0.8)",
+    navy: "rgba(0, 0, 128, 0.8)",
+    magenta: "rgba(240, 50, 230, 0.8)",
+    purple: "rgba(145, 30, 180, 0.8)",
+};
 
 const WHITE = "#f8f8f8";
 const TRANSLUCENT_WHITE = "rgba(240, 240, 240, 0.9)";
@@ -66,55 +66,54 @@ interface IPieChartProps {
 }
 
 export const PieChart: React.FC<IPieChartProps> = ({data}) => {
-    const [chartLabels, chartData] = splitData(data);
-
-    const config: Chart.ChartConfiguration = {
-        data: {
-            datasets: [{
-                backgroundColor: [
-                    "rgba(139, 195, 74)",
-                    "rgba(173, 20, 87)",
-                    "rgba(251, 192, 45)",
-                    COLORS.get("blue")!,
-                    COLORS.get("purple")!,
-                    COLORS.get("orange")!,
-
-                ],
-                borderWidth: 0,
-                data: chartData,
-                label: "",
-            }],
-            labels: chartLabels,
-        },
-        options: {
-            // Resize chart with its container
-            layout: {
-                padding: {
-                    bottom: 15,
-                    top: 15,
-                },
-            },
-            legend: {
-                labels: {
-                    fontFamily: FONT_FAMILY,
-                    fontSize: 16,
-                },
-                position: "bottom",
-            },
-            responsive: true,
-            tooltips: {
-                bodyFontFamily: FONT_FAMILY,
-                bodyFontSize: 14,
-            },
-        },
-        type: "pie",
-    };
-
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
 
     React.useEffect(() => {
-        const pie = new Chart(canvasRef.current, config);
-    }, [canvasRef, config]);
+        const [chartLabels, chartData] = splitData(data);
+        const config: Chart.ChartConfiguration = {
+            data: {
+                datasets: [{
+                    backgroundColor: [
+                        "rgba(139, 195, 74)",
+                        "rgba(173, 20, 87)",
+                        "rgba(251, 192, 45)",
+                        COLORS.blue,
+                        COLORS.purple,
+                        COLORS.orange,
+
+                    ],
+                    borderWidth: 0,
+                    data: chartData,
+                    label: "",
+                }],
+                labels: chartLabels,
+            },
+            options: {
+                // Resize chart with its container
+                layout: {
+                    padding: {
+                        bottom: 15,
+                        top: 15,
+                    },
+                },
+                legend: {
+                    labels: {
+                        fontFamily: FONT_FAMILY,
+                        fontSize: 16,
+                    },
+                    position: "bottom",
+                },
+                responsive: true,
+                tooltips: {
+                    bodyFontFamily: FONT_FAMILY,
+                    bodyFontSize: 14,
+                },
+            },
+            type: "pie",
+        };
+
+        new Chart(canvasRef.current, config);
+    }, [canvasRef, data]);
 
     return (
         <div className="canvas-container">
@@ -130,70 +129,69 @@ interface IBarChartProps {
 }
 
 export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
-    const [chartLabels, chartData] = splitData(data);
-    // Error checking
-    if (!validateChartInput(chartData)) {
-        return null;
-    }
-    const colorValues = Array.from(COLORS.values());
-
-    const config: Chart.ChartConfiguration = {
-        data: {
-            datasets: [{
-                backgroundColor: colorValues,
-                data: chartData,
-            }],
-            labels: chartLabels,
-        },
-        options: {
-            layout: {
-                padding: {
-                    bottom: 15,
-                    top: 15,
-                },
-            },
-            legend: {
-                display: false,
-            },
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    gridLines: {
-                        color: TRANSLUCENT_GRAY,
-                    },
-                    ticks: {
-                        beginAtZero: true,
-                        fontColor: TRANSLUCENT_WHITE,
-                        fontFamily: FONT_FAMILY,
-                        fontSize: 14,
-                    },
-                }],
-                yAxes: [{
-                    gridLines: {
-                        color: TRANSLUCENT_GRAY,
-                    },
-                    ticks: {
-                        fontColor: TRANSLUCENT_WHITE,
-                        fontFamily: FONT_FAMILY,
-                        fontSize: 14,
-                    },
-                }],
-            },
-            tooltips: {
-                bodyFontFamily: FONT_FAMILY,
-                bodyFontSize: 12,
-                titleFontFamily: FONT_FAMILY,
-                titleFontSize: 14,
-            },
-        },
-        type: "horizontalBar",
-    };
-
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
 
     React.useEffect(() => {
-        const bar = new Chart(canvasRef.current, config);
-    }, [canvasRef, config]);
+        const [chartLabels, chartData] = splitData(data);
+        // Error checking
+        if (!validateChartInput(chartData)) {
+            return;
+        }
+
+        const config: Chart.ChartConfiguration = {
+            data: {
+                datasets: [{
+                    backgroundColor: Object.values(COLORS),
+                    data: chartData,
+                }],
+                labels: chartLabels,
+            },
+            options: {
+                layout: {
+                    padding: {
+                        bottom: 15,
+                        top: 15,
+                    },
+                },
+                legend: {
+                    display: false,
+                },
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            color: TRANSLUCENT_GRAY,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: TRANSLUCENT_WHITE,
+                            fontFamily: FONT_FAMILY,
+                            fontSize: 14,
+                        },
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            color: TRANSLUCENT_GRAY,
+                        },
+                        ticks: {
+                            fontColor: TRANSLUCENT_WHITE,
+                            fontFamily: FONT_FAMILY,
+                            fontSize: 14,
+                        },
+                    }],
+                },
+                tooltips: {
+                    bodyFontFamily: FONT_FAMILY,
+                    bodyFontSize: 12,
+                    titleFontFamily: FONT_FAMILY,
+                    titleFontSize: 14,
+                },
+            },
+            type: "horizontalBar",
+        };
+
+        new Chart(canvasRef.current, config);
+    }, [canvasRef, data]);
 
     return (
         <canvas height={height} ref={canvasRef} />
@@ -208,90 +206,89 @@ interface ILineChartProps {
 export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     const logger = useLogger("LineChart");
 
-    const chartLabels = splitData(data[0])[0];
-    if (data.length !== seriesLabels.length) {
-        logger.logWarning(`Data and seriesLabels have different lenghts. ` +
-                   `${data.length} and ${seriesLabels.length} respectively.`);
-        return null;
-    }
-
-    const config: Chart.ChartConfiguration = {
-        data: {
-            datasets: [],
-            labels: chartLabels,
-        },
-        options: {
-            layout: {
-                padding: {
-                    bottom: 15,
-                    top: 15,
-                },
-            },
-            maintainAspectRatio: false,
-            responsive: true,
-            scales: {
-                xAxes: [{
-                    gridLines: {
-                        color: TRANSLUCENT_GRAY,
-                    },
-                    ticks: {
-                        beginAtZero: true,
-                        fontColor: TRANSLUCENT_WHITE,
-                        fontFamily: FONT_FAMILY,
-                        fontSize: 14,
-                    },
-                }],
-                yAxes: [{
-                    gridLines: {
-                        color: TRANSLUCENT_GRAY,
-                    },
-                    ticks: {
-                        fontColor: TRANSLUCENT_WHITE,
-                        fontFamily: FONT_FAMILY,
-                        fontSize: 14,
-                    },
-                }],
-            },
-            tooltips: {
-                bodyFontFamily: FONT_FAMILY,
-                bodyFontSize: 12,
-                titleFontFamily: FONT_FAMILY,
-                titleFontSize: 14,
-            },
-        },
-        type: "line",
-    };
-
-    const colorValues = Array.from(COLORS.values());
-    // Validate then add each data series to config
-    const dataValidation = data.map((series, i) => {
-        const [_, chartData] = splitData(series);
-        // Add the series data to the corresponding key in datasetLabels
-        // @ts-ignore
-        config.data.datasets.push({
-            backgroundColor: changeTransparency(colorValues[i], 0.5),
-            borderColor: colorValues[i],
-            data: chartData,
-            label: seriesLabels[i],
-        });
-        // Error checking
-        if (chartData.every((num) => num === 0)) {
-            logger.logWarning("All zeroes for chart");
-            return false;
-        }
-        return true;
-    });
-
-    if (!dataValidation.every((val) => val)) {
-        logger.logWarning("Data validation of chartData failed");
-        return null;
-    }
-
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
 
     React.useEffect(() => {
-        const line = new Chart(canvasRef.current, config);
-    }, [canvasRef, config]);
+        const chartLabels = splitData(data[0])[0];
+        const config: Chart.ChartConfiguration = {
+            data: {
+                datasets: [],
+                labels: chartLabels,
+            },
+            options: {
+                layout: {
+                    padding: {
+                        bottom: 15,
+                        top: 15,
+                    },
+                },
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            color: TRANSLUCENT_GRAY,
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: TRANSLUCENT_WHITE,
+                            fontFamily: FONT_FAMILY,
+                            fontSize: 14,
+                        },
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            color: TRANSLUCENT_GRAY,
+                        },
+                        ticks: {
+                            fontColor: TRANSLUCENT_WHITE,
+                            fontFamily: FONT_FAMILY,
+                            fontSize: 14,
+                        },
+                    }],
+                },
+                tooltips: {
+                    bodyFontFamily: FONT_FAMILY,
+                    bodyFontSize: 12,
+                    titleFontFamily: FONT_FAMILY,
+                    titleFontSize: 14,
+                },
+            },
+            type: "line",
+        };
+        const colorValues = Object.values(COLORS);
+        // Validate then add each data series to config
+        const dataValidation = data.map((series, i) => {
+            const [_, chartData] = splitData(series);
+            // Add the series data to the corresponding key in datasetLabels
+            config?.data?.datasets?.push({
+                backgroundColor: changeTransparency(colorValues[i], 0.5),
+                borderColor: colorValues[i],
+                data: chartData,
+                label: seriesLabels[i],
+            });
+            // Error checking
+            if (chartData.every((num) => num === 0)) {
+                logger.logWarning("All zeroes for chart");
+                return false;
+            }
+            return true;
+        });
+
+        if (!dataValidation.every((val) => val)) {
+            logger.logWarning("Data validation of chartData failed");
+            return;
+        }
+
+        if (data.length !== seriesLabels.length) {
+            logger.logWarning(`Data and seriesLabels have different lenghts. ` +
+                    `${data.length} and ${seriesLabels.length} respectively.`);
+            return;
+        }
+
+
+        new Chart(canvasRef.current, config);
+    }, [canvasRef, data, logger, seriesLabels]);
 
     return (
         <div className="canvas-container">

@@ -4,7 +4,7 @@ import { IWine } from "generated/rest";
 import { searchWines } from "lib/api/wines";
 import Logger from "lib/Logger";
 import { setTitle } from "lib/widgets";
-import React from "react";
+import React, { ReactElement } from "react";
 import { SearchWinesForm } from "./SearchWinesForm";
 import { ResultState, SearchWinesResults } from "./SearchWinesResults";
 
@@ -34,6 +34,7 @@ interface ISearchWinesAppState {
     lastActiveTextInput?: SearchWinesTextInput;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppState> {
     private static defaultState: Readonly<ISearchWinesAppState> = {
             colorSelection: "",
@@ -46,7 +47,8 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         };
     private readonly logger: Logger;
 
-    constructor(props: {}) {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    constructor(props: Readonly<{}>) {
         super(props);
         this.state = SearchWinesApp.defaultState;
         this.logger = new Logger("SearchWinesApp");
@@ -55,7 +57,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         this.onResetClick = this.onResetClick.bind(this);
     }
 
-    public render() {
+    public render(): ReactElement {
         return (
             <div className="container">
                 <Row s={ 12 }>
@@ -83,7 +85,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         );
     }
 
-    public componentDidMount() {
+    public componentDidMount(): void {
         setTitle("Search wines");
     }
 

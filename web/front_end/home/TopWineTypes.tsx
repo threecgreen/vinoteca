@@ -5,7 +5,7 @@ import { TopEntity } from "components/TopEntity";
 import { getTopWineTypes } from "lib/api/wine_types";
 import React from "react";
 
-export const TopWineTypes: React.FC<{}> = (_) => {
+export const TopWineTypes: React.FC = (_) => {
     return (
         <RedCard title="Top wine types">
             <TopEntity name="Wine Type"

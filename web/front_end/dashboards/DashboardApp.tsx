@@ -5,7 +5,7 @@ import { ByTheNumbers } from "./ByTheNumbers";
 import { PurchasesByYearGraph, PurchasesByYearTable } from "./PurchasesByYear";
 import { TopColors, TopGrapes, TopProducers, TopRegions, TopVitiAreas } from "./Top";
 
-const DashboardApp: React.FC<{}> = (_) => {
+const DashboardApp: React.FC = (_) => {
     useTitle("Dashboards");
 
     return (

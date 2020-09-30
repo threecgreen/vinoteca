@@ -9,7 +9,7 @@ import { getVitiArea, getVitiAreaStats, updateVitiArea } from "lib/api/viti_area
 import { getWines } from "lib/api/wines";
 import Logger from "lib/Logger";
 import { setTitle } from "lib/widgets";
-import React from "react";
+import React, { ReactElement } from "react";
 import { VitiArea } from "./VitiArea";
 import { VitiAreaStatsTable } from "./VitiAreaStatsTable";
 
@@ -47,7 +47,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
         this.onCancelClick = this.onCancelClick.bind(this);
     }
 
-    public async componentDidMount() {
+    public async componentDidMount(): Promise<void> {
         setTitle(this.state.vitiArea?.name ?? "Viticultural area profile");
         try {
             await Promise.all([
@@ -61,7 +61,7 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
         }
     }
 
-    public render() {
+    public render(): ReactElement {
         if (this.props.vitiAreaId === undefined) {
             return <h1>Viticultural area not found</h1>;
         }
@@ -129,12 +129,15 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
     }
 
     private async onConfirmClick() {
+        if (!this.state.vitiArea) {
+            return;
+        }
         try {
             const vitiArea = await updateVitiArea({
-                id: this.props.vitiAreaId!,
+                id: this.props.vitiAreaId,
                 name: this.state.vitiAreaText,
-                region: this.state.vitiArea!.region,
-                regionId: this.state.vitiArea!.regionId,
+                region: this.state.vitiArea.region,
+                regionId: this.state.vitiArea.regionId,
             });
             this.setState({
                 isEditing: false,

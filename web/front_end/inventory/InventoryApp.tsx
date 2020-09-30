@@ -11,7 +11,7 @@ import React from "react";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { initState, reducer } from "./state";
 
-const InventoryApp: React.FC<{}> = (_) => {
+const InventoryApp: React.FC = (_) => {
     const logger = useLogger("InventoryApp");
     useTitle("Inventory");
     useDescription("List of wines you currently own");
@@ -19,15 +19,15 @@ const InventoryApp: React.FC<{}> = (_) => {
     const [state, dispatch] = React.useReducer(reducer, [], initState);
 
     React.useEffect(() => {
-        updateInventory();
-    }, []);
+        const updateInventory = async () => {
+            const winesResult = await getInventory();
+            winesResult
+                .do((wines) => dispatch({type: "setWines", wines}))
+                .doErr((error) => dispatch({type: "setError", error}));
+        };
 
-    const updateInventory = async () => {
-        const winesResult = await getInventory();
-        winesResult
-            .do((wines) => dispatch({type: "setWines", wines}))
-            .doErr((error) => dispatch({type: "setError", error}));
-    };
+        void updateInventory();
+    }, []);
 
     const onInventoryChange = async (id: number, change: InventoryChange) => {
         if (!(id in state.wines)) {
@@ -50,8 +50,8 @@ const InventoryApp: React.FC<{}> = (_) => {
     const downloadInventory = () => {
         download(`vinoteca_inventory_${serializeDate(new Date())}.csv`,
                  generateCSV(Object.values(state.wines), [
-                     "inventory", "color", "name", "wineType", "producer", "region", "lastPurchaseVintage",
-                     "lastPurchaseDate", "lastPurchasePrice",
+                     "inventory", "color", "name", "wineType", "producer", "region",
+                     "lastPurchaseVintage", "lastPurchaseDate", "lastPurchasePrice",
                  ], {lastPurchasedDate: serializeDate}));
     };
 

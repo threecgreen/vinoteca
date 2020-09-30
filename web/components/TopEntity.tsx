@@ -1,6 +1,6 @@
 import { useLogger } from "lib/Logger";
 import { nameToId } from "lib/component_utils";
-import React from "react";
+import React, { ReactElement } from "react";
 import { BarChart } from "./Chart";
 import { PreloaderCirc, SpinnerColor } from "./Preloader";
 import { SimpleTable } from "./Table";
@@ -29,16 +29,14 @@ interface IProps<Entity> {
 }
 export function TopEntity<Entity extends IEntity>({
     name, EntityCell, fetchEntity, minQuantity, preloaderColor,
-}: IProps<Entity>) {
+}: IProps<Entity>): ReactElement {
 
     minQuantity = minQuantity ?? 5;
 
     const logger = useLogger("TopEntity");
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
-    React.useEffect(() => {
-        async function fetchTopEntities() {
-            try {
+    React.useEffect(() => { async function fetchTopEntities() { try {
                 const entities = await fetchEntity();
                 setTopEntities(entities);
             } catch (e) {
@@ -48,8 +46,8 @@ export function TopEntity<Entity extends IEntity>({
             }
         }
 
-        fetchTopEntities();
-    }, [setHasLoaded, setTopEntities]);
+        void fetchTopEntities();
+    }, [logger, setHasLoaded, setTopEntities]);
 
     if (!hasLoaded) {
         return <PreloaderCirc color={ preloaderColor } />;
@@ -103,7 +101,8 @@ export function TopEntity<Entity extends IEntity>({
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
                         data={ topEntities.map((ent) => ({
-                            label: ent.name, value: Number.parseFloat(ent.avgPrice?.toFixed(2) ?? "0"),
+                            label: ent.name,
+                            value: Number.parseFloat(ent.avgPrice?.toFixed(2) ?? "0"),
                         })) }
                     />
                 </TabPanel>

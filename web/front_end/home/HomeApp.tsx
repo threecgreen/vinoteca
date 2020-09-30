@@ -9,7 +9,7 @@ import { Preloader } from "components/Preloader";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React, { Suspense } from "react";
 
-export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
+export const HomeApp: React.FC<RouteComponentProps> = () => {
     useTitle("Wine purchase tracker");
     useDescription("A simple, free wine purchase tracker");
     useCanonical("");
@@ -37,6 +37,7 @@ export const HomeApp: React.FC<RouteComponentProps<{}>> = () => {
     return (
         <>
             <ParallaxImg src="/static/img/bourgogne.jpg"
+                // eslint-disable-next-line max-len
                 alt="Lush rows of grapevines with a small building in the distance in Burgundy, France"
             />
             <div className="section white">

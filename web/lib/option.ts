@@ -14,11 +14,11 @@ export class Option<T> {
     private constructor(private inner: Inner<T>) {
     }
 
-    public isSome() {
+    public isSome(): boolean {
         return this.inner.type === "some";
     }
 
-    public isNone() {
+    public isNone(): boolean {
         return this.inner.type === "none";
     }
 

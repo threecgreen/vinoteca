@@ -94,28 +94,28 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
     const logger = useLogger("PurchaseInputs");
     const storeInputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
 
-    const onStoreChange: (store: string) => void = (store) => {
-        dispatch({type: "setStore", store});
-    };
-
     React.useEffect(() => {
         async function fetchStores() {
             try {
                 const stores: IStore[] = await getStores({});
-                autocomplete(storeInputRef, toDict(stores), onStoreChange);
+                autocomplete(
+                    storeInputRef,
+                    toDict(stores),
+                    (store) => dispatch({type: "setStore", store})
+                );
             } catch (e) {
                 logger.logError("Failed to get store autocomplete options");
             }
         }
 
-        fetchStores();
-    }, [storeInputRef]);
+        void fetchStores();
+    }, [dispatch, logger, storeInputRef]);
 
     const [quantityS, quantityL] = displayInventoryBtn ? [3, 2] : [6, 3];
     const inventory = displayInventoryBtn
         ? <CheckboxInput text="Add to Inventory" enabled
             name="add-to-inventory"
-            isChecked={ data.shouldAddToInventory! }
+            isChecked={ data.shouldAddToInventory ?? false }
             onClick={ (checked) =>
                 dispatch({type: "setShouldAddToInventory", shouldAddToInventory: checked}) }
             s={ 3 } l={ 1 }
@@ -154,7 +154,7 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
             <TextInput name="Store"
                 className="autocomplete"
                 value={ data.store }
-                onChange={ onStoreChange }
+                onChange={ (store) => dispatch({type: "setStore", store}) }
                 s={ 12 } m={ 6 } l={ 3 }
                 inputRef={ storeInputRef }
             />

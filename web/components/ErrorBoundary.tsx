@@ -1,5 +1,5 @@
 import Logger from "lib/Logger";
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface IState {
     hasThrown: boolean;
@@ -7,10 +7,12 @@ interface IState {
     errorInfo: React.ErrorInfo | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export class ErrorBoundary extends React.Component<{}, IState> {
     private readonly logger: Logger;
 
-    constructor(props: {}) {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    constructor(props: Readonly<{}>) {
         super(props);
         this.state = {
             hasThrown: false,
@@ -20,17 +22,20 @@ export class ErrorBoundary extends React.Component<{}, IState> {
         this.logger = new Logger("ErrorBoundary", false, false);
     }
 
-    public async componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    public componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
         if (error.message.startsWith("Loading chunk ")) {
-            await this.logger.logCritical(`App crashed with loading chunk: ${error.message}.\nReloading...`);
+            this.logger.logCritical(
+                `App crashed with loading chunk: ${error.message}.\nReloading...`);
             location.reload();
         } else {
             this.setState({hasThrown: true, error, errorInfo});
-            this.logger.logCritical(`App crashed with ${error.message}.\nTraceback: ${error.stack}\nInfo: ${errorInfo.componentStack}`);
+            this.logger.logCritical(
+                `App crashed with ${error.message}.\n`
+                + `Traceback: ${error.stack}\nInfo: ${errorInfo.componentStack}`);
         }
     }
 
-    public render() {
+    public render(): ReactNode {
         if (this.state.hasThrown) {
             return (
                 <div className="container" style={ {maxWidth: "750px"} }>

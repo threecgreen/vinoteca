@@ -1,5 +1,7 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import { AuthenticatedRoute, NotFound, RouteById, AsyncComponent, AsyncRoute } from "components/CommonRoutes";
+import {
+    AuthenticatedRoute, NotFound, RouteById, AsyncComponent, AsyncRoute
+} from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";
 import { ViewportProvider } from "components/context/ViewportContext";
@@ -23,7 +25,7 @@ const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     );
 };
 
-export const Router: React.FC<{}> = () => (
+export const Router: React.FC = () => (
     <VersionProvider>
         <ErrorBoundary>
             <UserProvider>

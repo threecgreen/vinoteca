@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { RouteComponentProps } from "@reach/router";
 import { MaterialIcon } from "components/MaterialIcon";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
@@ -49,6 +50,7 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
             <div className="section">
                 <h4>
                     <a className="page-link"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         name="changelog"
                     >
@@ -65,6 +67,7 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
             <div className="section">
                 <h4>
                     <a className="page-link"
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         name="bugs-and-suggestions"
                     >
@@ -91,6 +94,7 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
                                 href={ `https://mail.google.com/mail/?view=cm&fs=1&to=${addr}&su=${subject}` }
                                 // Open in new tab
                                 target="_blank"
+                                rel="noreferrer"
                             >
                                 Gmail
                             </a>
@@ -104,6 +108,7 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
                                 href={ `https://outlook.live.com/owa/?to=${addr}&subject=${subject}&path=/mail/action/compose` }
                                 // Open in new tab
                                 target="_blank"
+                                rel="noreferrer"
                             >
                                 Outlook
                             </a>

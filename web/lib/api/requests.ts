@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { VinotecaError } from "generated/rest";
 import { RestResult, Result } from "../result";
 import { isEmpty } from "../utils";
@@ -17,7 +18,9 @@ function encodeParams(params: IQueryParams): string {
     if (isEmpty(params)) {
         return "";
     }
-    return "?" + Object.entries(params).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
+    return "?" + Object.entries(params)
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join("&");
 }
 
 function encodeJson<T>(obj: T, fun?: (val: T) => string): string {
@@ -203,7 +206,7 @@ export async function putForm<Response>(url: string, form: FormData,
     return (await checkResponse(response)).unwrap();
 }
 
-export async function patch<Response>(url: string, body: object,
+export async function patch<Response>(url: string, body: Record<string, unknown>,
                                       params: IQueryParams= {}): Promise<Response> {
     const response = await fetch(url + encodeParams(params), {
         body: encodeJson(body),

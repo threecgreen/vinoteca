@@ -1,5 +1,6 @@
 /** Prop for component with potential children elements/components. */
 export interface IChildrenProp {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     children: any[] | any;
 }
 

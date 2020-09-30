@@ -4,7 +4,8 @@ import { getMostCommonPurchaseDate, getPurchaseCount, getTotalLiters } from "lib
 import { getWineVarieties } from "lib/api/wines";
 import React from "react";
 
-export const ByTheNumbers: React.FC<{}> = (_) => {
+export const ByTheNumbers: React.FC = (_) => {
+    // TODO: useReducer
     const [totalLiters, setTotalLiters] = React.useState(0);
     const [mostCommonPurchaseDate, setMostCommonPurchaseDate] = React.useState<string | null>(null);
     const [totalPurchases, setTotalPurchases] = React.useState(0);
@@ -36,14 +37,8 @@ export const ByTheNumbers: React.FC<{}> = (_) => {
             setHasLoaded(true);
         }
 
-        fetchData();
-    }, [
-        setTotalLiters,
-        setMostCommonPurchaseDate,
-        setTotalLiters,
-        setTotalVarieties,
-        setHasLoaded,
-    ]);
+        void fetchData();
+    }, [setTotalLiters, setMostCommonPurchaseDate, setTotalVarieties, setHasLoaded]);
     if (hasLoaded) {
         return (
             <YellowCard title="By the numbers">

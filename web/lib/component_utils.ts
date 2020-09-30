@@ -1,4 +1,4 @@
-export const EN_DASH: string = "–";
+export const EN_DASH = "–";
 
 /**
  * Returns the default vintage year, which is two years prior to the current

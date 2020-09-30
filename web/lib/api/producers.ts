@@ -10,8 +10,9 @@ interface IGetProducersParams {
     regionId?: number;
 }
 
-// tslint:disable-next-line max-line-length
-export async function getProducers({id, name, regionId}: IGetProducersParams): Promise<IProducer[]> {
+export async function getProducers({
+    id, name, regionId
+}: IGetProducersParams): Promise<IProducer[]> {
     const nonNullParams = nonNulls({id, name, region_id: regionId});
     const producers: IProducer[] = await get(BASE_URL, nonNullParams);
     return producers;

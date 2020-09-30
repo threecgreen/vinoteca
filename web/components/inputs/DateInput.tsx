@@ -10,21 +10,24 @@ interface IProps {
     onChange: (date: Date | null) => void;
 }
 
-export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
+export const DateInput: React.FC<IProps> = ({ date, ...props }) => {
     const logger = useLogger("DateInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const onChangeRef = React.useRef((_: Date | null) => { return; })
+    React.useEffect(() => {
+        onChangeRef.current = props.onChange;
+    }, [props.onChange]);
 
     React.useEffect(() => {
         const datepicker = new Datepicker(inputRef.current, {
             autoClose: false,
             maxDate: new Date(),
             showClearBtn: true,
-            // tslint:disable-next-line: object-literal-shorthand
             onClose: function(this) {
                 if (datepicker.date) {
-                    onChange(datepicker.date);
+                    onChangeRef.current(datepicker.date);
                 } else {
-                    onChange(null);
+                    onChangeRef.current(null);
                 }
             },
             yearRange: 15,
@@ -36,7 +39,7 @@ export const DateInput: React.FC<IProps> = ({ date, onChange }) => {
         dateString = date ? format(date, "MMM dd, yyyy") : "";
     } catch (e) {
         logger.logWarning("Failed to format date", {name, date});
-        onChange(null);
+        props.onChange(null);
     }
     const isValueSet = date !== null;
 

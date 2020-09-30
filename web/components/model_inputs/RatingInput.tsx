@@ -18,7 +18,6 @@ export const RatingInput: React.FC<IProps> = ({
 
     React.useEffect(() => {
         if (ref) {
-            // tslint:disable-next-line no-unused-expression
             new Range(ref.current);
         }
     }, [ref]);

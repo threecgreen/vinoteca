@@ -39,7 +39,13 @@ export const TextInput: React.FC<ITextProps> = (props) => {
 
     const [timeoutId, setTimeoutId] = React.useState<number>();
     const [isActive, setIsActive] = React.useState(false);
-    const inputRef = props.inputRef ?? React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    // Can't call useRef conditionally
+    const ownRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const inputRef = props.inputRef ?? ownRef;
+    React.useEffect(() => {
+        ownRef.current = ownRef.current;
+    }, [inputRef])
+
     const [showPicker, setShowPicker] = React.useState(false);
 
     const onSpecialCharClick = (char: string) => {

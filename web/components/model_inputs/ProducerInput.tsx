@@ -12,22 +12,28 @@ interface IProps extends IOnChange {
     required: boolean;
 }
 
-export const ProducerInput: React.FC<IProps> = ({value, onChange, required}) => {
-    const logger = useLogger("ProducerInput");
+export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => {
+    const logger = useLogger("ProducerInput", true);
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const onChangeRef = React.useRef((_: string) => { return; });
+    React.useEffect(() => {
+        // logger.logWarning(`onChange effect`);
+        onChangeRef.current = props.onChange;
+    }, [props.onChange]);
 
     React.useEffect(() => {
+        // logger.logWarning(`fetchProducers effect`);
         async function fetchProducers() {
             try {
                 const producers: IProducer[] = await getProducers({});
-                autocomplete(inputRef, toDict(producers), onChange);
+                autocomplete(inputRef, toDict(producers), onChangeRef.current);
             } catch (e) {
                 logger.logError(`Failed to get producer autocomplete options. ${e.message}`);
             }
         }
 
-        fetchProducers();
-    }, [inputRef]);
+        void fetchProducers();
+    }, [inputRef, logger]);
 
     return (
         <TextInput name="Producer"
@@ -35,7 +41,10 @@ export const ProducerInput: React.FC<IProps> = ({value, onChange, required}) => 
             s={ 7 } l={ 3 }
             inputRef={ inputRef }
             value={ value }
-            onChange={ onChange }
+            onChange={ (s) => {
+                logger.logWarning(`onChange`);
+                onChangeRef.current(s);
+            } }
             required={ required }
         />
     );

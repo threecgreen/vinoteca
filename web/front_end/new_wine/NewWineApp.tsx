@@ -4,7 +4,9 @@ import { Form } from "components/Form";
 import { Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "components/model_inputs/GrapesInputs";
-import { initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs } from "components/model_inputs/PurchaseInputs";
+import {
+    initPurchaseInputData, purchaseDataToForm, purchaseInputReducer, PurchaseInputs
+} from "components/model_inputs/PurchaseInputs";
 import { PreloaderCirc } from "components/Preloader";
 import { createPurchase, deletePurchase } from "lib/api/purchases";
 import { Json } from "lib/api/serde";
@@ -61,7 +63,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             clearPurchaseStorage();
             clearWineStorage();
             clearGrapesStorage();
-            navigate(`/wines/${wine.id}`);
+            void navigate(`/wines/${wine.id}`);
         } catch (err) {
             logger.logError(`Error creating new wine: ${err.message}`);
             // Prevent partial data

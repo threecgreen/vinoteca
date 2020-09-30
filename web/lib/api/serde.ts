@@ -22,7 +22,7 @@ export class Json {
                 Json.createReviver(
                     dateKeys ?? [],
                     dateTimeKeys ?? [],
-                ) as (this: any, key: string, value: any) => any,
+                ) as (this: unknown, key: string, value: unknown) => unknown,
             );
         }
         return JSON.parse(text);
@@ -36,7 +36,7 @@ export class Json {
                 value,
                 Json.createReplacer(
                     dateKeys,
-                ) as (this: any, key: string, value: any) => string,
+                ) as (this: unknown, key: string, value: unknown) => string,
             );
         }
         return JSON.stringify(value);
@@ -45,15 +45,15 @@ export class Json {
     private static createReviver<T>(
         dateKeys: Array<keyof T>,
         dateTimeKeys: Array<keyof T>,
-    ): (this: any, key: keyof T, value: any) => any {
+    ): (this: unknown, key: keyof T, value: unknown) => unknown {
         return (key, value) =>  {
             if (value === null) {
                 return value;
             }
-            if (dateKeys.includes(key)) {
+            if (dateKeys.includes(key) && typeof value === "string") {
                 return deserializeDate(value);
             }
-            if (dateTimeKeys.includes(key)) {
+            if (dateTimeKeys.includes(key) && typeof value === "string") {
                 return new Date(value);
             }
             return value;
@@ -62,12 +62,12 @@ export class Json {
 
     private static createReplacer<T>(
         dateKeys: Array<keyof T>,
-    ): (this: any, key: keyof T, value: any) => string {
+    ): (this: unknown, key: keyof T, value: unknown) => unknown {
         return (key, value) => {
             if (value === null) {
                 return value;
             }
-            if (dateKeys.includes(key)) {
+            if (dateKeys.includes(key) && typeof value === "string") {
                 // Yes we have to deserialize to re-serialize
                 return serializeDate(new Date(value));
             }

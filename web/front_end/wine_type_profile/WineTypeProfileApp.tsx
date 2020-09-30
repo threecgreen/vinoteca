@@ -9,7 +9,7 @@ import { getWines } from "lib/api/wines";
 import { getWineType, updateWineType } from "lib/api/wine_types";
 import Logger from "lib/Logger";
 import { setTitle } from "lib/widgets";
-import React from "react";
+import React, { ReactElement } from "react";
 import { WineType } from "./WineType";
 
 interface IState {
@@ -44,7 +44,7 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
         this.onCancelClick = this.onCancelClick.bind(this);
     }
 
-    public async componentDidMount() {
+    public async componentDidMount(): Promise<void> {
         setTitle(this.state.wineType?.name ?? "Wine type profile");
         try {
             await Promise.all([
@@ -57,7 +57,7 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
         }
     }
 
-    public render() {
+    public render(): ReactElement {
         if (this.props.wineTypeId === undefined) {
             return <h1>Wine type not found</h1>;
         }

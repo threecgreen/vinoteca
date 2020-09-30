@@ -35,8 +35,8 @@ export const UserProvider: React.FC<IChildrenProp> = ({children}) => {
             const updatedUser = await getCurrentUser();
             dispatch({type: "setUser", user: updatedUser});
         }
-        checkIfLoggedIn();
-    }, []);
+        void checkIfLoggedIn();
+    }, [dispatch]);
 
     if (state.isSet) {
         return (
@@ -56,7 +56,7 @@ export const UserProvider: React.FC<IChildrenProp> = ({children}) => {
 };
 UserProvider.displayName = "UserProvider";
 
-export const useUser = () => {
+export const useUser = (): IUser | null => {
     const user = React.useContext(UserContext);
     if (user === undefined) {
         throw new Error("useUser must be used within a UserProvider");
@@ -64,7 +64,7 @@ export const useUser = () => {
     return user;
 };
 
-export const useSetUser = () => {
+export const useSetUser = (): (u: IUser | null) => void => {
     const setUser = React.useContext(SetUserContext);
     if (setUser) {
         return setUser;

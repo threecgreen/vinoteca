@@ -7,7 +7,7 @@ import { IWine } from "generated/rest";
 import { getWines } from "lib/api/wines";
 import FilterExpr from "lib/FilterExpr";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import Logger, { useLogger } from "lib/Logger";
 import React from "react";
 
 const LOCAL_STORAGE_KEY = "WinesAppPredicates";
@@ -35,7 +35,7 @@ type Action =
     | { type: "setError" };
 
 const deserializeFilters = (json: string): Map<WinesTableColumn, string> => {
-    const logger = useLogger("WinesApp");
+    const logger = new Logger("WinesApp");
     if (!json) {
         return new Map();
     }
@@ -93,7 +93,7 @@ const reducer: React.Reducer<IState, Action> = (state, action) => {
     }
 };
 
-const WinesApp: React.FC<{}> = (_) => {
+const WinesApp: React.FC = (_) => {
     const logger = useLogger("WinesApp");
     useTitle("Wines");
 
@@ -115,8 +115,8 @@ const WinesApp: React.FC<{}> = (_) => {
             }
         }
 
-        fetchWines();
-    }, []);
+        void fetchWines();
+    }, [logger]);
 
     // Update local storage predicates when they change
     React.useEffect(() => {
@@ -129,7 +129,7 @@ const WinesApp: React.FC<{}> = (_) => {
         } else {
             window.localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
-    }, [state.filterTexts]);
+    }, [logger, state.filterTexts]);
 
     // Rendering
     if (state.status === Status.Initial) {

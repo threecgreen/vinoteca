@@ -1,5 +1,5 @@
 import { nameToId } from "lib/component_utils";
-import React from "react";
+import React, { ReactElement } from "react";
 import { IGridProps, InputField } from "../Grid";
 
 type IInputValue = string | number | string[];
@@ -24,13 +24,13 @@ export interface IInputProps<T extends IInputValue> extends IGridProps {
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
     public static defaultProps = {
         enabled: true,
-        onChange: () => undefined,
-        onFocus: () => undefined,
-        onBlur: (_: React.FocusEvent<HTMLInputElement>) => undefined,
+        onChange: (): void => undefined,
+        onFocus: (): void => undefined,
+        onBlur: (_: React.FocusEvent<HTMLInputElement>): void => undefined,
         required: false,
     };
 
-    public render() {
+    public render(): ReactElement {
         const id = nameToId(this.props.name);
         const helper = this.props.required
             ? <span className="helper-text"

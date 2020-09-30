@@ -12,22 +12,26 @@ interface IProps extends IOnChange {
     regionText?: string;
 }
 
-export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) => {
+export const VitiAreaInput: React.FC<IProps> = ({value, regionText, ...props}) => {
     const logger = useLogger("VitiAreaInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const onChangeRef = React.useRef((_: string) => { return; });
+    React.useEffect(() => {
+        onChangeRef.current = props.onChange;
+    }, [props.onChange]);
 
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
                 const vitiAreas: IVitiArea[] = await getVitiAreas({regionName: regionText});
-                autocomplete(inputRef, toDict(vitiAreas), onChange);
+                autocomplete(inputRef, toDict(vitiAreas), onChangeRef.current);
             } catch (e) {
                 logger.logError("Failed to get viti area autocomplete options");
             }
         }
 
-        fetchVitiAreas();
-    }, [inputRef, regionText]);
+        void fetchVitiAreas();
+    }, [inputRef, logger, regionText]);
 
     return (
         <TextInput name="Viticultural Area"
@@ -35,7 +39,7 @@ export const VitiAreaInput: React.FC<IProps> = ({value, regionText, onChange}) =
             inputRef={ inputRef }
             s={ 12 } m={ 8 } l={ 4 }
             value={ value }
-            onChange={ onChange }
+            onChange={ onChangeRef.current }
         />
     );
 };

@@ -59,7 +59,8 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
                         setErrorMsg(ve.message);
                         break;
                     default:
-                        logger.logError(`Failed to create new user with ${ve.type} error: ${ve.message}`);
+                        logger.logError(
+                            `Failed to create new user with ${ve.type} error: ${ve.message}`);
                 }
                 setIsSaving(false);
                 return ve;
@@ -69,7 +70,7 @@ export const ChangePasswordForm: React.FC<IChangePasswordProps> = ({onFinish}) =
     const checkAndSubmit = () => {
         if (state.oldPassword && state.newPassword && state.newPassword2) {
             if (state.newPassword === state.newPassword2) {
-                onSubmit();
+                void onSubmit();
             } else {
                 setErrorMsg("New passwords must match");
             }

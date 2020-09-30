@@ -1,13 +1,15 @@
 import { GreenCard } from "components/Cards";
 import { PreloaderCirc, SpinnerColor } from "components/Preloader";
 import { SimpleTable } from "components/Table";
-import { DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell } from "components/TableCells";
+import {
+    DateCell, NameAndTypeCell, NumCell, PriceCell, ProducerCell, RegionCell, TextCell
+} from "components/TableCells";
 import { IRecentPurchase } from "generated/rest";
 import { getRecentPurchases } from "lib/api/purchases";
 import { useLogger } from "lib/Logger";
 import React, { useEffect, useState } from "react";
 
-const RecentPurchases: React.FC<{}> = (_) => {
+const RecentPurchases: React.FC = (_) => {
     const logger = useLogger("RecentPurchases");
     const [hasLoaded, setHasLoaded] = useState<boolean>(false);
     const [purchases, setPurchases] = useState<IRecentPurchase[]>([]);
@@ -23,8 +25,8 @@ const RecentPurchases: React.FC<{}> = (_) => {
             }
         }
 
-        fetchPurchases();
-    }, [setHasLoaded, setPurchases]);
+        void fetchPurchases();
+    }, [logger, setHasLoaded, setPurchases]);
 
     let content;
     if (!hasLoaded) {

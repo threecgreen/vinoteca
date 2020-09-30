@@ -5,7 +5,7 @@ import { useViewport } from "components/context/ViewportContext";
 import { VERSION } from "generated/constants";
 import React from "react";
 
-export const Footer: React.FC<{}> = (_) => {
+export const Footer: React.FC = (_) => {
     const thisYear = new Date().getFullYear();
     const { width } = useViewport();
     const user = useUser();
@@ -70,7 +70,10 @@ export const Footer: React.FC<{}> = (_) => {
                             </p>
                         </div>
                         <div className="col s12 l4">
-                            <p className={ `${width > MOBILE_CUTOFF ? "right" : undefined} no-indent` }>
+                            <p className={ `${width > MOBILE_CUTOFF
+                                    ? "right"
+                                    : undefined} no-indent` }
+                            >
                                 Version { VERSION }
                             </p>
                         </div>

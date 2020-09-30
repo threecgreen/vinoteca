@@ -38,7 +38,9 @@ const MaterializeSelect: React.FC<IProps> = (props) => {
     const formSelectInstance = React.useRef(null) as React.MutableRefObject<M.FormSelect | null>;
 
     React.useEffect(() => {
-        formSelectInstance.current = M.FormSelect.init(selectRef.current!);
+        if (selectRef.current) {
+            formSelectInstance.current = M.FormSelect.init(selectRef.current);
+        }
 
         return () => formSelectInstance.current?.destroy();
     }, [props.children]);

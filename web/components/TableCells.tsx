@@ -2,7 +2,7 @@ import { Link } from "@reach/router";
 import format from "date-fns/esm/format";
 import { EN_DASH, getNameAndType } from "lib/component_utils";
 import { capitalizeFirstLetter } from "lib/utils";
-import React from "react";
+import React, { ReactElement } from "react";
 
 interface ITextCellProps {
     default?: string;
@@ -14,7 +14,7 @@ export class TextCell extends React.Component<ITextCellProps> {
         default: "",
     };
 
-    public render() {
+    public render(): ReactElement {
         return <td>{ this.props.text ?? this.props.default }</td>;
     }
 }
