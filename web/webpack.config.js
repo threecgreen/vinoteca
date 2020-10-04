@@ -43,7 +43,6 @@ module.exports = (env, argv) => {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: !isProd,
-                                includePaths: [__dirname + "node_modules/materialize-css"]
                             }
                         },
                     ],
