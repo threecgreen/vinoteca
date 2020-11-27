@@ -8,6 +8,7 @@ import { serializeDate } from "lib/date";
 import { useDescription, useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import React from "react";
+import { InventoryStatsTable } from "./InventoryStatsTable";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
 import { initState, reducer } from "./state";
 
@@ -56,23 +57,43 @@ const InventoryApp: React.FC = (_) => {
     };
 
     const wines = Object.values(state.wines);
+    const wineCount = wines.length;
+    const bottleCount = wines.reduce((acc, wine) => acc + wine.inventory, 0);
 
     let content;
     if (state.hasLoaded) {
         if (state.error) {
             content = <ErrorHandler error={ state.error } />
         } else if (wines.length > 0) {
-            content = (
-                <>
-                    <Btn classes={ ["green-bg"] }
-                        onClick={ downloadInventory }
-                    >
-                        Export to CSV
-                    </Btn>
-                    <InventoryTable wines={ wines }
-                        onInventoryChange={ onInventoryChange }
-                    />
-                </>
+            return (
+                <div className="container">
+                    <Row>
+                        <Col s={ 12 }>
+                            <h3 className="page-title">Current inventory</h3>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col s={ 6 }>
+                            <InventoryStatsTable wineCount={ wineCount }
+                                bottleCount={ bottleCount }
+                            />
+                        </Col>
+                        <Col s={ 6 }>
+                            <Btn classes={ ["green-bg"] }
+                                onClick={ downloadInventory }
+                            >
+                                Export to CSV
+                            </Btn>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col s={ 12 }>
+                            <InventoryTable wines={ wines }
+                                onInventoryChange={ onInventoryChange }
+                            />
+                        </Col>
+                    </Row>
+                </div>
             );
         } else {
             content = <h6 className="bold center-align">Your inventory is currently empty.</h6>;
