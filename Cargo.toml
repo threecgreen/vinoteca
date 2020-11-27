@@ -15,37 +15,37 @@ categories = ["web-programming"]
 aws-creds = "0.22.1"
 aws-region = "0.21.0"
 # Password encryption
-bcrypt = "0.8.2"
+bcrypt = "0.9.0"
 # Datetime functionality
-chrono = { version = "0.4.15", features = ["serde"] }
+chrono = { version = "0.4.19", features = ["serde"] }
 # basic ORM
 diesel = { version = "1.4.5", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 # Image handling
-image = "0.23.9"
+image = "0.23.12"
 kamadak-exif = "0.5.2"
 lazy_static = "1.4.0"
 log = "0.4.11"
-rocket_codegen = "0.4.5"
-rocket-multipart-form-data = "0.9.5"
+rocket_codegen = "0.4.6"
+rocket-multipart-form-data = "0.9.6"
 # AWS S3 access
 rust-s3 = "0.22.10"
 # (De)serialization
-serde = { version = "1.0.115", features = ["derive"] }
-serde_json = "1.0.57"
+serde = { version = "1.0.117", features = ["derive"] }
+serde_json = "1.0.59"
 time = "0.1.42"
 uuid = { version = "0.8.1", features = ["v4"] }
 # Input validation
-validator = "0.10.1"
-validator_derive = "0.10.1"
+validator = "0.11.0"
+validator_derive = "0.11.0"
 
 [dependencies.rocket]
-version = "0.4.5"
+version = "0.4.6"
 default_features = false
 features = ["private-cookies"]
 
 [dependencies.rocket_contrib]
-version = "0.4.5"
+version = "0.4.6"
 default-features = false
 features = ["json", "diesel_postgres_pool"]
 
@@ -56,4 +56,4 @@ version = "0.1.10"
 features = ["export-typescript"]
 
 [dev-dependencies]
-mockall = "0.8.0"
+mockall = "0.8.3"

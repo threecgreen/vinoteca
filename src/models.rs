@@ -6,7 +6,6 @@ use chrono::{DateTime, NaiveDate, Utc};
 use diesel::{Insertable, Queryable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
-use validator::Validate;
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]

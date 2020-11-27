@@ -3,7 +3,6 @@ use crate::models::WineGrapeForm;
 
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
-use validator::Validate;
 
 #[derive(Deserialize, Serialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]

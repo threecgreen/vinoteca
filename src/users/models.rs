@@ -3,7 +3,6 @@ use crate::serde::trim_str;
 
 use serde::Deserialize;
 use typescript_definitions::TypeScriptify;
-use validator::Validate;
 
 #[derive(Deserialize, TypeScriptify, Validate, Debug)]
 #[serde(rename_all = "camelCase")]
