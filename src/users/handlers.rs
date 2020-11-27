@@ -131,7 +131,7 @@ fn add_auth_cookie(cookies: &mut Cookies, user_id: i32) {
         .same_site(SameSite::Strict)
         .http_only(true)
         .secure(true)
-        .expires(time::now() + time::Duration::days(5))
+        .expires(time::now() + time::Duration::days(14))
         .finish();
     cookies.add_private(cookie);
 }
