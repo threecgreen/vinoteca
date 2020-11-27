@@ -8,6 +8,7 @@ pub fn get_routes() -> Vec<rocket::Route> {
         robots,
         sitemap,
         about,
+        changelog,
         login,
         register,
         dashboards,
@@ -33,6 +34,10 @@ pub fn home() -> Html<&'static str> {
 }
 #[get("/about")]
 pub fn about() -> Html<&'static str> {
+    home()
+}
+#[get("/about/changelog")]
+pub fn changelog() -> Html<&'static str> {
     home()
 }
 #[get("/login")]

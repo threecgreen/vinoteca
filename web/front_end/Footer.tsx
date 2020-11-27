@@ -26,7 +26,7 @@ export const Footer: React.FC = (_) => {
                             </li>
                             <li>
                                 <Link className="footer-link"
-                                    to="/about#changelog"
+                                    to="/about/changelog"
                                 >
                                     Changelog
                                 </Link>

@@ -4,9 +4,9 @@ import { MaterialIcon } from "components/MaterialIcon";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 
-export const AboutApp: React.FC<RouteComponentProps> = () => {
+export const About: React.FC<RouteComponentProps> = () => {
     useTitle("About");
-    useDescription("History of vinoteca, changelog, and links to submit bugs and suggestions");
+    useDescription("Background on vinoteca, and links to submit bugs and suggestions");
     useCanonical("/about");
 
     const addr = "crtrgreen" + "@" + "gmail" + ".com";
@@ -45,23 +45,6 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
                     </a></li>
                     <li><a className="text-link" href="https://www.reddit.com/r/travel/comments/6z7cu0/loved_visiting_burgundy_right_before_harvest/">Cover photo from /u/CollideStorm</a></li>
                 </ul>
-            </div>
-
-            <div className="section">
-                <h4>
-                    <a className="page-link"
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        name="changelog"
-                    >
-                        <MaterialIcon iconName="track_changes" />
-                        &nbsp;
-                        Changelog
-                    </a>
-                </h4>
-
-                <h5>6.0.0</h5>
-                <p>Initial hosted version. All previous versions ran locally.</p>
             </div>
 
             <div className="section">
@@ -119,3 +102,4 @@ export const AboutApp: React.FC<RouteComponentProps> = () => {
         </div>
     );
 };
+About.displayName = "About";
