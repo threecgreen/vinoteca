@@ -10,15 +10,21 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
 
     return (
         <div className="container">
-            <h1 className="page-title">Changelog</h1>
+            <h1 className="page-title med-heading">Changelog</h1>
 
             <h5>6.0.0</h5>
             <ul className="bullets">
-                <li>Convert vinoteca to be hosted (with <a href="https://render.com/">render</a>)</li>
                 <li>Add users and auth</li>
+                <li>Add export to CSV button and totals to inventory</li>
+                <li>Add shopping list feature</li>
+                <li>Improve error/failure handling</li>
+                <li>Improve <a href="https://en.wikipedia.org/wiki/Exif">Exif</a> handling with uploaded JPEGs</li>
+                <li>Lazy-loaded bundles</li>
+                <li>Persist data to local storage instead of cookies</li>
+                <li>Add more state flags</li>
+                <li>Convert vinoteca to be hosted (with <a href="https://render.com/">render</a>)</li>
                 <li>Migrate database to <a href="https://www.postgresql.org/">postgres</a></li>
                 <li>Store wine images on <a href="https://aws.amazon.com/s3/">AWS S3</a></li>
-                <li>Add export to CSV option to inventory</li>
             </ul>
 
             <h5>5.1.2</h5>
@@ -315,7 +321,7 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                 <li>Add price column to inventory</li>
                 <li>Internal restructuring and refactoring</li>
                 <li>Improve null checks in TypeScript</li>
-                <li>Add automated <abbr title="Continuous Integration">CI</abbr> testing</li>
+                <li>Add automated <a href="https://en.wikipedia.org/wiki/Continuous_integration">CI</a> testing</li>
                 <li>Bug fixes:<ul className="bullets">
                     <li>Fix bug where wines table filters were not being saved</li>
                     <li>Fix navbar on smaller screens</li>
@@ -326,7 +332,7 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                 </ul></li>
                 <li>Dependency changes: <ul className="bullets">
                     <li>Rely more on conda to be more platform agnostic and improve install and update times.</li>
-                    <li>Add <abbr title="Node Package Manager">NPM</abbr> OS-level dependency</li>
+                    <li>Add <a href="https://www.npmjs.com/">NPM</a> OS-level dependency</li>
                     <li>Add WebPack dependency</li>
                     <li>Upgraded Materialize CSS to 1.0.0</li>
                 </ul></li>
@@ -335,8 +341,7 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
             <h5>3.0.6</h5>
             <ul className="bullets">
                 <li>
-                    Fix handling of <abbr title="Portable Network Graphics">PNG</abbr>
-                    images that don&rsquo;t have <abbr title="Exchangeable Image File ">EXIF</abbr> data
+                    Fix handling of PNG images that don&rsquo;t have <a href="https://en.wikipedia.org/wiki/Exif">Exif</a> data
                 </li>
                 <li>Upgrade Django version</li>
             </ul>
@@ -387,13 +392,13 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                     <li>Yearly Purchases Graph</li>
                 </ul></li>
                 <li>Calculate remaining grape percentage when adding a wine&rsquo;s grape composition</li>
-                <li>Improve <abbr title="Command Line Interface">CLI</abbr> by adding optional arguments and better portability</li>
-                <li><abbr title="Object-Relational Mapping">ORM</abbr></li>
+                <li>Improve CLI by adding optional arguments and better portability</li>
+                <li>ORM</li>
                 <li>Reduce number of colors in color palette</li>
                 <li>Stop testing using production database</li>
                 <li>Add <code>django-js-error-hook</code> for client-side JavaScript error logging</li>
                 <li>Extensive internal refactoring of database and data model names (not backwards compatible)</li>
-                <li>Convert basic <abbr title="Structured Query Language">SQL</abbr> queries to Django&rsquo;s</li>
+                <li>Convert basic SQL queries to Django&rsquo;s</li>
                 <li>Add code linting.</li>
                 <li>Bug fixes:<ul className="bullets">
                     <li>Link top regions dashboard to the region profiles</li>
@@ -521,7 +526,7 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                 <li>Default vintage year is now two years before the current year</li>
                 <li>Add tests for image upload, and purchase and wine editing</li>
                 <li>Order purchases by reverse chronological order</li>
-                <li>Improve <abbr title="Command Line Interface">CLI</abbr></li>
+                <li>Improve CLI</li>
                 <li>Fix bug where adding non-vintage wines would cause an exception</li>
                 <li>Fix bug where grapes with no composition percentage would cause an exception</li>
                 <li>Remove Django debug toolbar dependency</li>
@@ -559,7 +564,7 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                     Improve sorting and filtering with JQuery tablesorter plug-in, removing the need for separate
                     sorting and filtering views
                 </li>
-                <li>Add vector flags for <abbr title="United States">U.S.</abbr> states</li>
+                <li>Add vector flags for U.S. states</li>
                 <li>Add the ability to upload images for each wine</li>
                 <li>Wine Color renamed to Type and Wine Type renamed to Name</li>
                 <li>
