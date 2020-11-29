@@ -13,7 +13,7 @@ lazy_static! {
     /// Git SHA of most recent commit, i.e. the HEAD of the current branch
     pub static ref GIT_SHA: String = String::from_utf8(
         std::process::Command::new("git")
-            .args(&["rev-parse", "HEAD"])
+            .args(&["rev-parse", "--short", "HEAD"])
             .output()
             .expect("git rev-parse result")
             .stdout
