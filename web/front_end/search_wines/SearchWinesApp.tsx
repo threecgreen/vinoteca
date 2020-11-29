@@ -61,7 +61,7 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
         return (
             <div className="container">
                 <Row s={ 12 }>
-                    <h3 className="page-title">Find a previously purchased wine</h3>
+                    <h1 className="page-title med-heading">Find a previously purchased wine</h1>
                     <Btn classes={ ["yellow-bg"] }
                         onClick={ this.onResetClick }
                     >

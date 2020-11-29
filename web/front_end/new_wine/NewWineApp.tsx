@@ -85,7 +85,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
 
     return (
         <div className="container">
-            <h3 className="page-title">Enter new wine information</h3>
+            <h1 className="page-title med-heading">Enter new wine information</h1>
             <Btn classes={ ["yellow-bg"] }
                 onClick={ onReset }
             >

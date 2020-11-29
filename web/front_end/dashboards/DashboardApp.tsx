@@ -12,7 +12,7 @@ const DashboardApp: React.FC = (_) => {
         <div className="container">
             <Row>
                 <Col s={ 12 }>
-                    <h3 className="page-title">Wine purchase stats</h3>
+                    <h1 className="page-title med-heading">Wine purchase stats</h1>
                 </Col>
             </Row>
             <Row>

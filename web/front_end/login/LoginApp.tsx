@@ -28,7 +28,7 @@ const LoginApp: React.FC<RouteComponentProps> = () => {
     return (
         <div className="container">
             <div className="center">
-                <h3 className="page-title">Login</h3>
+                <h1 className="page-title med-heading">Login</h1>
 
                 <LoginForm onFinish={ onFinish } />
             </div>

@@ -28,7 +28,7 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
     return (
         <div className="container">
             <div className="center">
-                <h3 className="page-title">Register</h3>
+                <h1 className="page-title med-heading">Register</h1>
 
                 <NewUserForm onFinish={ onFinish } />
             </div>

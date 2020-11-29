@@ -63,7 +63,7 @@ const GrapesApp: React.FC = (_) => {
         <div className="container">
             <Row>
                 <Col s={ 12 }>
-                    <h3 className="page-title">Grapes</h3>
+                    <h1 className="page-title med-heading">Grapes</h1>
                     <GrapesList grapes={ Object.values(state.grapes) }
                         onEditClick={ onEditClick }
                     />

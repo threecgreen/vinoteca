@@ -14,7 +14,7 @@ export const About: React.FC<RouteComponentProps> = () => {
 
     return (
         <div className="container">
-            <h3 className="page-title">About</h3>
+            <h1 className="page-title med-heading">About</h1>
 
             <div className="section">
                 <p>

@@ -169,7 +169,7 @@ const WinesApp: React.FC = (_) => {
 
         winesComponent = (
             <>
-                <h3 className="page-title">Wines</h3>
+                <h1 className="page-title med-heading">Wines</h1>
                 <Btn classes={ ["yellow-bg"] }
                     onClick={ () => dispatch({type: "resetFilters"}) }
                 >

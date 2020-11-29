@@ -51,7 +51,7 @@ const ShoppingListApp: React.FC<RouteComponentProps> = () => {
         <div className="container">
             <Row>
                 <Col s={ 12 }>
-                    <h3 className="page-title">Shopping list</h3>
+                    <h1 className="page-title med-heading">Shopping list</h1>
                     { content }
                 </Col>
             </Row>

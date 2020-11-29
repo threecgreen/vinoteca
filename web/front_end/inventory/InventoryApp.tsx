@@ -69,7 +69,7 @@ const InventoryApp: React.FC = (_) => {
                 <div className="container">
                     <Row>
                         <Col s={ 12 }>
-                            <h3 className="page-title">Current inventory</h3>
+                            <h1 className="page-title med-heading">Current inventory</h1>
                         </Col>
                     </Row>
                     <Row>
@@ -105,7 +105,7 @@ const InventoryApp: React.FC = (_) => {
         <div className="container">
             <Row>
                 <Col s={ 12 }>
-                    <h3 className="page-title">Current inventory</h3>
+                    <h1 className="page-title med-heading">Current inventory</h1>
                     { content }
                 </Col>
             </Row>
