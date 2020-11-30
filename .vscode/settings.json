@@ -3,19 +3,10 @@
         "source.fixAll.tslint": true,
     },
     "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
         "**/*cache": true,
-        "**/.coverage": true,
-        ".coveragerc": false,
         "tags": true,
         "vinoteca/node_modules": true,
     },
-    "python.pythonPath": "~/.envs/migration/bin/python",
-    "typescript.format.enable": true,
     "typescript.suggest.completeFunctionCalls": true,
-    "eslint.workingDirectories": ["./web"]
+    "eslint.workingDirectories": ["./web"],
 }

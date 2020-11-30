@@ -19,6 +19,9 @@ media/*.jpg
 scripts/*.cache
 .vscode/.ropeproject/
 
+# Workspaces
+*.code-workspace
+
 # Javascript
 node_modules
 web/static/*bundle*
