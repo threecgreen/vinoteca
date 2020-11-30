@@ -83,6 +83,9 @@ pub fn validate_owns_wine(auth: Auth, id: i32, connection: &DbConn) -> Result<()
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::storage::MockStorage;
+    use crate::DbConn;
+    use crate::{models::WineForm, wines::get_one};
 
     #[test]
     fn validate_owns_wine_fails() {
@@ -99,5 +102,48 @@ mod test {
             let res = validate_owns_wine(Auth { id: 1 }, 1, &connection);
             assert!(res.is_ok());
         })
+    }
+
+    #[test]
+    fn nullifying_field() {
+        db_test!(|rocket, connection| {
+            let auth = Auth { id: 1 };
+            let wine1 = get_one(auth, 1, connection).unwrap();
+            assert!(wine1.description.is_none());
+            let mut form = WineForm::from(wine1.into_inner());
+            form.description = Some("pleasant".to_owned());
+            // Mock storage setup
+            let mock = MockStorage::new();
+            // mock.expect_delete_object().times(1).return_const(Ok(()));
+            let rocket = rocket.manage(Config::new(mock));
+            // Add description
+            let wine2 = put(
+                auth,
+                1,
+                RawWineForm {
+                    image: None,
+                    wine_form: form,
+                },
+                DbConn::get_one(&rocket).unwrap(),
+                State::from(&rocket).unwrap(),
+            )
+            .unwrap();
+            assert_eq!(wine2.description, Some("pleasant".to_owned()));
+            // Nullify description
+            let mut null_form = WineForm::from(wine2.into_inner());
+            null_form.description = None;
+            let wine3 = put(
+                auth,
+                1,
+                RawWineForm {
+                    image: None,
+                    wine_form: null_form,
+                },
+                DbConn::get_one(&rocket).unwrap(),
+                State::from(&rocket).unwrap(),
+            )
+            .unwrap();
+            assert!(wine3.description.is_none());
+        });
     }
 }

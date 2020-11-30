@@ -106,6 +106,7 @@ pub struct Purchase {
 }
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
+#[changeset_options(treat_none_as_null = "true")]
 #[table_name = "purchases"]
 #[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
@@ -219,7 +220,7 @@ pub struct UserForm<'a> {
     pub password: &'a str,
 }
 
-#[derive(AsChangeset, Insertable, Debug)]
+#[derive(Insertable, Debug)]
 #[table_name = "users"]
 pub struct NewUser<'a> {
     pub email: &'a str,
@@ -316,6 +317,7 @@ pub struct WineForm {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
+#[changeset_options(treat_none_as_null = "true")]
 #[table_name = "wines"]
 pub struct NewWine {
     pub description: Option<String>,
@@ -330,6 +332,25 @@ pub struct NewWine {
     pub wine_type_id: i32,
     pub user_id: i32,
     pub is_in_shopping_list: bool,
+}
+
+#[cfg(test)]
+impl From<Wine> for WineForm {
+    fn from(wine: Wine) -> Self {
+        Self {
+            description: wine.description,
+            notes: wine.notes,
+            rating: wine.rating,
+            inventory: wine.inventory,
+            why: wine.why,
+            color_id: wine.color_id,
+            producer_id: wine.producer_id,
+            viti_area_id: wine.viti_area_id,
+            name: wine.name,
+            wine_type_id: wine.wine_type_id,
+            is_in_shopping_list: wine.is_in_shopping_list,
+        }
+    }
 }
 
 impl From<(Auth, WineForm)> for NewWine {
