@@ -8,8 +8,21 @@ env:
   ROCKET_TEST_DB: ${{ secrets.ROCKET_TEST_DB }}
 
 jobs:
-  rust:
+  # Limit parallel jobs
+  pre-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 5
+          # Wait on all jobs, not just those for the same branch
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  rust:
+    needs: pre-ci
     runs-on: ubuntu-latest
 
     steps:
