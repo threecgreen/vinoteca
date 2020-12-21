@@ -1,5 +1,6 @@
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
+import { initListViewState, listViewReducer } from "front_end/list_view/state";
 import { IGrape, IGrapeForm } from "generated/rest";
 import { getGrapes, updateGrape } from "lib/api/grapes";
 import { useTitle } from "lib/hooks";
@@ -7,11 +8,10 @@ import { useLogger } from "lib/Logger";
 import React from "react";
 import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
-import { grapeStateReducer, initGrapeState } from "./state";
 
 const GrapesApp: React.FC = (_) => {
     const logger = useLogger("GrapesApp");
-    const [state, dispatch] = React.useReducer(grapeStateReducer, initGrapeState());
+    const [state, dispatch] = React.useReducer(listViewReducer, initListViewState());
 
     useTitle("Grapes");
 
@@ -19,7 +19,7 @@ const GrapesApp: React.FC = (_) => {
         async function fetchGrapes() {
             try {
                 const grapes: IGrape[] = await getGrapes({});
-                dispatch({type: "setGrapes", grapes});
+                dispatch({type: "setRecords", records: grapes});
             } catch (e) {
                 logger.logWarning(`Failed to load grapes: ${e.message}`);
             } finally {
@@ -38,7 +38,7 @@ const GrapesApp: React.FC = (_) => {
             const id = state.mode.id;
             try {
                 const updatedGrape = await updateGrape(id, grape);
-                dispatch({type: "updateGrape", grape: updatedGrape});
+                dispatch({type: "updateRecord", record: updatedGrape});
             } catch (e) {
                 logger.logWarning(
                     `Failed to save grape change for grape with id ${id}: ${e.message}`);
@@ -51,7 +51,7 @@ const GrapesApp: React.FC = (_) => {
     }
     let editComponent = null;
     if (state.mode.type === "edit") {
-        const grape = state.grapes[state.mode.id];
+        const grape = state.records[state.mode.id];
         editComponent = (
             <EditGrape name={ grape?.name ?? "" }
                 onCancelClick={ onCancelClick }
@@ -64,7 +64,7 @@ const GrapesApp: React.FC = (_) => {
             <Row>
                 <Col s={ 12 }>
                     <h1 className="page-title med-heading">Grapes</h1>
-                    <GrapesList grapes={ Object.values(state.grapes) }
+                    <GrapesList grapes={ Object.values(state.records as IGrape[]) }
                         onEditClick={ onEditClick }
                     />
                     { editComponent }

@@ -1,5 +1,4 @@
 import { VinotecaError } from "generated/rest";
-import { hasOwnProperty } from "./utils";
 
 type Inner<T, E> =
     | { type: "ok", value: T }

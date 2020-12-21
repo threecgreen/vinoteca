@@ -1,7 +1,7 @@
 import Logger from "../Logger";
 import { IQueryParams } from "./requests";
 
-interface IRestModel {
+export interface IRestModel {
     id: number;
     name: string;
 }
