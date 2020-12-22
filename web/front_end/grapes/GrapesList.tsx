@@ -13,9 +13,10 @@ enum SortingValue {
 interface IProps {
     grapes: IGrape[];
     onEditClick: (id: number) => void;
+    onDeleteClick: (id: number) => void;
 }
 
-export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
+export const GrapesList: React.FC<IProps> = ({grapes, onEditClick, onDeleteClick}) => {
     const [sortingValue, setSortingValue] = React.useState(SortingValue.Name);
     const [isAscending, setIsAscending] = React.useState(true);
 
@@ -66,6 +67,7 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
                         Wines
                     </TableHeader>
                     <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,6 +77,7 @@ export const GrapesList: React.FC<IProps> = ({grapes, onEditClick}) => {
                             key={ grape.id }
                             grape={ grape }
                             onEditClick={ onEditClick }
+                            onDeleteClick={ onDeleteClick }
                         />
                     );
                 })}

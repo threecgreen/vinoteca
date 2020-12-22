@@ -2,17 +2,17 @@ import { CancelOrConfirmBtns } from "components/Buttons";
 import { Row } from "components/Grid";
 import { TextInput } from "components/inputs/TextInput";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
-import { IGrapeForm } from "generated/rest";
 import { handleSubmit } from "lib/component_utils";
 import React from "react";
 
 interface IProps {
+    recordName: string;
     name: string;
     onCancelClick: () => void;
-    onSaveClick: (form: IGrapeForm) => Promise<void>;
+    onSaveClick: (form: {name: string}) => Promise<void>;
 }
 
-export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) => {
+export const EditRecord: React.FC<IProps> = ({recordName, name, onCancelClick, onSaveClick}) => {
     const [text, setText] = React.useState(name);
     const [isSaving, setIsSaving] = React.useState(false);
 
@@ -20,7 +20,7 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
         <Modal onClose={ onCancelClick }>
             <ModalContent>
                 <Row>
-                    <h4>Edit grape</h4>
+                    <h4>Edit { recordName }</h4>
                     <TextInput name="Name"
                         className=""
                         value={ text }
@@ -38,4 +38,4 @@ export const EditGrape: React.FC<IProps> = ({name, onCancelClick, onSaveClick}) 
         </Modal>
     );
 };
-EditGrape.displayName = EditGrape.name;
+EditRecord.displayName = "EditRecord";

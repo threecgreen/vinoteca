@@ -1,12 +1,13 @@
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
+import { DeleteRecord } from "front_end/list_view/DeleteRecord";
+import { EditRecord } from "front_end/list_view/EditRecord";
 import { initListViewState, listViewReducer } from "front_end/list_view/state";
 import { IGrape, IGrapeForm } from "generated/rest";
-import { getGrapes, updateGrape } from "lib/api/grapes";
+import { deleteGrape, getGrapes, updateGrape } from "lib/api/grapes";
 import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import React from "react";
-import { EditGrape } from "./EditGrape";
 import { GrapesList } from "./GrapesList";
 
 const GrapesApp: React.FC = (_) => {
@@ -31,6 +32,23 @@ const GrapesApp: React.FC = (_) => {
     }, [logger]);
 
     const onEditClick = (id: number) => dispatch({type: "setToEdit", id});
+    const onDeleteClick = (id: number) => {
+        if ((state.records[id] as IGrape).wineCount === 0) {
+            dispatch({type: "setToDelete", id});
+        }
+    }
+    const onConfirmDeleteClick = async () => {
+        dispatch({type: "setToDisplay"});
+        if (state.mode.type === "delete") {
+            const id = state.mode.id;
+            try {
+                await deleteGrape(id);
+                dispatch({type: "deleteRecord", id});
+            } catch (e) {
+                logger.logWarning(`Failed to delete grape for grape with id ${id}: ${e.message}`);
+            }
+        }
+    }
     const onCancelClick  = () => dispatch({type: "setToDisplay"});
     const onSaveClick = async (grape: IGrapeForm) => {
         dispatch({type: "setToDisplay"});
@@ -49,13 +67,24 @@ const GrapesApp: React.FC = (_) => {
     if (!state.hasLoaded) {
         return <Preloader />;
     }
-    let editComponent = null;
+    let modalComponent = null;
     if (state.mode.type === "edit") {
         const grape = state.records[state.mode.id];
-        editComponent = (
-            <EditGrape name={ grape?.name ?? "" }
+        modalComponent = (
+            <EditRecord recordName="grape"
+                name={ grape?.name ?? "" }
                 onCancelClick={ onCancelClick }
                 onSaveClick={ onSaveClick }
+            />
+        );
+    }
+    if (state.mode.type === "delete") {
+        const grape = state.records[state.mode.id];
+        modalComponent = (
+            <DeleteRecord recordName="grape"
+                name={ grape?.name ?? "" }
+                onYesClick={ onConfirmDeleteClick }
+                onNoClick={ onCancelClick }
             />
         );
     }
@@ -66,8 +95,9 @@ const GrapesApp: React.FC = (_) => {
                     <h1 className="page-title med-heading">Grapes</h1>
                     <GrapesList grapes={ Object.values(state.records as IGrape[]) }
                         onEditClick={ onEditClick }
+                        onDeleteClick={ onDeleteClick }
                     />
-                    { editComponent }
+                    { modalComponent }
                 </Col>
             </Row>
         </div>

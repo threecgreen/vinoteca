@@ -2,7 +2,8 @@ import { IRestModel } from "lib/api/common";
 
 export type Mode =
     | {type: "display"}
-    | {type: "edit", id: number};
+    | {type: "edit", id: number}
+    | {type: "delete", id: number};
 
 export interface IListViewState<T extends IRestModel> {
     mode: Mode;
@@ -20,6 +21,7 @@ export const initListViewState: <T extends IRestModel>() => IListViewState<T> = 
 type Action<T extends IRestModel> =
     | {type: "setToDisplay"}
     | {type: "setToEdit", id: number}
+    | {type: "setToDelete", id: number}
     | {type: "setRecords", records: T[]}
     | {type: "updateRecord", record: T}
     | {type: "deleteRecord", id: number}
@@ -33,6 +35,8 @@ export const listViewReducer = <T extends IRestModel>(
             return { ...state, mode: {type: "display"} };
         case "setToEdit":
             return { ...state, mode: {type: "edit", id: action.id} };
+        case "setToDelete":
+            return { ...state, mode: {type: "delete", id: action.id} };
         case "setRecords": {
             const records = action.records.reduce((acc: Record<number, T>, record) => {
                 acc[record.id] = record;

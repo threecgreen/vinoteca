@@ -6,6 +6,7 @@ import { MaterialIcon } from "./MaterialIcon";
 import { CircleSize, PreloaderCirc } from "./Preloader";
 
 interface IFloatingBtnProps extends IChildrenProp, IClassesProp {
+    enabled?: boolean;
     onClick: () => void;
     onMouseDown?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
 }
@@ -25,10 +26,11 @@ export const FloatingBtn: React.FC<IFloatingBtnProps> = (props) => {
         e.preventDefault();
         props.onClick();
     };
+    const disabledClass = (props.enabled ?? true) ? '' : 'disabled';
 
     return (
         <a href="#"
-            className={ `waves-effect waves-light btn-floating ${classes}` }
+            className={ `waves-effect waves-light btn-floating ${classes} ${disabledClass}` }
             onClick={ onClick }
             onMouseDown={ mouseDown }
         >
