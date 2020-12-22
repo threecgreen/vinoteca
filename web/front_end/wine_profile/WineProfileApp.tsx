@@ -21,7 +21,7 @@ import { getNameAndType } from "lib/component_utils";
 import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import { arrayHasChanged, hasChanged } from "lib/utils";
-import React, { StrictMode } from "react";
+import React from "react";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
 import { EditWine } from "./EditWine";

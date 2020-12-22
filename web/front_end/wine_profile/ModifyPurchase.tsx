@@ -27,7 +27,7 @@ export const ModifyPurchase: React.FC<IProps> = ({
         ...purchase,
         store: purchase.store ?? "",
         memo: purchase.memo ?? "",
-        shouldAddToInventory: null,
+        shouldAddToInventory: displayInventoryBtn ? true : null,
     });
     const [isSaving, setIsSaving] = React.useState(false);
 
