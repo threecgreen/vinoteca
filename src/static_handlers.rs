@@ -13,6 +13,7 @@ pub fn get_routes() -> Vec<rocket::Route> {
         register,
         dashboards,
         grapes,
+        producers,
         wines,
         wine_profile,
         inventory,
@@ -54,6 +55,10 @@ pub fn dashboards(_auth: Auth) -> Html<&'static str> {
 }
 #[get("/grapes")]
 pub fn grapes(_auth: Auth) -> Html<&'static str> {
+    home()
+}
+#[get("/producers")]
+pub fn producers(_auth: Auth) -> Html<&'static str> {
     home()
 }
 #[get("/wines")]

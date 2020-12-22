@@ -1,5 +1,5 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import { AsyncRoute, AuthenticatedRoute, NotFound, RouteById } from "components/CommonRoutes";
+import { AsyncRoute, AuthAsyncRoute, AuthRoute, NotFound, RouteById } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";
 import { ViewportProvider } from "components/context/ViewportContext";
@@ -11,6 +11,7 @@ import { Changelog } from "./about/Changelog";
 import { Footer } from "./Footer";
 import { HomeApp } from "./home/HomeApp";
 import { Navbar } from "./Navbar";
+import { ProducersApp } from "./producers/ProducersApp";
 
 const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
@@ -39,29 +40,31 @@ export const Router: React.FC = () => (
                             <AsyncRoute path="/login" componentName="Login" />
                             <AsyncRoute path="/register" componentName="Register" />
 
-                            <AuthenticatedRoute componentName="Dashboard" path="dashboards" />
-                            <AuthenticatedRoute componentName="Grapes" path="grapes" />
+                            <AuthAsyncRoute componentName="Dashboard" path="dashboards" />
+                            <AuthAsyncRoute componentName="Grapes" path="grapes" />
+                            {/* <AuthAsyncRoute componentName="Producers" path="producers" /> */}
+                            <AuthRoute component={ ProducersApp } path="producers" />
 
-                            <AuthenticatedRoute componentName="Wines" path="wines" />
+                            <AuthAsyncRoute componentName="Wines" path="wines" />
                             <RouteById componentName="WineProfile" path="wines/:id" />
-                            <AuthenticatedRoute componentName="Inventory" path="wines/inventory" />
-                            <AuthenticatedRoute componentName="NewWine" path="wines/new" />
-                            <AuthenticatedRoute componentName="SearchWines" path="wines/search" />
-                            <AuthenticatedRoute componentName="ShoppingList"
+                            <AuthAsyncRoute componentName="Inventory" path="wines/inventory" />
+                            <AuthAsyncRoute componentName="NewWine" path="wines/new" />
+                            <AuthAsyncRoute componentName="SearchWines" path="wines/search" />
+                            <AuthAsyncRoute componentName="ShoppingList"
                                 path="wines/shopping-list"
                             />
 
-                            <AuthenticatedRoute componentName="ProducerProfile"
+                            <AuthAsyncRoute componentName="ProducerProfile"
                                 path="producers/:producerId"
                             />
-                            <AuthenticatedRoute componentName="RegionProfile"
+                            <AuthAsyncRoute componentName="RegionProfile"
                                 path="regions/:regionId"
                             />
-                            <AuthenticatedRoute componentName="UserProfile" path="profile" />
-                            <AuthenticatedRoute componentName="VitiAreaProfile"
+                            <AuthAsyncRoute componentName="UserProfile" path="profile" />
+                            <AuthAsyncRoute componentName="VitiAreaProfile"
                                 path="viti-areas/:vitiAreaId"
                             />
-                            <AuthenticatedRoute componentName="WineTypeProfile"
+                            <AuthAsyncRoute componentName="WineTypeProfile"
                                 path="wine-types/:wineTypeId"
                             />
 

@@ -7,6 +7,7 @@ import { useUser } from "./context/UserContext";
 import { Preloader } from "./Preloader";
 import { BtnLink } from "./Buttons";
 import { MaterialIcon } from "./MaterialIcon";
+import { IChildrenProp } from "./IProps";
 
 interface IRouteByIdProps {
     id: string;
@@ -37,13 +38,13 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
     return null;
 };
 
-interface IAuthenticatedRouteProps {
-    user: IUser | null;
-    setUser: (user: IUser | null) => void;
+interface IAuthAsyncRouteProps {
+    // user: IUser | null;
+    // setUser: (user: IUser | null) => void;
     componentName: keyof typeof Components;
 }
 
-export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRouteProps>> =
+export const AuthAsyncRoute: React.FC<RouteComponentProps<IAuthAsyncRouteProps>> =
     ({componentName, ...props}) => {
 
     if (!componentName) {
@@ -59,14 +60,33 @@ export const AuthenticatedRoute: React.FC<RouteComponentProps<IAuthenticatedRout
     // never
     return null;
 };
-AuthenticatedRoute.displayName = "AuthenticatedRoute";
+AuthAsyncRoute.displayName = "AuthAsyncRoute";
+
+interface IAuthRouteProps {
+    component: React.FC;
+}
+
+export const AuthRoute: React.FC<RouteComponentProps<IAuthRouteProps>> = ({component: Component, ...props}) => {
+    const user = useUser();
+    if (user) {
+        // @ts-ignore
+        return <Component {...props} />;
+    }
+
+    void navigate("/login");
+    // never
+    return null;
+
+}
 
 // Prefetched components
 const Login = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "login" */ "../front_end/login/LoginApp"))
 const Register = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "register" */ "../front_end/register/RegisterApp"))
+// TODO: not all of these need to be async
 // Normal async components
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "../front_end/dashboards/DashboardApp"));
 const Grapes = lazy(() => import(/* webpackChunkName: "grapes" */ "../front_end/grapes/GrapesApp"));
+// const Producers = lazy(() => import(/* webpackChunkName: "producers" */ "../front_end/producers/ProducersApp"));
 const HomeDashboard = lazy(() => import(/* webpackChunkName: "home_dashboard" */ "../front_end/home/HomeDashboard"));
 const Inventory = lazy(() => import(/* webpackChunkName: "inventory" */ "../front_end/inventory/InventoryApp"));
 const NewWine = lazy(() => import(/* webpackChunkName: "new_wine" */ "../front_end/new_wine/NewWineApp"));
@@ -87,6 +107,7 @@ const Components = {
     // Normal
     Dashboard,
     Grapes,
+    // Producers,
     HomeDashboard,
     Inventory,
     NewWine,

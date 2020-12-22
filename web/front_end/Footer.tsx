@@ -53,6 +53,13 @@ export const Footer: React.FC = (_) => {
                                     Grapes
                                 </Link>
                             </li>
+                            <li>
+                                <Link to="/producers"
+                                    className="footer-link"
+                                >
+                                    Producers
+                                </Link>
+                            </li>
                         </ul>
                     </div> }
                 </div>
