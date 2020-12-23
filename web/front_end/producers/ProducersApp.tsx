@@ -3,13 +3,13 @@ import { Preloader } from "components/Preloader";
 import { Table } from "components/Table";
 import { DeleteRecord } from "front_end/list_view/DeleteRecord";
 import { EditRecord } from "front_end/list_view/EditRecord";
-import { ListItem } from "front_end/list_view/ListItem";
 import { initListViewState, listViewReducer } from "front_end/list_view/state";
 import { IProducer } from "generated/rest";
 import { deleteProducer, getProducers, updateProducer } from "lib/api/producers";
 import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import React from "react";
+import { ProducerListItem } from "./ProducerListItem";
 
 const ProducersApp: React.FC = () => {
     const logger = useLogger("ProducersApp")
@@ -89,7 +89,7 @@ const ProducersApp: React.FC = () => {
             );
         }
         const sortedProducers = Object.values(state.records)
-            .sort((p1, p2) => p1.name.localeCompare(p2.name));
+            .sort((p1, p2) => p1.name.localeCompare(p2.name)) as IProducer[];
 
         content = (
             <>
@@ -103,8 +103,8 @@ const ProducersApp: React.FC = () => {
                     </thead>
                     <tbody>
                         { sortedProducers.map((producer) => (
-                            <ListItem key={ producer.id }
-                                record={ producer }
+                            <ProducerListItem key={ producer.id }
+                                producer={ producer }
                                 onEditClick={ onEditClick }
                                 onDeleteClick={ onDeleteClick }
                             />

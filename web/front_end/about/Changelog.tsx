@@ -14,7 +14,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
 
             <h5>6.1.0</h5>
             <ul className="bullets">
+                <li>Add producers list view</li>
                 <li>Add ability to delete unused grapes</li>
+                <li>Improve some preloading screens</li>
                 <li>Fix bug where new purchase for existing wine doesn&rsquo;t by default add to inventory</li>
             </ul>
 

@@ -1,27 +1,29 @@
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
-import { TextCell } from "components/TableCells";
-import { IRestModel } from "lib/api/common";
+import { ProducerCell } from "components/TableCells";
+import { IProducer } from "generated/rest";
 import React from "react";
 
 interface IProps {
-    record: IRestModel;
+    producer: IProducer;
     onEditClick: (id: number) => void;
     onDeleteClick: (id: number) => void;
 }
 
-export const ListItem: React.FC<IProps> = ({record, onEditClick, onDeleteClick}) => (
+export const ProducerListItem: React.FC<IProps> = ({producer, onEditClick, onDeleteClick}) => (
     <tr>
-        <TextCell text={ record.name } />
+        <ProducerCell id={ producer.id }
+            name={ producer.name }
+        />
         <td>
-            <FloatingBtn onClick={ () => onEditClick(record.id) }
+            <FloatingBtn onClick={ () => onEditClick(producer.id) }
                 classes={ ["small", "yellow-bg"] }
             >
                 <MaterialIcon iconName="edit" />
             </FloatingBtn>
         </td>
         <td>
-            <FloatingBtn onClick={ () => onDeleteClick(record.id) }
+            <FloatingBtn onClick={ () => onDeleteClick(producer.id) }
                 classes={ ["small", "red-bg"] }
             >
                 <MaterialIcon iconName="delete" />
@@ -29,4 +31,4 @@ export const ListItem: React.FC<IProps> = ({record, onEditClick, onDeleteClick})
         </td>
     </tr>
 );
-ListItem.displayName = "ListItem";
+ProducerListItem.displayName = "ProducerListItem";

@@ -41,7 +41,7 @@ export const Footer: React.FC = (_) => {
                         </ul>
                     </div>
                     { user && <div className="col l6 s12">
-                        <h5 className="white-text">List Views</h5>
+                        <h5 className="white-text">List views</h5>
                         <p className="grey-text text-lighten-4">
                             Simple views for more direct access to your data.
                         </p>
