@@ -64,56 +64,63 @@ const ProducersApp: React.FC = () => {
         }
     };
 
+    let content = null;
     if (!state.hasLoaded) {
-        return <Preloader />;
-    }
-    let modalComponent = null;
-    if (state.mode.type === "edit") {
-        const producer = state.records[state.mode.id] as IProducer;
-        modalComponent = (
-            <EditRecord recordName="producer"
-                name={ producer?.name ?? "" }
-                onCancelClick={ onCancelClick }
-                onSaveClick={ (form) => onSaveClick({...producer, name: form.name}) }
-            />
+        content = <Preloader />;
+    } else {
+        let modalComponent = null;
+        if (state.mode.type === "edit") {
+            const producer = state.records[state.mode.id] as IProducer;
+            modalComponent = (
+                <EditRecord recordName="producer"
+                    name={ producer?.name ?? "" }
+                    onCancelClick={ onCancelClick }
+                    onSaveClick={ (form) => onSaveClick({...producer, name: form.name}) }
+                />
+            );
+        } else if (state.mode.type === "delete") {
+            const grape = state.records[state.mode.id];
+            modalComponent = (
+                <DeleteRecord recordName="producer"
+                    name={ grape?.name ?? "" }
+                    onYesClick={ onConfirmDeleteClick }
+                    onNoClick={ onCancelClick }
+                />
+            );
+        }
+        const sortedProducers = Object.values(state.records)
+            .sort((p1, p2) => p1.name.localeCompare(p2.name));
+
+        content = (
+            <>
+                <Table condensed>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { sortedProducers.map((producer) => (
+                            <ListItem key={ producer.id }
+                                record={ producer }
+                                onEditClick={ onEditClick }
+                                onDeleteClick={ onDeleteClick }
+                            />
+                        )) }
+                    </tbody>
+                </Table>
+                { modalComponent }
+            </>
         );
     }
-    if (state.mode.type === "delete") {
-        const grape = state.records[state.mode.id];
-        modalComponent = (
-            <DeleteRecord recordName="producer"
-                name={ grape?.name ?? "" }
-                onYesClick={ onConfirmDeleteClick }
-                onNoClick={ onCancelClick }
-            />
-        );
-    }
-    const sortedProducers = Object.values(state.records)
-        .sort((p1, p2) => p1.name.localeCompare(p2.name));
     return (
         <div className="container">
             <Row>
                 <Col s={ 12 }>
                     <h1 className="page-title med-heading">Producers</h1>
-                    <Table condensed>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Edit</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { sortedProducers.map((producer) => (
-                                <ListItem key={ producer.id }
-                                    record={ producer }
-                                    onEditClick={ onEditClick }
-                                    onDeleteClick={ onDeleteClick }
-                                />
-                            )) }
-                        </tbody>
-                    </Table>
-                    { modalComponent }
+                    { content }
                 </Col>
             </Row>
         </div>

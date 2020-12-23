@@ -64,40 +64,47 @@ const GrapesApp: React.FC = (_) => {
         }
     };
 
+    let content = null;
     if (!state.hasLoaded) {
-        return <Preloader />;
-    }
-    let modalComponent = null;
-    if (state.mode.type === "edit") {
-        const grape = state.records[state.mode.id];
-        modalComponent = (
-            <EditRecord recordName="grape"
-                name={ grape?.name ?? "" }
-                onCancelClick={ onCancelClick }
-                onSaveClick={ onSaveClick }
-            />
+        content = <Preloader />;
+    } else {
+        let modalComponent = null;
+        if (state.mode.type === "edit") {
+            const grape = state.records[state.mode.id];
+            modalComponent = (
+                <EditRecord recordName="grape"
+                    name={ grape?.name ?? "" }
+                    onCancelClick={ onCancelClick }
+                    onSaveClick={ onSaveClick }
+                />
+            );
+        } else if (state.mode.type === "delete") {
+            const grape = state.records[state.mode.id];
+            modalComponent = (
+                <DeleteRecord recordName="grape"
+                    name={ grape?.name ?? "" }
+                    onYesClick={ onConfirmDeleteClick }
+                    onNoClick={ onCancelClick }
+                />
+            );
+        }
+        content = (
+            <>
+                <GrapesList grapes={ Object.values(state.records as IGrape[]) }
+                    onEditClick={ onEditClick }
+                    onDeleteClick={ onDeleteClick }
+                />
+                { modalComponent }
+            </>
         );
     }
-    if (state.mode.type === "delete") {
-        const grape = state.records[state.mode.id];
-        modalComponent = (
-            <DeleteRecord recordName="grape"
-                name={ grape?.name ?? "" }
-                onYesClick={ onConfirmDeleteClick }
-                onNoClick={ onCancelClick }
-            />
-        );
-    }
+
     return (
         <div className="container">
             <Row>
                 <Col s={ 12 }>
                     <h1 className="page-title med-heading">Grapes</h1>
-                    <GrapesList grapes={ Object.values(state.records as IGrape[]) }
-                        onEditClick={ onEditClick }
-                        onDeleteClick={ onDeleteClick }
-                    />
-                    { modalComponent }
+                    { content }
                 </Col>
             </Row>
         </div>
