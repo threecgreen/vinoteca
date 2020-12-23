@@ -13,6 +13,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
             <h1 className="page-title med-heading">Changelog</h1>
 
             <h5>6.1.0</h5>
+            <p>Fix user profile page title</p>
+
+            <h5>6.1.0</h5>
             <ul className="bullets">
                 <li>Add producers list view</li>
                 <li>Add ability to delete unused grapes</li>

@@ -1,5 +1,5 @@
-import { navigate } from "@reach/router";
 import { Btn } from "components/Buttons";
+import { Unauthorized } from "components/CommonRoutes";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { Col, Row } from "components/Grid";
 import format from "date-fns/esm/format";
@@ -23,13 +23,12 @@ const UserProfileApp: React.FC = (_) => {
 
     const user = useUser();
     const setUser = useSetUser();
-    useTitle(`${user}'s profile`);
-    useDescription(`${user}'s profile. The current user`);
+    useTitle(`${user?.name}'s profile`);
+    useDescription(`${user?.name}'s profile. The current user`);
     useCanonical("/profile");
 
     if (!user) {
-        void navigate("/");
-        return null;
+        return <Unauthorized />
     }
 
     const onSubmitChanges = async (form: IChangeUserForm) => {
