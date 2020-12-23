@@ -15,6 +15,7 @@ export const Modal: React.FC<IModalProps> = ({children, onClose}) => {
         // Returning function from useEffect will be called when the
         // component is unmounted
         return () => instance?.close();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ref]);
 
     return (
@@ -25,7 +26,7 @@ export const Modal: React.FC<IModalProps> = ({children, onClose}) => {
 };
 Modal.displayName = "Modal";
 
-export const ModalContent: React.FC<IChildrenProp & any> = ({children, ...props}) => (
+export const ModalContent: React.FC<IChildrenProp> = ({children, ...props}) => (
     <section className="modal-content" {...props}>
         { children }
     </section>

@@ -36,7 +36,9 @@ export function TopEntity<Entity extends IEntity>({
     const logger = useLogger("TopEntity");
     const [hasLoaded, setHasLoaded] = React.useState<boolean>(false);
     const [topEntities, setTopEntities] = React.useState<Entity[]>([]);
-    React.useEffect(() => { async function fetchTopEntities() { try {
+    React.useEffect(() => {
+        async function fetchTopEntities() {
+            try {
                 const entities = await fetchEntity();
                 setTopEntities(entities);
             } catch (e) {
@@ -47,7 +49,7 @@ export function TopEntity<Entity extends IEntity>({
         }
 
         void fetchTopEntities();
-    }, [logger, setHasLoaded, setTopEntities]);
+    });
 
     if (!hasLoaded) {
         return <PreloaderCirc color={ preloaderColor } />;

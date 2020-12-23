@@ -239,17 +239,17 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     };
 
-    const onSubmitNewPurchase = async (purchase: IPurchaseData) => {
+    const onSubmitNewPurchase = async (wine: IWine, purchase: IPurchaseData) => {
         try {
             const form = await purchaseDataToForm(purchase, id);
             if (form) {
                 const newPurchase = await createPurchase(form);
                 dispatch({type: "setPurchases", purchases: state.purchases.concat([newPurchase])});
                 if (purchase.quantity) {
-                    const copy = {...state.wine!};
+                    const copy = {...wine};
                     copy.inventory += purchase.quantity;
-                    const wine = await updateWine(id, copy, null);
-                    dispatch({type: "setWine", wine});
+                    const updatedWine = await updateWine(id, copy, null);
+                    dispatch({type: "setWine", wine: updatedWine});
                 }
                 dispatch({type: "setMode", mode: {type: "display"}});
             } else {
@@ -262,18 +262,18 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     };
 
     // Render helpers
-    const renderWineData = () => (
+    const renderWineData = (wine: IWine) => (
         <WineData
-            color={ state.wine!.color }
-            description={ state.wine!.description }
-            inventory={ state.wine!.inventory }
-            lastPurchaseVintage={ state.wine!.lastPurchaseVintage }
-            notes={ state.wine!.notes }
-            rating={ state.wine!.rating }
-            vitiArea={ state.wine!.vitiArea }
-            vitiAreaId={ state.wine!.vitiAreaId }
-            why={ state.wine!.why }
-            isInShoppingList={ state.wine!.isInShoppingList }
+            color={ wine.color }
+            description={ wine.description }
+            inventory={ wine.inventory }
+            lastPurchaseVintage={ wine.lastPurchaseVintage }
+            notes={ wine.notes }
+            rating={ wine.rating }
+            vitiArea={ wine.vitiArea }
+            vitiAreaId={ wine.vitiAreaId }
+            why={ wine.why }
+            isInShoppingList={ wine.isInShoppingList }
             onInventoryChange={ onInventoryChange }
             onIsInShoppingListChange={ onIsInShoppingListChange }
         />
@@ -281,12 +281,12 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
     const renderWineImg = () => <WineImg path={ state.wine?.image ?? "" } />;
-    const renderWineDetails = () => {
-        if (state.wine?.image && state.grapes.length) {
+    const renderWineDetails = (wine: IWine) => {
+        if (wine.image && state.grapes.length) {
             return (
                 <>
                     <Col s={ 12 } l={ 4 } key="wineData">
-                        { renderWineData() }
+                        { renderWineData(wine) }
                     </Col>
                     <Col s={ 12 } l={ 4 } key="grapesData">
                         { renderGrapes() }
@@ -297,11 +297,11 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 </>
             );
         }
-        if (state.wine?.image) {
+        if (wine.image) {
             return (
                 <>
                     <Col s={ 12 } l={ 6 } key="wineData">
-                        { renderWineData() }
+                        { renderWineData(wine) }
                     </Col>
                     <Col s={ 12 } l={ 6 } key="wineImage">
                         { renderWineImg() }
@@ -313,7 +313,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             return (
                 <>
                     <Col s={ 12 } l={ 6 } key="wineData">
-                        { renderWineData() }
+                        { renderWineData(wine) }
                     </Col>
                     <Col s={ 12 } l={ 6 } key="grapesData">
                         { renderGrapes() }
@@ -323,13 +323,13 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
         return (
             <Col s={ 12 } key="wineData">
-                { renderWineData() }
+                { renderWineData(wine) }
             </Col>
         );
     };
 
     // Displays relevant modal for editing/deleting
-    const renderModal = () => {
+    const renderModal = (wine: IWine) => {
         if (state.mode.type === "editWine") {
             if (state.wine) {
                 return (
@@ -389,7 +389,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     displayInventoryBtn
                     purchase={ newPurchase }
                     onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                    onSubmit={ onSubmitNewPurchase }
+                    onSubmit={ (purchase) => onSubmitNewPurchase(wine, purchase) }
                 />
             );
         } else {
@@ -442,7 +442,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 wineType={ state.wine.wineType }
                 wineTypeId={ state.wine.wineTypeId }
             >
-                { renderWineDetails() }
+                { renderWineDetails(state.wine) }
             </WineHeader>
             <Row>
                 { width > 600
@@ -464,7 +464,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     />
                 </Col>
             </Row>
-            { renderModal() }
+            { renderModal(state.wine) }
         </div>
     );
 };

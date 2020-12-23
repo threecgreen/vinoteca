@@ -118,7 +118,7 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
     private async onConfirmClick() {
         try {
             const wineType = await updateWineType({
-                id: this.props.wineTypeId!,
+                id: this.props.wineTypeId,
                 name: this.state.wineTypeText,
             });
             this.setState({
