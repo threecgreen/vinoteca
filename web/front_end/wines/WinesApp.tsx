@@ -132,11 +132,15 @@ const WinesApp: React.FC = (_) => {
     }, [logger, state.filterTexts]);
 
     // Rendering
-    if (state.status === Status.Initial) {
-        return <Preloader />;
-    }
     let winesComponent;
-    if (state.status === Status.Error) {
+    if (state.status === Status.Initial) {
+        winesComponent = (
+            <>
+                <h1 className="page-title med-heading">Wines</h1>
+                <Preloader />
+            </>
+        );
+    } else if (state.status === Status.Error) {
         winesComponent = (
             <div className="center-align">
                 <h6 className="bold">
