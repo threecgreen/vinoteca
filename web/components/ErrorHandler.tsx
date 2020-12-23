@@ -9,11 +9,23 @@ interface IProps {
 export const ErrorHandler: React.FC<IProps> = ({error}) => {
     switch (error.type) {
         case "NotFound":
-            return <NotFound info={ error.message } />;
+            return (
+                <NotFound>
+                    <p>{ error.message }</p>
+                </NotFound>
+            );
         case "Unauthorized":
-            return <Unauthorized info={ error.message }/>;
+            return (
+                <Unauthorized>
+                    <p>{ error.message }</p>
+                </Unauthorized>
+            );
         case "Forbidden":
-            return <Forbidden info={ error.message } />;
+            return (
+                <Forbidden>
+                    <p>{ error.message }</p>
+                </Forbidden>
+            );
         default:
             return (
                 <div className="container">

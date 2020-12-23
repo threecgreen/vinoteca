@@ -1,5 +1,5 @@
 import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
-import { AsyncRoute, AuthAsyncRoute, AuthRoute, NotFound, RouteById } from "components/CommonRoutes";
+import { AsyncRoute, AuthAsyncRoute, NotFound, RouteById } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";
 import { ViewportProvider } from "components/context/ViewportContext";
@@ -11,7 +11,6 @@ import { Changelog } from "./about/Changelog";
 import { Footer } from "./Footer";
 import { HomeApp } from "./home/HomeApp";
 import { Navbar } from "./Navbar";
-import { ProducersApp } from "./producers/ProducersApp";
 
 const App: React.FC<RouteComponentProps<IChildrenProp>> = ({children}) => {
     return (
@@ -42,8 +41,7 @@ export const Router: React.FC = () => (
 
                             <AuthAsyncRoute componentName="Dashboard" path="dashboards" />
                             <AuthAsyncRoute componentName="Grapes" path="grapes" />
-                            {/* <AuthAsyncRoute componentName="Producers" path="producers" /> */}
-                            <AuthRoute component={ ProducersApp } path="producers" />
+                            <AuthAsyncRoute componentName="Producers" path="producers" />
 
                             <AuthAsyncRoute componentName="Wines" path="wines" />
                             <RouteById componentName="WineProfile" path="wines/:id" />

@@ -1,13 +1,11 @@
 /* eslint-disable max-len */
-import { navigate, redirectTo, RouteComponentProps, Link } from "@reach/router";
+import { RouteComponentProps } from "@reach/router";
 import React, { lazy, Suspense } from "react";
-import { IUser } from "../generated/rest";
 import { useLogger } from "../lib/Logger";
-import { useUser } from "./context/UserContext";
-import { Preloader } from "./Preloader";
 import { BtnLink } from "./Buttons";
+import { useUser } from "./context/UserContext";
 import { MaterialIcon } from "./MaterialIcon";
-import { IChildrenProp } from "./IProps";
+import { Preloader } from "./Preloader";
 
 interface IRouteByIdProps {
     id: string;
@@ -33,14 +31,10 @@ export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, c
         return <AsyncComponent componentName={ componentName } id={ idNum } />;
     }
 
-    redirectTo("/login");
-    // never
-    return null;
+    return <Unauthorized />;
 };
 
 interface IAuthAsyncRouteProps {
-    // user: IUser | null;
-    // setUser: (user: IUser | null) => void;
     componentName: keyof typeof Components;
 }
 
@@ -56,49 +50,29 @@ export const AuthAsyncRoute: React.FC<RouteComponentProps<IAuthAsyncRouteProps>>
         return <AsyncComponent componentName={ componentName } {...props} />;
     }
 
-    void navigate("/login");
-    // never
-    return null;
+    return <Unauthorized />;
 };
 AuthAsyncRoute.displayName = "AuthAsyncRoute";
 
-interface IAuthRouteProps {
-    component: React.FC;
-}
-
-export const AuthRoute: React.FC<RouteComponentProps<IAuthRouteProps>> = ({component: Component, ...props}) => {
-    const user = useUser();
-    if (user) {
-        // @ts-ignore
-        return <Component {...props} />;
-    }
-
-    void navigate("/login");
-    // never
-    return null;
-
-}
-
 // Prefetched components
 const Login = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "login" */ "../front_end/login/LoginApp"))
-const Register = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "register" */ "../front_end/register/RegisterApp"))
-// TODO: not all of these need to be async
+const Register = lazy(() => import(/* webpackPrefetch: true, webpackChunkName: "login" */ "../front_end/register/RegisterApp"))
 // Normal async components
-const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "../front_end/dashboards/DashboardApp"));
-const Grapes = lazy(() => import(/* webpackChunkName: "grapes" */ "../front_end/grapes/GrapesApp"));
-// const Producers = lazy(() => import(/* webpackChunkName: "producers" */ "../front_end/producers/ProducersApp"));
-const HomeDashboard = lazy(() => import(/* webpackChunkName: "home_dashboard" */ "../front_end/home/HomeDashboard"));
-const Inventory = lazy(() => import(/* webpackChunkName: "inventory" */ "../front_end/inventory/InventoryApp"));
-const NewWine = lazy(() => import(/* webpackChunkName: "new_wine" */ "../front_end/new_wine/NewWineApp"));
-const ProducerProfile = lazy(() => import(/* webpackChunkName: "producer_profile" */ "../front_end/producer_profile/ProducerProfileApp"));
-const RegionProfile = lazy(() => import(/* webpackChunkName: "region_profile" */ "../front_end/region_profile/RegionProfileApp"));
-const SearchWines = lazy(() => import(/* webpackChunkName: "search_wines" */ "../front_end/search_wines/SearchWinesApp"));
-const ShoppingList = lazy(() => import(/* webpackChunkName: "shopping_list" */ "../front_end/shopping_list/ShoppingListApp"))
-const UserProfile = lazy(() => import(/* webpackChunkName: "user_profile" */ "../front_end/user_profile/UserProfileApp"));
-const VitiAreaProfile = lazy(() => import(/* webpackChunkName: "viti_area_profile" */ "../front_end/viti_area_profile/VitiAreaProfileApp"));
-const WineProfile = lazy(() => import(/* webpackChunkName: "wine_profile" */ "../front_end/wine_profile/WineProfileApp"));
-const Wines = lazy(() => import(/* webpackChunkName: "wines" */ "../front_end/wines/WinesApp"));
-const WineTypeProfile = lazy(() => import(/* webpackChunkName: "wine_type_profile" */ "../front_end/wine_type_profile/WineTypeProfileApp"));
+const Dashboard = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/dashboards/DashboardApp"));
+const Grapes = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/grapes/GrapesApp"));
+const Producers = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/producers/ProducersApp"));
+const HomeDashboard = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/home/HomeDashboard"));
+const Inventory = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/inventory/InventoryApp"));
+const NewWine = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/new_wine/NewWineApp"));
+const ProducerProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/producer_profile/ProducerProfileApp"));
+const RegionProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/region_profile/RegionProfileApp"));
+const SearchWines = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/search_wines/SearchWinesApp"));
+const ShoppingList = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/shopping_list/ShoppingListApp"))
+const UserProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/user_profile/UserProfileApp"));
+const VitiAreaProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/viti_area_profile/VitiAreaProfileApp"));
+const WineProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/wine_profile/WineProfileApp"));
+const Wines = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/wines/WinesApp"));
+const WineTypeProfile = lazy(() => import(/* webpackChunkName: "private" */ "../front_end/wine_type_profile/WineTypeProfileApp"));
 
 const Components = {
     // Prefetch
@@ -107,7 +81,7 @@ const Components = {
     // Normal
     Dashboard,
     Grapes,
-    // Producers,
+    Producers,
     HomeDashboard,
     Inventory,
     NewWine,
@@ -145,7 +119,7 @@ export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = 
     <AsyncComponent componentName={ componentName } { ...props } />
 )
 
-export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+export const NotFound: React.FC<RouteComponentProps> = (props) => {
     const logger = useLogger("NotFound", false, false);
     logger.logWarning("Client requested a resource that doesn't exist");
     // Keep google at bay
@@ -160,18 +134,18 @@ export const NotFound: React.FC<RouteComponentProps<{info?: string}>> = ({info})
             </h1>
             <br />
             <h4>Looks like you took a wrong turn in the cellar&hellip;</h4>
-            <p>{ info }</p>
+            { props.children }
         </div>
     );
 };
 NotFound.displayName = "NotFound";
 
-export const Unauthorized: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+export const Unauthorized: React.FC<RouteComponentProps> = (props) => {
     return (
         <div className="container">
             <h1 className="light center big">You need to log in to access this</h1>
             <br />
-            <p>{ info }</p>
+            { props.children }
             <BtnLink classes={["green-bg"]} to="/login">
                 <MaterialIcon iconName="account_circle" />
                 login
@@ -185,13 +159,13 @@ export const Unauthorized: React.FC<RouteComponentProps<{info?: string}>> = ({in
 }
 Unauthorized.displayName = "Unauthorized";
 
-export const Forbidden: React.FC<RouteComponentProps<{info?: string}>> = ({info}) => {
+export const Forbidden: React.FC<RouteComponentProps> = (props) => {
     const logger = useLogger("Forbidden", false, false);
     logger.logWarning("Client requested a forbidden resource");
     return (
         <div className="container">
             <h1 className="light center big">Forbidden</h1>
-            <p>{ info }</p>
+            { props.children }
         </div>
     );
 }

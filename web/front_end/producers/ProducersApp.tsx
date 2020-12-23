@@ -11,7 +11,7 @@ import { useTitle } from "lib/hooks";
 import { useLogger } from "lib/Logger";
 import React from "react";
 
-export const ProducersApp: React.FC = () => {
+const ProducersApp: React.FC = () => {
     const logger = useLogger("ProducersApp")
     const [state, dispatch] = React.useReducer(listViewReducer, initListViewState());
 
@@ -120,3 +120,4 @@ export const ProducersApp: React.FC = () => {
     );
 }
 ProducersApp.displayName = "ProducersApp";
+export default ProducersApp;
