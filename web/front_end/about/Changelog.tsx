@@ -12,7 +12,13 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="container">
             <h1 className="page-title med-heading">Changelog</h1>
 
-            <h5>6.1.0</h5>
+            <h5>6.1.2</h5>
+            <ul className="bullets">
+                <li>Fix continously reloading charts</li>
+                <li>Upgrade dependencies</li>
+            </ul>
+
+            <h5>6.1.1</h5>
             <p>Fix user profile page title</p>
 
             <h5>6.1.0</h5>
