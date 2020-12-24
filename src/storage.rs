@@ -38,7 +38,7 @@ impl Storage for S3 {
         let path = Uuid::new_v4().to_string();
         let (data, code) =
             self.bucket
-                .put_object_blocking(format!("{}/{}", dir, path), content, content_type)?;
+                .put_object_with_content_type_blocking(format!("{}/{}", dir, path), content, content_type)?;
         if code > 304 {
             warn!(
                 "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -70,7 +70,7 @@ impl Storage for S3 {
 
 impl S3 {
     pub fn new(aws_access_key: &str, aws_secret_key: &str) -> Result<S3, VinotecaError> {
-        let creds = awscreds::Credentials::new_blocking(
+        let creds = s3::creds::Credentials::new(
             Some(aws_access_key),
             Some(aws_secret_key),
             None,
