@@ -22,7 +22,6 @@ const COLORS: Record<string, string> = {
     purple: "rgba(145, 30, 180, 0.8)",
 };
 
-const WHITE = "#f8f8f8";
 const TRANSLUCENT_WHITE = "rgba(240, 240, 240, 0.9)";
 const TRANSLUCENT_GRAY = "rgba(200, 200, 200, 0.9)";
 
@@ -80,7 +79,6 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
                         COLORS.blue,
                         COLORS.purple,
                         COLORS.orange,
-
                     ],
                     borderWidth: 0,
                     data: chartData,
@@ -113,7 +111,7 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
         };
 
         new Chart(canvasRef.current, config);
-    }, [canvasRef, data]);
+    });
 
     return (
         <div className="canvas-container">
@@ -191,7 +189,7 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
         };
 
         new Chart(canvasRef.current, config);
-    }, [canvasRef, data]);
+    });
 
     return (
         <canvas height={height} ref={canvasRef} />
@@ -288,7 +286,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
 
 
         new Chart(canvasRef.current, config);
-    }, [canvasRef, data, logger, seriesLabels]);
+    });
 
     return (
         <div className="canvas-container">
