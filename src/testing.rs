@@ -44,6 +44,15 @@ macro_rules! rocket_test {
     }};
 }
 
+/// Doesn't include database access
+pub fn simple_rocket() -> Rocket {
+    let config = Config::build(Environment::Development)
+        .workers(1)
+        .finalize()
+        .unwrap();
+    rocket::custom(config)
+}
+
 /// `MediaDir`
 pub fn create_test_rocket() -> Rocket {
     test_rocket_config()
@@ -51,7 +60,7 @@ pub fn create_test_rocket() -> Rocket {
         .attach(AdHoc::on_attach("Setup test db", setup_test_db))
 }
 
-fn test_rocket_config() -> rocket::Rocket {
+fn test_rocket_config() -> Rocket {
     let mut database_config = HashMap::new();
     let mut databases = HashMap::new();
     let rocket_test_db = env::var("ROCKET_TEST_DB").expect("Test database connection string");

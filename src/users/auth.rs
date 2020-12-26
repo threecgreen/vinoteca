@@ -71,14 +71,14 @@ mod test {
     use rocket::local::Client;
 
     #[get("/")]
-    fn test_auth(auth: Auth) -> Json<i32> {
+    fn handle_auth(auth: Auth) -> Json<i32> {
         Json(auth.id)
     }
 
     #[test]
     fn missing_cookie() {
         rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![test_auth]);
+            let rocket = rocket.mount("/", routes![handle_auth]);
             let client = Client::new(rocket).expect("rocket client");
             let req = client.get("/");
             let response = req.dispatch();
@@ -89,7 +89,7 @@ mod test {
     #[test]
     fn missing_user() {
         rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![test_auth]);
+            let rocket = rocket.mount("/", routes![handle_auth]);
             let client = Client::new(rocket).expect("rocket client");
             let req = client
                 .get("/")
@@ -103,7 +103,7 @@ mod test {
     #[test]
     fn authorize() {
         rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![test_auth]);
+            let rocket = rocket.mount("/", routes![handle_auth]);
             let client = Client::new(rocket).expect("rocket client");
             let req = client
                 .get("/")

@@ -59,7 +59,7 @@ impl<'r> Responder<'r> for VinotecaError {
                 name: Uncased::new("WWW-Authenticate"),
                 value: Cow::from("cookie"),
             });
-        };
+        }
         Ok(res)
     }
 }
@@ -156,5 +156,58 @@ impl Error for VinotecaError {
 
     fn cause(&self) -> Option<&dyn Error> {
         None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::testing::simple_rocket;
+
+    use rocket::{
+        http::{Accept, ContentType},
+        local::Client,
+    };
+
+    #[get("/")]
+    fn handle_err() -> Result<(), VinotecaError> {
+        Err(VinotecaError::Unauthorized("No user".to_owned()))
+    }
+
+    fn error_rocket_client() -> Client {
+        let rocket = simple_rocket()
+            .mount("/", routes![handle_err])
+            .register(catchers![crate::catchers::unauthorized]);
+        let client = Client::new(rocket).unwrap();
+        client
+    }
+
+    #[test]
+    fn accept_html_bad_request_receives_html() {
+        let client = error_rocket_client();
+        let mut req = client.get("/");
+        req.add_header(Accept::HTML);
+        let response = req.dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+        assert_eq!(response.content_type(), Some(ContentType::HTML));
+    }
+
+    #[test]
+    fn plain_bad_request_receives_json() {
+        let client = error_rocket_client();
+        let req = client.get("/");
+        let response = req.dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+        assert_eq!(response.content_type(), Some(ContentType::JSON));
+    }
+
+    #[test]
+    fn accept_json_bad_request_receives_json() {
+        let client = error_rocket_client();
+        let mut req = client.get("/");
+        req.add_header(Accept::JSON);
+        let response = req.dispatch();
+        assert_eq!(response.status(), Status::Unauthorized);
+        assert_eq!(response.content_type(), Some(ContentType::JSON));
     }
 }
