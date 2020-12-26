@@ -1,3 +1,5 @@
+use crate::static_handlers;
+
 use bcrypt::BcryptError;
 use image::ImageError;
 use rocket::http::{uncased::Uncased, Header, Status};
@@ -32,26 +34,33 @@ pub enum VinotecaError {
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
 
 impl<'r> Responder<'r> for VinotecaError {
-    fn respond_to(self, _r: &Request) -> response::Result<'static> {
-        Json(self.clone()).respond_to(_r).map(|mut res| {
-            res.set_status(match self {
-                VinotecaError::NotFound(_) => Status::NotFound,
-                VinotecaError::Internal(_) => Status::InternalServerError,
-                VinotecaError::MissingConstraint(_) => Status::BadRequest,
-                VinotecaError::BadRequest(_) => Status::BadRequest,
-                VinotecaError::Forbidden(_) => Status::Forbidden,
-                VinotecaError::Unauthorized(_) => Status::Unauthorized,
+    fn respond_to(self, req: &Request) -> response::Result<'static> {
+        // Return JSON or HTML depending on accept header
+        let mut res = if req
+            .accept()
+            .map_or(false, |a| a.preferred().media_type().is_html())
+        {
+            static_handlers::home().respond_to(req)
+        } else {
+            Json(self.clone()).respond_to(req)
+        }?;
+        res.set_status(match self {
+            VinotecaError::NotFound(_) => Status::NotFound,
+            VinotecaError::Internal(_) => Status::InternalServerError,
+            VinotecaError::MissingConstraint(_) => Status::BadRequest,
+            VinotecaError::BadRequest(_) => Status::BadRequest,
+            VinotecaError::Forbidden(_) => Status::Forbidden,
+            VinotecaError::Unauthorized(_) => Status::Unauthorized,
+        });
+        if let VinotecaError::Unauthorized(_) = self {
+            // Response with 401 Unauthorized must set this header
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
+            res.set_header(Header {
+                name: Uncased::new("WWW-Authenticate"),
+                value: Cow::from("cookie"),
             });
-            if let VinotecaError::Unauthorized(_) = self {
-                // Response with 401 Unauthorized must set this header
-                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
-                res.set_header(Header {
-                    name: Uncased::new("WWW-Authenticate"),
-                    value: Cow::from("cookie"),
-                });
-            }
-            res
-        })
+        };
+        Ok(res)
     }
 }
 
