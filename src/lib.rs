@@ -146,7 +146,11 @@ pub fn create_rocket() -> rocket::Rocket {
             ],
         )
         // These errors should only happen with rest requests so they also return JSON
-        .register(catchers![catchers::forbidden, catchers::unauthorized]);
+        .register(catchers![
+            catchers::unauthorized,
+            catchers::forbidden,
+            catchers::not_found
+        ]);
     let static_dir = rocket
         .config()
         .get_str("static_dir")

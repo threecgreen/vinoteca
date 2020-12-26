@@ -9,3 +9,8 @@ pub fn unauthorized() -> VinotecaError {
 pub fn forbidden() -> VinotecaError {
     VinotecaError::Forbidden("Bad email or password".to_owned())
 }
+
+#[catch(404)]
+pub fn not_found() -> VinotecaError {
+    VinotecaError::NotFound("The requested resource could not be found".to_owned())
+}

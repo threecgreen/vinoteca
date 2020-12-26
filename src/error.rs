@@ -175,9 +175,7 @@ mod tests {
     }
 
     fn error_rocket_client() -> Client {
-        let rocket = simple_rocket()
-            .mount("/", routes![handle_err])
-            .register(catchers![crate::catchers::unauthorized]);
+        let rocket = simple_rocket().mount("/", routes![handle_err]);
         let client = Client::new(rocket).unwrap();
         client
     }
