@@ -26,7 +26,7 @@ than the Excel spreadsheet he was using.
     ```
  1. Build the web server
     ```bash
-    $ cargo buildj
+    $ cargo build
     ```
  1. Generate contracts
     ```bash
@@ -41,7 +41,7 @@ than the Excel spreadsheet he was using.
     ```bash
     $ cargo run
     ```
- 1. Navigate to [localhost:8000](http://localhost:800). The service will run
+ 1. Navigate to [localhost:8000](http://localhost:8000). The service will run
     the necessary database migrations on startup.
 
 ## Configuration
@@ -54,7 +54,7 @@ Required configurations:
 Optional configurations
  * Secret key for generating encrypted cookies
  * Log level
- * Number of workers
+ * Number of worker threads
 
 ## Acknowledgements
 The background image on the main page was taken by [CollideStorm](https://www.reddit.com/r/wine/comments/6z7d6c/one_of_my_favorite_road_trips_i_have_ever_done_i/)
