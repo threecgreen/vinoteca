@@ -9,6 +9,10 @@
         <changefreq>weekly</changefreq>
     </url>
     <url>
+        <loc>https://vinote.ca/about/changelog</loc>
+        <changefreq>weekly</changefreq>
+    </url>
+    <url>
         <loc>https://vinote.ca/login</loc>
         <changefreq>weekly</changefreq>
     </url>
