@@ -42,6 +42,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
                 />
                 <Btn onClick={ clear }
                     classes={ ["red-bg", "right"] }
+                    disabled={ !fileName }
                 >
                     Clear
                 </Btn>
