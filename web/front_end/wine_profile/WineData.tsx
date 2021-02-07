@@ -5,6 +5,7 @@ import { capitalizeFirstLetter } from "lib/utils";
 import React from "react";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { CheckboxInput } from "components/inputs/CheckboxInput";
+import { Row } from "components/Grid";
 
 interface IProps {
     color: string;
@@ -65,11 +66,13 @@ export const WineData: React.FC<IProps> = (props) => (
         { props.why &&
             <h6><b>Why:</b> { props.why }</h6>
         }
-        <CheckboxInput isChecked={ props.isInShoppingList }
-            name="is-in-shopping-list"
-            text="In shopping list"
-            onClick={ props.onIsInShoppingListChange }
-        />
+        <Row>
+            <CheckboxInput isChecked={ props.isInShoppingList }
+                name="is-in-shopping-list"
+                text="In shopping list"
+                onClick={ props.onIsInShoppingListChange }
+            />
+        </Row>
     </>
 );
 WineData.displayName = "WineData";
