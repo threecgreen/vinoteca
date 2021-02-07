@@ -12,6 +12,15 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.1.5</h5>
+            <ul className="bullets">
+                <li>Fix counting of varieties in &ldquo;Top&hellip;&rdquo; dashboards</li>
+                <li>Fix flashing dashboard components</li>
+                <li>Increase spacing of region input for new wines on mobile</li>
+                <li>Disable clear wine image button when there&rsquo;s no wine image</li>
+                <li>Improve spacing for &ldquo;In shopping list&rdquo; toggle</li>
+            </ul>
+
             <h5>6.1.4</h5>
             <p>Update sitemap</p>
 
