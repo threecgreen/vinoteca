@@ -74,7 +74,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, ..
     return (
         <TextInput name="Region"
             className="autocomplete"
-            s={ 5 } l={ 3 }
+            s={ 12 } m={ 5 } l={ 3 }
             inputRef={ inputRef }
             enabled={ enabled }
             value={ value }

@@ -166,6 +166,10 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => (
             required={ true }
             producerText={ data.producer }
         />
+        <VitiAreaInput value={ data.vitiArea }
+            onChange={ (vitiArea) => dispatch({type: "setVitiArea", vitiArea}) }
+            regionText={ data.region }
+        />
         <RatingInput isChecked={ data.isRatingEnabled }
             onIsCheckedChange={ (isRatingEnabled) => dispatch({
                 type: "setIsRatingEnabled",
@@ -173,10 +177,6 @@ export const WineInputs: React.FC<IProps> = ({data, dispatch}) => (
             }) }
             rating={ data.rating }
             onRatingChange={ (rating) => dispatch({type: "setRating", rating}) }
-        />
-        <VitiAreaInput value={ data.vitiArea }
-            onChange={ (vitiArea) => dispatch({type: "setVitiArea", vitiArea}) }
-            regionText={ data.region }
         />
         <TextInput name="Description" className=""
             value={ data.description }

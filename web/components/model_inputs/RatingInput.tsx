@@ -23,7 +23,7 @@ export const RatingInput: React.FC<IProps> = ({
     }, [ref]);
 
     return (
-        <Col s={ 12 } m={ 4 } l={ 2 } classes={ ["range-field" ] }>
+        <Col s={ 12 } m={ 5 } l={ 2 } classes={ ["range-field" ] }>
             <CheckboxInput name="has-rating"
                 text="Rating"
                 isChecked={ isChecked }
