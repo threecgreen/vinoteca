@@ -111,7 +111,7 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
         };
 
         new Chart(canvasRef.current, config);
-    });
+    }, [data]);
 
     return (
         <div className="canvas-container">
@@ -124,9 +124,10 @@ PieChart.displayName = "PieChart";
 interface IBarChartProps {
     data: IChartInput[];
     height: string;
+    decimalPlaces: number;
 }
 
-export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
+export const BarChart: React.FC<IBarChartProps> = ({data, height, decimalPlaces}) => {
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
 
     React.useEffect(() => {
@@ -183,13 +184,21 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height}) => {
                     bodyFontSize: 12,
                     titleFontFamily: FONT_FAMILY,
                     titleFontSize: 14,
+                    callbacks: {
+                        label: (tooltipItem, _data) => {
+                            if (typeof tooltipItem.xLabel === "number") {
+                                return tooltipItem.xLabel.toFixed(decimalPlaces);
+                            }
+                            return tooltipItem.xLabel ?? "";
+                        }
+                    }
                 },
             },
             type: "horizontalBar",
         };
 
         new Chart(canvasRef.current, config);
-    });
+    }, [data, decimalPlaces]);
 
     return (
         <canvas height={height} ref={canvasRef} />
@@ -250,6 +259,14 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
                     bodyFontSize: 12,
                     titleFontFamily: FONT_FAMILY,
                     titleFontSize: 14,
+                    callbacks: {
+                        label: (tooltipItem, _data) => {
+                            if (typeof tooltipItem.yLabel === "number") {
+                                return tooltipItem.yLabel.toFixed(2);
+                            }
+                            return tooltipItem.yLabel ?? "";
+                        }
+                    }
                 },
             },
             type: "line",
@@ -286,7 +303,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
 
 
         new Chart(canvasRef.current, config);
-    });
+    }, [data, logger, seriesLabels]);
 
     return (
         <div className="canvas-container">

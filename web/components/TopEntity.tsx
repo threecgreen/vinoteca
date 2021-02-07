@@ -49,7 +49,7 @@ export function TopEntity<Entity extends IEntity>({
         }
 
         void fetchTopEntities();
-    });
+    }, [fetchEntity, logger, name]);
 
     if (!hasLoaded) {
         return <PreloaderCirc color={ preloaderColor } />;
@@ -93,19 +93,22 @@ export function TopEntity<Entity extends IEntity>({
                 <TabPanel id={tabIdxer(1)}>
                     <BarChart height={canvasHeight}
                         data={topEntities.map((ent) => ({ label: ent.name, value: ent.quantity }))}
+                        decimalPlaces={ 0 }
                     />
                 </TabPanel>
                 <TabPanel id={tabIdxer(2)}>
                     <BarChart height={canvasHeight}
                         data={topEntities.map((ent) => ({ label: ent.name, value: ent.varieties }))}
+                        decimalPlaces={ 0 }
                     />
                 </TabPanel>
                 <TabPanel id={tabIdxer(3)}>
                     <BarChart height={canvasHeight}
                         data={ topEntities.map((ent) => ({
                             label: ent.name,
-                            value: Number.parseFloat(ent.avgPrice?.toFixed(2) ?? "0"),
+                            value: ent.avgPrice ?? 0.0,
                         })) }
+                        decimalPlaces={ 2 }
                     />
                 </TabPanel>
             </>
