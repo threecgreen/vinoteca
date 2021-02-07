@@ -20,8 +20,7 @@ macro_rules! top_table {
                 $id,
                 $name,
                 sql::<BigInt>("sum(purchases.quantity)"),
-                // Should probably be distinct
-                sql::<BigInt>("count(wines.id)"),
+                sql::<BigInt>("count(DISTINCT wines.id)"),
                 sql::<Nullable<Double>>("avg(purchases.price)"),
             ))
             .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
