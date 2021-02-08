@@ -16,7 +16,7 @@ pub struct Auth {
     pub id: i32,
 }
 
-pub static COOKIE_NAME: &str = "vinoteca-auth";
+pub const COOKIE_NAME: &str = "vinoteca-auth";
 
 impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     type Error = Json<VinotecaError>;

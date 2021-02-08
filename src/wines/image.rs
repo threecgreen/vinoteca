@@ -1,4 +1,4 @@
-use super::update::validate_owns_wine;
+use super::{update::validate_owns_wine, Rotation, RotationForm};
 use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
@@ -18,8 +18,8 @@ pub struct Image {
     pub data: Vec<u8>,
 }
 
-static WINE_DIR: &str = "wine_images";
-static MAX_IMAGE_DIM: u32 = 1280;
+const WINE_DIR: &str = "wine_images";
+const MAX_IMAGE_DIM: u32 = 1280;
 
 /// Auth must be handled before this function is called
 pub fn handle_image(
@@ -31,7 +31,7 @@ pub fn handle_image(
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(image)?;
     // AWS
-    let path = storage.put_object(WINE_DIR, &image, "image/jpeg")?;
+    let path = storage.create_object(WINE_DIR, &image, "image/jpeg")?;
 
     diesel::update(wines::table)
         .filter(wines::id.eq(wine_id))
@@ -51,10 +51,7 @@ pub fn post(
 ) -> RestResult<String> {
     validate_owns_wine(auth, id, &connection)?;
 
-    let existing_image_path = wines::table
-        .filter(wines::id.eq(id))
-        .select(wines::image)
-        .first::<Option<String>>(&*connection)?;
+    let existing_image_path = get_image_path(auth, id, &connection)?;
 
     let path = handle_image(id, image, &*config.storage, &connection)?;
     if let Some(existing_image_path) = existing_image_path {
@@ -64,13 +61,30 @@ pub fn post(
     Ok(Json(path))
 }
 
+#[patch("/wines/<id>/image", format = "json", data = "<rotation_form>")]
+pub fn rotate(
+    auth: Auth,
+    id: i32,
+    rotation_form: Json<RotationForm>,
+    connection: DbConn,
+    config: State<Config>,
+) -> RestResult<String> {
+    let path = get_image_path(auth, id, &connection).and_then(|file_path| {
+        file_path.ok_or_else(|| VinotecaError::NotFound(format!("No wine with id {}", id)))
+    })?;
+    let rotation = rotation_form.into_inner().rotation;
+
+    let image_bytes = config
+        .storage
+        .get_object(&format!("{}/{}", WINE_DIR, path))?;
+    let rotated_image = rotate_image(image_bytes, rotation)?;
+    config.storage.update_object(&path, &rotated_image)?;
+    Ok(Json(path))
+}
+
 #[delete("/wines/<id>/image")]
 pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
-    let file_path = wines::table
-        .filter(wines::user_id.eq(auth.id))
-        .filter(wines::id.eq(id))
-        .select(wines::image)
-        .first::<Option<String>>(&*connection)?;
+    let file_path = get_image_path(auth, id, &connection)?;
 
     match file_path {
         Some(file_path) => {
@@ -85,6 +99,18 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
         }
         None => Ok(Json(())),
     }
+}
+
+fn get_image_path(
+    auth: Auth,
+    id: i32,
+    connection: &DbConn,
+) -> Result<Option<String>, VinotecaError> {
+    Ok(wines::table
+        .filter(wines::user_id.eq(auth.id))
+        .filter(wines::id.eq(id))
+        .select(wines::image)
+        .first::<Option<String>>(&**connection)?)
 }
 
 pub fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
@@ -202,6 +228,35 @@ fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
                 e, mime_type, orientation
             );
             VinotecaError::Internal("Failed to reformat image".to_owned())
+        })?;
+    Ok(reformatted_image)
+}
+
+fn rotate_image(raw: Vec<u8>, rotation: Rotation) -> Result<Vec<u8>, VinotecaError> {
+    let decoded_image = image::io::Reader::new(Cursor::new(raw.as_slice()))
+        .with_guessed_format()?
+        .decode()?;
+    match rotation {
+        Rotation::Clockwise90 => {
+            decoded_image.rotate90();
+        }
+        Rotation::CounterClockwise90 => {
+            decoded_image.rotate270();
+        }
+        Rotation::Clockwise180 => {
+            decoded_image.rotate180();
+        }
+    };
+    let mut reformatted_image = Vec::new();
+    let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
+    decoded_image
+        .write_to(
+            &mut reformatted_image_writer,
+            image::ImageOutputFormat::Jpeg(100),
+        )
+        .map_err(|e| {
+            warn!("Failed to rotate image: {:?}. Rotation: {:?}", e, rotation);
+            VinotecaError::Internal("Failed to rotate image".to_owned())
         })?;
     Ok(reformatted_image)
 }

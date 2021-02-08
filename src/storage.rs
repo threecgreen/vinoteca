@@ -10,12 +10,16 @@ use mockall::{automock, predicate::*};
 pub trait Storage: Send + Sync + 'static {
     /// Store object `content` in `dir` at a generated path. Returns the path where
     /// `content` is stored.
-    fn put_object(
+    fn create_object(
         &self,
         dir: &str,
         content: &[u8],
         content_type: &str,
     ) -> Result<String, VinotecaError>;
+    /// read object at `path`
+    fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError>;
+    /// update object at `path`
+    fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError>;
     /// Delete object at `path`.
     fn delete_object(&self, path: &str) -> Result<(), VinotecaError>;
 }
@@ -26,19 +30,21 @@ pub struct S3 {
     bucket: S3Bucket,
 }
 
-static BUCKET_NAME: &str = "vinoteca";
+const BUCKET_NAME: &str = "vinoteca";
 
 impl Storage for S3 {
-    fn put_object(
+    fn create_object(
         &self,
         dir: &str,
         content: &[u8],
         content_type: &str,
     ) -> Result<String, VinotecaError> {
         let path = Uuid::new_v4().to_string();
-        let (data, code) =
-            self.bucket
-                .put_object_with_content_type_blocking(format!("{}/{}", dir, path), content, content_type)?;
+        let (data, code) = self.bucket.put_object_with_content_type_blocking(
+            format!("{}/{}", dir, path),
+            content,
+            content_type,
+        )?;
         if code > 304 {
             warn!(
                 "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -51,6 +57,34 @@ impl Storage for S3 {
         }
     }
 
+    fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError> {
+        let (data, code) = self.bucket.get_object_blocking(path)?;
+        if code > 304 {
+            warn!(
+                "Failed to get file from S3. Code: {}, AWSResponseData: {:?}",
+                code,
+                String::from_utf8(data)
+            );
+            Err(VinotecaError::Internal("Error getting file".to_owned()))
+        } else {
+            Ok(data)
+        }
+    }
+
+    fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError> {
+        let (data, code) = self.bucket.put_object_blocking(path, content)?;
+        if code > 304 {
+            warn!(
+                "Error saving image. Code: {}, AWSResponseData: {:?}",
+                code,
+                String::from_utf8(data)
+            );
+            Err(VinotecaError::Internal("Error saving image".to_owned()))
+        } else {
+            Ok(())
+        }
+    }
+
     fn delete_object(&self, path: &str) -> Result<(), VinotecaError> {
         let (data, code) = self.bucket.delete_object_blocking(path)?;
         if code > 304 {
@@ -59,9 +93,7 @@ impl Storage for S3 {
                 code,
                 String::from_utf8(data)
             );
-            Err(VinotecaError::Internal(
-                "Error deleting existing file".to_owned(),
-            ))
+            Err(VinotecaError::Internal("Error deleting file".to_owned()))
         } else {
             Ok(())
         }

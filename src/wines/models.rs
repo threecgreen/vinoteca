@@ -58,3 +58,15 @@ pub struct InventoryWine {
     #[sql_type = "Nullable<Double>"]
     pub last_purchase_price: Option<f64>,
 }
+
+#[derive(Debug, Deserialize, TypeScriptify)]
+pub enum Rotation {
+    Clockwise90,
+    CounterClockwise90,
+    Clockwise180,
+}
+
+#[derive(Debug, Deserialize, TypeScriptify)]
+pub struct RotationForm {
+    pub rotation: Rotation,
+}

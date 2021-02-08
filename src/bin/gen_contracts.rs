@@ -10,7 +10,7 @@ use vinoteca::users::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use vinoteca::version::Version;
 use vinoteca::viti_areas::VitiAreaStats;
 use vinoteca::wine_grapes::{AssociatedGrape, WineGrapesForm};
-use vinoteca::wines::{InventoryWine, WineCount, WinePatchForm};
+use vinoteca::wines::{InventoryWine, Rotation, RotationForm, WineCount, WinePatchForm};
 
 use std::borrow::Cow;
 use std::error;
@@ -90,6 +90,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         AssociatedGrape::type_script_ify()
     )?;
     // Write discriminated unions normally
+    writeln!(&mut type_def_writer, "{}", Rotation::type_script_ify())?;
     writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
     writeln!(&mut type_def_writer, "{}", WinePatchForm::type_script_ify())?;
     // Other models
@@ -104,6 +105,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         MostCommonPurchaseDate::type_script_ify(),
     )?;
     write_interface(&mut type_def_writer, RecentPurchase::type_script_ify())?;
+    write_interface(&mut type_def_writer, RotationForm::type_script_ify())?;
     write_interface(&mut type_def_writer, generic::TopEntity::type_script_ify())?;
     write_interface(&mut type_def_writer, PurchaseCount::type_script_ify())?;
     write_interface(&mut type_def_writer, TotalLiters::type_script_ify())?;

@@ -135,6 +135,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::search,
                 wines::varieties,
                 wines::image::post,
+                wines::image::rotate,
                 wines::image::delete,
                 wine_grapes::get,
                 wine_grapes::post,
