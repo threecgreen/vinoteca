@@ -119,12 +119,7 @@ export async function post<B, R>(
     serializer?: Serializer<B>,
     parser?: Parser<R>,
 ): Promise<R> {
-    const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body, serializer),
-        headers: HEADERS,
-        method: "POST",
-    });
-    return (await checkResponse(response, parser)).unwrap();
+    return (await postResult(url, body, params, serializer, parser)).unwrap();
 }
 
 /**
@@ -177,12 +172,7 @@ export async function put<B, R>(
     serializer?: (val: B) => string,
     parser?: (text: string) => R,
 ): Promise<R> {
-    const response = await fetch(url + encodeParams(params), {
-        body: encodeJson(body, serializer),
-        headers: HEADERS,
-        method: "PUT",
-    });
-    return (await checkResponse(response, parser)).unwrap();
+    return (await putResult(url, body, params, serializer, parser)).unwrap();
 }
 
 export async function putResult<B, R>(
@@ -214,6 +204,17 @@ export async function patch<Response>(url: string, body: Record<string, unknown>
         method: "PATCH",
     });
     return (await checkResponse(response)).unwrap();
+}
+
+export async function patchResult<Response>(
+    url: string, body: Record<string, unknown>, params: IQueryParams= {}
+): Promise<RestResult<Response>> {
+    const response = await fetch(url + encodeParams(params), {
+        body: encodeJson(body),
+        headers: HEADERS,
+        method: "PATCH",
+    });
+    return await checkResponse(response);
 }
 
 export async function delete_<Response>(url: string, params: IQueryParams = {}): Promise<Response> {

@@ -1,7 +1,8 @@
-import { IInventoryWine, IWine, IWineCount, IWineForm, WinePatchForm } from "generated/rest";
+import { IInventoryWine, IWine, IWineCount, IWineForm, Rotation,
+         WinePatchForm } from "generated/rest";
 import { RestResult } from "lib/result";
 import { nonNulls } from "./common";
-import { delete_, get, getResult, patch, postForm, putForm } from "./requests";
+import { delete_, get, getResult, patch, patchResult, postForm, putForm } from "./requests";
 import { Json } from "./serde";
 
 const BASE_URL = "/rest/wines";
@@ -88,6 +89,10 @@ export async function uploadWineImage(id: number, image: File): Promise<string> 
     const form = new FormData();
     form.append("image", image);
     return postForm(`${BASE_URL}/${id}/image`, form);
+}
+
+export async function rotateWineImage(id: number, rotation: Rotation): Promise<RestResult<string>> {
+    return patchResult(`${BASE_URL}/${id}/image`, {rotation});
 }
 
 export async function deleteWineImage(id: number): Promise<void> {
