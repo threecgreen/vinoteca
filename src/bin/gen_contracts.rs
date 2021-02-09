@@ -89,8 +89,14 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         "{}",
         AssociatedGrape::type_script_ify()
     )?;
+    let rotation_def = Rotation::type_script_ify();
+    writeln!(
+        &mut type_def_writer,
+        "{}",
+        // Remove last semi-colon
+        &rotation_def[..rotation_def.len() - 1]
+    )?;
     // Write discriminated unions normally
-    writeln!(&mut type_def_writer, "{}", Rotation::type_script_ify())?;
     writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
     writeln!(&mut type_def_writer, "{}", WinePatchForm::type_script_ify())?;
     // Other models
