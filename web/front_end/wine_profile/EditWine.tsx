@@ -1,4 +1,4 @@
-import { CancelOrConfirmBtns } from "components/Buttons";
+import { Btn, CancelOrConfirmBtns } from "components/Buttons";
 import { Row } from "components/Grid";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { grapeReducer, GrapesInputs } from "components/model_inputs/GrapesInputs";
@@ -12,9 +12,10 @@ interface IProps {
     grapes: IWineGrape[];
     onSubmit: (wine: IWineData, grapes: IWineGrape[]) => Promise<void>;
     onCancel: () => void;
+    onEditWineImg: () => void;
 }
 
-export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) => {
+export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel, onEditWineImg}) => {
     const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,
         name: wine.name ?? "",
@@ -38,6 +39,14 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
                     <WineInputs data={ mutableWine }
                         dispatch={ wineDispatch }
                     />
+                    { wine.image &&
+                        <Btn classes={ ["yellow-btn"] }
+                            type="button"
+                            onClick={ onEditWineImg }
+                        >
+                            Edit image
+                        </Btn>
+                    }
                     <GrapesInputs grapes={ mutableGrapes }
                         dispatch={ grapesDispatch }
                     />

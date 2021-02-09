@@ -15,6 +15,7 @@ export interface IState {
 export type Mode =
     | {type: "display"}
     | {type: "editWine"}
+    | {type: "editWineImage"}
     | {type: "deleteWine"}
     | {type: "editPurchase", id: number}
     | {type: "deletePurchase", id: number}

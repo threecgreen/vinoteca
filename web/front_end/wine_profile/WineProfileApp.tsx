@@ -11,10 +11,10 @@ import {
     initPurchaseInputData, IPurchaseData, purchaseDataToForm
 } from "components/model_inputs/PurchaseInputs";
 import { Preloader } from "components/Preloader";
-import { IPurchase, IWine, IWineGrape } from "generated/rest";
+import { IPurchase, IWine, IWineGrape, Rotation } from "generated/rest";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "lib/api/purchases";
 import {
-    deleteWine, deleteWineImage, getWine, patchWine, updateWine, uploadWineImage
+    deleteWine, deleteWineImage, getWine, patchWine, rotateWineImage, updateWine, uploadWineImage
 } from "lib/api/wines";
 import { createWineGrapes, getWineGrapes } from "lib/api/wine_grapes";
 import { getNameAndType } from "lib/component_utils";
@@ -24,6 +24,7 @@ import { arrayHasChanged, hasChanged } from "lib/utils";
 import React from "react";
 import { InventoryChange } from "../inventory/InventoryTable";
 import { IWineData, wineDataToForm } from "../new_wine/WineInputs";
+import { EditImg } from "./EditImg";
 import { EditWine } from "./EditWine";
 import { GrapesTable } from "./GrapesTable";
 import { ModifyPurchase } from "./ModifyPurchase";
@@ -183,6 +184,16 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         }
     };
 
+    const onSubmitWineImgEdit = async (rotation: Rotation) => {
+        try {
+            await rotateWineImage(id, rotation);
+            logger.logInfo("Successfully edited wine image", {id, rotation});
+            dispatch({type: "setMode", mode: {type: "display"}});
+        } catch (e) {
+            logger.logError(`Error in editing wine image: ${e.message}`, {id, rotation});
+        }
+    }
+
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
@@ -330,70 +341,93 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
 
     // Displays relevant modal for editing/deleting
     const renderModal = (wine: IWine) => {
-        if (state.mode.type === "editWine") {
-            if (state.wine) {
+        switch (state.mode.type) {
+            case "editWine": {
+                if (state.wine) {
+                    return (
+                        <EditWine wine={ state.wine }
+                            grapes={ state.grapes }
+                            onSubmit={ onSubmitWineEdit }
+                            onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                            onEditWineImg={ () => dispatch({
+                                type: "setMode",
+                                mode: {type: "editWineImage"}
+                            }) }
+                        />
+                    );
+                }
+                return null;
+            }
+            case "editWineImage": {
+                if (state.wine && state.wine.image) {
+                    return (
+                        <EditImg imagePath={ state.wine.image }
+                            onSubmit={ onSubmitWineImgEdit }
+                            onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                        />
+                    )
+                }
+                return null;
+            }
+            case "deleteWine": {
+                if (state.wine) {
+                    return (
+                        <DeleteModal item="Wine"
+                            onYesClick={ onDeleteWine }
+                            onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                        />
+                    );
+                }
+                return null;
+            }
+            case "editPurchase": {
+                const purchaseId = state.mode.id;
+                const purchase = state.purchases.find((p) => p.id === purchaseId);
+                if (purchase) {
+                    return (
+                        <ModifyPurchase title="Edit purchase"
+                            displayInventoryBtn={ false }
+                            purchase={ purchase }
+                            onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                            onSubmit={ onSubmitPurchaseEdit }
+                        />
+                    );
+                }
+                return null;
+            }
+            case "deletePurchase": {
+                const purchaseId = state.mode.id;
+                const purchase = state.purchases.find((p) => p.id === purchaseId);
+                if (purchase) {
+                    return (
+                        <DeleteModal
+                            item="Purchase"
+                            onYesClick={ () => onDeletePurchase(purchaseId) }
+                            onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                        />
+                    );
+                }
+                return null;
+            }
+            case "addPurchase": {
+                const newPurchaseData = initPurchaseInputData();
+                const newPurchase: IPurchase = {
+                    ...newPurchaseData,
+                    id: 0,
+                    wineId: id,
+                    storeId: null,
+                };
                 return (
-                    <EditWine wine={ state.wine }
-                        grapes={ state.grapes }
-                        onSubmit={ onSubmitWineEdit }
+                    <ModifyPurchase title="Add purchase"
+                        displayInventoryBtn
+                        purchase={ newPurchase }
                         onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
+                        onSubmit={ (purchase) => onSubmitNewPurchase(wine, purchase) }
                     />
                 );
             }
-        } else if (state.mode.type === "deleteWine") {
-            if (state.wine) {
-                return (
-                    <DeleteModal item="Wine"
-                        onYesClick={ onDeleteWine }
-                        onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                    />
-                );
-            }
-        } else if (state.mode.type === "editPurchase") {
-            const purchaseId = state.mode.id;
-            const purchase = state.purchases.find((p) => p.id === purchaseId);
-            if (purchase) {
-                return (
-                    <ModifyPurchase title="Edit purchase"
-                        displayInventoryBtn={ false }
-                        purchase={ purchase }
-                        onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                        onSubmit={ onSubmitPurchaseEdit }
-                    />
-                );
-            }
-            return null;
-        } else if (state.mode.type === "deletePurchase") {
-            const purchaseId = state.mode.id;
-            const purchase = state.purchases.find((p) => p.id === purchaseId);
-            if (purchase) {
-                return (
-                    <DeleteModal
-                        item="Purchase"
-                        onYesClick={ () => onDeletePurchase(purchaseId) }
-                        onNoClick={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                    />
-                );
-            }
-            return null;
-        } else if (state.mode.type === "addPurchase") {
-            const newPurchaseData = initPurchaseInputData();
-            const newPurchase: IPurchase = {
-                ...newPurchaseData,
-                id: 0,
-                wineId: id,
-                storeId: null,
-            };
-            return (
-                <ModifyPurchase title="Add purchase"
-                    displayInventoryBtn
-                    purchase={ newPurchase }
-                    onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                    onSubmit={ (purchase) => onSubmitNewPurchase(wine, purchase) }
-                />
-            );
-        } else {
-            return null;
+            default:
+                return null;
         }
     };
 
