@@ -12,8 +12,6 @@ export const WineImg: React.FC<IProps> = ({path, id, ...props}) => {
         <div className="card center" id={ `${id}` }
             style={ {
                 transform: `rotate(${rotation}deg)`,
-                maxHeight: "25rem",
-                maxWidth: "25rem"
             } }
         >
             <div className="card-image">

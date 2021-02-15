@@ -8,7 +8,7 @@ export const FixedActionList: React.FC<IChildrenProp> = (props) => {
     const divRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
 
     React.useEffect(() => {
-        new FloatingActionButton(divRef.current, {direction: "left"});
+        new FloatingActionButton(divRef.current, {direction: "left", hoverEnabled: false});
     }, [divRef]);
 
     return (
