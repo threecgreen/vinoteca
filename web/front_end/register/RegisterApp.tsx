@@ -14,7 +14,7 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
     const setUser = useSetUser();
     if (user) {
         return (
-            <div className="container">
+            <div className="text-container">
                 <h1>It looks like you&rsquo;re already logged in.</h1>
             </div>
         );
@@ -26,7 +26,7 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
     }
 
     return (
-        <div className="container">
+        <div className="text-container">
             <div className="center">
                 <h1 className="page-title med-heading">Register</h1>
 

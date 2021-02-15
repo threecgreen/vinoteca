@@ -26,7 +26,7 @@ const LoginApp: React.FC<RouteComponentProps> = () => {
     }
 
     return (
-        <div className="container">
+        <div className="text-container">
             <div className="center">
                 <h1 className="page-title med-heading">Login</h1>
 

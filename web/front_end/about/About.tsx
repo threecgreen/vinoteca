@@ -13,7 +13,7 @@ export const About: React.FC<RouteComponentProps> = () => {
     const subject = "vinoteca bug";
 
     return (
-        <div className="container">
+        <div className="text-container">
             <h1 className="page-title med-heading">About</h1>
 
             <div className="section">

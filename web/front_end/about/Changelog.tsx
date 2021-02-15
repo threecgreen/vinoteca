@@ -9,8 +9,15 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
     useCanonical("/about/changelog");
 
     return (
-        <div className="container">
+        <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
+
+            <h5>6.2.0</h5>
+            <ul className="bullets">
+                <li>Add ability to edit rotation of wine images</li>
+                <li>Use narrower content width for text-only pages</li>
+                <li>Change floating action buttons to always open on click because on hover was difficult to use</li>
+            </ul>
 
             <h5>6.1.5</h5>
             <ul className="bullets">

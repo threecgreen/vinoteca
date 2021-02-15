@@ -59,7 +59,7 @@ const UserProfileApp: React.FC = (_) => {
     }
 
     return (
-        <div className="container">
+        <div className="text-container">
             <Row>
                 <Col s={ 12 }>
                     <h3>Welcome back { user.name }</h3>
