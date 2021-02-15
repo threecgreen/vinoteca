@@ -9,7 +9,7 @@ rust()
     if [ "$CI" = "true" ]; then
         rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || return 0
     fi
-    cargo clippy || error_exit "Clippy error(s)"
+    cargo clippy -- --deny warnings || error_exit "Clippy error(s)"
     cd -
 }
 
