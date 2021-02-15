@@ -10,11 +10,12 @@ import { WineImg } from "./WineImg";
 
 interface IProps {
     imagePath: string;
+    imageCounter: number;
     onSubmit: (rotation: Rotation) => Promise<void>;
     onCancel: () => void;
 }
 
-export const EditImg: React.FC<IProps> = ({imagePath, onSubmit, onCancel}) => {
+export const EditImg: React.FC<IProps> = ({imagePath, imageCounter, onSubmit, onCancel}) => {
     const [rotation, setRotation] = React.useState(0);
     const [isSaving, setIsSaving] = React.useState(false);
 
@@ -25,6 +26,7 @@ export const EditImg: React.FC<IProps> = ({imagePath, onSubmit, onCancel}) => {
                     <h4>Rotate wine image</h4>
                     <div className="center-content">
                         <WineImg path={ imagePath }
+                            imageCounter={ imageCounter }
                             id=""
                             rotation={ rotation }
                         />

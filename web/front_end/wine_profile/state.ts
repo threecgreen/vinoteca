@@ -5,6 +5,8 @@ export interface IState {
     mode: Mode;
     grapes: IWineGrape[];
     wine?: IWine;
+    /** Incremented so image is refreshed when the user changes its rotation */
+    imageCounter: number;
     purchases: IPurchase[];
     error: VinotecaError | null;
 }
@@ -25,6 +27,7 @@ export const initState = (): IState => ({
     mode: {type: "display"},
     grapes: [],
     wine: undefined,
+    imageCounter: 0,
     purchases: [],
     error: null,
 });
@@ -34,7 +37,8 @@ export type Action =
     | {type: "setGrapes", grapes: IWineGrape[]}
     | {type: "setWine", wine: IWine}
     | {type: "setPurchases", purchases: IPurchase[]}
-    | {type: "setError", error: VinotecaError};
+    | {type: "setError", error: VinotecaError}
+    | {type: "updatedWineRotation"};
 
 export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
     switch (action.type) {
@@ -48,6 +52,8 @@ export const wineReducer: React.Reducer<IState, Action> = (state, action) => {
             return {...state, purchases: action.purchases};
         case "setError":
             return {...state, error: action.error};
+        case "updatedWineRotation":
+            return {...state, mode: {type: "display"}, imageCounter: state.imageCounter + 1};
         default:
             return state;
     }

@@ -189,7 +189,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
         try {
             await rotateWineImage(id, rotation);
             logger.logInfo("Successfully edited wine image", {id, rotation});
-            dispatch({type: "setMode", mode: {type: "display"}});
+            dispatch({type: "updatedWineRotation"});
         } catch (e) {
             logger.logError(`Error in editing wine image: ${e.message}`, {id, rotation});
         }
@@ -292,7 +292,12 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     );
 
     const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
-    const renderWineImg = () => <WineImg path={ state.wine?.image ?? "" } id="wine-img" />;
+    const renderWineImg = () => (
+        <WineImg path={ state.wine?.image ?? "" }
+            imageCounter={ state.imageCounter }
+            id="wine-img"
+        />
+    );
     const renderWineDetails = (wine: IWine) => {
         if (wine.image && state.grapes.length) {
             return (
@@ -359,6 +364,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 if (state.wine && state.wine.image) {
                     return (
                         <EditImg imagePath={ state.wine.image }
+                            imageCounter={ state.imageCounter }
                             onSubmit={ onSubmitWineImgEdit }
                             onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
                         />
