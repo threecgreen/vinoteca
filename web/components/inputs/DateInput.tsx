@@ -10,7 +10,7 @@ interface IProps {
     onChange: (date: Date | null) => void;
 }
 
-export const DateInput: React.FC<IProps> = ({ date, ...props }) => {
+export const DateInput: React.FC<IProps> = ({ date, name, ...props }) => {
     const logger = useLogger("DateInput");
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
     const onChangeRef = React.useRef((_: Date | null) => { return; })
