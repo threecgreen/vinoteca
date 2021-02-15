@@ -46,9 +46,5 @@ Rocket.toml
 *.tar.gz
 *.deb
 
-# Generated
-web/generated/rest.d.ts
-web/generated/constants.ts
-
 # Migration
 **/migration_conf.json
