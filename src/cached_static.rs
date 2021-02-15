@@ -131,9 +131,9 @@ impl CachedStaticFiles {
     }
 }
 
-impl Into<Vec<Route>> for CachedStaticFiles {
-    fn into(self) -> Vec<Route> {
-        let non_index = Route::ranked(self.rank, Method::Get, "/<path..>", self);
+impl From<CachedStaticFiles> for Vec<Route> {
+    fn from(files: CachedStaticFiles) -> Self {
+        let non_index = Route::ranked(files.rank, Method::Get, "/<path..>", files);
         vec![non_index]
     }
 }
