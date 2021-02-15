@@ -44,8 +44,12 @@ fn write_log_level(writer: &mut BufWriter<&File>) -> io::Result<()> {
 }
 
 fn write_contracts() -> Result<(), Box<dyn error::Error>> {
-    let const_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/generated/constants.ts"))?;
+    let const_file = File::create(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("web")
+            .join("generated")
+            .join("constants.ts"),
+    )?;
     let mut const_writer = BufWriter::new(&const_file);
     let vinoteca::version::Version { version, git_sha } = vinoteca::version::get().into_inner();
     write_const(&mut const_writer, "VERSION", &version)?;
@@ -53,10 +57,29 @@ fn write_contracts() -> Result<(), Box<dyn error::Error>> {
     Ok(write_const(&mut const_writer, "GIT_SHA", &git_sha)?)
 }
 
+fn write_enums() -> Result<(), Box<dyn error::Error>> {
+    let enum_file = File::create(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("web")
+            .join("generated")
+            .join("enums.ts"),
+    )?;
+    let mut enum_writer = BufWriter::new(&enum_file);
+    Ok(writeln!(
+        &mut enum_writer,
+        "{}",
+        Rotation::type_script_ify()
+    )?)
+}
+
 fn main() -> Result<(), Box<dyn error::Error>> {
     // Truncate file if it already exists
-    let type_def_file =
-        File::create(Path::new(env!("CARGO_MANIFEST_DIR")).join("web/generated/rest.d.ts"))?;
+    let type_def_file = File::create(
+        Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("web")
+            .join("generated")
+            .join("rest.d.ts"),
+    )?;
     let mut type_def_writer = BufWriter::new(&type_def_file);
     // Main db models
     write_interface(&mut type_def_writer, Color::type_script_ify())?;
@@ -89,13 +112,6 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         "{}",
         AssociatedGrape::type_script_ify()
     )?;
-    let rotation_def = Rotation::type_script_ify();
-    writeln!(
-        &mut type_def_writer,
-        "{}",
-        // Remove last semi-colon
-        &rotation_def[..rotation_def.len() - 1]
-    )?;
     // Write discriminated unions normally
     writeln!(&mut type_def_writer, "{}", VinotecaError::type_script_ify())?;
     writeln!(&mut type_def_writer, "{}", WinePatchForm::type_script_ify())?;
@@ -121,6 +137,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     write_interface(&mut type_def_writer, YearsPurchases::type_script_ify())?;
 
     write_contracts()?;
+    write_enums()?;
 
     Ok(())
 }

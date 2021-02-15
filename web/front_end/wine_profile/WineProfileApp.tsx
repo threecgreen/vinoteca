@@ -11,7 +11,8 @@ import {
     initPurchaseInputData, IPurchaseData, purchaseDataToForm
 } from "components/model_inputs/PurchaseInputs";
 import { Preloader } from "components/Preloader";
-import { IPurchase, IWine, IWineGrape, Rotation } from "generated/rest";
+import { Rotation } from "generated/enums";
+import { IPurchase, IWine, IWineGrape } from "generated/rest";
 import { createPurchase, deletePurchase, getPurchases, updatePurchase } from "lib/api/purchases";
 import {
     deleteWine, deleteWineImage, getWine, patchWine, rotateWineImage, updateWine, uploadWineImage

@@ -1,5 +1,5 @@
-import { IInventoryWine, IWine, IWineCount, IWineForm, Rotation,
-         WinePatchForm } from "generated/rest";
+import { Rotation } from "generated/enums";
+import { IInventoryWine, IWine, IWineCount, IWineForm, WinePatchForm } from "generated/rest";
 import { RestResult } from "lib/result";
 import { nonNulls } from "./common";
 import { delete_, get, getResult, patch, patchResult, postForm, putForm } from "./requests";

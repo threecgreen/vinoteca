@@ -1,16 +1,11 @@
 import { CancelOrConfirmBtns } from "components/Buttons";
-import { Range } from "materialize-css";
 import { Col, Row } from "components/Grid";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
+import { Rotation } from "generated/enums";
 import { handleSubmit } from "lib/component_utils";
+import { Range } from "materialize-css";
 import React from "react";
 import { WineImg } from "./WineImg";
-import { Rotation } from "generated/rest";
-// enum Rotation {
-//     Clockwise90 = "Clockwise90",
-//     CounterClockwise90 = "CounterClockwise90",
-//     Clockwise180 = "Clockwise180"
-// }
 
 interface IProps {
     imagePath: string;
