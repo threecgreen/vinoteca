@@ -74,11 +74,14 @@ pub fn rotate(
     })?;
     let rotation = rotation_form.into_inner().rotation;
 
-    let image_bytes = config
-        .storage
-        .get_object(&format!("{}/{}", WINE_DIR, path))?;
+    let full_path = format!("{}/{}", WINE_DIR, path);
+    let image_bytes = config.storage.get_object(&full_path)?;
     let rotated_image = rotate_image(image_bytes, rotation)?;
-    config.storage.update_object(&path, &rotated_image)?;
+    info!(
+        "Updated rotation of image at {} by rotation {:?}",
+        full_path, rotation,
+    );
+    config.storage.update_object(&full_path, &rotated_image)?;
     Ok(Json(path))
 }
 

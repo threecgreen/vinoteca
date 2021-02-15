@@ -59,7 +59,7 @@ pub struct InventoryWine {
     pub last_purchase_price: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, TypeScriptify)]
+#[derive(Debug, Clone, Copy, Deserialize, TypeScriptify)]
 pub enum Rotation {
     Clockwise90,
     CounterClockwise90,
