@@ -80,7 +80,7 @@ mod test {
     fn insert_wine() {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
-            mock.expect_put_object()
+            mock.expect_create_object()
                 .times(1)
                 .return_const(Ok("uuid123".to_owned()));
             let rocket = rocket.manage(Config::new(mock));
@@ -94,7 +94,7 @@ mod test {
     fn image_failure_still_saves_wine() {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
-            mock.expect_put_object()
+            mock.expect_create_object()
                 .times(1)
                 .return_const(Err(VinotecaError::Internal("No good".to_owned())));
             let rocket = rocket.manage(Config::new(mock));
