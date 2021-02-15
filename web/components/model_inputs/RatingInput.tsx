@@ -18,8 +18,7 @@ export const RatingInput: React.FC<IProps> = ({
 
     React.useEffect(() => {
         if (ref) {
-            const range = new Range(ref.current);
-            return () => range.destroy();
+            new Range(ref.current);
         }
     }, [ref]);
 

@@ -292,7 +292,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     );
 
     const renderGrapes = () => <GrapesTable grapes={ state.grapes } />;
-    const renderWineImg = () => <WineImg path={ state.wine?.image ?? "" } />;
+    const renderWineImg = () => <WineImg path={ state.wine?.image ?? "" } id="wine-img" />;
     const renderWineDetails = (wine: IWine) => {
         if (wine.image && state.grapes.length) {
             return (
@@ -350,10 +350,6 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                             grapes={ state.grapes }
                             onSubmit={ onSubmitWineEdit }
                             onCancel={ () => dispatch({type: "setMode", mode: {type: "display"}}) }
-                            onEditWineImg={ () => dispatch({
-                                type: "setMode",
-                                mode: {type: "editWineImage"}
-                            }) }
                         />
                     );
                 }
@@ -452,6 +448,14 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 >
                     <MaterialIcon iconName="add" />
                 </FloatingBtn>
+                { state.wine.image
+                    && <FloatingBtn onClick={ () =>
+                            dispatch({type: "setMode", mode: {type: "editWineImage"}}) }
+                        classes={ ["yellow-bg"] }
+                    >
+                        <MaterialIcon iconName="crop_rotate" />
+                    </FloatingBtn>
+                }
                 <FloatingBtn onClick={ () => dispatch({type: "setMode", mode: {type: "editWine"}}) }
                     classes={ ["yellow-bg"] }
                 >

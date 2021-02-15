@@ -12,10 +12,9 @@ interface IProps {
     grapes: IWineGrape[];
     onSubmit: (wine: IWineData, grapes: IWineGrape[]) => Promise<void>;
     onCancel: () => void;
-    onEditWineImg: () => void;
 }
 
-export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel, onEditWineImg}) => {
+export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) => {
     const [mutableWine, wineDispatch] = React.useReducer(wineInputReducer, {
         ...wine,
         name: wine.name ?? "",
@@ -39,14 +38,6 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel, on
                     <WineInputs data={ mutableWine }
                         dispatch={ wineDispatch }
                     />
-                    { wine.image &&
-                        <Btn classes={ ["yellow-btn"] }
-                            type="button"
-                            onClick={ onEditWineImg }
-                        >
-                            Edit image
-                        </Btn>
-                    }
                     <GrapesInputs grapes={ mutableGrapes }
                         dispatch={ grapesDispatch }
                     />

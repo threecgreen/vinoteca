@@ -1,5 +1,6 @@
 import { CancelOrConfirmBtns } from "components/Buttons";
 import { Col, Row } from "components/Grid";
+import { MaterialIcon } from "components/MaterialIcon";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { Rotation } from "generated/enums";
 import { handleSubmit } from "lib/component_utils";
@@ -21,10 +22,13 @@ export const EditImg: React.FC<IProps> = ({imagePath, onSubmit, onCancel}) => {
         <Modal onClose={ onCancel }>
             <ModalContent>
                 <Row>
-                    <h4>Edit wine image</h4>
-                    <WineImg path={ imagePath }
-                        rotation={ rotation }
-                    />
+                    <h4>Rotate wine image</h4>
+                    <div className="center-content">
+                        <WineImg path={ imagePath }
+                            id=""
+                            rotation={ rotation }
+                        />
+                    </div>
                     <RotationInput rotation={ rotation }
                         setRotation={ setRotation }
                     />
@@ -75,8 +79,7 @@ const RotationInput: React.FC<IRotationInputProps> = ({rotation, setRotation}) =
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
     React.useEffect(() => {
         if (inputRef) {
-            const range = new Range(inputRef.current);
-            return () => range.destroy();
+            new Range(inputRef.current);
         }
     }, [inputRef]);
 
@@ -89,15 +92,25 @@ const RotationInput: React.FC<IRotationInputProps> = ({rotation, setRotation}) =
 
     return (
         <Col s={ 12 } classes={ ["range-field"] }>
-            <label htmlFor="rotation" />
-            <p className="range-field">
-                <input type="range" name="rotation"
-                    ref={ inputRef }
-                    min={ -270 } max={ 270 } step={ 90 }
-                    value={ rotation }
-                    onChange={ onChange }
+            <label htmlFor="rotation">
+                <MaterialIcon iconName="rotate_left"
+                    className="left"
                 />
-            </p>
+                <div className="center">
+                    Rotation
+                </div>
+                <MaterialIcon iconName="rotate_right"
+                    className="right"
+                />
+                <p className="range-field">
+                    <input type="range" name="rotation"
+                        ref={ inputRef }
+                        min={ -270 } max={ 270 } step={ 90 }
+                        value={ rotation }
+                        onChange={ onChange }
+                    />
+                </p>
+            </label>
         </Col>
     );
 }

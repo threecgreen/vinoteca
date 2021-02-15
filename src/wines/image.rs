@@ -236,16 +236,10 @@ fn rotate_image(raw: Vec<u8>, rotation: Rotation) -> Result<Vec<u8>, VinotecaErr
     let decoded_image = image::io::Reader::new(Cursor::new(raw.as_slice()))
         .with_guessed_format()?
         .decode()?;
-    match rotation {
-        Rotation::Clockwise90 => {
-            decoded_image.rotate90();
-        }
-        Rotation::CounterClockwise90 => {
-            decoded_image.rotate270();
-        }
-        Rotation::Clockwise180 => {
-            decoded_image.rotate180();
-        }
+    let decoded_image = match rotation {
+        Rotation::Clockwise90 => decoded_image.rotate90(),
+        Rotation::CounterClockwise90 => decoded_image.rotate270(),
+        Rotation::Clockwise180 => decoded_image.rotate180(),
     };
     let mut reformatted_image = Vec::new();
     let mut reformatted_image_writer = Cursor::new(&mut reformatted_image);
