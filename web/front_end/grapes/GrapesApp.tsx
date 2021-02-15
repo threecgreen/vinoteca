@@ -100,7 +100,7 @@ const GrapesApp: React.FC = (_) => {
     }
 
     return (
-        <div className="container">
+        <div className="text-container">
             <Row>
                 <Col s={ 12 }>
                     <h1 className="page-title med-heading">Grapes</h1>

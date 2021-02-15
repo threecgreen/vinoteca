@@ -116,7 +116,7 @@ const ProducersApp: React.FC = () => {
         );
     }
     return (
-        <div className="container">
+        <div className="text-container">
             <Row>
                 <Col s={ 12 }>
                     <h1 className="page-title med-heading">Producers</h1>
