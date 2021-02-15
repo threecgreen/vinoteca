@@ -9,7 +9,8 @@ env:
 
 jobs:
   # Limit parallel jobs
-  pre-ci:
+  db-test-lock:
+    name: Database lock
     runs-on: ubuntu-latest
     steps:
       - name: 'Block Concurrent Executions'
@@ -21,26 +22,52 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  rust:
-    needs: pre-ci
+  rust-build:
+    name: Rust build
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build
-    - name: Test
-      run: cargo test
-    - name: Lint
-      run: |
-        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu || exit 0
-        cargo clippy
+      - uses: actions/checkout@v2
+      - name: Install nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+      - name: Build
+        run: cargo build
+
+  rust-test:
+    needs: db-test-lock
+    name: Rust test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+      - name: Test
+        run: cargo test
+
+  rust-lint:
+    name: Rust lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: clippy
+      - name: Lint
+        run: cargo clippy
 
   js:
     name: JS
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Generate contracts
