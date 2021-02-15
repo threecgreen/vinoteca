@@ -295,7 +295,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const renderWineImg = () => (
         <WineImg path={ state.wine?.image ?? "" }
             imageCounter={ state.imageCounter }
-            id="wine-img"
+            id="wine-image"
         />
     );
     const renderWineDetails = (wine: IWine) => {

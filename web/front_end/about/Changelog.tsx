@@ -12,6 +12,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.1</h5>
+            <p>Fix stretching of portrait wine images</p>
+
             <h5>6.2.0</h5>
             <ul className="bullets">
                 <li>Add ability to edit rotation of wine images</li>
