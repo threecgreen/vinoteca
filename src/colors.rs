@@ -28,7 +28,7 @@ pub async fn get(id: Option<i32>, name: Option<String>, conn: DbConn) -> RestRes
 }
 
 #[get("/colors/top")]
-pub fn top(auth: Auth, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub async fn top(auth: Auth, conn: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = 20;
     top_table!(
         colors::table
@@ -37,6 +37,7 @@ pub fn top(auth: Auth, connection: DbConn) -> RestResult<Vec<generic::TopEntity>
         colors::id,
         colors::name,
         limit,
-        connection
+        conn
     )
+    .await
 }

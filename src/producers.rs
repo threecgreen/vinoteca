@@ -11,50 +11,53 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]
-pub fn get(
+pub async fn get(
     auth: Auth,
     id: Option<i32>,
     name: Option<String>,
     region_id: Option<i32>,
     region_name: Option<String>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<Producer>> {
-    let mut query = producers::table
-        .inner_join(regions::table)
-        .filter(producers::user_id.eq(auth.id))
-        .into_boxed();
-    if let Some(id) = id {
-        query = query.filter(producers::id.eq(id));
-    }
-    if let Some(name) = name {
-        query = query.filter(producers::name.eq(name));
-    }
-    if let Some(region_id) = region_id {
-        query = query.filter(regions::id.eq(region_id))
-    }
-    if let Some(region_name) = region_name {
-        query = query.filter(regions::name.eq(region_name));
-    }
-    let final_query = query
-        .select((producers::id, producers::name, producers::region_id))
-        .distinct();
-    final_query
-        .load::<Producer>(&*connection)
-        .map(Json)
-        .map_err(VinotecaError::from)
+    conn.run(move |c| {
+        let mut query = producers::table
+            .inner_join(regions::table)
+            .filter(producers::user_id.eq(auth.id))
+            .into_boxed();
+        if let Some(id) = id {
+            query = query.filter(producers::id.eq(id));
+        }
+        if let Some(name) = name {
+            query = query.filter(producers::name.eq(name));
+        }
+        if let Some(region_id) = region_id {
+            query = query.filter(regions::id.eq(region_id))
+        }
+        if let Some(region_name) = region_name {
+            query = query.filter(regions::name.eq(region_name));
+        }
+        let final_query = query
+            .select((producers::id, producers::name, producers::region_id))
+            .distinct();
+        final_query
+            .load::<Producer>(c)
+            .map(Json)
+            .map_err(VinotecaError::from)
+    })
+    .await
 }
 
 #[get("/producers/<id>")]
-pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<Producer> {
-    let producer = get(auth, Some(id), None, None, None, connection)?;
+pub async fn get_one(auth: Auth, id: i32, conn: DbConn) -> RestResult<Producer> {
+    let producer = get(auth, Some(id), None, None, None, conn).await?;
     producer.into_first(&format!("Producer with id: {}", id))
 }
 
 #[get("/producers/top?<limit>")]
-pub fn top(
+pub async fn top(
     auth: Auth,
     limit: Option<usize>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
@@ -64,67 +67,82 @@ pub fn top(
         producers::id,
         producers::name,
         limit,
-        connection
+        conn
     )
+    .await
 }
 
 #[post("/producers", format = "json", data = "<producer_form>")]
-pub fn post(
+pub async fn post(
     auth: Auth,
-    producer_form: Json<ProducerForm>,
-    connection: DbConn,
+    producer_form: Json<ProducerForm<'_>>,
+    conn: DbConn,
 ) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
+    let new_producer = NewProducer::from((auth, producer_form));
     producer_form.validate()?;
 
-    diesel::insert_into(producers::table)
-        .values(NewProducer::from((auth, producer_form)))
-        .returning(producers::id)
-        .get_result::<i32>(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|producer_id| {
-            get(auth, Some(producer_id), None, None, None, connection)?
-                .into_first("Newly-created producer")
+    let producer_id = conn
+        .run(move |c| {
+            diesel::insert_into(producers::table)
+                .values(new_producer)
+                .returning(producers::id)
+                .get_result::<i32>(c)
+                .map_err(VinotecaError::from)
         })
+        .await?;
+    get(auth, Some(producer_id), None, None, None, conn)
+        .await?
+        .into_first("Newly-created producer")
 }
 
 #[put("/producers/<id>", format = "json", data = "<producer_form>")]
-pub fn put(
+pub async fn put(
     auth: Auth,
     id: i32,
     producer_form: Json<ProducerForm>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
     producer_form.validate()?;
 
-    validate_owns_producer(auth, id, &connection)?;
+    validate_owns_producer(auth, id, &conn).await?;
 
-    diesel::update(producers::table.filter(producers::id.eq(id)))
-        .set(NewProducer::from((auth, producer_form)))
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| {
-            get(auth, Some(id), None, None, None, connection)?.into_first("Edited producer")
-        })
+    conn.run(move |c| {
+        diesel::update(producers::table.filter(producers::id.eq(id)))
+            .set(NewProducer::from((auth, producer_form)))
+            .execute(c)
+            .map_err(VinotecaError::from)
+    })
+    .await?;
+
+    get(auth, Some(id), None, None, None, conn)
+        .await?
+        .into_first("Edited producer")
 }
 
 #[delete("/producers/<id>")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    validate_owns_producer(auth, id, &connection)?;
+pub async fn delete(auth: Auth, id: i32, conn: DbConn) -> Result<(), VinotecaError> {
+    validate_owns_producer(auth, id, &conn).await?;
 
-    diesel::delete(producers::table.filter(producers::id.eq(id)))
-        .execute(&*connection)
-        .map(|_| ())
-        .map_err(VinotecaError::from)
+    conn.run(move |c| {
+        diesel::delete(producers::table.filter(producers::id.eq(id)))
+            .execute(c)
+            .map(|_| ())
+            .map_err(VinotecaError::from)
+    })
+    .await
 }
 
-fn validate_owns_producer(auth: Auth, id: i32, connection: &DbConn) -> Result<(), VinotecaError> {
-    producers::table
-        .filter(producers::id.eq(id))
-        .filter(producers::user_id.eq(auth.id))
-        .select(producers::id)
-        .first::<i32>(&**connection)?;
+async fn validate_owns_producer(auth: Auth, id: i32, conn: &DbConn) -> Result<(), VinotecaError> {
+    conn.run(move |c| {
+        producers::table
+            .filter(producers::id.eq(id))
+            .filter(producers::user_id.eq(auth.id))
+            .select(producers::id)
+            .first::<i32>(c)
+    })
+    .await?;
 
     Ok(())
 }

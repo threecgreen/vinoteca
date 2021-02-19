@@ -58,7 +58,6 @@ pub fn top(
     )
 }
 
-use rocket::futures::TryFutureExt;
 #[post("/grapes", format = "json", data = "<grape_form>")]
 pub async fn post(auth: Auth, grape_form: Json<GrapeForm>, conn: DbConn) -> RestResult<Grape> {
     let grape_form = grape_form.into_inner();

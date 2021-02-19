@@ -7,27 +7,29 @@ use rocket_contrib::json::Json;
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
 macro_rules! top_table {
-    ($table: expr, $id: expr, $name: expr, $limit: expr, $connection: expr) => {{
+    ($table: expr, $id: expr, $name: expr, $limit: expr, $conn: expr) => {{
         use crate::error::VinotecaError;
         use crate::models::generic;
 
         use diesel::sql_types::{BigInt, Double, Nullable};
         use rocket_contrib::json::Json;
 
-        $table
-            .group_by(($id, $name))
-            .select((
-                $id,
-                $name,
-                sql::<BigInt>("sum(purchases.quantity)"),
-                sql::<BigInt>("count(DISTINCT wines.id)"),
-                sql::<Nullable<Double>>("avg(purchases.price)"),
-            ))
-            .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
-            .limit($limit as i64)
-            .load::<generic::TopEntity>(&*$connection)
-            .map(Json)
-            .map_err(VinotecaError::from)
+        $conn.run(move |c| {
+            $table
+                .group_by(($id, $name))
+                .select((
+                    $id,
+                    $name,
+                    sql::<BigInt>("sum(purchases.quantity)"),
+                    sql::<BigInt>("count(DISTINCT wines.id)"),
+                    sql::<Nullable<Double>>("avg(purchases.price)"),
+                ))
+                .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
+                .limit($limit as i64)
+                .load::<generic::TopEntity>(c)
+                .map(Json)
+                .map_err(VinotecaError::from)
+        })
     }};
 }
 
