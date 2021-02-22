@@ -23,8 +23,8 @@ image = "0.23.12"
 kamadak-exif = "0.5.3"
 lazy_static = "1.4.0"
 log = "0.4.11"
-rocket_codegen = "0.4.7"
-rocket-multipart-form-data = "0.9.6"
+rocket_codegen = { git = "https://github.com/SergioBenitez/Rocket", version = "0.5.0-dev" }
+rocket-multipart-form-data = { git = "https://github.com/impero-com/rocket-multipart-form-data", branch = "rocket-0.5" }
 # AWS S3 access
 rust-s3 = "0.26.4"
 # (De)serialization
@@ -37,18 +37,21 @@ validator = "0.12.0"
 validator_derive = "0.12.0"
 
 [dependencies.rocket]
-version = "0.4.7"
+git = "https://github.com/SergioBenitez/Rocket"
+version = "0.5.0-dev"
 default_features = false
-features = ["private-cookies"]
+features = ["secrets"]
 
 [dependencies.rocket_contrib]
-version = "0.4.7"
+git = "https://github.com/SergioBenitez/Rocket"
+version = "0.5.0-dev"
 default-features = false
 features = ["json", "diesel_postgres_pool"]
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]
-version = "0.1.10"
+git = "https://github.com/onelson/typescript-definitions"
+branch = "no-debug-attrs"
 # Enable export in release build
 features = ["export-typescript"]
 
