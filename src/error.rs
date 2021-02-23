@@ -176,7 +176,7 @@ mod tests {
 
     fn error_rocket_client() -> Client {
         let rocket = simple_rocket().mount("/", routes![handle_err]);
-        let client = Client::new(rocket).unwrap();
+        let client = Client::untracked(rocket).unwrap();
         client
     }
 
