@@ -4,8 +4,8 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use rocket::http::Status;
+use rocket::outcome::Outcome;
 use rocket::request::{self, FromRequest, Request};
-use rocket::Outcome;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 
@@ -18,11 +18,12 @@ pub struct Auth {
 
 pub const COOKIE_NAME: &str = "vinoteca-auth";
 
+#[rocket::async_trait]
 impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     type Error = Json<VinotecaError>;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
-        let connection = request.guard::<DbConn>().map_failure(|e| {
+    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
+        let connection = try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
             error!("Failed to acquire database connection: {:?}", e);
             (
                 Status::InternalServerError,
@@ -30,7 +31,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                     "Database connection failed".to_owned(),
                 )),
             )
-        })?;
+        }));
         let cookie = request.cookies().get_private(COOKIE_NAME);
         match cookie {
             Some(cookie) => {

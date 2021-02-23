@@ -3,17 +3,17 @@ use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
 
-use rocket::data::{FromDataSimple, Outcome};
+use rocket::data::{self, FromData};
 use rocket::http::Status;
-use rocket::{Data, Outcome::*, Request};
+use rocket::{outcome::Outcome, Data, Request};
 use rocket_multipart_form_data::{
     mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField,
 };
 
-impl FromDataSimple for RawWineForm {
+impl FromData for RawWineForm {
     type Error = VinotecaError;
 
-    fn from_data(request: &Request, data: Data) -> Outcome<Self, Self::Error> {
+    fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {
         // Create form parser
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
@@ -30,7 +30,7 @@ impl FromDataSimple for RawWineForm {
         let content_type = match request.content_type() {
             Some(content_type) => content_type,
             _ => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest(
                         "Incorrect content-type, should be 'multipart/form-data'".to_owned(),
@@ -44,7 +44,7 @@ impl FromDataSimple for RawWineForm {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest(format!("Failed to parse multipart form. {:?}", e)),
                 ));
@@ -54,7 +54,7 @@ impl FromDataSimple for RawWineForm {
         let wine_form_json = match multipart_form.texts.remove("wine_form") {
             Some(wine_form_json) => wine_form_json,
             _ => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Missing required field 'wine_form'".to_owned()),
                 ))
@@ -67,7 +67,7 @@ impl FromDataSimple for RawWineForm {
             texts if texts.len() == 1 => match serde_json::from_str::<WineForm>(&texts[0].text) {
                 Ok(parsed) => parsed,
                 Err(e) => {
-                    return Failure((
+                    return Outcome::Failure((
                         Status::BadRequest,
                         VinotecaError::BadRequest(format!(
                             "Failed to parse wine form JSON: {:?}",
@@ -77,7 +77,7 @@ impl FromDataSimple for RawWineForm {
                 }
             },
             _text => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Extra text fields supplied".to_owned()),
                 ))
@@ -98,7 +98,7 @@ impl FromDataSimple for RawWineForm {
                 })
             }
             Some(_raw) => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
                 ))
@@ -106,14 +106,14 @@ impl FromDataSimple for RawWineForm {
             None => None,
         };
 
-        Success(RawWineForm { wine_form, image })
+        Outcome::Success(RawWineForm { wine_form, image })
     }
 }
 
-impl FromDataSimple for Image {
+impl FromData for Image {
     type Error = VinotecaError;
 
-    fn from_data(request: &Request, data: Data) -> Outcome<Self, Self::Error> {
+    fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
             MultipartFormDataField::raw("image")
@@ -126,7 +126,7 @@ impl FromDataSimple for Image {
         let content_type = match request.content_type() {
             Some(content_type) => content_type,
             _ => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest(
                         "Incorrect content-type, should be 'multipart/form-data'".to_owned(),
@@ -140,7 +140,7 @@ impl FromDataSimple for Image {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest(format!("Failed to parse multipart form. {:?}", e)),
                 ));
@@ -150,7 +150,7 @@ impl FromDataSimple for Image {
         let raw_field = match multipart_form.raw.remove("image") {
             Some(field) => field,
             _ => {
-                return Failure((
+                return Outcome::Failure((
                     Status::BadRequest,
                     VinotecaError::BadRequest("Missing required field 'image'".to_owned()),
                 ))
@@ -159,7 +159,7 @@ impl FromDataSimple for Image {
         // Verify only one image provided
         if raw_field.len() == 1 {
             let raw = &raw_field[0];
-            Success(Image {
+            Outcome::Success(Image {
                 // FIXME: clone
                 data: raw.raw.clone(),
                 // TODO: determine if default is good
@@ -169,7 +169,7 @@ impl FromDataSimple for Image {
                     .unwrap_or_else(|| "image/jpeg".parse().expect("JPEG mime")),
             })
         } else {
-            Failure((
+            Outcome::Failure((
                 Status::BadRequest,
                 VinotecaError::BadRequest("Invalid number of image fields supplied".to_owned()),
             ))

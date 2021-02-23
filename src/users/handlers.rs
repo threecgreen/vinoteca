@@ -7,7 +7,7 @@ use crate::DbConn;
 
 use chrono::Utc;
 use diesel::prelude::*;
-use rocket::http::{Cookie, Cookies, SameSite};
+use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket_contrib::json::Json;
 use validator::Validate;
 
@@ -30,7 +30,11 @@ pub fn get(auth: Auth, connection: DbConn) -> RestResult<User> {
 }
 
 #[post("/users/login", format = "json", data = "<form>")]
-pub fn login(form: Json<LoginForm>, mut cookies: Cookies, connection: DbConn) -> RestResult<User> {
+pub fn login(
+    form: Json<LoginForm>,
+    mut cookies: &CookieJar<'_>,
+    connection: DbConn,
+) -> RestResult<User> {
     let form = form.into_inner();
     let user = users::table
         .filter(users::email.eq(form.email))

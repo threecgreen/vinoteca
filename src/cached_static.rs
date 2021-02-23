@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CacheControl, CacheDirective, ContentEncoding, Encoding};
+use rocket::http::hyper::header::{CACHE_CONTROL, CONTENT_ENCODING};
 use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::{Data, Request, Route};
@@ -13,8 +13,8 @@ use std::path::{Path, PathBuf};
 pub struct NotModified<R>(pub R);
 
 /// Sets the status code of the response to 304 Not Modified.
-impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
-    fn respond_to(self, _req: &Request) -> Result<Response<'r>, Status> {
+impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for NotModified<R> {
+    fn respond_to(self, _req: &Request) -> Result<Response<'o>, Status> {
         Response::build().status(Status::NotModified).ok()
     }
 }
@@ -43,8 +43,8 @@ impl CachedFile {
 /// Streams the named file to the client. Sets or overrides the Content-Type in
 /// the response according to the file's extension if the extension is
 /// recognized.
-impl<'r> Responder<'r> for CachedFile {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+impl<'r, 'o: 'r> Responder<'r, 'o> for CachedFile {
+    fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         let mut response = self.file.respond_to(req)?;
         if let Some(ext) = self.path.extension() {
             if ext == "gz" {
@@ -59,7 +59,7 @@ impl<'r> Responder<'r> for CachedFile {
                 {
                     // Support for gzipped code, e.g. js or css
                     response.set_header(content_type);
-                    response.set_header(ContentEncoding(vec![Encoding::Gzip]));
+                    response.set_raw_header(CONTENT_ENCODING.to_string(), "gzip");
                 } else {
                     response.set_header(ContentType::new("application", "gzip"));
                 }
@@ -78,7 +78,7 @@ impl<'r> Responder<'r> for CachedFile {
             value: Cow::from(epoch.to_rfc2822()),
         });
         // User agent must revalidate. This is especially important for JS bundles
-        response.set_header(CacheControl(vec![CacheDirective::NoCache]));
+        response.set_raw_header(CACHE_CONTROL.to_string(), "no-cache");
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
@@ -138,8 +138,9 @@ impl From<CachedStaticFiles> for Vec<Route> {
     }
 }
 
+#[rocket::async_trait]
 impl Handler for CachedStaticFiles {
-    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
         // If this is not the route with segments, handle it only if the user
         // requested a handling of index files.
         let current_route = req.route().expect("route while handling");

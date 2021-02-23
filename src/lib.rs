@@ -59,18 +59,20 @@ use rocket::Rocket;
 extern crate diesel_migrations;
 embed_migrations!();
 
-pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
-    let connection = DbConn::get_one(&rocket).expect("database connection");
-    match embedded_migrations::run(&*connection) {
-        Ok(()) => {
-            info!("Successfully ran database migrations");
-            Ok(rocket)
-        }
-        Err(e) => {
-            error!("Failed to run database migrations: {:?}", e);
-            Err(rocket)
-        }
-    }
+pub async fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
+    let connection = DbConn::get_one(&rocket).await.expect("database connection");
+    connection
+        .run(|conn| match embedded_migrations::run(conn) {
+            Ok(()) => {
+                info!("Successfully ran database migrations");
+                Ok(rocket)
+            }
+            Err(e) => {
+                error!("Failed to run database migrations: {:?}", e);
+                Err(rocket)
+            }
+        })
+        .await
 }
 
 pub fn create_rocket() -> rocket::Rocket {

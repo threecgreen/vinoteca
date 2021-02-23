@@ -33,7 +33,7 @@ pub enum VinotecaError {
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
 
-impl<'r> Responder<'r> for VinotecaError {
+impl<'r> Responder<'r, 'static> for VinotecaError {
     fn respond_to(self, req: &Request) -> response::Result<'static> {
         // Return JSON or HTML depending on accept header
         let mut res = if req
@@ -166,7 +166,7 @@ mod tests {
 
     use rocket::{
         http::{Accept, ContentType},
-        local::Client,
+        local::blocking::Client,
     };
 
     #[get("/")]
