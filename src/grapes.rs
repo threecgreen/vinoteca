@@ -41,10 +41,10 @@ pub async fn get(
 }
 
 #[get("/grapes/top?<limit>")]
-pub fn top(
+pub async fn top(
     auth: Auth,
     limit: Option<usize>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
@@ -54,8 +54,9 @@ pub fn top(
         grapes::id,
         grapes::name,
         limit,
-        connection
+        conn
     )
+    .await
 }
 
 #[post("/grapes", format = "json", data = "<grape_form>")]
@@ -108,13 +109,16 @@ pub async fn put<'r>(
 }
 
 #[delete("/grapes/<id>")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn) -> RestResult<()> {
-    diesel::delete(
-        grapes::table
-            .filter(grapes::id.eq(id))
-            .filter(grapes::user_id.eq(auth.id)),
-    )
-    .execute(&*connection)
-    .map(|_| Json(()))
-    .map_err(VinotecaError::from)
+pub async fn delete(auth: Auth, id: i32, conn: DbConn) -> RestResult<()> {
+    conn.run(move |c| {
+        diesel::delete(
+            grapes::table
+                .filter(grapes::id.eq(id))
+                .filter(grapes::user_id.eq(auth.id)),
+        )
+        .execute(c)
+        .map(|_| Json(()))
+        .map_err(VinotecaError::from)
+    })
+    .await
 }

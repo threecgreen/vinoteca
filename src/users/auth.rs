@@ -23,7 +23,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
     type Error = Json<VinotecaError>;
 
     async fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
-        let connection = try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
+        let conn = try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
             error!("Failed to acquire database connection: {:?}", e);
             (
                 Status::InternalServerError,
@@ -32,34 +32,37 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                 )),
             )
         }));
-        let cookie = request.cookies().get_private(COOKIE_NAME);
-        match cookie {
-            Some(cookie) => {
-                let auth = cookie
-                    .value()
-                    .parse()
-                    .ok()
-                    .and_then(|id: i32| {
-                        users::table
-                            .filter(users::id.eq(id))
-                            .select(users::id)
-                            .first(&*connection)
-                            .ok()
-                    })
-                    .map(|id| Auth { id });
-                if let Some(auth) = auth {
-                    Outcome::Success(auth)
-                } else {
-                    Outcome::Failure((
-                        Status::Forbidden,
-                        Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
-                    ))
-                }
+        let user_id: Option<i32> = request
+            .cookies()
+            .get_private(COOKIE_NAME)
+            .and_then(|cookie| cookie.value().parse().ok());
+        let user_id = match user_id {
+            Some(user_id) => user_id,
+            None => {
+                return Outcome::Failure((
+                    Status::Unauthorized,
+                    Json(VinotecaError::Unauthorized("Login required".to_owned())),
+                ));
             }
-            None => Outcome::Failure((
-                Status::Unauthorized,
-                Json(VinotecaError::Unauthorized("Login required".to_owned())),
-            )),
+        };
+
+        let auth = conn
+            .run(move |c| {
+                users::table
+                    .filter(users::id.eq(user_id))
+                    .select(users::id)
+                    .first(c)
+                    .ok()
+            })
+            .await;
+
+        if let Some(auth) = auth {
+            Outcome::Success(auth)
+        } else {
+            Outcome::Failure((
+                Status::Forbidden,
+                Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
+            ))
         }
     }
 }

@@ -3406,7 +3406,7 @@ dependencies = [
  "rust-s3",
  "serde",
  "serde_json",
- "time 0.1.44",
+ "time 0.2.25",
  "typescript-definitions",
  "uuid",
  "validator",

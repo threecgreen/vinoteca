@@ -75,12 +75,12 @@ pub async fn top(
 #[post("/producers", format = "json", data = "<producer_form>")]
 pub async fn post(
     auth: Auth,
-    producer_form: Json<ProducerForm<'_>>,
+    producer_form: Json<ProducerForm>,
     conn: DbConn,
 ) -> RestResult<Producer> {
     let producer_form = producer_form.into_inner();
-    let new_producer = NewProducer::from((auth, producer_form));
     producer_form.validate()?;
+    let new_producer = NewProducer::from((auth, producer_form));
 
     let producer_id = conn
         .run(move |c| {

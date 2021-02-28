@@ -11,39 +11,42 @@ use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[get("/wine-types?<id>&<name>")]
-pub fn get(
+pub async fn get(
     auth: Auth,
     id: Option<i32>,
     name: Option<String>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<WineType>> {
-    let mut query = wine_types::table
-        .filter(wine_types::user_id.eq(auth.id))
-        .into_boxed();
-    if let Some(id) = id {
-        query = query.filter(wine_types::id.eq(id));
-    }
-    if let Some(name) = name {
-        query = query.filter(wine_types::name.eq(name));
-    }
-    query
-        .select((wine_types::id, wine_types::name))
-        .load::<WineType>(&*connection)
-        .map(Json)
-        .map_err(VinotecaError::from)
+    conn.run(move |c| {
+        let mut query = wine_types::table
+            .filter(wine_types::user_id.eq(auth.id))
+            .into_boxed();
+        if let Some(id) = id {
+            query = query.filter(wine_types::id.eq(id));
+        }
+        if let Some(name) = name {
+            query = query.filter(wine_types::name.eq(name));
+        }
+        query
+            .select((wine_types::id, wine_types::name))
+            .load::<WineType>(c)
+            .map(Json)
+            .map_err(VinotecaError::from)
+    })
+    .await
 }
 
 #[get("/wine-types/<id>")]
-pub fn get_one(auth: Auth, id: i32, connection: DbConn) -> RestResult<WineType> {
-    let wine_types = get(auth, Some(id), None, connection)?;
+pub async fn get_one(auth: Auth, id: i32, conn: DbConn) -> RestResult<WineType> {
+    let wine_types = get(auth, Some(id), None, conn).await?;
     wine_types.into_first(&format!("No wine type with id {}", id))
 }
 
 #[get("/wine-types/top?<limit>")]
-pub fn top(
+pub async fn top(
     auth: Auth,
     limit: Option<usize>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
@@ -54,49 +57,59 @@ pub fn top(
         wine_types::id,
         wine_types::name,
         limit,
-        connection
+        conn
     )
+    .await
 }
 
 #[post("/wine-types", format = "json", data = "<wine_type_form>")]
-pub fn post(
+pub async fn post(
     auth: Auth,
     wine_type_form: Json<WineTypeForm>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     wine_type_form.validate()?;
 
-    diesel::insert_into(wine_types::table)
-        .values(NewWineType::from((auth, wine_type_form)))
-        .returning(wine_types::id)
-        .get_result(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|wine_type_id| {
-            get(auth, Some(wine_type_id), None, connection)?.into_first("Newly-created wine type")
+    let wine_type_id = conn
+        .run(move |c| {
+            diesel::insert_into(wine_types::table)
+                .values(NewWineType::from((auth, wine_type_form)))
+                .returning(wine_types::id)
+                .get_result(c)
+                .map_err(VinotecaError::from)
         })
+        .await?;
+    get(auth, Some(wine_type_id), None, conn)
+        .await?
+        .into_first("Newly-created wine type")
 }
 
 #[put("/wine-types/<id>", format = "json", data = "<wine_type_form>")]
-pub fn put(
+pub async fn put(
     auth: Auth,
     id: i32,
     wine_type_form: Json<WineTypeForm>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<WineType> {
     let wine_type_form = wine_type_form.into_inner();
     wine_type_form.validate()?;
 
-    // Validate is user's wine type
-    wine_types::table
-        .filter(wine_types::id.eq(id))
-        .filter(wine_types::user_id.eq(auth.id))
-        .select(wine_types::id)
-        .first::<i32>(&*connection)?;
+    conn.run(move |c| {
+        // Validate is user's wine type
+        wine_types::table
+            .filter(wine_types::id.eq(id))
+            .filter(wine_types::user_id.eq(auth.id))
+            .select(wine_types::id)
+            .first::<i32>(c)?;
 
-    diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
-        .set(wine_types::name.eq(wine_type_form.name))
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| get(auth, Some(id), None, connection)?.into_first("Edited wine type"))
+        diesel::update(wine_types::table.filter(wine_types::id.eq(id)))
+            .set(wine_types::name.eq(wine_type_form.name))
+            .execute(c)
+            .map_err(VinotecaError::from)
+    })
+    .await?;
+    get(auth, Some(id), None, conn)
+        .await?
+        .into_first("Edited wine type")
 }
