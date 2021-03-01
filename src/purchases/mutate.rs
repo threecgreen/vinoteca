@@ -21,7 +21,7 @@ pub async fn post(
 
     let purchase_id = conn
         .run(move |c| {
-            validate_relations(auth, &purchase_form, c);
+            validate_relations(auth, &purchase_form, c)?;
             diesel::insert_into(purchases::table)
                 .values(&purchase_form)
                 .returning(purchases::id)

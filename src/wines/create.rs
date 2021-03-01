@@ -1,10 +1,10 @@
 use super::image::handle_image;
 use super::models::RawWineForm;
 use super::read::get_one;
-use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{NewWine, Wine};
 use crate::schema::wines;
+use crate::storage::Storage;
 use crate::users::Auth;
 use crate::DbConn;
 
@@ -13,30 +13,32 @@ use rocket::State;
 use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
-pub fn post(
+pub async fn post(
     auth: Auth,
     raw_wine_form: RawWineForm,
-    connection: DbConn,
-    config: State<Config>,
+    conn: DbConn,
+    storage: State<'_, Box<dyn Storage>>,
 ) -> RestResult<Wine> {
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
     wine_form.validate()?;
 
-    diesel::insert_into(wines::table)
-        .values(NewWine::from((auth, wine_form)))
-        .returning(wines::id)
-        .get_result(&*connection)
-        .map_err(VinotecaError::from)
-        .map(|wine_id| {
-            if let Some(image) = image {
-                if let Err(e) = handle_image(wine_id, image, &*config.storage, &connection) {
-                    warn!("Error adding image for new wine with id {}: {}", wine_id, e);
-                };
-            }
-            wine_id
+    let wine_id = conn
+        .run(move |c| {
+            diesel::insert_into(wines::table)
+                .values(NewWine::from((auth, wine_form)))
+                .returning(wines::id)
+                .get_result(c)
+                .map_err(VinotecaError::from)
         })
-        .and_then(|wine_id| get_one(auth, wine_id, connection))
+        .await?;
+    if let Some(image) = image {
+        if let Err(e) = handle_image(wine_id, image, &**storage, &conn).await {
+            warn!("Error adding image for new wine with id {}: {}", wine_id, e);
+        };
+    }
+
+    get_one(auth, wine_id, conn).await
 }
 
 #[cfg(test)]

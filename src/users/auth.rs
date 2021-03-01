@@ -32,6 +32,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                 )),
             )
         }));
+        // Extract user id from cookie
         let user_id: Option<i32> = request
             .cookies()
             .get_private(COOKIE_NAME)
@@ -45,8 +46,8 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
                 ));
             }
         };
-
-        let auth = conn
+        // Verify user id exists
+        let id = conn
             .run(move |c| {
                 users::table
                     .filter(users::id.eq(user_id))
@@ -56,8 +57,8 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
             })
             .await;
 
-        if let Some(auth) = auth {
-            Outcome::Success(auth)
+        if let Some(id) = id {
+            Outcome::Success(Auth { id })
         } else {
             Outcome::Failure((
                 Status::Forbidden,

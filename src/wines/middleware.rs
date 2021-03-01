@@ -3,22 +3,25 @@ use super::models::RawWineForm;
 use crate::error::VinotecaError;
 use crate::models::WineForm;
 
-use rocket::data::{self, FromData};
+use rocket::data::{self, ByteUnit, FromData};
 use rocket::http::Status;
 use rocket::{outcome::Outcome, Data, Request};
 use rocket_multipart_form_data::{
     mime, MultipartFormData, MultipartFormDataField, MultipartFormDataOptions, RawField,
 };
 
+const DATA_LIMIT: u64 = 16 * 1024 * 1024; // 16 MB
+
+#[rocket::async_trait]
 impl FromData for RawWineForm {
     type Error = VinotecaError;
 
-    fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {
+    async fn from_data(request: &Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
         // Create form parser
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
             MultipartFormDataField::raw("image")
-                .size_limit(16 * 1024 * 1024) // 16 MB
+                .size_limit(DATA_LIMIT)
                 .content_type_by_string(Some(mime::IMAGE_STAR))
                 .unwrap(),
         );
@@ -40,7 +43,13 @@ impl FromData for RawWineForm {
         };
 
         // Parse form
-        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(
+            &content_type,
+            data.open(ByteUnit::Byte(DATA_LIMIT)),
+            options,
+        )
+        .await
+        {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
@@ -110,14 +119,15 @@ impl FromData for RawWineForm {
     }
 }
 
+#[rocket::async_trait]
 impl FromData for Image {
     type Error = VinotecaError;
 
-    fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {
+    async fn from_data(request: &Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
             MultipartFormDataField::raw("image")
-                .size_limit(16 * 1024 * 1024) // 16 MB
+                .size_limit(DATA_LIMIT)
                 .content_type_by_string(Some(mime::IMAGE_STAR))
                 .unwrap(),
         );
@@ -136,7 +146,13 @@ impl FromData for Image {
         };
 
         // Parse form
-        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(
+            &content_type,
+            data.open(ByteUnit::Byte(DATA_LIMIT)),
+            options,
+        )
+        .await
+        {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);

@@ -33,11 +33,6 @@ impl CachedFile {
         let file = File::open(&path)?;
         Ok(CachedFile { path, file })
     }
-
-    /// Retrieve the underlying `File`.
-    pub fn file(&self) -> &File {
-        &self.file
-    }
 }
 
 /// Streams the named file to the client. Sets or overrides the Content-Type in

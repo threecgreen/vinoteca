@@ -1,12 +1,12 @@
 use super::auth::{Auth, COOKIE_NAME};
 use super::models::{ChangePasswordForm, ChangeUserForm, LoginForm};
-use crate::error::{self, RestResult, VinotecaError};
+use crate::error::{RestResult, VinotecaError};
 use crate::models::{InternalUser, NewUser, User, UserForm};
 use crate::schema::users;
 use crate::DbConn;
 
 use chrono::Utc;
-use diesel::{dsl::Offset, prelude::*};
+use diesel::prelude::*;
 use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket_contrib::json::Json;
 use validator::Validate;

@@ -5,8 +5,6 @@ extern crate diesel;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
-extern crate log;
-#[macro_use]
 extern crate rocket_contrib;
 #[macro_use]
 extern crate rocket;
@@ -52,8 +50,7 @@ pub mod wines;
 use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
-use rocket::fairing::AdHoc;
-use rocket::Rocket;
+use rocket::{fairing::AdHoc, Rocket};
 
 #[macro_use]
 extern crate diesel_migrations;
@@ -132,7 +129,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::patch,
                 wines::post,
                 wines::put,
-                wines::delete,
+                wines::delete_,
                 wines::inventory,
                 wines::search,
                 wines::varieties,
@@ -154,24 +151,10 @@ pub fn create_rocket() -> rocket::Rocket {
             catchers::forbidden,
             catchers::not_found
         ]);
-    let static_dir = rocket
-        .config()
-        .get_str("static_dir")
-        .unwrap_or("web/static")
-        .to_owned();
-    let aws_access_key = rocket
-        .config()
-        .get_str("aws_access_key")
-        .expect("AWS access key")
-        .to_owned();
-    let aws_secret_key = rocket
-        .config()
-        .get_str("aws_secret_key")
-        .expect("AWS secret key")
-        .to_owned();
-    let storage =
-        storage::S3::new(&aws_access_key, &aws_secret_key).expect("AWS S3 bucket connection");
+    let app_config: config::AppConfig = rocket.figment().extract().expect("config");
+    let storage = storage::S3::new(&app_config.aws_access_key, &app_config.aws_secret_key)
+        .expect("AWS S3 bucket connection");
     rocket
-        .manage(config::Config::new(storage))
-        .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
+        .manage(Box::new(storage))
+        .mount("/static", CachedStaticFiles::from("web/static").rank(1))
 }

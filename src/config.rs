@@ -1,15 +1,8 @@
-use crate::storage::Storage;
+use serde::Deserialize;
 
 /// Holds runtime configurations
-pub struct Config {
-    /// Storage object for user images and other files
-    pub storage: Box<dyn Storage>,
-}
-
-impl Config {
-    pub fn new<S: Storage>(storage: S) -> Config {
-        Config {
-            storage: Box::new(storage),
-        }
-    }
+#[derive(Debug, Deserialize)]
+pub struct AppConfig {
+    pub aws_access_key: String,
+    pub aws_secret_key: String,
 }

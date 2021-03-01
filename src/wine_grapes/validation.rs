@@ -1,7 +1,6 @@
 use super::models::AssociatedGrape;
 use crate::error::VinotecaError;
 use crate::schema::grapes;
-use crate::DbConn;
 
 use diesel::prelude::*;
 use std::collections::HashSet;
@@ -33,7 +32,7 @@ pub fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError
 pub fn validate_user_owns_grapes(
     user_id: i32,
     wine_grapes: &[AssociatedGrape],
-    connection: &DbConn,
+    pg_conn: &mut PgConnection,
 ) -> Result<(), VinotecaError> {
     let valid_grape_count = grapes::table
         .filter(grapes::user_id.eq(user_id))
@@ -46,7 +45,7 @@ pub fn validate_user_owns_grapes(
             ),
         )
         .count()
-        .get_result::<i64>(&**connection)?;
+        .get_result::<i64>(pg_conn)?;
     if valid_grape_count as usize == wine_grapes.len() {
         Ok(())
     } else {

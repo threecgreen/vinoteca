@@ -1,7 +1,7 @@
 use super::image;
-use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
+use crate::storage::Storage;
 use crate::users::Auth;
 use crate::DbConn;
 
@@ -10,23 +10,35 @@ use rocket::State;
 use rocket_contrib::json::Json;
 
 #[delete("/wines/<id>")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
+pub async fn delete(
+    auth: Auth,
+    id: i32,
+    conn: DbConn,
+    storage: State<'_, Box<dyn Storage>>,
+) -> RestResult<()> {
     // Validate is user's wine
-    let image_path = wines::table
-        .filter(wines::id.eq(id))
-        .filter(wines::user_id.eq(auth.id))
-        .select(wines::image)
-        .first::<Option<String>>(&*connection)?;
+    let image_path = conn
+        .run(move |c| {
+            wines::table
+                .filter(wines::id.eq(id))
+                .filter(wines::user_id.eq(auth.id))
+                .select(wines::image)
+                .first::<Option<String>>(c)
+        })
+        .await?;
 
     if let Some(image_path) = image_path {
-        if let Err(e) = image::delete_from_storage(&*config.storage, &image_path) {
+        if let Err(e) = image::delete_from_storage(&**storage, &image_path).await {
             warn!("Error deleting image for deleted wine: {:?}", e);
         };
     }
-    diesel::delete(wines::table.filter(wines::id.eq(id)))
-        .execute(&*connection)
-        .map(|_| Json(()))
-        .map_err(VinotecaError::from)
+    conn.run(move |c| {
+        diesel::delete(wines::table.filter(wines::id.eq(id)))
+            .execute(c)
+            .map_err(VinotecaError::from)
+    })
+    .await?;
+    Ok(Json(()))
 }
 
 #[cfg(test)]
