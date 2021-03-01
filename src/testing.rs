@@ -4,9 +4,9 @@ use crate::{run_db_migrations, DbConn};
 
 use diesel::prelude::*;
 use diesel::sql_query;
-use rocket::config::Config;
 use rocket::fairing::AdHoc;
 use rocket::Rocket;
+use rocket::{config::Config, figment::Profile};
 use std::collections::HashMap;
 use std::env;
 use std::sync::Mutex;
@@ -23,9 +23,7 @@ macro_rules! db_test {
 
         let _lock = DB_LOCK.lock();
         let $rocket = create_test_rocket();
-        let $conn = DbConn::get_one(&$rocket)
-            .await
-            .expect("database connection");
+        let $conn = $rocket.state::<DbConn>().expect("database connection");
 
         // Execute test code
         $test_block
@@ -48,11 +46,8 @@ macro_rules! rocket_test {
 
 /// Doesn't include database access
 pub fn simple_rocket() -> Rocket {
-    let config = Config::build(Environment::Development)
-    rocket::custom(provider)
-        .workers(1)
-        .finalize()
-        .unwrap();
+    let config = rocket::Config::default();
+    config.workers = 1;
     rocket::custom(config)
 }
 
@@ -64,19 +59,24 @@ pub fn create_test_rocket() -> Rocket {
 }
 
 fn test_rocket_config() -> Rocket {
-    let mut database_config = HashMap::new();
-    let mut databases = HashMap::new();
-    let rocket_test_db = env::var("ROCKET_TEST_DB").expect("Test database connection string");
-    // Testing db should have test in the name
-    assert!(rocket_test_db.contains("test"));
+    use rocket::figment::{
+        self,
+        value::{Map, Value},
+    };
 
-    database_config.insert("url", Value::from(rocket_test_db));
-    databases.insert("vinoteca", Value::from(database_config));
-    let config = Config::build(Environment::Development)
-        .workers(1)
-        .extra("databases", databases)
-        .finalize()
-        .unwrap();
+    let test_db = env::var("ROCKET_TEST_DB").expect("Test database connection string");
+    // Testing db should have test in the name
+    assert!(test_db.contains("test"));
+
+    let db_config: Map<_, Value> = figment::util::map! {
+        "url" => test_db,
+        "pool_size" => 2.into(),
+    };
+
+    let config = rocket::Config::figment().merge((
+        "databases",
+        rocket::figment::util::map!["vinoteca" => db_config],
+    ));
     rocket::custom(config)
 }
 
