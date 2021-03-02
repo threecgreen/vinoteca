@@ -83,8 +83,8 @@ mod test {
     use super::*;
     use crate::wine_grapes::AssociatedGrape;
 
-    #[test]
-    fn post_many() {
+    #[rocket::async_test]
+    async fn post_many() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
@@ -115,15 +115,15 @@ mod test {
                     },
                 ],
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(response.is_ok());
             let wine_grapes = response.unwrap();
             assert_eq!(wine_grapes.len(), 6);
         })
     }
 
-    #[test]
-    fn post_high_percent() {
+    #[rocket::async_test]
+    async fn post_high_percent() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 2,
@@ -138,15 +138,15 @@ mod test {
                     },
                 ],
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(
                 matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("maximum"))
             );
         })
     }
 
-    #[test]
-    fn post_negative_percent() {
+    #[rocket::async_test]
+    async fn post_negative_percent() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 3,
@@ -155,13 +155,13 @@ mod test {
                     percent: Some(-3),
                 }],
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(matches!(response, Err(VinotecaError::BadRequest(_))));
         })
     }
 
-    #[test]
-    fn post_duplicate() {
+    #[rocket::async_test]
+    async fn post_duplicate() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
@@ -180,27 +180,27 @@ mod test {
                     },
                 ],
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(
                 matches!(response, Err(VinotecaError::BadRequest(desc)) if desc.contains("Duplicate"))
             );
         })
     }
 
-    #[test]
-    fn post_empty_no_op() {
+    #[rocket::async_test]
+    async fn post_empty_no_op() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 3,
                 grapes: Vec::new(),
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
         })
     }
 
-    #[test]
-    fn post_empty_delete_existing() {
+    #[rocket::async_test]
+    async fn post_empty_delete_existing() {
         db_test!(|rocket, connection| {
             let form = WineGrapesForm {
                 wine_id: 1,
@@ -215,16 +215,15 @@ mod test {
                     },
                 ],
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(matches!(response, Ok(Json(wg)) if wg.len() == 2));
             // Post empty wine grapes for same wine
-            let connection = DbConn::get_one(&rocket).expect("database connection");
+            let connection = DbConn::get_one(&rocket).await.expect("database connection");
             let form = WineGrapesForm {
                 wine_id: 1,
                 grapes: Vec::new(),
             };
-            let response = post(Auth { id: 1 }, Json(form), connection);
-            dbg!(&response);
+            let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(matches!(response, Ok(Json(wg)) if wg.is_empty() ));
         })
     }

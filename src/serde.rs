@@ -28,7 +28,7 @@ where
 mod test {
     use super::*;
 
-    use serde::de::value::{BorrowedStrDeserializer, Error, StringDeserializer};
+    use serde::de::value::{Error, StringDeserializer};
     use serde::de::IntoDeserializer;
 
     #[test]

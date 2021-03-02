@@ -44,7 +44,6 @@ pub async fn post(
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::config::Config;
     use crate::models::WineForm;
     use crate::storage::MockStorage;
     use crate::wines::image::Image;
@@ -78,30 +77,30 @@ mod test {
         }
     }
 
-    #[test]
-    fn insert_wine() {
+    #[rocket::async_test]
+    async fn insert_wine() {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_create_object()
                 .times(1)
                 .return_const(Ok("uuid123".to_owned()));
-            let rocket = rocket.manage(Config::new(mock));
-            let config = State::from(&rocket).unwrap();
-            let response = post(Auth { id: 1 }, mock_form(), connection, config);
+            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
+            let storage = State::from(&rocket).unwrap();
+            let response = post(Auth { id: 1 }, mock_form(), connection, storage).await;
             assert!(response.is_ok());
         })
     }
 
-    #[test]
-    fn image_failure_still_saves_wine() {
+    #[rocket::async_test]
+    async fn image_failure_still_saves_wine() {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_create_object()
                 .times(1)
                 .return_const(Err(VinotecaError::Internal("No good".to_owned())));
-            let rocket = rocket.manage(Config::new(mock));
-            let config = State::from(&rocket).unwrap();
-            let response = post(Auth { id: 1 }, mock_form(), connection, config);
+            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
+            let storage = State::from(&rocket).unwrap();
+            let response = post(Auth { id: 1 }, mock_form(), connection, storage).await;
             assert!(response.is_ok());
         })
     }

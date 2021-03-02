@@ -239,19 +239,18 @@ mod test {
     use super::super::models::RawWineForm;
     use super::super::post;
     use super::*;
-    use crate::config::Config;
     use crate::models::WineForm;
-    use crate::storage::MockStorage;
+    use crate::storage::{MockStorage, Storage};
     use crate::DbConn;
 
     use rocket::State;
 
-    #[test]
-    fn wine_without_purchases_appears_in_inventory() {
+    #[rocket::async_test]
+    async fn wine_without_purchases_appears_in_inventory() {
         db_test!(|rocket, connection| {
             let auth = Auth { id: 1 };
             let mock = MockStorage::new();
-            let rocket = rocket.manage(Config::new(mock));
+            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
             let config = State::from(&rocket).unwrap();
             let form = RawWineForm {
                 image: None,
@@ -269,12 +268,12 @@ mod test {
                     is_in_shopping_list: false,
                 },
             };
-            let wine_response = post(auth, form, connection, config);
+            let wine_response = post(auth, form, connection, config).await;
             assert!(wine_response.is_ok());
             let wine_id = wine_response.unwrap().id;
 
-            let connection = DbConn::get_one(&rocket).expect("database connection");
-            let inventory_response = inventory(auth, connection);
+            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let inventory_response = inventory(auth, connection).await;
             assert!(inventory_response.is_ok());
             let inventory = inventory_response.unwrap().into_inner();
             assert!(inventory.iter().any(|w| w.id == wine_id));

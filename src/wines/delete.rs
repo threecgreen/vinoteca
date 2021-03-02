@@ -49,23 +49,22 @@ mod test {
 
     use rocket_contrib::json::Json;
 
-    #[test]
-    fn delete_removes_wine() {
+    #[rocket::async_test]
+    async fn delete_removes_wine() {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_delete_object().times(1).return_const(Ok(()));
-            let rocket = rocket.manage(Config::new(mock));
-            let config = State::from(&rocket).unwrap();
+            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
+            let storage = State::from(&rocket).unwrap();
 
             let auth = Auth { id: 1 };
-            let wines = get_one(auth, 1, connection);
+            let wines = get_one(auth, 1, connection).await;
             assert!(matches!(wines, Ok(Json(wines)) if wines.id == 1));
-            let connection = DbConn::get_one(&rocket).expect("database connection");
-            let response = delete(auth, 1, connection, config);
-            dbg!(&response);
+            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let response = delete(auth, 1, connection, storage).await;
             assert!(response.is_ok());
-            let connection = DbConn::get_one(&rocket).expect("database connection");
-            let res = get_one(auth, 1, connection);
+            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let res = get_one(auth, 1, connection).await;
             assert!(matches!(res, Err(VinotecaError::NotFound(_))));
         })
     }

@@ -5,11 +5,9 @@ use crate::{run_db_migrations, DbConn};
 use diesel::prelude::*;
 use diesel::sql_query;
 use rocket::fairing::AdHoc;
+use rocket::tokio::sync::Mutex;
 use rocket::Rocket;
-use rocket::{config::Config, figment::Profile};
-use std::collections::HashMap;
 use std::env;
-use std::sync::Mutex;
 
 // Use a lock to synchronize between tests so database operations from one
 // test don't interfere with another
@@ -23,7 +21,9 @@ macro_rules! db_test {
 
         let _lock = DB_LOCK.lock();
         let $rocket = create_test_rocket();
-        let $conn = $rocket.state::<DbConn>().expect("database connection");
+        let $conn = DbConn::get_one(&$rocket)
+            .await
+            .expect("database connection");
 
         // Execute test code
         $test_block
@@ -46,7 +46,7 @@ macro_rules! rocket_test {
 
 /// Doesn't include database access
 pub fn simple_rocket() -> Rocket {
-    let config = rocket::Config::default();
+    let mut config = rocket::Config::default();
     config.workers = 1;
     rocket::custom(config)
 }
@@ -69,7 +69,7 @@ fn test_rocket_config() -> Rocket {
     assert!(test_db.contains("test"));
 
     let db_config: Map<_, Value> = figment::util::map! {
-        "url" => test_db,
+        "url" => test_db.into(),
         "pool_size" => 2.into(),
     };
 
