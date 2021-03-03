@@ -46,6 +46,7 @@ impl Storage for S3 {
             .bucket
             .put_object_with_content_type(format!("{}/{}", dir, path), content, content_type)
             .await?;
+        // TODO: may be able to delete code checks with fail on err feature enabled
         if code > 304 {
             warn!(
                 "Error saving image. Code: {}, AWSResponseData: {:?}",
