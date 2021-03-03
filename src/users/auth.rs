@@ -72,50 +72,47 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
 mod test {
     use super::*;
 
-    use rocket::{http::Cookie, local::blocking::Client};
+    use rocket::{http::Cookie, local::asynchronous::Client};
 
     #[get("/")]
     fn handle_auth(auth: Auth) -> Json<i32> {
         Json(auth.id)
     }
 
-    #[test]
-    #[ignore = "panics with async"]
-    fn missing_cookie() {
-        rocket_test!(|rocket| {
+    #[rocket::async_test]
+    async fn missing_cookie() {
+        db_test!(|rocket, _conn| {
             let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::tracked(rocket).expect("rocket client");
+            let client = Client::tracked(rocket).await.expect("rocket client");
             let req = client.get("/");
-            let response = req.dispatch();
+            let response = req.dispatch().await;
             assert_eq!(response.status(), Status::Unauthorized);
         })
     }
 
-    #[test]
-    #[ignore = "panics with async"]
-    fn missing_user() {
-        rocket_test!(|rocket| {
+    #[rocket::async_test]
+    async fn missing_user() {
+        db_test!(|rocket, _conn| {
             let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::tracked(rocket).expect("rocket client");
+            let client = Client::tracked(rocket).await.expect("rocket client");
             let req = client
                 .get("/")
                 // User that doesn't exist
                 .private_cookie(Cookie::new("vinoteca-auth", "-1"));
-            let response = req.dispatch();
+            let response = req.dispatch().await;
             assert_eq!(response.status(), Status::Forbidden);
         })
     }
 
-    #[test]
-    #[ignore = "panics with async"]
-    fn authorize() {
-        rocket_test!(|rocket| {
+    #[rocket::async_test]
+    async fn authorize() {
+        db_test!(|rocket, _conn| {
             let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::tracked(rocket).expect("rocket client");
+            let client = Client::tracked(rocket).await.expect("rocket client");
             let req = client
                 .get("/")
                 .private_cookie(Cookie::new("vinoteca-auth", "1"));
-            let response = req.dispatch();
+            let response = req.dispatch().await;
             assert_eq!(response.status(), Status::Ok);
         })
     }
