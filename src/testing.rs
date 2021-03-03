@@ -19,7 +19,7 @@ macro_rules! db_test {
     (|$rocket: ident, $conn: ident| $test_block: expr) => {{
         use crate::testing::{create_test_rocket, DB_LOCK};
 
-        let _lock = DB_LOCK.lock();
+        let _lock = DB_LOCK.lock().await;
         let $rocket = create_test_rocket();
         let $conn = DbConn::get_one(&$rocket)
             .await
