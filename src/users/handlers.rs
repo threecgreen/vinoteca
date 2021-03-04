@@ -166,15 +166,74 @@ fn add_auth_cookie(cookies: &CookieJar<'_>, user_id: i32) {
 
 #[cfg(test)]
 mod test {
-    // use super::*;
+    use super::*;
+    use crate::testing::PW;
 
-    #[test]
-    #[ignore]
-    fn logon_adds_cookie() {}
+    use rocket::http::{ContentType, Status};
+    use rocket::local::asynchronous::Client;
 
-    #[test]
-    #[ignore]
-    fn logoff_removes_cookie() {}
+    fn mounted_rocket(rocket: rocket::Rocket) -> rocket::Rocket {
+        rocket.mount(
+            "/",
+            routes![get, login, create, change_password, logout, modify_profile],
+        )
+    }
+
+    #[rocket::async_test]
+    async fn logon_adds_cookie() {
+        db_test!(|rocket, _conn| {
+            let rocket = mounted_rocket(rocket);
+            let client = Client::tracked(rocket).await.expect("rocket client");
+            assert!(client.cookies().get(COOKIE_NAME).is_none());
+            let req = client.post("/users/login");
+            let form = LoginForm {
+                email: "test@gmail.com".to_owned(),
+                password: PW.to_owned(),
+            };
+            let mut req = req.header(ContentType::JSON);
+            req.set_body(serde_json::to_string(&form).unwrap());
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            assert!(response.cookies().get(COOKIE_NAME).is_some());
+        })
+    }
+
+    #[rocket::async_test]
+    async fn logoff_removes_cookie() {
+        db_test!(|rocket, _conn| {
+            let rocket = mounted_rocket(rocket);
+            let client = Client::tracked(rocket).await.expect("rocket client");
+            // Login and add cookie
+            let req = client.post("/users/login");
+            let form = LoginForm {
+                email: "test@gmail.com".to_owned(),
+                password: PW.to_owned(),
+            };
+            let mut req = req.header(ContentType::JSON);
+            req.set_body(serde_json::to_string(&form).unwrap());
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            assert!(client.cookies().get(COOKIE_NAME).is_some());
+            // Logout and remove
+            let req = client.post("/users/logout");
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            assert_eq!(response.cookies().get(COOKIE_NAME).unwrap().value(), "");
+        })
+    }
+
+    #[rocket::async_test]
+    async fn logout_when_not_logged_in_is_no_op() {
+        db_test!(|rocket, _conn| {
+            let rocket = mounted_rocket(rocket);
+            let client = Client::tracked(rocket).await.expect("rocket client");
+            assert!(client.cookies().get(COOKIE_NAME).is_none());
+            let req = client.post("/users/logout");
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            assert!(response.cookies().get(COOKIE_NAME).is_none());
+        })
+    }
 
     #[test]
     #[ignore]

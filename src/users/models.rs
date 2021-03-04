@@ -5,6 +5,7 @@ use serde::Deserialize;
 use typescript_definitions::TypeScriptify;
 
 #[derive(Deserialize, TypeScriptify, Validate, Debug)]
+#[cfg_attr(test, derive(serde::Serialize))]
 #[serde(rename_all = "camelCase")]
 pub struct LoginForm {
     #[validate(email(message = "Email %s is invalid"))]

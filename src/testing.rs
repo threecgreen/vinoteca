@@ -15,6 +15,12 @@ lazy_static! {
     pub static ref DB_LOCK: Mutex<()> = Mutex::new(());
 }
 
+pub const PW: &str = "testing123";
+
+lazy_static! {
+    pub static ref PW_HASH: String = bcrypt::hash(PW, bcrypt::DEFAULT_COST).unwrap();
+}
+
 macro_rules! db_test {
     (|$rocket: ident, $conn: ident| $test_block: expr) => {{
         use crate::testing::{create_test_rocket, DB_LOCK};
@@ -98,7 +104,7 @@ async fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
             users::id.eq(user_id),
             users::email.eq("test@gmail.com"),
             users::name.eq("John Doe"),
-            users::hash.eq("browns"),
+            users::hash.eq(&*PW_HASH),
         ))
         .execute(c)
         .unwrap();
