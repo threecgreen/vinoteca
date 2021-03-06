@@ -187,8 +187,8 @@ mod test {
             assert!(client.cookies().get(COOKIE_NAME).is_none());
             let req = client.post("/users/login");
             let form = LoginForm {
-                email: "test@gmail.com",
-                password: PW,
+                email: "test@gmail.com".to_owned(),
+                password: PW.to_owned(),
             };
             let mut req = req.header(ContentType::JSON);
             req.set_body(serde_json::to_string(&form).unwrap());
@@ -206,8 +206,8 @@ mod test {
             // Login and add cookie
             let req = client.post("/users/login");
             let form = LoginForm {
-                email: "test@gmail.com",
-                password: PW,
+                email: "test@gmail.com".to_owned(),
+                password: PW.to_owned(),
             };
             let mut req = req.header(ContentType::JSON);
             req.set_body(serde_json::to_string(&form).unwrap());
@@ -235,9 +235,37 @@ mod test {
         })
     }
 
-    #[test]
-    #[ignore]
-    fn new_user() {}
+    #[rocket::async_test]
+    async fn new_user() {
+        const EMAIL: &str = "test@example.com";
+        const NAME: &str = "Test";
+        const PASSWORD: &str = "compromised";
+
+        db_test!(|rocket, _conn| {
+            let rocket = mounted_rocket(rocket);
+            let client = Client::tracked(rocket).await.expect("rocket client");
+            assert!(client.cookies().get(COOKIE_NAME).is_none());
+            let req = client.post("/users");
+            let form = UserForm {
+                email: EMAIL.to_string(),
+                name: NAME.to_string(),
+                password: PASSWORD.to_string(),
+            };
+            let mut req = req.header(ContentType::JSON);
+            req.set_body(serde_json::to_string(&form).unwrap());
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            assert!(client.cookies().get(COOKIE_NAME).is_some());
+            let req = client.get("/users");
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Ok);
+            let user: User =
+                serde_json::from_str(&response.into_string().await.expect("response body"))
+                    .unwrap();
+            assert_eq!(user.email, EMAIL);
+            assert_eq!(user.name, NAME);
+        })
+    }
 
     #[test]
     #[ignore]

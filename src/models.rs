@@ -184,6 +184,7 @@ pub struct InternalUser {
 }
 
 #[derive(Clone, Queryable, Serialize, TypeScriptify, Debug)]
+#[cfg_attr(test, derive(Deserialize))]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     pub email: String,
@@ -208,6 +209,7 @@ impl From<InternalUser> for User {
 }
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
+#[cfg_attr(test, derive(Serialize))]
 #[serde(rename_all = "camelCase")]
 pub struct UserForm {
     #[validate(email)]
