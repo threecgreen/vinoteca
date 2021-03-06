@@ -267,7 +267,26 @@ mod test {
         })
     }
 
-    #[test]
-    #[ignore]
-    fn new_user_bad_input() {}
+    #[rocket::async_test]
+    async fn new_user_bad_input() {
+        db_test!(|rocket, _conn| {
+            let rocket = mounted_rocket(rocket);
+            let client = Client::tracked(rocket).await.expect("rocket client");
+            assert!(client.cookies().get(COOKIE_NAME).is_none());
+            let req = client.post("/users");
+            let form = UserForm {
+                email: "test@example.com".to_owned(),
+                name: "test".to_owned(),
+                password: "short".to_owned(),
+            };
+            let mut req = req.header(ContentType::JSON);
+            req.set_body(serde_json::to_string(&form).unwrap());
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::BadRequest);
+            assert!(client.cookies().get(COOKIE_NAME).is_none());
+            let req = client.get("/users");
+            let response = req.dispatch().await;
+            assert_eq!(response.status(), Status::Unauthorized);
+        })
+    }
 }
