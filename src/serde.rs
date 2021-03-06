@@ -84,10 +84,8 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn trim_opt_only_spaces_to_none() {
-        // let deserializer = serde_json::de::Deserializer::from_str(r#""   ""#);
-        // let deserializer = Some("   ".to_owned()).into_deserializer();
-        // assert_eq!(trim_opt_string(deserializer), Ok(None));
+        let deserializer = serde_json::json!("   ").into_deserializer();
+        assert!(matches!(trim_opt_string(deserializer), Ok(None)));
     }
 }
