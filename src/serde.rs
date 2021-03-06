@@ -1,6 +1,15 @@
 /// Custom deserializers to trim leading and trailing whitespace from strings.
 use serde::{Deserialize, Deserializer};
 
+#[allow(dead_code)]
+pub fn trim_str<'de, D>(deserializer: D) -> Result<&'de str, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: &str = Deserialize::deserialize(deserializer)?;
+    Ok(s.trim())
+}
+
 pub fn trim_string<'de, D>(deserializer: D) -> Result<String, D::Error>
 where
     D: Deserializer<'de>,
@@ -28,8 +37,28 @@ where
 mod test {
     use super::*;
 
-    use serde::de::value::{Error, StringDeserializer};
+    use serde::de::value::{BorrowedStrDeserializer, Error, StringDeserializer};
     use serde::de::IntoDeserializer;
+
+    #[test]
+    fn trim_str_untouched() {
+        let test_str = "quick brown fox";
+        let deserializer = BorrowedStrDeserializer::<Error>::new(&test_str);
+        assert_eq!(trim_str(deserializer), Ok(test_str));
+    }
+
+    #[test]
+    fn trim_str_all_spaces() {
+        let spaces = " ";
+        let deserializer = BorrowedStrDeserializer::<Error>::new(spaces);
+        assert_eq!(trim_str(deserializer), Ok(""));
+    }
+
+    #[test]
+    fn trim_str_leading_and_trailing() {
+        let deserializer = BorrowedStrDeserializer::<Error>::new("  the Quick brown fox  ");
+        assert_eq!(trim_str(deserializer), Ok("the Quick brown fox"));
+    }
 
     #[test]
     fn trim_string_untouched() {

@@ -145,9 +145,9 @@ impl Handler for CachedStaticFiles {
         }
 
         let path = req
-            .get_segments::<Segments<'_>>(0)
-            .and_then(|res| res.ok())
-            .and_then(|segments| segments.into_path_buf(false).ok())
+            .segments::<Segments<'_>>(0..)
+            .ok()
+            .and_then(|segments| segments.to_path_buf(false).ok())
             .map(|path| self.root.join(path));
 
         match &path {

@@ -95,7 +95,7 @@ pub async fn create(
 #[post("/users/password", format = "json", data = "<form>")]
 pub async fn change_password(
     auth: Auth,
-    form: Json<ChangePasswordForm>,
+    form: Json<ChangePasswordForm<'_>>,
     cookies: &CookieJar<'_>,
     conn: DbConn,
 ) -> RestResult<()> {
@@ -187,8 +187,8 @@ mod test {
             assert!(client.cookies().get(COOKIE_NAME).is_none());
             let req = client.post("/users/login");
             let form = LoginForm {
-                email: "test@gmail.com".to_owned(),
-                password: PW.to_owned(),
+                email: "test@gmail.com",
+                password: PW,
             };
             let mut req = req.header(ContentType::JSON);
             req.set_body(serde_json::to_string(&form).unwrap());
@@ -206,8 +206,8 @@ mod test {
             // Login and add cookie
             let req = client.post("/users/login");
             let form = LoginForm {
-                email: "test@gmail.com".to_owned(),
-                password: PW.to_owned(),
+                email: "test@gmail.com",
+                password: PW,
             };
             let mut req = req.header(ContentType::JSON);
             req.set_body(serde_json::to_string(&form).unwrap());

@@ -17,11 +17,11 @@ pub struct LoginForm {
 
 #[derive(Deserialize, TypeScriptify, Validate, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct ChangePasswordForm {
+pub struct ChangePasswordForm<'r> {
     #[validate(length(min = 8))]
-    pub old_password: String,
+    pub old_password: &'r str,
     #[validate(length(min = 8))]
-    pub new_password: String,
+    pub new_password: &'r str,
 }
 
 #[derive(AsChangeset, Deserialize, TypeScriptify, Validate, Debug)]

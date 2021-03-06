@@ -13,10 +13,10 @@ use rocket_multipart_form_data::{
 const DATA_LIMIT: u64 = 16 * 1024 * 1024; // 16 MB
 
 #[rocket::async_trait]
-impl FromData for RawWineForm {
+impl<'r> FromData<'r> for RawWineForm {
     type Error = VinotecaError;
 
-    async fn from_data(request: &Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
+    async fn from_data(request: &'r Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
         // Create form parser
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
@@ -120,10 +120,10 @@ impl FromData for RawWineForm {
 }
 
 #[rocket::async_trait]
-impl FromData for Image {
+impl<'r> FromData<'r> for Image {
     type Error = VinotecaError;
 
-    async fn from_data(request: &Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
+    async fn from_data(request: &'r Request<'_>, data: Data) -> data::Outcome<Self, Self::Error> {
         let mut options = MultipartFormDataOptions::new();
         options.allowed_fields.push(
             MultipartFormDataField::raw("image")
