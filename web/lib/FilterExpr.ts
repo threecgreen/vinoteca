@@ -9,7 +9,7 @@ operators.set("<=", (l, r) => l <= r);
 operators.set("<", (l, r) => l < r);
 operators.set(">=", (l, r) => l >= r);
 operators.set(">", (l, r) => l > r);
-operators.set("INCLUDES", (l, r) => new String(l).toLowerCase().includes(r));
+operators.set("INCLUDES", (l, r) => new String(l).toLowerCase().includes(r.toLowerCase()));
 
 export default class FilterExpr {
     public static parse(expr: string): FilterExpr {
