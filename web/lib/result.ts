@@ -8,11 +8,11 @@ export type RestResult<T> = Result<T, VinotecaError>;
 
 export class Result<T, E extends Record<string, unknown>> {
     public static Ok<T, E extends Record<string, unknown>>(value: T): Result<T, E> {
-        return new Result({ type: "ok", value });
+        return new Result<T, E>({ type: "ok", value });
     }
 
     public static Err<T, E extends Record<string, unknown>>(value: E): Result<T, E> {
-        return new Result({ type: "err", value });
+        return new Result<T, E>({ type: "err", value });
     }
 
     private constructor(private inner: Inner<T, E>) {
