@@ -52,9 +52,9 @@ fn write_contracts() -> Result<(), Box<dyn error::Error>> {
     )?;
     let mut const_writer = BufWriter::new(&const_file);
     let vinoteca::version::Version { version, git_sha } = vinoteca::version::get().into_inner();
-    write_const(&mut const_writer, "VERSION", &version)?;
+    write_const(&mut const_writer, "VERSION", version)?;
     write_log_level(&mut const_writer)?;
-    Ok(write_const(&mut const_writer, "GIT_SHA", &git_sha)?)
+    Ok(write_const(&mut const_writer, "GIT_SHA", git_sha)?)
 }
 
 fn write_enums() -> Result<(), Box<dyn error::Error>> {

@@ -40,7 +40,7 @@ impl FromDataSimple for RawWineForm {
         };
 
         // Parse form
-        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(content_type, data, options) {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
@@ -136,7 +136,7 @@ impl FromDataSimple for Image {
         };
 
         // Parse form
-        let mut multipart_form = match MultipartFormData::parse(&content_type, data, options) {
+        let mut multipart_form = match MultipartFormData::parse(content_type, data, options) {
             Ok(m) => m,
             Err(e) => {
                 error!("Failed to parse multipart form. {:?}", e);
