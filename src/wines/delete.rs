@@ -6,15 +6,15 @@ use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
+use rocket::serde::json::Json;
 use rocket::State;
-use rocket_contrib::json::Json;
 
 #[delete("/wines/<id>")]
 pub async fn delete(
     auth: Auth,
     id: i32,
     conn: DbConn,
-    storage: State<'_, Box<dyn Storage>>,
+    storage: &State<Box<dyn Storage>>,
 ) -> RestResult<()> {
     // Validate is user's wine
     let image_path = conn
@@ -28,7 +28,7 @@ pub async fn delete(
         .await?;
 
     if let Some(image_path) = image_path {
-        if let Err(e) = image::delete_from_storage(&**storage, &image_path).await {
+        if let Err(e) = image::delete_from_storage(&***storage, &image_path).await {
             warn!("Error deleting image for deleted wine: {:?}", e);
         };
     }
@@ -47,7 +47,7 @@ mod test {
     use crate::storage::MockStorage;
     use crate::wines::get_one;
 
-    use rocket_contrib::json::Json;
+    use rocket::serde::json::Json;
 
     #[rocket::async_test]
     async fn delete_removes_wine() {
@@ -55,7 +55,7 @@ mod test {
             let mut mock = MockStorage::new();
             mock.expect_delete_object().times(1).return_const(Ok(()));
             let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
-            let storage = State::from(&rocket).unwrap();
+            let storage = State::from(&rocket);
 
             let auth = Auth { id: 1 };
             let wines = get_one(auth, 1, connection).await;

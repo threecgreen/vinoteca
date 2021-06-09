@@ -1,8 +1,8 @@
 use crate::error::{RestResult, VinotecaError};
 
 use diesel::sql_types::Text;
-use rocket_contrib::databases::diesel::PgConnection;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
+use rocket_sync_db_pools::diesel::PgConnection;
 
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
@@ -12,7 +12,7 @@ macro_rules! top_table {
         use crate::models::generic;
 
         use diesel::sql_types::{BigInt, Double, Nullable};
-        use rocket_contrib::json::Json;
+        use rocket::serde::json::Json;
 
         $conn.run(move |c| {
             $table

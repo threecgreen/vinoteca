@@ -10,7 +10,7 @@ use diesel::dsl::count;
 use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::Integer;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 fn add_wildcards(query: &str) -> String {
     format!("%{}%", query)

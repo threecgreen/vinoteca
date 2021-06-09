@@ -6,7 +6,7 @@ use diesel::prelude::*;
 use rocket::http::Status;
 use rocket::outcome::Outcome;
 use rocket::request::{self, FromRequest, Request};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 
 // If more fields are added, remove `Copy`
@@ -19,19 +19,20 @@ pub struct Auth {
 pub const COOKIE_NAME: &str = "vinoteca-auth";
 
 #[rocket::async_trait]
-impl<'a, 'r> FromRequest<'a, 'r> for Auth {
+impl<'r> FromRequest<'r> for Auth {
     type Error = Json<VinotecaError>;
 
-    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
-        let conn = try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
-            error!("Failed to acquire database connection: {:?}", e);
-            (
-                Status::InternalServerError,
-                Json(VinotecaError::Internal(
-                    "Database connection failed".to_owned(),
-                )),
-            )
-        }));
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<Auth, Self::Error> {
+        let conn =
+            rocket::outcome::try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
+                error!("Failed to acquire database connection: {:?}", e);
+                (
+                    Status::InternalServerError,
+                    Json(VinotecaError::Internal(
+                        "Database connection failed".to_owned(),
+                    )),
+                )
+            }));
         // Extract user id from cookie
         let user_id: Option<i32> = request
             .cookies()

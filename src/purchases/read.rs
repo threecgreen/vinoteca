@@ -9,7 +9,7 @@ use diesel::dsl::{sql, sum};
 use diesel::prelude::*;
 use diesel::sql_query;
 use diesel::sql_types::{Double, Integer};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/purchases?<id>&<wine_id>&<wine_name>")]
 pub async fn get(

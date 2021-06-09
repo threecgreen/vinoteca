@@ -6,7 +6,7 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/colors?<id>&<name>")]
 pub async fn get(id: Option<i32>, name: Option<String>, conn: DbConn) -> RestResult<Vec<Color>> {

@@ -5,7 +5,7 @@ use image::ImageError;
 use rocket::http::{uncased::Uncased, Header, Status};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use s3::S3Error;
 use serde::Serialize;
 use std::borrow::Cow;

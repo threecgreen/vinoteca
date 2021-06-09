@@ -1,8 +1,11 @@
 use chrono::{DateTime, Utc};
-use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CACHE_CONTROL, CONTENT_ENCODING};
 use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
+use rocket::route::Outcome;
+use rocket::{
+    http::hyper::header::{CACHE_CONTROL, CONTENT_ENCODING},
+    route::Handler,
+};
 use rocket::{Data, Request, Route};
 use std::borrow::Cow;
 use std::fs::{self, File};
@@ -135,7 +138,7 @@ impl From<CachedStaticFiles> for Vec<Route> {
 
 #[rocket::async_trait]
 impl Handler for CachedStaticFiles {
-    async fn handle<'r, 's: 'r>(&'s self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r> {
         // If this is not the route with segments, handle it only if the user
         // requested a handling of index files.
         let current_route = req.route().expect("route while handling");
@@ -145,7 +148,7 @@ impl Handler for CachedStaticFiles {
         }
 
         let path = req
-            .segments::<Segments<'_>>(0..)
+            .segments::<Segments<Path>>(0..)
             .ok()
             .and_then(|segments| segments.to_path_buf(false).ok())
             .map(|path| self.root.join(path));

@@ -6,7 +6,7 @@ use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use validator::Validate;
 
 #[get("/stores?<id>&<name>")]

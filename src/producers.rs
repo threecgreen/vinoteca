@@ -7,7 +7,7 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use validator::Validate;
 
 #[get("/producers?<id>&<name>&<region_id>&<region_name>")]

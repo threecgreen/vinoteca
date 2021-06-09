@@ -6,7 +6,7 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/regions?<id>&<name>&<producer_name>")]
 pub async fn get(

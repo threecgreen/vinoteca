@@ -8,7 +8,7 @@ use crate::DbConn;
 use chrono::Utc;
 use diesel::prelude::*;
 use rocket::http::{Cookie, CookieJar, SameSite};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use validator::Validate;
 
 // TODO: store bad login attempts and lock after 10
@@ -171,8 +171,9 @@ mod test {
 
     use rocket::http::{ContentType, Status};
     use rocket::local::asynchronous::Client;
+    use rocket::Build;
 
-    fn mounted_rocket(rocket: rocket::Rocket) -> rocket::Rocket {
+    fn mounted_rocket(rocket: rocket::Rocket<Build>) -> rocket::Rocket<Build> {
         rocket.mount(
             "/",
             routes![get, login, create, change_password, logout, modify_profile],

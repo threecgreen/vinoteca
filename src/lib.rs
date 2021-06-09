@@ -3,9 +3,9 @@ extern crate diesel;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
-extern crate rocket_contrib;
-#[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate rocket_sync_db_pools;
 #[macro_use]
 extern crate validator_derive;
 
@@ -54,7 +54,9 @@ use rocket::{fairing::AdHoc, Rocket};
 extern crate diesel_migrations;
 embed_migrations!();
 
-pub async fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
+pub async fn run_db_migrations(
+    rocket: Rocket<rocket::Ignite>,
+) -> Result<Rocket<rocket::Ignite>, Rocket<rocket::Ignite>> {
     let connection = DbConn::get_one(&rocket).await.expect("database connection");
     connection
         .run(|conn| match embedded_migrations::run(conn) {
@@ -70,14 +72,12 @@ pub async fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
         .await
 }
 
-pub fn create_rocket() -> rocket::Rocket {
-    let mut rocket = rocket::ignite();
-
-    rocket = rocket
+pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::Error> {
+    let rocket = rocket::build()
         // Allow handlers access to the database
         .attach(DbConn::fairing())
         // Run embedded database migrations on startup
-        .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
+        .attach(AdHoc::on_ignite("Database migrations", run_db_migrations))
         .mount("/", static_handlers::get_routes())
         .mount(
             "/rest",
@@ -143,16 +143,22 @@ pub fn create_rocket() -> rocket::Rocket {
                 wine_types::top,
             ],
         )
+        // TODO: register separate handlers for /
         // These errors should only happen with rest requests so they also return JSON
-        .register(catchers![
-            catchers::unauthorized,
-            catchers::forbidden,
-            catchers::not_found
-        ]);
+        .register(
+            "/rest",
+            catchers![
+                catchers::unauthorized,
+                catchers::forbidden,
+                catchers::not_found
+            ],
+        );
     let app_config: config::AppConfig = rocket.figment().extract().expect("config");
     let storage = storage::S3::new(&app_config.aws_access_key, &app_config.aws_secret_key)
         .expect("AWS S3 bucket connection");
-    rocket
+    Ok(rocket
         .manage(Box::new(storage))
         .mount("/static", CachedStaticFiles::from("web/static").rank(1))
+        .ignite()
+        .await?)
 }

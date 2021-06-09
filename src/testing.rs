@@ -38,20 +38,20 @@ macro_rules! db_test {
 }
 
 /// Doesn't include database access
-pub fn simple_rocket() -> Rocket {
+pub fn simple_rocket() -> Rocket<rocket::Build> {
     let mut config = rocket::Config::default();
     config.workers = 1;
     rocket::custom(config)
 }
 
 /// `MediaDir`
-pub fn create_test_rocket() -> Rocket {
+pub fn create_test_rocket() -> Rocket<rocket::Build> {
     test_rocket_config()
         .attach(DbConn::fairing())
         .attach(AdHoc::on_attach("Setup test db", setup_test_db))
 }
 
-fn test_rocket_config() -> Rocket {
+fn test_rocket_config() -> Rocket<rocket::Build> {
     use rocket::figment::{
         self,
         value::{Map, Value},
@@ -73,7 +73,9 @@ fn test_rocket_config() -> Rocket {
     rocket::custom(config)
 }
 
-async fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
+async fn setup_test_db(
+    rocket: Rocket<rocket::Build>,
+) -> Result<Rocket<rocket::Build>, Rocket<rocket::Build>> {
     let rocket = run_db_migrations(rocket).await?;
     // TODO: test with multiple users
     let conn = DbConn::get_one(&rocket).await.expect("database connection");

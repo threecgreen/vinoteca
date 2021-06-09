@@ -9,18 +9,19 @@ use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
+use rocket::form::Form;
 use rocket::State;
 use validator::Validate;
 
 #[post("/wines", data = "<raw_wine_form>")]
 pub async fn post(
     auth: Auth,
-    raw_wine_form: RawWineForm,
+    raw_wine_form: Form<RawWineForm>,
     conn: DbConn,
-    storage: State<'_, Box<dyn Storage>>,
+    storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
-    let wine_form = raw_wine_form.wine_form;
-    let image = raw_wine_form.image;
+    let RawWineForm { wine_form, image } = raw_wine_form.into_inner();
+    let wine_form = wine_form.into_inner();
     wine_form.validate()?;
 
     let wine_id = conn
@@ -33,7 +34,7 @@ pub async fn post(
         })
         .await?;
     if let Some(image) = image {
-        if let Err(e) = handle_image(wine_id, image, &**storage, &conn).await {
+        if let Err(e) = handle_image(wine_id, image, &***storage, &conn).await {
             warn!("Error adding image for new wine with id {}: {}", wine_id, e);
         };
     }
@@ -46,7 +47,6 @@ mod test {
     use super::*;
     use crate::models::WineForm;
     use crate::storage::MockStorage;
-    use crate::wines::image::Image;
     use crate::wines::models::RawWineForm;
     use crate::DbConn;
 

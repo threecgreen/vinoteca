@@ -8,7 +8,7 @@ use crate::DbConn;
 use diesel::dsl::sql;
 use diesel::prelude::*;
 use diesel::sql_types::{BigInt, Double, Nullable};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use serde::Serialize;
 use typescript_definitions::TypeScriptify;
 use validator::Validate;

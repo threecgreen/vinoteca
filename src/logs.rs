@@ -1,6 +1,6 @@
 use crate::users::Auth;
 
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 

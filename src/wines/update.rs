@@ -9,8 +9,9 @@ use crate::users::Auth;
 use crate::DbConn;
 
 use diesel::prelude::*;
+use rocket::form::Form;
+use rocket::serde::json::Json;
 use rocket::State;
-use rocket_contrib::json::Json;
 use validator::Validate;
 
 #[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
@@ -53,11 +54,12 @@ pub async fn patch(
 pub async fn put(
     auth: Auth,
     id: i32,
-    raw_wine_form: RawWineForm,
+    raw_wine_form: Form<RawWineForm>,
     conn: DbConn,
-    storage: State<'_, Box<dyn Storage>>,
+    storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
-    let RawWineForm { image, wine_form } = raw_wine_form;
+    let RawWineForm { image, wine_form } = raw_wine_form.into_inner();
+    let wine_form = wine_form.into_inner();
     wine_form.validate()?;
 
     conn.run(move |c| {
@@ -71,7 +73,7 @@ pub async fn put(
     })
     .await?;
     if let Some(image) = image {
-        if let Err(e) = handle_image(id, image, &**storage, &conn).await {
+        if let Err(e) = handle_image(id, image, &***storage, &conn).await {
             warn!("Error updating image for wine with id {}: {}", id, e);
         }
     }
