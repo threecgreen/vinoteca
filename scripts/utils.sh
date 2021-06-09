@@ -7,7 +7,7 @@ if [ "$CI" == "true" ]; then
 fi
 
 # Important filesystem locations
-scripts_dir="$(cd "$(dirname "$0")" ; pwd -P )"
+scripts_dir="$(cd "$(dirname "$0")" || exit ; pwd -P )"
 root_dir="$(dirname "$scripts_dir")"
 
 error_exit()
@@ -44,7 +44,7 @@ check_for_node()
 rust_build()
 {
     info_text "Building web server…"
-    cd $root_dir
+    cd "$root_dir" || exit
     if [ "$1" = "release" ]; then
         cargo build --release || error_exit "Failed build rust web server"
         cargo run --release --bin gen_contracts || error_exit "Failed generating contracts"
@@ -52,29 +52,29 @@ rust_build()
         cargo build || error_exit "Failed build rust web server"
         cargo run --bin gen_contracts || error_exit "Failed generating contracts"
     fi
-    cd -
+    cd - || exit
 }
 
 js_install_and_build()
 {
     info_text "Building web application…"
     check_for_node
-    cd "$root_dir/web"
+    cd "$root_dir/web" || exit
     if [ "$CI" == "true" ]; then
         npm ci --dev || error_exit "Failed installing JavaScript dependencies"
     else
         npm ci || error_exit "Failed installing JavaScript dependencies"
     fi
     npm run-script build || error_exit "Failed building webpack bundles"
-    cd -
+    cd - || exit
 }
 
 find_tslint()
 {
     command -v tslint > /dev/null 2>&1
     if [ $? = 0 ]; then
-        tslint="tslint"
+        export tslint="tslint"
     else
-        tslint="$root_dir/web/node_modules/.bin/tslint"
+        export tslint="$root_dir/web/node_modules/.bin/tslint"
     fi
 }

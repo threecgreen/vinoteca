@@ -8,10 +8,10 @@ use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 
 pub struct RawWineForm {
-    /// raw submitted wine image
-    pub image: Option<Image>,
     /// JSON data for database
     pub wine_form: WineForm,
+    /// raw submitted wine image
+    pub image: Option<Image>,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]

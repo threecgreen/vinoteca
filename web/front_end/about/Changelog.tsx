@@ -12,6 +12,12 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.3</h5>
+            <p>Dependency upgrades</p>
+
+            <h5>6.2.2</h5>
+            <p>Fix bug where filtering wines in wines table with mixed-casing always filtered out all wines</p>
+
             <h5>6.2.1</h5>
             <p>Fix stretching of portrait wine images</p>
 
