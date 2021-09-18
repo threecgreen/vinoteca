@@ -1,10 +1,11 @@
 import { GIT_SHA, LOG_LEVEL, VERSION } from "generated/constants";
 import React from "react";
 import { postLog } from "./api/logs";
+import { isIn } from "./utils";
 import { toast } from "./widgets";
 
 /** Provides logging functionality for client-side JavaScript errors. */
-enum LogLevel {
+export enum LogLevel {
     Critical = "critical",
     Error = "error",
     Warning = "warning",
@@ -46,6 +47,16 @@ export default class Logger {
         void this.log(level, message, tags);
     }
 
+    /** Special method for logging exceptions (errors) */
+    public logException(message: string, error: unknown, tags: LogTags = {},
+                        level = LogLevel.Error): void {
+        if (isIn(level, LogLevel.Critical, LogLevel.Error, LogLevel.Warning)) {
+            this.toast(level, message);
+        }
+        tags["error"] = `${error}`;
+        void this.log(level, message, tags);
+    }
+
     public logWarning(message: string, tags: LogTags = {}): void {
         const level = LogLevel.Warning;
         this.toast(level, message);
@@ -78,8 +89,7 @@ export default class Logger {
                     this.toast(LogLevel.Error, "Failed to send client-side logs to server.");
                 }
             } catch (e) {
-                this.toast(LogLevel.Error,
-                           `Failed to send client-side logs to server: ${e.message}`);
+                this.toast(LogLevel.Error, `Failed to send client-side logs to server. ${e}`);
             }
         }
     }

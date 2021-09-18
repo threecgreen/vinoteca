@@ -7,7 +7,7 @@ import { initListViewState, listViewReducer } from "front_end/list_view/state";
 import { IProducer } from "generated/rest";
 import { deleteProducer, getProducers, updateProducer } from "lib/api/producers";
 import { useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 import { ProducerListItem } from "./ProducerListItem";
 
@@ -23,7 +23,7 @@ const ProducersApp: React.FC = () => {
                 const producers: IProducer[] = await getProducers({});
                 dispatch({type: "setRecords", records: producers});
             } catch (e) {
-                logger.logWarning(`Failed to load producers: ${e.message}`);
+                logger.logException("Failed to load producers", e, {}, LogLevel.Warning);
             } finally {
                 dispatch({type: "hasLoaded"});
             }
@@ -44,8 +44,8 @@ const ProducersApp: React.FC = () => {
                 await deleteProducer(id);
                 dispatch({type: "deleteRecord", id});
             } catch (e) {
-                logger.logWarning(
-                    `Failed to delete producer for producer with id ${id}: ${e.message}`);
+                logger.logException("Failed to delete producer", e, {producerId: id},
+                                    LogLevel.Warning);
             }
         }
     }
@@ -58,8 +58,8 @@ const ProducersApp: React.FC = () => {
                 const updatedProducers = await updateProducer(producer);
                 dispatch({type: "updateRecord", record: updatedProducers});
             } catch (e) {
-                logger.logWarning(
-                    `Failed to save producer change for producer with id ${id}: ${e.message}`);
+                logger.logException("Failed to save producer change for producer", e,
+                                    {producerId: id}, LogLevel.Warning);
             }
         }
     };

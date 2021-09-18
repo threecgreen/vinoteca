@@ -6,7 +6,7 @@ import { initListViewState, listViewReducer } from "front_end/list_view/state";
 import { IGrape, IGrapeForm } from "generated/rest";
 import { deleteGrape, getGrapes, updateGrape } from "lib/api/grapes";
 import { useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 import { GrapesList } from "./GrapesList";
 
@@ -22,7 +22,7 @@ const GrapesApp: React.FC = (_) => {
                 const grapes: IGrape[] = await getGrapes({});
                 dispatch({type: "setRecords", records: grapes});
             } catch (e) {
-                logger.logWarning(`Failed to load grapes: ${e.message}`);
+                logger.logException("Failed to load grapes", e, {}, LogLevel.Warning);
             } finally {
                 dispatch({type: "hasLoaded"});
             }
@@ -45,7 +45,7 @@ const GrapesApp: React.FC = (_) => {
                 await deleteGrape(id);
                 dispatch({type: "deleteRecord", id});
             } catch (e) {
-                logger.logWarning(`Failed to delete grape for grape with id ${id}: ${e.message}`);
+                logger.logException("Failed to delete grape", e, {grapeId: id}, LogLevel.Warning);
             }
         }
     }
@@ -58,8 +58,8 @@ const GrapesApp: React.FC = (_) => {
                 const updatedGrape = await updateGrape(id, grape);
                 dispatch({type: "updateRecord", record: updatedGrape});
             } catch (e) {
-                logger.logWarning(
-                    `Failed to save grape change for grape with id ${id}: ${e.message}`);
+                logger.logException("Failed to save grape change", e, {grapeId: id},
+                                    LogLevel.Warning);
             }
         }
     };

@@ -153,3 +153,7 @@ export function hasOwnProperty<X extends Record<string, unknown>, Y extends Prop
     (obj: X, prop: Y): obj is X & Record<Y, unknown> {
     return obj.hasOwnProperty(prop)
 }
+
+export function isIn<T>(val: T, ...args: T[]): boolean {
+    return args.includes(val);
+}

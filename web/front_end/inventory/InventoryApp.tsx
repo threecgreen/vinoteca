@@ -6,7 +6,7 @@ import { getInventory, patchWine } from "lib/api/wines";
 import { download, generateCSV } from "lib/csv";
 import { serializeDate } from "lib/date";
 import { useDescription, useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 import { InventoryStatsTable } from "./InventoryStatsTable";
 import { InventoryChange, InventoryTable } from "./InventoryTable";
@@ -45,7 +45,7 @@ const InventoryApp: React.FC = (_) => {
             const updatedWine = await patchWine(id, {inventory: newInventory});
             dispatch({type: "updateWineInventory", id, inventory: updatedWine.inventory})
         } catch (err) {
-            logger.logWarning(`Failed to update inventory: ${err.message}`);
+            logger.logException("Failed to update inventory", err, {}, LogLevel.Warning);
         }
     };
     const downloadInventory = () => {

@@ -35,7 +35,7 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, ..
                 });
                 autocomplete(inputRef, result, onChangeRef.current);
             } catch (e) {
-                logger.logError(`Failed to get region autocomplete options. ${e.message}`);
+                logger.logException("Failed to get region autocomplete options", e);
             }
         }
         void fetchAutocompleteOptions();
@@ -57,8 +57,9 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, ..
                 }
             } catch (e) {
                 // Ignore empty result errors
-                if (!EmptyResultError.isInstance(e)) {
-                    logger.logWarning(`Error fetching regions based on producer. ${e.message}`);
+                if (!(e instanceof Error) || !EmptyResultError.isInstance(e)) {
+                    logger.logWarning(`Error fetching regions based on producer. ${e}`,
+                                      {producerText});
                     throw e;
                 }
             }

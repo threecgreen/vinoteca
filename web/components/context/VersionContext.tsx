@@ -2,7 +2,7 @@ import { IChildrenProp } from "components/IProps";
 import { IVersion } from "generated/rest";
 import { getVersion } from "lib/api/version";
 import { useInterval } from "lib/interval";
-import Logger, { useLogger } from "lib/Logger";
+import Logger, { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 
 const VersionContext = React.createContext<IVersion | null>(null);
@@ -25,7 +25,7 @@ const updateVersion = async (
         }
         setState(version);
     } catch (e) {
-        logger.logWarning("Unable to update version", {errorMessage: e.message});
+        logger.logException("Unable to update version", e, {}, LogLevel.Warning);
     }
 }
 export const VersionProvider: React.FC<IChildrenProp> = ({children}) => {

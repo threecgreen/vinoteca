@@ -22,13 +22,12 @@ export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => 
     }, [props.onChange]);
 
     React.useEffect(() => {
-        // logger.logWarning(`fetchProducers effect`);
         async function fetchProducers() {
             try {
                 const producers: IProducer[] = await getProducers({});
                 autocomplete(inputRef, toDict(producers), onChangeRef.current);
             } catch (e) {
-                logger.logError(`Failed to get producer autocomplete options. ${e.message}`);
+                logger.logException("Failed to get producer autocomplete options", e);
             }
         }
 

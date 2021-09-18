@@ -5,7 +5,7 @@ import { IRegion, IVitiAreaStats, IWine } from "generated/rest";
 import { getRegion } from "lib/api/regions";
 import { getVitiAreaStats } from "lib/api/viti_areas";
 import { getWines } from "lib/api/wines";
-import Logger from "lib/Logger";
+import Logger, { LogLevel } from "lib/Logger";
 import { setTitle } from "lib/widgets";
 import React, { ReactElement } from "react";
 import { Region } from "./Region";
@@ -50,8 +50,8 @@ export default class RegionProfileApp extends React.Component<IProps, IState> {
                 this.getAndSetVitiAreaStats(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to load region: ${e.message}`,
-                {id: this.props.regionId});
+            this.logger.logException("Failed to load region", e, {id: this.props.regionId},
+                                     LogLevel.Warning);
         }
     }
 

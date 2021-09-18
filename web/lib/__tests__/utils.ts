@@ -1,4 +1,5 @@
-import { isEmpty, capitalizeFirstLetter } from "../utils";
+import { LogLevel } from "lib/Logger";
+import { isEmpty, capitalizeFirstLetter, isIn } from "../utils";
 
 test("isEmpty works with arrays", () => {
     expect(isEmpty([])).toBeTruthy();
@@ -17,3 +18,9 @@ test("capitalizeFirstLetter works with empty string", () => {
 test("capitalizeFirstLetter to capitalize only the first letter", () => {
     expect(capitalizeFirstLetter("lastPurchaseDate")).toBe("LastPurchaseDate");
 });
+
+test("isIn works correctly", () => {
+    const debug = LogLevel.Debug;
+    expect(isIn(debug, LogLevel.Info, LogLevel.Debug)).toBeTruthy();
+    expect(isIn(debug, LogLevel.Critical, LogLevel.Error, LogLevel.Warning)).toBeFalsy();
+})

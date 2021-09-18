@@ -7,7 +7,7 @@ import { WinesTable } from "components/WinesTable";
 import { IWine, IWineType } from "generated/rest";
 import { getWines } from "lib/api/wines";
 import { getWineType, updateWineType } from "lib/api/wine_types";
-import Logger from "lib/Logger";
+import Logger, { LogLevel } from "lib/Logger";
 import { setTitle } from "lib/widgets";
 import React, { ReactElement } from "react";
 import { WineType } from "./WineType";
@@ -52,8 +52,8 @@ export default class WineTypeProfileApp extends React.Component<IProps, IState> 
                 this.getAndSetWines(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to load wine type: ${e.message}`,
-                {id: this.props.wineTypeId});
+            this.logger.logException("Failed to load wine type", e, {id: this.props.wineTypeId},
+                                     LogLevel.Warning);
         }
     }
 

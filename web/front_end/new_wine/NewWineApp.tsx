@@ -65,7 +65,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             clearGrapesStorage();
             void navigate(`/wines/${wine.id}`);
         } catch (err) {
-            logger.logError(`Error creating new wine: ${err.message}`);
+            logger.logException("Error creating new wine", err);
             // Prevent partial data
             if (purchaseId) {
                 await deletePurchase(purchaseId);

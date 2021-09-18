@@ -20,7 +20,7 @@ import {
 import { createWineGrapes, getWineGrapes } from "lib/api/wine_grapes";
 import { getNameAndType } from "lib/component_utils";
 import { useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import { arrayHasChanged, hasChanged } from "lib/utils";
 import React from "react";
 import { InventoryChange } from "../inventory/InventoryTable";
@@ -77,7 +77,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     fetchGrapes(),
                 ]);
             } catch (e) {
-                logger.logWarning(`Failed to load wine: ${e.message}`, {id});
+                logger.logException("Failed to load wine", e, {id});
             }
         }
 
@@ -97,7 +97,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 const wine = await patchWine(id, {inventory});
                 dispatch({type: "setWine", wine});
             } catch (e) {
-                logger.logWarning(`Failed to change inventory. ${e.message}`, {id});
+                logger.logException("Failed to change inventory", e, {id}, LogLevel.Warning);
             }
         }
     };
@@ -108,7 +108,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 const wine = await patchWine(id, {isInShoppingList});
                 dispatch({type: "setWine", wine})
             } catch (e) {
-                logger.logWarning(`Failed to change isInShoppingList. ${e.message}`, {id});
+                logger.logException("Failed to change isInShoppingList", e, {id}, LogLevel.Warning);
             }
         }
     }
@@ -123,7 +123,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 // Potential race condition
                 dispatch({type: "setWine", wine: {...state.wine, image: null}});
             } catch (e) {
-                logger.logWarning(`Failed to delete wine image: ${e.message}`, {id});
+                logger.logException("Failed to delete wine image", e, {id}, LogLevel.Warning);
             }
         } else if (editedFile && state.wine?.image !== editedFile?.name) {
             logger.logInfo(`Updating wine image`,
@@ -133,7 +133,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 // Potential race condition
                 dispatch({type: "setWine", wine: {...state.wine, image: imagePath}});
             } catch (e) {
-                logger.logWarning(`Failed to update wine image: ${e.message}`, {id});
+                logger.logException("Failed to upload wine image", e, {id}, LogLevel.Warning);
             }
         }
     };
@@ -150,8 +150,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 const updatedWine = await updateWine(id, wineForm, null);
                 dispatch({type: "setWine", wine: updatedWine});
             } catch (e) {
-                logger.logError(`Failed to update wine. ${e.message}`,
-                                {editedWine, id});
+                logger.logException("Failed to update wine", e,
+                                    {editedWine, id});
             }
         }
     };
@@ -165,8 +165,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 const updatedGrapes = await createWineGrapes(grapesForm);
                 dispatch({type: "setGrapes", grapes: updatedGrapes});
             } catch (e) {
-                logger.logWarning(`Failed to update wine grapes. ${e.message}`,
-                                  {editedGrapes, id});
+                logger.logException("Failed to update wine grapes", e, {editedGrapes, id},
+                                    LogLevel.Warning);
             }
         }
     };
@@ -181,7 +181,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             logger.logInfo("Successfully updated wine", {id});
             dispatch({type: "setMode", mode: {type: "display"}});
         } catch (e) {
-            logger.logError(`Error in updating wine and grapes: ${e.message}`, {id});
+            logger.logException("Error in updating wine and grapes", e, {id});
         }
     };
 
@@ -191,7 +191,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             logger.logInfo("Successfully edited wine image", {id, rotation});
             dispatch({type: "updatedWineRotation"});
         } catch (e) {
-            logger.logError(`Error in editing wine image: ${e.message}`, {id, rotation});
+            logger.logException("Error in editing wine image", e, {id, rotation});
         }
     }
 
@@ -200,7 +200,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
             await deleteWine(id);
             void navigate("/wines");
         } catch (e) {
-            logger.logWarning(`Failed to delete wine. ${e.message}`);
+            logger.logException("Failed to delete wine", e, {id}, LogLevel.Warning);
         }
     };
 
@@ -229,8 +229,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                     logger.logWarning("Not submitting purchase edit. Purchase form is invalid");
                 }
             } catch (err) {
-                logger.logWarning(`Failed to update purchase: ${err.message}`,
-                    {wineId: id, purchaseId});
+                logger.logException("Failed to update purchase", err, {wineId: id, purchaseId},
+                                    LogLevel.Warning);
             }
         }
         dispatch({type: "setMode", mode: {type: "display"}});
@@ -244,8 +244,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 purchases: state.purchases.filter((p) => p.id !== purchaseId),
             });
         } catch (e) {
-            logger.logWarning(`Error deleting purchase with id: ${purchaseId}. ${e.message}`,
-                              {wineId: id, purchaseId});
+            logger.logException("Error deleting purchase", e, {wineId: id, purchaseId},
+                                LogLevel.Warning);
         } finally {
             dispatch({type: "setMode", mode: {type: "display"}});
         }
@@ -268,7 +268,8 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
                 logger.logWarning("Not submitting new purchase form. Form is invalid");
             }
         } catch (err) {
-            logger.logWarning(`Failed to create new purchase: ${err.message}`, {wineId: id});
+            logger.logException("Failed to create new purchase", err, {wineId: id},
+                                LogLevel.Warning);
             dispatch({type: "setMode", mode: {type: "display"}});
         }
     };
