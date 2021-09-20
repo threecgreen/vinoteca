@@ -133,7 +133,7 @@ export async function onError(
 ): Promise<void> {
     const logger = new Logger("window", false, false);
     if (error && error.message.startsWith("Loading chunk ")) {
-        await logger.logError(
+        logger.logError(
             `A top-level error occured loading chunk: ${error.message}. Reloading...`);
         location.reload();
     } else {
