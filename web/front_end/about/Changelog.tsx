@@ -12,6 +12,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.6</h5>
+            <p>Remove chatty log</p>
+
             <h5>6.2.5</h5>
             <ul className="bullets">
                 <li>Improve client error handling</li>

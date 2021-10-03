@@ -17,7 +17,6 @@ export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => 
     const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
     const onChangeRef = React.useRef((_: string) => { return; });
     React.useEffect(() => {
-        // logger.logWarning(`onChange effect`);
         onChangeRef.current = props.onChange;
     }, [props.onChange]);
 
@@ -41,7 +40,6 @@ export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => 
             inputRef={ inputRef }
             value={ value }
             onChange={ (s) => {
-                logger.logWarning(`onChange`);
                 onChangeRef.current(s);
             } }
             required={ required }
