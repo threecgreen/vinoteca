@@ -58,7 +58,16 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-
+  rust-audit:
+    name: Rust dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Audit
+        uses: actions-rs/cargo@v1
+        with:
+          command: audit
   js:
     name: JS
     runs-on: ubuntu-latest
@@ -81,3 +90,13 @@ jobs:
         run: npm run test
       - name: Lint
         run: npm run lint
+  js-audit:
+    name: JS dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Audit
+        uses: actions-rs/cargo@v1
+        with:
+          command: audit
