@@ -1,7 +1,9 @@
 name: CI
 
-on: [push]
-
+on:
+  push:
+  schedule:
+    - cron:  '30 18 * * 1'
 env:
   CARGO_TERM_COLOR: always
   FORCE_COLOR: true
