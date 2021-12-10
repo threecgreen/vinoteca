@@ -147,15 +147,15 @@ impl Handler for CachedStaticFiles {
             return Outcome::forward(data);
         }
 
-        let path = req
-            .segments::<Segments<Path>>(0..)
-            .ok()
-            .and_then(|segments| segments.to_path_buf(false).ok())
-            .map(|path| self.root.join(path));
+        let path = req.uri().path().as_str();
+        // .segments::<Segments<Path>>(0..)
+        // .ok()
+        // .and_then(|segments| segments.to_path_buf(false).ok())
+        // .map(|path| self.root.join(path));
 
-        match &path {
-            Some(path) if path.is_dir() => Outcome::forward(data),
-            Some(path) if path.exists() => {
+        match PathBuf::from(path) {
+            path if path.is_dir() => Outcome::forward(data),
+            path if path.exists() => {
                 let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
                     .headers()
@@ -172,14 +172,13 @@ impl Handler for CachedStaticFiles {
                     Outcome::from(req, CachedFile::open(path).ok())
                 }
             }
-            Some(path) => {
+            path => {
                 warn!(
                     "Request received for static file that doesn't exist at path '{:?}'",
                     path
                 );
                 Outcome::failure(Status::NotFound)
             }
-            None => Outcome::forward(data),
         }
     }
 }

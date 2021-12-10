@@ -1,3 +1,4 @@
+use rocket::Rocket;
 use std::env;
 use std::process;
 
@@ -5,7 +6,7 @@ use std::process;
 async fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {
-        let res = vinoteca::create_rocket().launch().await;
+        let res = vinoteca::create_rocket().await.map(Rocket::launch);
         if let Err(e) = res {
             print_error(&format!("Error launching rocket: {}", e));
         }

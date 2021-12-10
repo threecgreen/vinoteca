@@ -49,6 +49,7 @@ use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
 use rocket::{fairing::AdHoc, Rocket};
+use storage::Storage;
 
 #[macro_use]
 extern crate diesel_migrations;
@@ -157,10 +158,13 @@ pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::E
             ],
         );
     let app_config: config::AppConfig = rocket.figment().extract().expect("config");
-    let storage = storage::S3::new(&app_config.aws_access_key, &app_config.aws_secret_key)
-        .expect("AWS S3 bucket connection");
+    let storage: Box<dyn Storage> = Box::new(
+        storage::S3::new(&app_config.aws_access_key, &app_config.aws_secret_key)
+            .expect("AWS S3 bucket connection"),
+    );
+
     Ok(rocket
-        .manage(Box::new(storage))
+        .manage(storage)
         .mount("/static", CachedStaticFiles::from("web/static").rank(1))
         .ignite()
         .await?)
