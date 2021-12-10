@@ -54,8 +54,8 @@ mod test {
         db_test!(|rocket, connection| {
             let mut mock = MockStorage::new();
             mock.expect_delete_object().times(1).return_const(Ok(()));
-            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
-            let storage = State::from(&rocket);
+            let mock_storage: Box<dyn Storage> = Box::new(mock);
+            let storage = State::from(&mock_storage);
 
             let auth = Auth { id: 1 };
             let wines = get_one(auth, 1, connection).await;

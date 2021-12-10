@@ -131,19 +131,19 @@ mod test {
             form.description = Some("pleasant".to_owned());
             // Mock storage setup
             let mock = MockStorage::new();
-            // mock.expect_delete_object().times(1).return_const(Ok(()));
-            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
+            let mock_storage: Box<dyn Storage> = Box::new(mock);
+            let storage = State::from(&mock_storage);
             let connection = DbConn::get_one(&rocket).await.expect("database connection");
             // Add description
             let wine2 = put(
                 auth,
                 1,
-                RawWineForm {
+                Form::from(RawWineForm {
                     image: None,
-                    wine_form: form,
-                },
+                    wine_form: Json(form),
+                }),
                 connection,
-                State::from(&rocket).unwrap(),
+                storage,
             )
             .await
             .unwrap();
@@ -155,12 +155,12 @@ mod test {
             let wine3 = put(
                 auth,
                 1,
-                RawWineForm {
+                Form::from(RawWineForm {
                     image: None,
-                    wine_form: null_form,
-                },
+                    wine_form: Json(null_form),
+                }),
                 connection,
-                State::from(&rocket).unwrap(),
+                storage,
             )
             .await
             .unwrap();

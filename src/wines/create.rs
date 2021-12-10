@@ -50,18 +50,19 @@ mod test {
     use crate::wines::models::RawWineForm;
     use crate::DbConn;
 
+    use rocket::serde::json::Json;
     use rocket::State;
     use std::fs::read;
     use std::path::Path;
 
-    fn mock_form() -> RawWineForm {
-        RawWineForm {
-            image: Some(Image {
-                mime_type: "image/jpeg".parse().unwrap(),
-                data: read(Path::new(env!("CARGO_MANIFEST_DIR")).join("src/test_data/test.jpg"))
+    fn mock_form() -> Form<RawWineForm> {
+        Form::from(RawWineForm {
+            image: Some(
+                // mime_type: "image/jpeg".parse().unwrap(),
+                read(Path::new(env!("CARGO_MANIFEST_DIR")).join("src/test_data/test.jpg"))
                     .expect("Test image"),
-            }),
-            wine_form: WineForm {
+            ),
+            wine_form: Json(WineForm {
                 description: None,
                 notes: None,
                 rating: Some(5),
@@ -73,8 +74,8 @@ mod test {
                 name: None,
                 wine_type_id: 1,
                 is_in_shopping_list: false,
-            },
-        }
+            }),
+        })
     }
 
     #[rocket::async_test]
@@ -84,9 +85,9 @@ mod test {
             mock.expect_create_object()
                 .times(1)
                 .return_const(Ok("uuid123".to_owned()));
-            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
-            let storage = State::from(&rocket).unwrap();
-            let response = post(Auth { id: 1 }, mock_form(), connection, storage).await;
+            let mock_storage: Box<dyn Storage> = Box::new(mock);
+            let storage = State::from(&mock_storage);
+            let response = post(Auth { id: 1 }, mock_form(), connection, &storage).await;
             assert!(response.is_ok());
         })
     }
@@ -98,9 +99,9 @@ mod test {
             mock.expect_create_object()
                 .times(1)
                 .return_const(Err(VinotecaError::Internal("No good".to_owned())));
-            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
-            let storage = State::from(&rocket).unwrap();
-            let response = post(Auth { id: 1 }, mock_form(), connection, storage).await;
+            let mock_storage: Box<dyn Storage> = Box::new(mock);
+            let storage = State::from(&mock_storage);
+            let response = post(Auth { id: 1 }, mock_form(), connection, &storage).await;
             assert!(response.is_ok());
         })
     }

@@ -4,7 +4,7 @@ use crate::{run_db_migrations, DbConn};
 
 use diesel::prelude::*;
 use diesel::sql_query;
-use rocket::fairing::AdHoc;
+use rocket::fairing::{AdHoc, Fairing};
 use rocket::tokio::sync::Mutex;
 use rocket::Rocket;
 use std::env;
@@ -15,6 +15,7 @@ lazy_static! {
     pub static ref DB_LOCK: Mutex<()> = Mutex::new(());
 }
 
+/// password for a test user
 pub const PW: &str = "testing123";
 
 lazy_static! {
@@ -26,7 +27,7 @@ macro_rules! db_test {
         use crate::testing::{create_test_rocket, DB_LOCK};
 
         let _lock = DB_LOCK.lock().await;
-        let $rocket = create_test_rocket();
+        let $rocket = create_test_rocket().await;
         let $conn = DbConn::get_one(&$rocket)
             .await
             .expect("database connection");
@@ -45,10 +46,15 @@ pub fn simple_rocket() -> Rocket<rocket::Build> {
 }
 
 /// `MediaDir`
-pub fn create_test_rocket() -> Rocket<rocket::Build> {
-    test_rocket_config()
-        .attach(DbConn::fairing())
-        .attach(AdHoc::on_attach("Setup test db", setup_test_db))
+pub async fn create_test_rocket() -> Rocket<rocket::Build> {
+    let rocket = test_rocket_config();
+    // Hack to call these fairings before calling `ignite` on `rocket`. This way we can mount
+    // individual routes in tests and have more flexibility in general
+    let rocket = DbConn::fairing().on_ignite(rocket).await.unwrap();
+    AdHoc::try_on_ignite("Setup test db", setup_test_db)
+        .on_ignite(rocket)
+        .await
+        .expect("Successful migration")
 }
 
 fn test_rocket_config() -> Rocket<rocket::Build> {
@@ -68,7 +74,7 @@ fn test_rocket_config() -> Rocket<rocket::Build> {
 
     let config = rocket::Config::figment().merge((
         "databases",
-        rocket::figment::util::map!["vinoteca" => db_config],
+        rocket::figment::util::map! { "vinoteca" => db_config },
     ));
     rocket::custom(config)
 }

@@ -243,6 +243,7 @@ mod test {
     use crate::storage::{MockStorage, Storage};
     use crate::DbConn;
 
+    use rocket::form::Form;
     use rocket::State;
 
     #[rocket::async_test]
@@ -250,11 +251,11 @@ mod test {
         db_test!(|rocket, connection| {
             let auth = Auth { id: 1 };
             let mock = MockStorage::new();
-            let rocket = rocket.manage::<Box<dyn Storage>>(Box::new(mock));
-            let config = State::from(&rocket).unwrap();
-            let form = RawWineForm {
+            let mock_storage: Box<dyn Storage> = Box::new(mock);
+            let storage = State::from(&mock_storage);
+            let form = Form::from(RawWineForm {
                 image: None,
-                wine_form: WineForm {
+                wine_form: Json(WineForm {
                     description: None,
                     notes: None,
                     rating: Some(5),
@@ -266,9 +267,9 @@ mod test {
                     name: None,
                     wine_type_id: 1,
                     is_in_shopping_list: false,
-                },
-            };
-            let wine_response = post(auth, form, connection, config).await;
+                }),
+            });
+            let wine_response = post(auth, form, connection, storage).await;
             assert!(wine_response.is_ok());
             let wine_id = wine_response.unwrap().id;
 
