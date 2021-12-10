@@ -18,12 +18,12 @@ const MAX_IMAGE_DIM: u32 = 1280;
 /// Auth must be handled before this function is called
 pub async fn handle_image(
     wine_id: i32,
-    image: Capped<Vec<u8>>,
+    image: Vec<u8>,
     storage: &dyn Storage,
     conn: &DbConn,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
-    let image = reformat_image(image)?;
+    let image = reformat_image(&image)?;
     // AWS
     let path = storage
         .create_object(WINE_DIR, &image, "image/jpeg")
@@ -55,7 +55,7 @@ pub async fn post(
         })
         .await?;
 
-    let path = handle_image(id, image, &***storage, &conn).await?;
+    let path = handle_image(id, image.into_inner(), &***storage, &conn).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
         storage.delete_object(&existing_image_path).await?;
@@ -111,7 +111,7 @@ pub async fn delete(
                     .execute(c)
             })
             .await?;
-            delete_from_storage(&**storage, &file_path).await?;
+            delete_from_storage(&***storage, &file_path).await?;
             Ok(Json(()))
         }
         None => Ok(Json(())),

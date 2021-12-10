@@ -55,8 +55,8 @@ extern crate diesel_migrations;
 embed_migrations!();
 
 pub async fn run_db_migrations(
-    rocket: Rocket<rocket::Ignite>,
-) -> Result<Rocket<rocket::Ignite>, Rocket<rocket::Ignite>> {
+    rocket: Rocket<rocket::Build>,
+) -> Result<Rocket<rocket::Build>, Rocket<rocket::Build>> {
     let connection = DbConn::get_one(&rocket).await.expect("database connection");
     connection
         .run(|conn| match embedded_migrations::run(conn) {
@@ -77,7 +77,10 @@ pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::E
         // Allow handlers access to the database
         .attach(DbConn::fairing())
         // Run embedded database migrations on startup
-        .attach(AdHoc::on_ignite("Database migrations", run_db_migrations))
+        .attach(AdHoc::try_on_ignite(
+            "Database migrations",
+            run_db_migrations,
+        ))
         .mount("/", static_handlers::get_routes())
         .mount(
             "/rest",
