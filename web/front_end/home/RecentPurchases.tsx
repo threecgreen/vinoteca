@@ -19,7 +19,7 @@ const RecentPurchases: React.FC = (_) => {
                 const updatedPurchases = await getRecentPurchases();
                 setPurchases(updatedPurchases);
             } catch (e) {
-                logger.logError(`Error fetching recent purchases: ${e.message}`);
+                logger.logException("Error fetching recent purchases", e);
             } finally {
                 setHasLoaded(true);
             }

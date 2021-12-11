@@ -1,7 +1,6 @@
 mod create;
 mod delete;
 pub mod image;
-mod middleware;
 mod models;
 mod read;
 mod update;

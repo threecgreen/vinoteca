@@ -12,7 +12,7 @@ import { deleteProducer, getProducer, updateProducer } from "lib/api/producers";
 import { getRegion } from "lib/api/regions";
 import { getWines } from "lib/api/wines";
 import { useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 import { Producer } from "./Producer";
 
@@ -109,7 +109,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 const region = await getRegion({id: producer.regionId});
                 dispatch({type: "setRegion", region});
             } catch (e) {
-                logger.logWarning(`Error getting producer data: ${e.message}`);
+                logger.logException("Error getting producer data", e, {}, LogLevel.Warning);
             }
         };
 
@@ -121,7 +121,8 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 ]);
                 dispatch({type: "setWines", wines: wines.unwrap()});
             } catch (e) {
-                logger.logWarning(`Failed to load producer: ${e.message}`, {id: producerId});
+                logger.logException("Failed to load producer", e, {id: producerId},
+                                    LogLevel.Warning);
             }
         }
 
@@ -144,7 +145,8 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 dispatch({type: "reset"});
             }
         } catch (err) {
-            logger.logWarning(`Failed to save changes to the database: ${err.message}`);
+            logger.logException("Failed to save changes to the database", err, {},
+                                LogLevel.Warning);
         }
     };
 
@@ -158,15 +160,14 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
                 dispatch({type: "setRegion", region});
                 return [true, region.id];
             } catch (err) {
-                if (EmptyResultError.isInstance(err)) {
+                if (err instanceof Error && EmptyResultError.isInstance(err)) {
                     logger.logWarning("Invalid region while trying to edit producer",
                                       {producer: state.producerText,
                                        region: state.regionText});
                 } else {
-                    logger.logError("Error fetching region",
-                                    {errorMsg: err.message,
-                                     region: state.regionText,
-                                     producer: state.producerText});
+                    logger.logException("Error fetching region", err,
+                                        {region: state.regionText,
+                                         producer: state.producerText});
                 }
                 throw err;
             }
@@ -183,7 +184,8 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
             // Redirect home
             void navigate("/");
         } catch (ex) {
-            logger.logWarning(`Failed to delete producer: ${ex.message}`, {id: producerId});
+            logger.logException("Failed to delete producer", ex, {id: producerId},
+                                LogLevel.Warning);
         }
     };
 

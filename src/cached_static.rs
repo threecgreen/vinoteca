@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
+use rocket::http::{uncased::Uncased, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
 use rocket::route::Outcome;
 use rocket::{
@@ -147,13 +147,8 @@ impl Handler for CachedStaticFiles {
             return Outcome::forward(data);
         }
 
-        let path = req.uri().path().as_str();
-        // .segments::<Segments<Path>>(0..)
-        // .ok()
-        // .and_then(|segments| segments.to_path_buf(false).ok())
-        // .map(|path| self.root.join(path));
-
-        match PathBuf::from(path) {
+        let path = self.root.join(req.uri().path().as_str());
+        match path {
             path if path.is_dir() => Outcome::forward(data),
             path if path.exists() => {
                 let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));

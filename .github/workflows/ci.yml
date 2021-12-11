@@ -1,7 +1,9 @@
 name: CI
 
-on: [push]
-
+on:
+  push:
+  schedule:
+    - cron:  '30 18 * * 1'
 env:
   CARGO_TERM_COLOR: always
   FORCE_COLOR: true
@@ -49,7 +51,16 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-
+  rust-audit:
+    name: Rust dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Audit
+        uses: actions-rs/cargo@v1
+        with:
+          command: audit
   js:
     name: JS
     runs-on: ubuntu-latest
@@ -72,3 +83,16 @@ jobs:
         run: npm run test
       - name: Lint
         run: npm run lint
+  js-audit:
+    name: JS dependency audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install better-npm-audit
+        run: npm install better-npm-audit -g
+      - name: Audit
+        run: better-npm-audit audit --production

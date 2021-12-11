@@ -25,7 +25,7 @@ const WinesApp: React.FC = (_) => {
                 const wines = (await getWines({})).unwrap();
                 dispatch({type: "setWines", wines});
             } catch (e) {
-                logger.logError(`Failed to get wines: ${e.message}`);
+                logger.logException("Failed to get wines", e);
                 dispatch({type: "setWines", wines: []});
             }
         }

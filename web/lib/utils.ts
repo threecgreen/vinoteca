@@ -133,7 +133,7 @@ export async function onError(
 ): Promise<void> {
     const logger = new Logger("window", false, false);
     if (error && error.message.startsWith("Loading chunk ")) {
-        await logger.logError(
+        logger.logError(
             `A top-level error occured loading chunk: ${error.message}. Reloading...`);
         location.reload();
     } else {
@@ -152,4 +152,8 @@ export async function onError(
 export function hasOwnProperty<X extends Record<string, unknown>, Y extends PropertyKey>
     (obj: X, prop: Y): obj is X & Record<Y, unknown> {
     return obj.hasOwnProperty(prop)
+}
+
+export function isIn<T>(val: T, ...args: T[]): boolean {
+    return args.includes(val);
 }

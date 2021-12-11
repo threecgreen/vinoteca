@@ -1,5 +1,5 @@
 import React from "react";
-import { useLogger } from "./Logger";
+import { LogLevel, useLogger } from "./Logger";
 
 export function useLocalStorage<S>(key: string, initValue: S,
                                    posthook = (x: S): S => x,
@@ -13,7 +13,8 @@ export function useLocalStorage<S>(key: string, initValue: S,
                 return posthook(val);
             } catch (err) {
                 window.localStorage.removeItem(key);
-                logger.logWarning(`Failed to read local storage with error: ${err}`);
+                logger.logException("Failed to read local storage. Removed item", err, {key},
+                                    LogLevel.Warning);
                 return initValue;
             }
         }
@@ -27,7 +28,8 @@ export function useLocalStorage<S>(key: string, initValue: S,
             const serializedValue = JSON.stringify(prehook(value));
             window.localStorage.setItem(key, serializedValue);
         } catch (err) {
-            logger.logWarning(`Failed to update local storage with error: ${err.message}`);
+            logger.logException("Failed to update local storage with error", err, {key, newValue},
+                                LogLevel.Warning);
             window.localStorage.removeItem(key);
         }
     };
@@ -60,7 +62,8 @@ export function useLocalStorageReducer<S, A>(
             const serializedValue = serializer(newState);
             window.localStorage.setItem(key, serializedValue);
         } catch (err) {
-            logger.logWarning(`Failed to update local storage with error: ${err.message}`);
+            logger.logException("Failed to update local storage with error", err, {key},
+                                LogLevel.Warning);
             window.localStorage.removeItem(key);
         }
         return newState;
@@ -73,7 +76,8 @@ export function useLocalStorageReducer<S, A>(
                 return parser(json);
             } catch (err) {
                 window.localStorage.removeItem(key);
-                logger.logWarning(`Failed to read local storage with error: ${err}`);
+                logger.logException("Failed to read local storage. Removed item", err, {key},
+                                    LogLevel.Warning);
             }
         }
         return initializer();

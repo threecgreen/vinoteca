@@ -7,7 +7,7 @@ import { ColumnToExclude, WinesTable } from "components/WinesTable";
 import { IVitiArea, IVitiAreaStats, IWine } from "generated/rest";
 import { getVitiArea, getVitiAreaStats, updateVitiArea } from "lib/api/viti_areas";
 import { getWines } from "lib/api/wines";
-import Logger from "lib/Logger";
+import Logger, { LogLevel } from "lib/Logger";
 import { setTitle } from "lib/widgets";
 import React, { ReactElement } from "react";
 import { VitiArea } from "./VitiArea";
@@ -56,8 +56,8 @@ export default class VitiAreaProfileApp extends React.Component<IProps, IState> 
                 this.getAndSetStats(),
             ]);
         } catch (e) {
-            this.logger.logWarning(`Failed to log viticultural area: ${e.message}`,
-                {id: this.props.vitiAreaId});
+            this.logger.logException("Failed to log viticultural area", e,
+                                     {id: this.props.vitiAreaId}, LogLevel.Warning);
         }
     }
 

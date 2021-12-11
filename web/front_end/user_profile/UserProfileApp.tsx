@@ -6,7 +6,7 @@ import format from "date-fns/esm/format";
 import { IChangeUserForm } from "generated/rest";
 import { updateUser } from "lib/api/auth";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
-import { useLogger } from "lib/Logger";
+import { LogLevel, useLogger } from "lib/Logger";
 import React from "react";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { EditUser } from "./EditUser";
@@ -38,7 +38,7 @@ const UserProfileApp: React.FC = (_) => {
                 // TODO: better graceful error handling
                 .doErr((e) => logger.logWarning(`Failed to update profile: ${e}`));
         } catch (e) {
-            logger.logWarning(`Failed to update profile: ${e.message}`, {form});
+            logger.logException("Failed to update profile", e, {form}, LogLevel.Warning);
         } finally {
             setMode(Mode.Display);
         }
