@@ -61,6 +61,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: audit
+          args: --ignore RUSTSEC-2020-0071 --ignore RUSTSEC-2021-0124 --ignore RUSTSEC-2021-0079 --ignore RUSTSEC-2021-0078 --ignore RUSTSEC-2020-0159
   js:
     name: JS
     runs-on: ubuntu-latest
