@@ -6,10 +6,15 @@ use std::process;
 async fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {
-        let res = vinoteca::create_rocket().await.map(Rocket::launch);
-        if let Err(e) = res {
-            print_error(&format!("Error launching rocket: {}", e));
-        }
+        match vinoteca::create_rocket().await {
+            Ok(rocket) => {
+                let _ = Rocket::launch(rocket).await;
+            }
+            Err(e) => {
+                print_error(&format!("Error launching rocket: {}", e));
+                process::exit(2)
+            }
+        };
     } else {
         let option = &args[1];
         match option.as_str() {
