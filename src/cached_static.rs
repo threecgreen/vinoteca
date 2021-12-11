@@ -145,13 +145,16 @@ impl Handler for CachedStaticFiles {
         let is_segments_route = current_route.uri.path().ends_with('>');
         if !is_segments_route {
             return Outcome::forward(data);
-        }
-
-        let path = self.root.join(req.uri().path().as_str());
+        };
+        let path = req
+            .routed_segments(0..)
+            .to_path_buf(false /* allow dotfiles */)
+            .ok()
+            .map(|pb| self.root.join(pb));
         match path {
-            path if path.is_dir() => Outcome::forward(data),
-            path if path.exists() => {
-                let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
+            Some(path) if path.is_dir() => Outcome::forward(data),
+            Some(path) if path.exists() => {
+                let gz_path = PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
                     .headers()
                     .get_one("Accept-Encoding")
@@ -167,13 +170,14 @@ impl Handler for CachedStaticFiles {
                     Outcome::from(req, CachedFile::open(path).ok())
                 }
             }
-            path => {
+            Some(path) => {
                 warn!(
-                    "Request received for static file that doesn't exist at path '{:?}'",
-                    path
+                    "Request received for static file that doesn't exist at path {:?}. Root: {:?}",
+                    path, self.root
                 );
                 Outcome::failure(Status::NotFound)
             }
+            None => Outcome::forward(data),
         }
     }
 }
