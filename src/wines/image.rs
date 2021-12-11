@@ -136,8 +136,8 @@ pub async fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<()
         .await
 }
 
-fn get_exif(raw: &Vec<u8>) -> Option<exif::Exif> {
-    let mut reader = BufReader::new(raw.as_slice());
+fn get_exif(raw: &[u8]) -> Option<exif::Exif> {
+    let mut reader = BufReader::new(raw);
     exif::get_exif_attr_from_jpeg(&mut reader)
         .map_err(|e| {
             warn!("Failed to extract exif attr from JPEG: {:?}", e);
@@ -194,8 +194,8 @@ fn handle_exif(
     }
 }
 
-fn reformat_image(raw: &Vec<u8>) -> Result<Vec<u8>, VinotecaError> {
-    let decoded_image = image::io::Reader::new(Cursor::new(raw.as_slice()))
+fn reformat_image(raw: &[u8]) -> Result<Vec<u8>, VinotecaError> {
+    let decoded_image = image::io::Reader::new(Cursor::new(raw))
         .with_guessed_format()?
         .decode()?;
     let (mut decoded_image, orientation) = if let Some(exif) = get_exif(raw) {
