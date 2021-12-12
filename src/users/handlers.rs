@@ -7,6 +7,7 @@ use crate::DbConn;
 
 use chrono::Utc;
 use diesel::prelude::*;
+use rocket::http::private::cookie::Expiration;
 use rocket::http::{Cookie, CookieJar, SameSite};
 use rocket::serde::json::Json;
 use validator::Validate;
@@ -154,12 +155,13 @@ pub async fn modify_profile(
 }
 
 fn add_auth_cookie(cookies: &CookieJar<'_>, user_id: i32) {
+    let expiration = time::OffsetDateTime::now_utc() + time::Duration::days(14);
     let cookie = Cookie::build(COOKIE_NAME, user_id.to_string())
         .path("/")
         .same_site(SameSite::Strict)
         .http_only(true)
         .secure(true)
-        .expires(time::OffsetDateTime::now_utc() + time::Duration::days(14))
+        .expires(Expiration::DateTime(expiration))
         .finish();
     cookies.add_private(cookie);
 }
