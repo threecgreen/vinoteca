@@ -25,6 +25,8 @@ lazy_static = "1.4.0"
 log = "0.4.14"
 # AWS S3 access
 rust-s3 = { version = "0.26.4", features = ["fail-on-err"] }
+sea-orm = { version = "^0", features = [ "sqlx-postgres", "macros" ], default-features = false }
+sea-orm-rocket = { git = "https://github.com/SeaQL/sea-orm" }
 # (De)serialization
 serde = { version = "1.0.126", features = ["derive"] }
 serde_json = "1.0.64"
@@ -40,11 +42,17 @@ branch = "v0.5-rc"
 default-features = false
 features = ["secrets", "json"]
 
+[dependencies.rocket_db_pools]
+git = "https://github.com/SergioBenitez/Rocket.git"
+branch = "v0.5-rc"
+features = [ "sqlx_postgres" ]
+
 [dependencies.rocket_sync_db_pools]
 git = "https://github.com/SergioBenitez/Rocket.git"
 branch = "v0.5-rc"
 default-features = false
 features = ["diesel_postgres_pool"]
+
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]

@@ -10,12 +10,14 @@ extern crate rocket_sync_db_pools;
 extern crate validator_derive;
 
 // Diesel modules
+mod entity;
 pub mod models;
 mod schema;
 // Server internals
 mod cached_static;
 mod catchers;
 mod config;
+mod db;
 pub mod error;
 mod serde;
 mod storage;
@@ -49,6 +51,8 @@ use cached_static::CachedStaticFiles;
 use query_utils::DbConn;
 
 use rocket::{fairing::AdHoc, Rocket};
+// use rocket_db_pools::Database;
+use sea_orm_rocket::Database;
 use storage::Storage;
 
 #[macro_use]
@@ -77,6 +81,7 @@ pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::E
     let rocket = rocket::build()
         // Allow handlers access to the database
         .attach(DbConn::fairing())
+        .attach(db::pool::Db::init())
         // Run embedded database migrations on startup
         .attach(AdHoc::try_on_ignite(
             "Database migrations",

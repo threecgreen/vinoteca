@@ -93,6 +93,18 @@ impl From<diesel::result::Error> for VinotecaError {
     }
 }
 
+impl From<sea_orm::DbErr> for VinotecaError {
+    fn from(db_err: sea_orm::DbErr) -> Self {
+        match db_err {
+            sea_orm::DbErr::RecordNotFound(e) => VinotecaError::NotFound(e),
+            e => {
+                warn!("other Sea ORM error. {:#?}", e);
+                VinotecaError::Internal(format!("{:?}", e))
+            }
+        }
+    }
+}
+
 impl From<std::io::Error> for VinotecaError {
     fn from(io_error: std::io::Error) -> Self {
         warn!("IOError: {:#?}", io_error);
