@@ -1,4 +1,4 @@
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
 import { capitalizeFirstLetter } from "lib/utils";

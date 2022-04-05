@@ -1,4 +1,4 @@
-import { Link } from "@reach/router";
+import { Link } from "@gatsbyjs/reach-router";
 import { MOBILE_CUTOFF } from "components/constants";
 import { useUser } from "components/context/UserContext";
 import { useViewport } from "components/context/ViewportContext";

@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate, RouteComponentProps } from "@gatsbyjs/reach-router";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";

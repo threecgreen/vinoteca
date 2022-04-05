@@ -1,4 +1,4 @@
-import { navigate } from "@reach/router";
+import { navigate } from "@gatsbyjs/reach-router";
 import { FloatingBtn } from "components/Buttons";
 import { useViewport } from "components/context/ViewportContext";
 import { ErrorHandler } from "components/ErrorHandler";

@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 

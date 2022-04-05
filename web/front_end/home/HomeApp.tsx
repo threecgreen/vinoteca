@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { BtnLink } from "components/Buttons";
 import { AsyncComponent } from "components/CommonRoutes";
 import { useUser } from "components/context/UserContext";

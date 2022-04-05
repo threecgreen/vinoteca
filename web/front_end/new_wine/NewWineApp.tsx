@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@reach/router";
+import { navigate, RouteComponentProps } from "@gatsbyjs/reach-router";
 import { Btn, BtnLink } from "components/Buttons";
 import { Form } from "components/Form";
 import { Row } from "components/Grid";
