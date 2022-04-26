@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
     return {
         devtool: isProd ? false : "inline-source-map",
         entry: {
-            vinoteca: [inputPath + "app.ts", inputPath + "vinoteca-style.sass"],
+            vinoteca: [inputPath + "index.tsx", inputPath + "vinoteca-style.sass"],
         },
         module: {
             rules: [
