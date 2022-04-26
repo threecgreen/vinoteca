@@ -12,6 +12,13 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.8</h5>
+            <ul className="bullets">
+                <li>Fix passing of child componets that caused <code>@@iterator</code> error</li>
+                <li>Remove old copyright years</li>
+                <li>Finish React 18 upgrade</li>
+            </ul>
+
             <h5>6.2.7</h5>
             <p>Upgrade Rust and JS dependencies</p>
 
