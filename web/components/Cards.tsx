@@ -11,7 +11,7 @@ const Card: React.FC<IProps> = ({classes, children, title}) => {
         <div className={ `card ${joinedClasses}` }>
             <div className="card-content">
                 <h2 className="card-title">{ title }</h2>
-                { ...children }
+                { children }
             </div>
         </div>
     );

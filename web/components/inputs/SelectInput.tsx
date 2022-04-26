@@ -26,7 +26,7 @@ export const SelectInput: React.FC<IProps> = (props) => {
             classes={ ["col"] }
         >
             <Select { ...props }>
-                { React.Children.map(props.children, renderOption) }
+                { props.children }
             </Select>
         </InputField>
     );

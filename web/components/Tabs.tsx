@@ -14,7 +14,7 @@ export const Tabs: React.FC<IChildrenProp> = ({children}) => {
     }, [tabsRef]);
     return (
         <ul className="tabs tabs-fixed-width narrow-tabs z-depth-1" ref={ tabsRef }>
-            { ...children }
+            { children }
         </ul>
     );
 };
@@ -36,7 +36,7 @@ export const Tab: React.FC<ITabProps> = ({children, color, target, enabled}) => 
     return (
         <li className={ `tab ${color.valueOf()} ${enabledClass}` }>
             <a href={ `#${target}` }>
-                { ...children }
+                { children }
             </a>
         </li>
     );
@@ -50,7 +50,7 @@ interface ITabPanelProps extends IChildrenProp {
 export const TabPanel: React.FC<ITabPanelProps> = ({children, id}) => {
     return (
         <div id={ id }>
-            { ...children }
+            { children }
         </div>
     );
 };
