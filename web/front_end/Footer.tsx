@@ -68,7 +68,7 @@ export const Footer: React.FC = (_) => {
                 <div className="container">
                     <div className="row">
                         <div className="col s12 l4">
-                            <p>© 2017&ndash;{ thisYear } Carter Green</p>
+                            <p>© { thisYear } Carter Green</p>
                         </div>
                         <div className="col s12 l4">
                             <p className={ width > MOBILE_CUTOFF ? "center" : undefined }>
