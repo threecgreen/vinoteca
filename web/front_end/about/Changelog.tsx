@@ -12,6 +12,12 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.9</h5>
+            <ul className="bullets">
+                <li>Fix total price calculation in purchases by year chart</li>
+                <li>Add orange wine color</li>
+            </ul>
+
             <h5>6.2.8</h5>
             <ul className="bullets">
                 <li>Fix passing of child componets that caused <code>@@iterator</code> error</li>
