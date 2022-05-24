@@ -163,9 +163,9 @@ pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::E
             .expect("AWS S3 bucket connection"),
     );
 
-    Ok(rocket
+    rocket
         .manage(storage)
         .mount("/static", CachedStaticFiles::from("web/static").rank(1))
         .ignite()
-        .await?)
+        .await
 }
