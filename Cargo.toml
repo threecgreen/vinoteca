@@ -2,7 +2,7 @@
 name = "vinoteca"
 description = "Wine purchase tracker"
 repository = "https://github.com/threecgreen/vinoteca"
-version = "6.2.9"
+version = "6.3.0"
 edition = "2021"
 authors = ["Carter Green <cartergr@usc.edu>"]
 readme = "./README.md"
@@ -23,32 +23,30 @@ image = "0.23.14"
 kamadak-exif = "0.5.4"
 lazy_static = "1.4.0"
 log = "0.4.14"
-rocket_codegen = "0.4.10"
-rocket-multipart-form-data = "0.9.6"
 # AWS S3 access
-rust-s3 = "0.26.4"
+rust-s3 = { version = "0.26.4", features = ["fail-on-err"] }
 # (De)serialization
 serde = { version = "1.0.126", features = ["derive"] }
 serde_json = "1.0.64"
-time = "0.1.42"
 uuid = { version = "0.8.2", features = ["v4"] }
 # Input validation
 validator = "0.13.0"
 validator_derive = "0.13.0"
 
 [dependencies.rocket]
-version = "0.4.10"
+version = "0.5.0-rc.2"
 default_features = false
-features = ["private-cookies"]
+features = ["secrets", "json"]
 
-[dependencies.rocket_contrib]
-version = "0.4.10"
+[dependencies.rocket_sync_db_pools]
+version = "0.1.0-rc.2"
 default-features = false
-features = ["json", "diesel_postgres_pool"]
+features = ["diesel_postgres_pool"]
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]
-version = "0.1.10"
+git = "https://github.com/onelson/typescript-definitions"
+branch = "no-debug-attrs"
 # Enable export in release build
 features = ["export-typescript"]
 

@@ -7,21 +7,22 @@ use uuid::Uuid;
 #[cfg(test)]
 use mockall::{automock, predicate::*};
 #[cfg_attr(test, automock)]
+#[rocket::async_trait]
 pub trait Storage: Send + Sync + 'static {
     /// Store object `content` in `dir` at a generated path. Returns the path where
     /// `content` is stored.
-    fn create_object(
+    async fn create_object(
         &self,
         dir: &str,
         content: &[u8],
         content_type: &str,
     ) -> Result<String, VinotecaError>;
     /// read object at `path`
-    fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError>;
+    async fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError>;
     /// update object at `path`
-    fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError>;
+    async fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError>;
     /// Delete object at `path`.
-    fn delete_object(&self, path: &str) -> Result<(), VinotecaError>;
+    async fn delete_object(&self, path: &str) -> Result<(), VinotecaError>;
 }
 
 /// Stores files on AWS S3 bucket.
@@ -32,19 +33,20 @@ pub struct S3 {
 
 const BUCKET_NAME: &str = "vinoteca";
 
+#[rocket::async_trait]
 impl Storage for S3 {
-    fn create_object(
+    async fn create_object(
         &self,
         dir: &str,
         content: &[u8],
         content_type: &str,
     ) -> Result<String, VinotecaError> {
         let path = Uuid::new_v4().to_string();
-        let (data, code) = self.bucket.put_object_with_content_type_blocking(
-            format!("{}/{}", dir, path),
-            content,
-            content_type,
-        )?;
+        let (data, code) = self
+            .bucket
+            .put_object_with_content_type(format!("{}/{}", dir, path), content, content_type)
+            .await?;
+        // TODO: may be able to delete code checks with fail on err feature enabled
         if code > 304 {
             warn!(
                 "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -57,8 +59,8 @@ impl Storage for S3 {
         }
     }
 
-    fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError> {
-        let (data, code) = self.bucket.get_object_blocking(path)?;
+    async fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError> {
+        let (data, code) = self.bucket.get_object(path).await?;
         if code > 304 {
             warn!(
                 "Failed to get file from S3. Code: {}, AWSResponseData: {:?}",
@@ -71,8 +73,8 @@ impl Storage for S3 {
         }
     }
 
-    fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError> {
-        let (data, code) = self.bucket.put_object_blocking(path, content)?;
+    async fn update_object(&self, path: &str, content: &[u8]) -> Result<(), VinotecaError> {
+        let (data, code) = self.bucket.put_object(path, content).await?;
         if code > 304 {
             warn!(
                 "Error saving image. Code: {}, AWSResponseData: {:?}",
@@ -85,8 +87,8 @@ impl Storage for S3 {
         }
     }
 
-    fn delete_object(&self, path: &str) -> Result<(), VinotecaError> {
-        let (data, code) = self.bucket.delete_object_blocking(path)?;
+    async fn delete_object(&self, path: &str) -> Result<(), VinotecaError> {
+        let (data, code) = self.bucket.delete_object(path).await?;
         if code > 304 {
             warn!(
                 "Error deleting existing file. Code: {}, AWSResponseData: {:?}",

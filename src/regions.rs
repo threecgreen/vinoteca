@@ -6,39 +6,43 @@ use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 
 #[get("/regions?<id>&<name>&<producer_name>")]
-pub fn get(
+pub async fn get(
     id: Option<i32>,
     name: Option<String>,
     producer_name: Option<String>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<Region>> {
-    // Still want to include regions that don't have a producer associated with them
-    let mut query = regions::table.left_join(producers::table).into_boxed();
-    if let Some(id) = id {
-        query = query.filter(regions::id.eq(id));
-    }
-    if let Some(name) = name {
-        query = query.filter(regions::name.eq(name));
-    }
-    if let Some(producer_name) = producer_name {
-        query = query.filter(producers::name.eq(producer_name));
-    }
-    query
-        .select((regions::id, regions::name))
-        .distinct()
-        .load::<Region>(&*connection)
-        .map(Json)
-        .map_err(VinotecaError::from)
+    conn.run(move |c| {
+        // Left join because still want to include regions that don't have a producer associated
+        // with them
+        let mut query = regions::table.left_join(producers::table).into_boxed();
+        if let Some(id) = id {
+            query = query.filter(regions::id.eq(id));
+        }
+        if let Some(name) = name {
+            query = query.filter(regions::name.eq(name));
+        }
+        if let Some(producer_name) = producer_name {
+            query = query.filter(producers::name.eq(producer_name));
+        }
+        query
+            .select((regions::id, regions::name))
+            .distinct()
+            .load::<Region>(c)
+            .map(Json)
+            .map_err(VinotecaError::from)
+    })
+    .await
 }
 
 #[get("/regions/top?<limit>")]
-pub fn top(
+pub async fn top(
     auth: Auth,
     limit: Option<usize>,
-    connection: DbConn,
+    conn: DbConn,
 ) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
@@ -49,6 +53,7 @@ pub fn top(
         regions::id,
         regions::name,
         limit,
-        connection
+        conn
     )
+    .await
 }

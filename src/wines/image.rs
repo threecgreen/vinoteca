@@ -1,5 +1,4 @@
 use super::{update::validate_owns_wine, Rotation, RotationForm};
-use crate::config::Config;
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
 use crate::storage::Storage;
@@ -8,97 +7,112 @@ use crate::DbConn;
 
 use diesel::prelude::*;
 use image::GenericImageView;
+use rocket::data::Capped;
+use rocket::serde::json::Json;
 use rocket::State;
-use rocket_contrib::json::Json;
-use rocket_multipart_form_data::mime::{self, Mime};
 use std::io::{BufReader, Cursor};
-
-pub struct Image {
-    pub mime_type: Mime,
-    pub data: Vec<u8>,
-}
 
 const WINE_DIR: &str = "wine_images";
 const MAX_IMAGE_DIM: u32 = 1280;
 
 /// Auth must be handled before this function is called
-pub fn handle_image(
+pub async fn handle_image(
     wine_id: i32,
-    image: Image,
+    image: Vec<u8>,
     storage: &dyn Storage,
-    connection: &DbConn,
+    conn: &DbConn,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
-    let image = reformat_image(image)?;
+    let image = reformat_image(&image)?;
     // AWS
-    let path = storage.create_object(WINE_DIR, &image, "image/jpeg")?;
+    let path = storage
+        .create_object(WINE_DIR, &image, "image/jpeg")
+        .await?;
+    let ret = path.clone();
+    conn.run(move |c| {
+        diesel::update(wines::table)
+            .filter(wines::id.eq(wine_id))
+            .set(wines::image.eq(&path))
+            .execute(c)
+    })
+    .await?;
 
-    diesel::update(wines::table)
-        .filter(wines::id.eq(wine_id))
-        .set(wines::image.eq(&path))
-        .execute(&**connection)?;
-
-    Ok(path)
+    Ok(ret)
 }
 
 #[post("/wines/<id>/image", data = "<image>")]
-pub fn post(
+pub async fn post(
     auth: Auth,
     id: i32,
-    image: Image,
-    connection: DbConn,
-    config: State<Config>,
+    image: Capped<Vec<u8>>,
+    conn: DbConn,
+    storage: &State<Box<dyn Storage>>,
 ) -> RestResult<String> {
-    validate_owns_wine(auth, id, &connection)?;
+    let existing_image_path = conn
+        .run(move |c| {
+            validate_owns_wine(auth, id, c)?;
+            get_image_path(auth, id, c)
+        })
+        .await?;
 
-    let existing_image_path = get_image_path(auth, id, &connection)?;
-
-    let path = handle_image(id, image, &*config.storage, &connection)?;
+    let path = handle_image(id, image.into_inner(), &***storage, &conn).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
-        config.storage.delete_object(&existing_image_path)?;
+        storage.delete_object(&existing_image_path).await?;
     }
     Ok(Json(path))
 }
 
 #[patch("/wines/<id>/image", format = "json", data = "<rotation_form>")]
-pub fn rotate(
+pub async fn rotate(
     auth: Auth,
     id: i32,
     rotation_form: Json<RotationForm>,
-    connection: DbConn,
-    config: State<Config>,
+    conn: DbConn,
+    storage: &State<Box<dyn Storage>>,
 ) -> RestResult<String> {
-    let path = get_image_path(auth, id, &connection).and_then(|file_path| {
-        file_path.ok_or_else(|| VinotecaError::NotFound(format!("No wine with id {}", id)))
-    })?;
+    let path = conn
+        .run(move |c| {
+            get_image_path(auth, id, c)?
+                .ok_or_else(|| VinotecaError::NotFound(format!("No wine with id {}", id)))
+        })
+        .await?;
     let rotation = rotation_form.into_inner().rotation;
 
     let full_path = format!("{}/{}", WINE_DIR, path);
-    let image_bytes = config.storage.get_object(&full_path)?;
+    let image_bytes = storage.get_object(&full_path).await?;
     let rotated_image = rotate_image(image_bytes, rotation)?;
     info!(
         "Updated rotation of image at {} by rotation {:?}",
         full_path, rotation,
     );
-    config.storage.update_object(&full_path, &rotated_image)?;
+    storage.update_object(&full_path, &rotated_image).await?;
     Ok(Json(path))
 }
 
 #[delete("/wines/<id>/image")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) -> RestResult<()> {
-    let file_path = get_image_path(auth, id, &connection)?;
+pub async fn delete(
+    auth: Auth,
+    id: i32,
+    conn: DbConn,
+    storage: &State<Box<dyn Storage>>,
+) -> RestResult<()> {
+    let file_path = conn.run(move |c| get_image_path(auth, id, c)).await?;
 
     match file_path {
         Some(file_path) => {
             // Delete from database first, because it's better to have an orphan
             // file than have the database think there's a file when we've
             // already deleted it.
-            diesel::update(wines::table)
-                .filter(wines::id.eq(id))
-                .set(wines::image.eq::<Option<String>>(None))
-                .execute(&*connection)?;
-            delete_from_storage(&*config.storage, &file_path).map(Json)
+            conn.run(move |c| {
+                diesel::update(wines::table)
+                    .filter(wines::id.eq(id))
+                    .set(wines::image.eq::<Option<String>>(None))
+                    .execute(c)
+            })
+            .await?;
+            delete_from_storage(&***storage, &file_path).await?;
+            Ok(Json(()))
         }
         None => Ok(Json(())),
     }
@@ -107,50 +121,38 @@ pub fn delete(auth: Auth, id: i32, connection: DbConn, config: State<Config>) ->
 fn get_image_path(
     auth: Auth,
     id: i32,
-    connection: &DbConn,
+    pg_conn: &mut PgConnection,
 ) -> Result<Option<String>, VinotecaError> {
     Ok(wines::table
         .filter(wines::user_id.eq(auth.id))
         .filter(wines::id.eq(id))
         .select(wines::image)
-        .first::<Option<String>>(&**connection)?)
+        .first::<Option<String>>(pg_conn)?)
 }
 
-pub fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
-    storage.delete_object(&format!("{}/{}", WINE_DIR, path))
+pub async fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
+    storage
+        .delete_object(&format!("{}/{}", WINE_DIR, path))
+        .await
 }
 
-fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {
-    match (mime_type.type_(), mime_type.subtype()) {
-        (mime::IMAGE, mime::JPEG) => {
-            info!("Trying to extract EXIF data from JPEG");
-            let mut reader = BufReader::new(raw.as_slice());
-            exif::get_exif_attr_from_jpeg(&mut reader)
+fn get_exif(raw: &[u8]) -> Option<exif::Exif> {
+    let mut reader = BufReader::new(raw);
+    exif::get_exif_attr_from_jpeg(&mut reader)
+        .map_err(|e| {
+            warn!("Failed to extract exif attr from JPEG: {:?}", e);
+            e
+        })
+        .ok()
+        .and_then(|exif_attr| {
+            exif::Reader::new()
+                .read_raw(exif_attr)
                 .map_err(|e| {
-                    warn!("Failed to extract exif attr from JPEG: {:?}", e);
+                    warn!("Failed to read exif attr from JPEG: {:?}", e);
                     e
                 })
                 .ok()
-                .and_then(|exif_attr| {
-                    exif::Reader::new()
-                        .read_raw(exif_attr)
-                        .map_err(|e| {
-                            warn!("Failed to read exif attr from JPEG: {:?}", e);
-                            e
-                        })
-                        .ok()
-                })
-        }
-        // Try reading with other types of image files, even though should only work with TIFF
-        (mime::IMAGE, _) => match exif::Reader::new().read_raw(raw) {
-            Ok(exif) => Some(exif),
-            Err(e) => {
-                error!("Error creating exif reader: {:?}", e);
-                None
-            }
-        },
-        _ => None,
-    }
+        })
 }
 
 fn handle_exif(
@@ -192,16 +194,11 @@ fn handle_exif(
     }
 }
 
-fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
-    let decoded_image = image::io::Reader::new(Cursor::new(image.data.as_slice()))
+fn reformat_image(raw: &[u8]) -> Result<Vec<u8>, VinotecaError> {
+    let decoded_image = image::io::Reader::new(Cursor::new(raw))
         .with_guessed_format()?
         .decode()?;
-    // Unpack to avoid clone
-    let Image {
-        mime_type,
-        data: raw,
-    } = image;
-    let (mut decoded_image, orientation) = if let Some(exif) = get_exif(&mime_type, raw) {
+    let (mut decoded_image, orientation) = if let Some(exif) = get_exif(raw) {
         handle_exif(decoded_image, exif)
     } else {
         (decoded_image, None)
@@ -227,8 +224,8 @@ fn reformat_image(image: Image) -> Result<Vec<u8>, VinotecaError> {
         )
         .map_err(|e| {
             warn!(
-                "Failed to reformat image: {:?}. MimeType: {:?}, Orientation: {:?}",
-                e, mime_type, orientation
+                "Failed to reformat image: {:?}. Orientation: {:?}",
+                e, orientation
             );
             VinotecaError::Internal("Failed to reformat image".to_owned())
         })?;

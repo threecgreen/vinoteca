@@ -12,6 +12,11 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.3.0</h5>
+            <ul className="bullets">
+                <li>Update rocket to version 0.5-rc2, which supports async I/O</li>
+            </ul>
+
             <h5>6.2.9</h5>
             <ul className="bullets">
                 <li>Fix total price calculation in purchases by year chart</li>

@@ -1,15 +1,19 @@
-use super::image::Image;
+// use super::image::Image;
 use crate::models::WineForm;
 
 use chrono::NaiveDate;
+use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 
+// FIXME: better name for this
+#[derive(FromForm)]
 pub struct RawWineForm {
     /// JSON data for database
-    pub wine_form: WineForm,
+    pub wine_form: Json<WineForm>,
     /// raw submitted wine image
-    pub image: Option<Image>,
+    /// FIXME: data limits
+    pub image: Option<Vec<u8>>,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]

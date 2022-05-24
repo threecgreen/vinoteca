@@ -1,5 +1,5 @@
 use crate::schema::*;
-use crate::serde::{trim_opt_string, trim_str};
+use crate::serde::{trim_opt_string, trim_string};
 use crate::users::Auth;
 
 use chrono::{DateTime, NaiveDate, Utc};
@@ -17,10 +17,10 @@ pub struct Color {
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "colors"]
 #[serde(rename_all = "camelCase")]
-pub struct ColorForm<'a> {
+pub struct ColorForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -33,21 +33,21 @@ pub struct Grape {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct GrapeForm<'a> {
+pub struct GrapeForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
 }
 
 #[derive(Insertable, Debug)]
 #[table_name = "grapes"]
-pub struct NewGrape<'a> {
-    pub name: &'a str,
+pub struct NewGrape {
+    pub name: String,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, GrapeForm<'a>)> for NewGrape<'a> {
-    fn from((auth, form): (Auth, GrapeForm<'a>)) -> Self {
+impl From<(Auth, GrapeForm)> for NewGrape {
+    fn from((auth, form): (Auth, GrapeForm)) -> Self {
         Self {
             name: form.name,
             user_id: auth.id,
@@ -65,23 +65,23 @@ pub struct Producer {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct ProducerForm<'a> {
+pub struct ProducerForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
     pub region_id: i32,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
 #[table_name = "producers"]
-pub struct NewProducer<'a> {
-    pub name: &'a str,
+pub struct NewProducer {
+    pub name: String,
     pub region_id: i32,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, ProducerForm<'a>)> for NewProducer<'a> {
-    fn from((auth, form): (Auth, ProducerForm<'a>)) -> Self {
+impl From<(Auth, ProducerForm)> for NewProducer {
+    fn from((auth, form): (Auth, ProducerForm)) -> Self {
         Self {
             name: form.name,
             region_id: form.region_id,
@@ -135,10 +135,10 @@ pub struct Region {
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
 #[table_name = "regions"]
 #[serde(rename_all = "camelCase")]
-pub struct RegionForm<'a> {
+pub struct RegionForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
 }
 
 #[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
@@ -150,21 +150,21 @@ pub struct Store {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct StoreForm<'a> {
+pub struct StoreForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
 }
 
 #[derive(Insertable, Debug)]
 #[table_name = "stores"]
-pub struct NewStore<'a> {
-    pub name: &'a str,
+pub struct NewStore {
+    pub name: String,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, StoreForm<'a>)> for NewStore<'a> {
-    fn from((auth, form): (Auth, StoreForm<'a>)) -> Self {
+impl From<(Auth, StoreForm)> for NewStore {
+    fn from((auth, form): (Auth, StoreForm)) -> Self {
         Self {
             name: form.name,
             user_id: auth.id,
@@ -184,6 +184,7 @@ pub struct InternalUser {
 }
 
 #[derive(Clone, Queryable, Serialize, TypeScriptify, Debug)]
+#[cfg_attr(test, derive(Deserialize))]
 #[serde(rename_all = "camelCase")]
 pub struct User {
     pub email: String,
@@ -208,23 +209,24 @@ impl From<InternalUser> for User {
 }
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
+#[cfg_attr(test, derive(Serialize))]
 #[serde(rename_all = "camelCase")]
-pub struct UserForm<'a> {
+pub struct UserForm {
     #[validate(email)]
-    #[serde(deserialize_with = "trim_str")]
-    pub email: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub email: String,
     #[validate(length(min = 2))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
     #[validate(length(min = 8))]
-    pub password: &'a str,
+    pub password: String,
 }
 
 #[derive(Insertable, Debug)]
 #[table_name = "users"]
-pub struct NewUser<'a> {
-    pub email: &'a str,
-    pub name: &'a str,
+pub struct NewUser {
+    pub email: String,
+    pub name: String,
     pub image: Option<String>,
     pub hash: String,
 }
@@ -240,23 +242,23 @@ pub struct VitiArea {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct VitiAreaForm<'a> {
+pub struct VitiAreaForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
     pub region_id: i32,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
 #[table_name = "viti_areas"]
-pub struct NewVitiArea<'a> {
-    pub name: &'a str,
+pub struct NewVitiArea {
+    pub name: String,
     pub region_id: i32,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, VitiAreaForm<'a>)> for NewVitiArea<'a> {
-    fn from((auth, form): (Auth, VitiAreaForm<'a>)) -> Self {
+impl From<(Auth, VitiAreaForm)> for NewVitiArea {
+    fn from((auth, form): (Auth, VitiAreaForm)) -> Self {
         Self {
             name: form.name,
             region_id: form.region_id,
@@ -399,21 +401,21 @@ pub struct WineType {
 
 #[derive(Deserialize, Validate, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
-pub struct WineTypeForm<'a> {
+pub struct WineTypeForm {
     #[validate(length(min = 1))]
-    #[serde(deserialize_with = "trim_str")]
-    pub name: &'a str,
+    #[serde(deserialize_with = "trim_string")]
+    pub name: String,
 }
 
 #[derive(Insertable, Debug)]
 #[table_name = "wine_types"]
-pub struct NewWineType<'a> {
-    pub name: &'a str,
+pub struct NewWineType {
+    pub name: String,
     pub user_id: i32,
 }
 
-impl<'a> From<(Auth, WineTypeForm<'a>)> for NewWineType<'a> {
-    fn from((auth, form): (Auth, WineTypeForm<'a>)) -> Self {
+impl From<(Auth, WineTypeForm)> for NewWineType {
+    fn from((auth, form): (Auth, WineTypeForm)) -> Self {
         Self {
             name: form.name,
             user_id: auth.id,

@@ -5,7 +5,7 @@ use image::ImageError;
 use rocket::http::{uncased::Uncased, Header, Status};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
-use rocket_contrib::json::Json;
+use rocket::serde::json::Json;
 use s3::S3Error;
 use serde::Serialize;
 use std::borrow::Cow;
@@ -33,7 +33,7 @@ pub enum VinotecaError {
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
 
-impl<'r> Responder<'r> for VinotecaError {
+impl<'r> Responder<'r, 'static> for VinotecaError {
     fn respond_to(self, req: &Request) -> response::Result<'static> {
         // Return JSON or HTML depending on accept header
         let mut res = if req
@@ -166,7 +166,7 @@ mod tests {
 
     use rocket::{
         http::{Accept, ContentType},
-        local::Client,
+        local::blocking::Client,
     };
 
     #[get("/")]
@@ -176,7 +176,7 @@ mod tests {
 
     fn error_rocket_client() -> Client {
         let rocket = simple_rocket().mount("/", routes![handle_err]);
-        let client = Client::new(rocket).unwrap();
+        let client = Client::untracked(rocket).unwrap();
         client
     }
 

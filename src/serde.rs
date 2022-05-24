@@ -1,6 +1,7 @@
 /// Custom deserializers to trim leading and trailing whitespace from strings.
 use serde::{Deserialize, Deserializer};
 
+#[allow(dead_code)]
 pub fn trim_str<'de, D>(deserializer: D) -> Result<&'de str, D::Error>
 where
     D: Deserializer<'de>,
@@ -42,7 +43,7 @@ mod test {
     #[test]
     fn trim_str_untouched() {
         let test_str = "quick brown fox";
-        let deserializer = BorrowedStrDeserializer::<Error>::new(test_str);
+        let deserializer = BorrowedStrDeserializer::<Error>::new(&test_str);
         assert_eq!(trim_str(deserializer), Ok(test_str));
     }
 
@@ -83,10 +84,8 @@ mod test {
     }
 
     #[test]
-    #[ignore]
     fn trim_opt_only_spaces_to_none() {
-        // let deserializer = serde_json::de::Deserializer::from_str(r#""   ""#);
-        // let deserializer = Some("   ".to_owned()).into_deserializer();
-        // assert_eq!(trim_opt_string(deserializer), Ok(None));
+        let deserializer = serde_json::json!("   ").into_deserializer();
+        assert!(matches!(trim_opt_string(deserializer), Ok(None)));
     }
 }

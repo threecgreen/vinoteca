@@ -1,20 +1,23 @@
 use chrono::{DateTime, Utc};
-use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CacheControl, CacheDirective, ContentEncoding, Encoding};
-use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
+use rocket::http::{uncased::Uncased, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
+use rocket::route::Outcome;
+use rocket::tokio::fs::{self, File};
+use rocket::tokio::io;
+use rocket::{
+    http::hyper::header::{CACHE_CONTROL, CONTENT_ENCODING},
+    route::Handler,
+};
 use rocket::{Data, Request, Route};
 use std::borrow::Cow;
-use std::fs::{self, File};
-use std::io;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotModified<R>(pub R);
 
 /// Sets the status code of the response to 304 Not Modified.
-impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
-    fn respond_to(self, _req: &Request) -> Result<Response<'r>, Status> {
+impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for NotModified<R> {
+    fn respond_to(self, _req: &Request) -> Result<Response<'o>, Status> {
         Response::build().status(Status::NotModified).ok()
     }
 }
@@ -24,27 +27,31 @@ impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
 pub struct CachedFile {
     path: PathBuf,
     file: File,
+    last_modified: DateTime<Utc>,
 }
 
 impl CachedFile {
     /// Attempts to open a file in read-only mode.
-    pub fn open(path: impl Into<PathBuf>) -> io::Result<CachedFile> {
+    pub async fn open(path: impl Into<PathBuf>) -> io::Result<CachedFile> {
         let path = path.into();
-        let file = File::open(&path)?;
-        Ok(CachedFile { path, file })
-    }
-
-    /// Retrieve the underlying `File`.
-    pub fn file(&self) -> &File {
-        &self.file
+        let file = File::open(&path).await?;
+        let last_modified: DateTime<Utc> = {
+            let metadata = fs::metadata(&path).await.unwrap();
+            metadata.modified().unwrap().into()
+        };
+        Ok(CachedFile {
+            path,
+            file,
+            last_modified,
+        })
     }
 }
 
 /// Streams the named file to the client. Sets or overrides the Content-Type in
 /// the response according to the file's extension if the extension is
 /// recognized.
-impl<'r> Responder<'r> for CachedFile {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+impl<'r, 'o: 'r> Responder<'r, 'o> for CachedFile {
+    fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         let mut response = self.file.respond_to(req)?;
         if let Some(ext) = self.path.extension() {
             if ext == "gz" {
@@ -59,7 +66,7 @@ impl<'r> Responder<'r> for CachedFile {
                 {
                     // Support for gzipped code, e.g. js or css
                     response.set_header(content_type);
-                    response.set_header(ContentEncoding(vec![Encoding::Gzip]));
+                    response.set_raw_header(CONTENT_ENCODING.to_string(), "gzip");
                 } else {
                     response.set_header(ContentType::new("application", "gzip"));
                 }
@@ -69,37 +76,23 @@ impl<'r> Responder<'r> for CachedFile {
                 response.set_header(content_type);
             }
         }
-        let epoch: DateTime<Utc> = {
-            let metadata = fs::metadata(&self.path).unwrap();
-            metadata.modified().unwrap().into()
-        };
         response.set_header(Header {
             name: Uncased::new("Last-Modified"),
-            value: Cow::from(epoch.to_rfc2822()),
+            value: Cow::from(self.last_modified.to_rfc2822()),
         });
         // User agent must revalidate. This is especially important for JS bundles
-        response.set_header(CacheControl(vec![CacheDirective::NoCache]));
+        response.set_raw_header(CACHE_CONTROL.to_string(), "no-cache");
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
                 if let Ok(if_modified_since) = DateTime::parse_from_rfc2822(if_modified_since) {
-                    if epoch <= if_modified_since {
+                    if self.last_modified <= if_modified_since {
                         return NotModified("Not Modified").respond_to(req);
                     }
                 }
             }
         }
         Ok(response)
-    }
-}
-
-impl io::Read for CachedFile {
-    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        self.file.read(buf)
-    }
-
-    fn read_to_end(&mut self, buf: &mut Vec<u8>) -> io::Result<usize> {
-        self.file.read_to_end(buf)
     }
 }
 
@@ -138,26 +131,25 @@ impl From<CachedStaticFiles> for Vec<Route> {
     }
 }
 
+#[rocket::async_trait]
 impl Handler for CachedStaticFiles {
-    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r> {
         // If this is not the route with segments, handle it only if the user
         // requested a handling of index files.
         let current_route = req.route().expect("route while handling");
         let is_segments_route = current_route.uri.path().ends_with('>');
         if !is_segments_route {
             return Outcome::forward(data);
-        }
-
+        };
         let path = req
-            .get_segments::<Segments<'_>>(0)
-            .and_then(|res| res.ok())
-            .and_then(|segments| segments.into_path_buf(false).ok())
-            .map(|path| self.root.join(path));
-
-        match &path {
+            .routed_segments(0..)
+            .to_path_buf(false /* allow dotfiles */)
+            .ok()
+            .map(|pb| self.root.join(pb));
+        match path {
             Some(path) if path.is_dir() => Outcome::forward(data),
             Some(path) if path.exists() => {
-                let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
+                let gz_path = PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
                     .headers()
                     .get_one("Accept-Encoding")
@@ -168,15 +160,15 @@ impl Handler for CachedStaticFiles {
                         .unwrap_or(false)
                 {
                     // TODO: make CachedGzFile struct
-                    Outcome::from(req, CachedFile::open(gz_path).ok())
+                    Outcome::from(req, CachedFile::open(gz_path).await.ok())
                 } else {
-                    Outcome::from(req, CachedFile::open(path).ok())
+                    Outcome::from(req, CachedFile::open(path).await.ok())
                 }
             }
             Some(path) => {
                 warn!(
-                    "Request received for static file that doesn't exist at path '{:?}'",
-                    path
+                    "Request received for static file that doesn't exist at path {:?}. Root: {:?}",
+                    path, self.root
                 );
                 Outcome::failure(Status::NotFound)
             }
