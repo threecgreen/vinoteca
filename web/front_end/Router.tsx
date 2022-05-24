@@ -1,4 +1,4 @@
-import { RouteComponentProps, Router as ReachRouter } from "@reach/router";
+import { RouteComponentProps, Router as ReachRouter } from "@gatsbyjs/reach-router";
 import { AsyncRoute, AuthAsyncRoute, NotFound, RouteById } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";

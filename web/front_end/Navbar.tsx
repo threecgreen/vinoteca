@@ -1,4 +1,4 @@
-import { Link, navigate, useLocation } from "@reach/router";
+import { Link, navigate, useLocation } from "@gatsbyjs/reach-router";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { MaterialIcon } from "components/MaterialIcon";
 import { IUser } from "generated/rest";

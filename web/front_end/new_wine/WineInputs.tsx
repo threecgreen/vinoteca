@@ -54,9 +54,9 @@ const getOrCreateVitiAreaForRegion = async (data: IWineData, regionId: number) =
     return null;
 };
 
-const getProducerAndVitiArea = async (data: IWineData) => {
+const getProducerAndVitiArea = async (data: IWineData): Promise<[IProducer, IVitiArea | null]> => {
     const region = await getRegion({name: data.region});
-    return Promise.all<IProducer, IVitiArea | null>([
+    return Promise.all([
         getOrCreateProducer({name: data.producer}, {name: data.producer, regionId: region.id}),
         getOrCreateVitiAreaForRegion(data, region.id),
     ]);
@@ -64,7 +64,7 @@ const getProducerAndVitiArea = async (data: IWineData) => {
 
 export const wineDataToForm = async (data: IWineData, inventory: number): Promise<IWineForm> => {
     const [color, wineType, [producer, vitiArea]] =
-        await Promise.all<IColor, IWineType, [IProducer, IVitiArea | null]>([
+        await Promise.all([
             getColor({name: data.color}),
             getOrCreateWineType({name: data.wineType}, {name: data.wineType}),
             getProducerAndVitiArea(data),

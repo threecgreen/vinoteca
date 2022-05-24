@@ -1,7 +1,8 @@
+import React from "react";
+
 /** Prop for component with potential children elements/components. */
 export interface IChildrenProp {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    children: any[] | any;
+    children: React.ReactNode;
 }
 
 /** Prop for storing additional class names to be used in the component HTML */

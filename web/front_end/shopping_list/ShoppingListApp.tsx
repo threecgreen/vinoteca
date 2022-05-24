@@ -1,4 +1,4 @@
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { ErrorHandler } from "components/ErrorHandler";
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";

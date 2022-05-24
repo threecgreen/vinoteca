@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { setTitle } from "lib/widgets";
 import React, { lazy, Suspense } from "react";
 import { useLogger } from "../lib/Logger";

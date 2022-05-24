@@ -8,8 +8,6 @@ use crate::DbConn;
 
 use diesel::dsl::count;
 use diesel::prelude::*;
-use diesel::sql_query;
-use diesel::sql_types::Integer;
 use rocket::serde::json::Json;
 
 fn add_wildcards(query: &str) -> String {
@@ -134,9 +132,29 @@ pub async fn get_one(auth: Auth, id: i32, conn: DbConn) -> RestResult<Wine> {
 #[get("/wines/inventory")]
 pub async fn inventory(auth: Auth, conn: DbConn) -> RestResult<Vec<InventoryWine>> {
     conn.run(move |c| {
-        // TODO: move to diesel
-        sql_query(include_str!("inventory.sql"))
-            .bind::<Integer, _>(auth.id)
+        wines::table
+            .inner_join(producers::table.inner_join(regions::table))
+            .inner_join(colors::table)
+            .inner_join(wine_types::table)
+            .left_join(recent_purchases::table)
+            .filter(wines::inventory.gt(0))
+            .filter(wines::user_id.eq(auth.id))
+            .order_by(recent_purchases::date)
+            .select((
+                wines::id,
+                colors::name,
+                wines::name,
+                wine_types::id,
+                wine_types::name,
+                producers::id,
+                producers::name,
+                regions::id,
+                regions::name,
+                recent_purchases::vintage.nullable(),
+                recent_purchases::date.nullable(),
+                wines::inventory,
+                recent_purchases::price.nullable(),
+            ))
             .load::<InventoryWine>(c)
             .map(Json)
             .map_err(VinotecaError::from)
