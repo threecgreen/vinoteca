@@ -159,7 +159,7 @@ fn add_auth_cookie(cookies: &CookieJar<'_>, user_id: i32) {
         .same_site(SameSite::Strict)
         .http_only(true)
         .secure(true)
-        .expires(time::OffsetDateTime::now_utc() + time::Duration::days(14))
+        .expires(rocket::time::OffsetDateTime::now_utc() + rocket::time::Duration::days(14))
         .finish();
     cookies.add_private(cookie);
 }
