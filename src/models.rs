@@ -316,6 +316,7 @@ pub struct WineForm {
     pub name: Option<String>,
     pub wine_type_id: i32,
     pub is_in_shopping_list: bool,
+    pub has_image: bool,
 }
 
 #[derive(AsChangeset, Insertable, Debug)]

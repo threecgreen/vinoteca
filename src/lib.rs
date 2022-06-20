@@ -1,3 +1,5 @@
+#![allow(clippy::extra_unused_lifetimes)]
+
 #[macro_use]
 extern crate diesel;
 #[macro_use]

@@ -17,6 +17,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
                 <li>Update rocket to version 0.5-rc2, which supports async I/O</li>
             </ul>
 
+            <h5>6.2.10</h5>
+            <p>Upgrade Rust dependencies</p>
+
             <h5>6.2.9</h5>
             <ul className="bullets">
                 <li>Fix total price calculation in purchases by year chart</li>

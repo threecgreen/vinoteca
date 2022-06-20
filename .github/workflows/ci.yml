@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-  schedule:
-    - cron:  '30 18 * * 1'
 env:
   CARGO_TERM_COLOR: always
   FORCE_COLOR: true
@@ -30,11 +28,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install clippy
+      - name: Install nightly and clippy
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
+          override: true
           components: clippy
       - name: Build
         uses: actions-rs/cargo@v1
@@ -57,17 +56,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-  rust-audit:
-    name: Rust dependency audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Audit
-        uses: actions-rs/cargo@v1
-        with:
-          command: audit
-          args: --ignore RUSTSEC-2020-0071 --ignore RUSTSEC-2021-0124 --ignore RUSTSEC-2021-0079 --ignore RUSTSEC-2021-0078 --ignore RUSTSEC-2020-0159
+
   js:
     name: JS
     runs-on: ubuntu-latest
@@ -82,6 +71,10 @@ jobs:
         with:
           command: run
           args: --bin gen_contracts
+      - name: Install NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.3
       - name: Install
         run: npm ci --dev
       - name: Build
@@ -90,16 +83,3 @@ jobs:
         run: npm run test
       - name: Lint
         run: npm run lint
-  js-audit:
-    name: JS dependency audit
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install better-npm-audit
-        run: npm install better-npm-audit -g
-      - name: Audit
-        run: better-npm-audit audit --production

@@ -2,6 +2,7 @@
 use crate::models::WineForm;
 
 use chrono::NaiveDate;
+use rocket::fs::TempFile;
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
@@ -11,9 +12,9 @@ use typescript_definitions::TypeScriptify;
 pub struct RawWineForm {
     /// JSON data for database
     pub wine_form: Json<WineForm>,
-    /// raw submitted wine image
-    /// FIXME: data limits
-    pub image: Option<Vec<u8>>,
+    // raw submitted wine image
+    // FIXME: data limits
+    // pub image: Option<TempFile<'r>>,
 }
 
 #[derive(Serialize, TypeScriptify, Debug)]

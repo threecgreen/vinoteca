@@ -54,11 +54,10 @@ pub async fn patch(
 pub async fn put(
     auth: Auth,
     id: i32,
-    raw_wine_form: Form<RawWineForm>,
+    wine_form: Json<WineForm>,
     conn: DbConn,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
-    let RawWineForm { image, wine_form } = raw_wine_form.into_inner();
     let wine_form = wine_form.into_inner();
     wine_form.validate()?;
 
@@ -72,11 +71,11 @@ pub async fn put(
             .map_err(VinotecaError::from)
     })
     .await?;
-    if let Some(image) = image {
-        if let Err(e) = handle_image(id, image, &***storage, &conn).await {
-            warn!("Error updating image for wine with id {}: {}", id, e);
-        }
-    }
+    // if let Some(image) = image {
+    //     if let Err(e) = handle_image(id, image, &***storage, &conn).await {
+    //         warn!("Error updating image for wine with id {}: {}", id, e);
+    //     }
+    // }
     get_one(auth, id, conn).await
 }
 

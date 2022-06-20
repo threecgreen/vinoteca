@@ -16,11 +16,11 @@ use validator::Validate;
 #[post("/wines", data = "<raw_wine_form>")]
 pub async fn post(
     auth: Auth,
-    raw_wine_form: Form<RawWineForm>,
+    wine_form: Json<WineForm>,
     conn: DbConn,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
-    let RawWineForm { wine_form, image } = raw_wine_form.into_inner();
+    // let RawWineForm { wine_form, image } = raw_wine_form.into_inner();
     let wine_form = wine_form.into_inner();
     wine_form.validate()?;
 
@@ -33,11 +33,14 @@ pub async fn post(
                 .map_err(VinotecaError::from)
         })
         .await?;
-    if let Some(image) = image {
-        if let Err(e) = handle_image(wine_id, image, &***storage, &conn).await {
-            warn!("Error adding image for new wine with id {}: {}", wine_id, e);
-        };
-    }
+    // if let Some(image) = image {
+    //     warn!("Found an image");
+    //     if let Err(e) = handle_image(wine_id, image, &***storage, &conn).await {
+    //         warn!("Error adding image for new wine with id {}: {}", wine_id, e);
+    //     };
+    // } else {
+    //     warn!("No image found");
+    // }
 
     get_one(auth, wine_id, conn).await
 }
