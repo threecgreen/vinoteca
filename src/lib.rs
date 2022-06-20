@@ -1,4 +1,5 @@
 #![feature(decl_macro, proc_macro_hygiene)]
+#![allow(clippy::extra_unused_lifetimes)]
 
 #[macro_use]
 extern crate diesel;

@@ -160,8 +160,8 @@ fn handle_exif(
     let orientation_field = exif.get_field(exif::Tag::Orientation, exif::In::PRIMARY);
     if let Some(orientation_field) = orientation_field {
         let orientation = match &orientation_field.value {
-            exif::Value::Short(v) => v.get(0).map(|n| n.to_owned()),
-            exif::Value::Byte(v) => v.get(0).map(|n| n.to_owned() as u16),
+            exif::Value::Short(v) => v.first().map(|n| n.to_owned()),
+            exif::Value::Byte(v) => v.first().map(|n| n.to_owned() as u16),
             _ => None,
         };
         if let Some(orientation) = orientation {

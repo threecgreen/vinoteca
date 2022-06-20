@@ -9,7 +9,7 @@ use std::fs::{self, File};
 use std::io;
 use std::path::{Path, PathBuf};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NotModified<R>(pub R);
 
 /// Sets the status code of the response to 304 Not Modified.
