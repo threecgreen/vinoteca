@@ -71,8 +71,13 @@ jobs:
         with:
           command: run
           args: --bin gen_contracts
+      - name: Install NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.3
+      - run: npm --version
       - name: Install
-        run: npm ci --dev
+        run: npm ci --include=dev
       - name: Build
         run: npm run build
       - name: Test
