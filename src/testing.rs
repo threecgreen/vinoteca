@@ -64,8 +64,8 @@ fn test_rocket_config() -> Rocket {
     let mut database_config = HashMap::new();
     let mut databases = HashMap::new();
     let rocket_test_db = env::var("ROCKET_TEST_DB").expect("Test database connection string");
-    // Testing db should have test in the name
-    assert!(rocket_test_db.contains("test"));
+    // Testing db should be on localhost
+    assert!(rocket_test_db.contains("localhost"));
 
     database_config.insert("url", Value::from(rocket_test_db));
     databases.insert("vinoteca", Value::from(database_config));
@@ -83,7 +83,6 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
         // TODO: test with multiple users
         let connection = DbConn::get_one(&rocket).expect("database connection");
 
-        // TODO: timing logs
         let user_id = 1;
         // Truncate most tables
         sql_query("TRUNCATE TABLE wines, purchases, grapes, wine_grapes, producers, viti_areas, users, wine_types CASCADE;")
@@ -161,6 +160,10 @@ fn setup_test_db(rocket: Rocket) -> Result<Rocket, Rocket> {
                 wines::user_id.eq(user_id),
                 wines::image.eq(Some("unique_id")),
             ))
+            .execute(&*connection)
+            .unwrap();
+        // Correct auto-increment ID
+        sql_query("ALTER SEQUENCE wines_id_seq RESTART WITH 2;")
             .execute(&*connection)
             .unwrap();
 

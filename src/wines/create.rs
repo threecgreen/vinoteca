@@ -31,7 +31,7 @@ pub fn post(
         .map(|wine_id| {
             if let Some(image) = image {
                 if let Err(e) = handle_image(wine_id, image, &*config.storage, &connection) {
-                    warn!("Error adding image for new wine with id {}: {}", wine_id, e);
+                    warn!("Error adding image for new wine with id {wine_id}: {e}");
                 };
             }
             wine_id

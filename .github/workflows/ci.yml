@@ -8,20 +8,6 @@ env:
   ROCKET_TEST_DB: ${{ secrets.ROCKET_TEST_DB }}
 
 jobs:
-  # Limit parallel jobs
-  db-test-lock:
-    name: Database lock
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Block Concurrent Executions'
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 5
-          # Wait on all jobs, not just those for the same branch
-          same-branch-only: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   rust-build:
     name: Rust build and lint
     runs-on: ubuntu-latest
@@ -46,14 +32,17 @@ jobs:
           args: -- --deny warnings
 
   rust-test:
-    needs: db-test-lock
     name: Rust test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Setup test database
+        run: docker compose up --detach
       - name: Test
         uses: actions-rs/cargo@v1
+        env:
+          ROCKET_TEST_DB: postgres://postgres:docker@localhost:5432
         with:
           command: test
 
