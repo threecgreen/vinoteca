@@ -57,7 +57,7 @@ const MobileNavbar: React.FC = (props) => {
 };
 MobileNavbar.displayName = "MobileNavbar";
 
-const NavLink: React.FC<{to: string}> = ({to, ...props}) => {
+const NavLink: React.FC<{to: string, children: React.ReactNode}> = ({to, ...props}) => {
     const location = useLocation();
     return (
         // Sidenav-close closes the sidenav on click
@@ -187,7 +187,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
 };
 UserMenuItems.displayName = "UserMenuItems";
 
-const NoUserMenuItems: React.FC = () => (
+const NoUserMenuItems: React.FC<IMenuItemsProps> = () => (
     <>
         <NavLink to="/login">
             <MaterialIcon className="left" iconName="account_circle" />

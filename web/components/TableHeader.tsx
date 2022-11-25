@@ -4,6 +4,7 @@ import { useLogger } from "lib/Logger";
 import { capitalizeFirstLetter } from "lib/utils";
 import React, { ReactElement } from "react";
 import { SelectInput } from "./inputs/SelectInput";
+import { IChildrenProp } from "./IProps";
 import { MaterialIcon } from "./MaterialIcon";
 
 export enum SortingState {
@@ -12,7 +13,7 @@ export enum SortingState {
     Descending,
 }
 
-interface IProps {
+interface IProps extends IChildrenProp {
     className?: string;
     onClick: (e: React.MouseEvent) => void;
     sortingState: SortingState;

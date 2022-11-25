@@ -1,5 +1,6 @@
 import Logger from "lib/Logger";
 import React, { ReactNode } from "react";
+import { IChildrenProp } from "./IProps";
 
 interface IState {
     hasThrown: boolean;
@@ -8,11 +9,11 @@ interface IState {
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export class ErrorBoundary extends React.Component<{}, IState> {
+export class ErrorBoundary extends React.Component<IChildrenProp, IState> {
     private readonly logger: Logger;
 
     // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(props: Readonly<{}>) {
+    constructor(props: Readonly<IChildrenProp>) {
         super(props);
         this.state = {
             hasThrown: false,

@@ -1,12 +1,15 @@
 /* eslint-disable max-len */
 import { RouteComponentProps } from "@gatsbyjs/reach-router";
-import { setTitle } from "lib/widgets";
 import React, { lazy, Suspense } from "react";
 import { useLogger } from "../lib/Logger";
 import { BtnLink } from "./Buttons";
 import { useUser } from "./context/UserContext";
 import { MaterialIcon } from "./MaterialIcon";
 import { Preloader } from "./Preloader";
+
+interface IRouteComponentProps extends RouteComponentProps {
+    children?: React.ReactNode;
+}
 
 interface IRouteByIdProps {
     id: string;
@@ -98,7 +101,9 @@ const Components = {
 };
 
 interface IAsyncComponentProps {
+    path?: string;
     componentName: keyof typeof Components;
+    children?: React.ReactNode;
 }
 
 export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, ...props}) => {
@@ -114,13 +119,13 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
     );
 };
 
-export const AsyncRoute: React.FC<IAsyncComponentProps & RouteComponentProps> = ({
+export const AsyncRoute: React.FC<IAsyncComponentProps> = ({
     componentName, ...props
 }) => (
     <AsyncComponent componentName={ componentName } { ...props } />
 )
 
-export const NotFound: React.FC<RouteComponentProps> = (props) => {
+export const NotFound: React.FC<IRouteComponentProps> = (props) => {
     const logger = useLogger("NotFound", false, false);
     logger.logWarning("Client requested a resource that doesn't exist");
     // Keep google at bay
@@ -141,7 +146,7 @@ export const NotFound: React.FC<RouteComponentProps> = (props) => {
 };
 NotFound.displayName = "NotFound";
 
-export const Unauthorized: React.FC<RouteComponentProps> = (props) => {
+export const Unauthorized: React.FC<IRouteComponentProps> = (props) => {
     return (
         <div className="text-container">
             <h1 className="light center big">You need to log in to access this</h1>
@@ -160,7 +165,7 @@ export const Unauthorized: React.FC<RouteComponentProps> = (props) => {
 }
 Unauthorized.displayName = "Unauthorized";
 
-export const Forbidden: React.FC<RouteComponentProps> = (props) => {
+export const Forbidden: React.FC<IRouteComponentProps> = (props) => {
     const logger = useLogger("Forbidden", false, false);
     logger.logWarning("Client requested a forbidden resource");
     return (
