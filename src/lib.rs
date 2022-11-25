@@ -60,6 +60,7 @@ use rocket::Rocket;
 extern crate diesel_migrations;
 embed_migrations!();
 
+#[allow(clippy::result_large_err)]
 pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
     let connection = DbConn::get_one(&rocket).expect("database connection");
     match embedded_migrations::run(&*connection) {
