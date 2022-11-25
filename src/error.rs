@@ -6,7 +6,7 @@ use rocket::http::{uncased::Uncased, Header, Status};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket_contrib::json::Json;
-use s3::S3Error;
+use s3::error::S3Error;
 use serde::Serialize;
 use std::borrow::Cow;
 use std::convert::From;
