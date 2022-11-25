@@ -66,14 +66,8 @@ impl<'r> Responder<'r> for VinotecaError {
 
 impl From<BcryptError> for VinotecaError {
     fn from(bcrypt_error: BcryptError) -> Self {
-        let msg = "Error hashing password".to_owned();
-        match bcrypt_error {
-            BcryptError::InvalidPassword => VinotecaError::Forbidden("Bad password".to_owned()),
-            e => {
-                error!("Error performing password hash: {:?}", e);
-                VinotecaError::Internal(msg)
-            }
-        }
+        error!("Error performing password hash: {bcrypt_error:?}");
+        VinotecaError::Internal("Error hashing password".to_owned())
     }
 }
 
