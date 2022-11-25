@@ -19,8 +19,8 @@ chrono = { version = "0.4.23", features = ["serde"] }
 diesel = { version = "1.4.7", features = ["postgres", "chrono"] }
 diesel_migrations = "1.4.0"
 # Image handling
-image = "0.23.14"
-kamadak-exif = "0.5.4"
+image = "0.24.5"
+kamadak-exif = "0.5.5"
 lazy_static = "1.4.0"
 log = "0.4.14"
 rocket_codegen = "0.4.11"
