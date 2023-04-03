@@ -3212,7 +3212,7 @@ dependencies = [
  "rust-s3",
  "serde",
  "serde_json",
- "time 0.1.45",
+ "time 0.3.20",
  "typescript-definitions",
  "uuid",
  "validator",
