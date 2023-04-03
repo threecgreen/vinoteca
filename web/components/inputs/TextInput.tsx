@@ -37,7 +37,7 @@ interface ITextProps extends IGridProps {
 export const TextInput: React.FC<ITextProps> = (props) => {
     const useCol = props.useCol ?? true;
 
-    const [timeoutId, setTimeoutId] = React.useState<number>();
+    const [timeoutId, setTimeoutId] = React.useState<ReturnType<typeof setTimeout>>();
     const [isActive, setIsActive] = React.useState(false);
     // Can't call useRef conditionally
     const ownRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
