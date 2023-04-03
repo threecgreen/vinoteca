@@ -12,6 +12,9 @@ export const Changelog: React.FC<RouteComponentProps> = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>6.2.12</h5>
+            <p>Upgrade Rust and JS dependencies</p>
+
             <h5>6.2.11</h5>
             <p>Upgrade Rust and JS dependencies</p>
 
