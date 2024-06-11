@@ -6,7 +6,7 @@ use rocket::http::{uncased::Uncased, Header, Status};
 use rocket::request::Request;
 use rocket::response::{self, Responder};
 use rocket::serde::json::Json;
-use s3::S3Error;
+use s3::error::S3Error;
 use serde::Serialize;
 use std::borrow::Cow;
 use std::convert::From;
@@ -68,7 +68,7 @@ impl From<BcryptError> for VinotecaError {
     fn from(bcrypt_error: BcryptError) -> Self {
         let msg = "Error hashing password".to_owned();
         match bcrypt_error {
-            BcryptError::InvalidPassword => VinotecaError::Forbidden("Bad password".to_owned()),
+            BcryptError::InvalidHash(_) => VinotecaError::Forbidden("Bad password".to_owned()),
             e => {
                 error!("Error performing password hash: {:?}", e);
                 VinotecaError::Internal(msg)

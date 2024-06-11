@@ -1,6 +1,6 @@
 use crate::schema::{grapes, producers, users, wine_types, wines};
 /// Integration tests
-use crate::{run_db_migrations, DbConn};
+use crate::{run_db_migrations, Db};
 
 use diesel::prelude::*;
 use diesel::sql_query;
@@ -28,7 +28,7 @@ macro_rules! db_test {
 
         let _lock = DB_LOCK.lock().await;
         let $rocket = create_test_rocket().await;
-        let $conn = DbConn::get_one(&$rocket)
+        let $conn = Db::get_one(&$rocket)
             .await
             .expect("database connection");
 
@@ -50,7 +50,7 @@ pub async fn create_test_rocket() -> Rocket<rocket::Build> {
     let rocket = test_rocket_config();
     // Hack to call these fairings before calling `ignite` on `rocket`. This way we can mount
     // individual routes in tests and have more flexibility in general
-    let rocket = DbConn::fairing().on_ignite(rocket).await.unwrap();
+    let rocket = Db::fairing().on_ignite(rocket).await.unwrap();
     AdHoc::try_on_ignite("Setup test db", setup_test_db)
         .on_ignite(rocket)
         .await
@@ -84,7 +84,7 @@ async fn setup_test_db(
 ) -> Result<Rocket<rocket::Build>, Rocket<rocket::Build>> {
     let rocket = run_db_migrations(rocket).await?;
     // TODO: test with multiple users
-    let conn = DbConn::get_one(&rocket).await.expect("database connection");
+    let conn = Db::get_one(&rocket).await.expect("database connection");
 
     let user_id = 1;
     let mock_grapes = vec![

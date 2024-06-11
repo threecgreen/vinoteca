@@ -1,17 +1,20 @@
+use diesel::dsl::count;
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use rocket::serde::json::Json;
+use rocket_db_pools::Connection;
+
 use super::models::{InventoryWine, WineCount};
+
 use crate::error::{RestResult, VinotecaError};
 use crate::models::Wine;
 use crate::query_utils::{lower, IntoFirst};
 use crate::schema::{colors, producers, recent_purchases, regions, viti_areas, wine_types, wines};
 use crate::users::Auth;
-use crate::DbConn;
-
-use diesel::dsl::count;
-use diesel::prelude::*;
-use rocket::serde::json::Json;
+use crate::Db;
 
 fn add_wildcards(query: &str) -> String {
-    format!("%{}%", query)
+    format!("%{query}%")
 }
 
 /// Contains all information used in the wine table
@@ -33,83 +36,81 @@ pub async fn get(
     region: Option<String>,
     viti_area: Option<String>,
 
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<Vec<Wine>> {
-    conn.run(move |c| {
-        let mut query = wines::table
-            .inner_join(producers::table.inner_join(regions::table))
-            .inner_join(colors::table)
-            .inner_join(wine_types::table)
-            .left_join(recent_purchases::table)
-            .left_join(viti_areas::table)
-            .filter(wines::user_id.eq(auth.id))
-            .into_boxed();
-        if let Some(id) = id {
-            query = query.filter(wines::id.eq(id));
-        }
-        if let Some(producer_id) = producer_id {
-            query = query.filter(wines::producer_id.eq(producer_id));
-        }
-        if let Some(region_id) = region_id {
-            query = query.filter(producers::region_id.eq(region_id));
-        }
-        if let Some(viti_area_id) = viti_area_id {
-            query = query.filter(wines::viti_area_id.eq(viti_area_id));
-        }
-        if let Some(wine_type_id) = wine_type_id {
-            query = query.filter(wines::wine_type_id.eq(wine_type_id));
-        }
-        if let Some(is_in_shopping_list) = is_in_shopping_list {
-            query = query.filter(wines::is_in_shopping_list.eq(is_in_shopping_list));
-        }
-        if let Some(color) = color {
-            query = query.filter(colors::name.like(add_wildcards(&color)));
-        }
-        if let Some(wine_type) = wine_type {
-            query = query.filter(wine_types::name.like(add_wildcards(&wine_type)));
-        }
-        if let Some(producer) = producer {
-            query = query.filter(producers::name.like(add_wildcards(&producer)));
-        }
-        if let Some(region) = region {
-            query = query.filter(regions::name.like(add_wildcards(&region)));
-        }
-        if let Some(viti_area) = viti_area {
-            query = query.filter(viti_areas::name.like(add_wildcards(&viti_area)));
-        }
+    let mut query = wines::table
+        .inner_join(producers::table.inner_join(regions::table))
+        .inner_join(colors::table)
+        .inner_join(wine_types::table)
+        .left_join(recent_purchases::table)
+        .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
+        .into_boxed();
+    if let Some(id) = id {
+        query = query.filter(wines::id.eq(id));
+    }
+    if let Some(producer_id) = producer_id {
+        query = query.filter(wines::producer_id.eq(producer_id));
+    }
+    if let Some(region_id) = region_id {
+        query = query.filter(producers::region_id.eq(region_id));
+    }
+    if let Some(viti_area_id) = viti_area_id {
+        query = query.filter(wines::viti_area_id.eq(viti_area_id));
+    }
+    if let Some(wine_type_id) = wine_type_id {
+        query = query.filter(wines::wine_type_id.eq(wine_type_id));
+    }
+    if let Some(is_in_shopping_list) = is_in_shopping_list {
+        query = query.filter(wines::is_in_shopping_list.eq(is_in_shopping_list));
+    }
+    if let Some(color) = color {
+        query = query.filter(colors::name.like(add_wildcards(&color)));
+    }
+    if let Some(wine_type) = wine_type {
+        query = query.filter(wine_types::name.like(add_wildcards(&wine_type)));
+    }
+    if let Some(producer) = producer {
+        query = query.filter(producers::name.like(add_wildcards(&producer)));
+    }
+    if let Some(region) = region {
+        query = query.filter(regions::name.like(add_wildcards(&region)));
+    }
+    if let Some(viti_area) = viti_area {
+        query = query.filter(viti_areas::name.like(add_wildcards(&viti_area)));
+    }
 
-        query
-            .select((
-                wines::id,
-                wines::description,
-                wines::notes,
-                wines::rating,
-                wines::inventory,
-                wines::why,
-                wines::color_id,
-                colors::name,
-                wines::producer_id,
-                producers::name,
-                producers::region_id,
-                regions::name,
-                wines::viti_area_id,
-                viti_areas::name.nullable(), // Left join
-                wines::name,
-                wines::wine_type_id,
-                wine_types::name,
-                recent_purchases::vintage.nullable(),
-                wines::image,
-                wines::is_in_shopping_list,
-            ))
-            .load::<Wine>(c)
-            .map(Json)
-            .map_err(VinotecaError::from)
-    })
-    .await
+    query
+        .select((
+            wines::id,
+            wines::description,
+            wines::notes,
+            wines::rating,
+            wines::inventory,
+            wines::why,
+            wines::color_id,
+            colors::name,
+            wines::producer_id,
+            producers::name,
+            producers::region_id,
+            regions::name,
+            wines::viti_area_id,
+            viti_areas::name.nullable(), // Left join
+            wines::name,
+            wines::wine_type_id,
+            wine_types::name,
+            recent_purchases::vintage.nullable(),
+            wines::image,
+            wines::is_in_shopping_list,
+        ))
+        .load::<Wine>(&mut **conn)
+        .await
+        .map(Json)
+        .map_err(VinotecaError::from)
 }
 
 #[get("/wines/<id>")]
-pub async fn get_one(auth: Auth, id: i32, conn: DbConn) -> RestResult<Wine> {
+pub async fn get_one(auth: Auth, id: i32, conn: Connection<Db>) -> RestResult<Wine> {
     let wines = get(
         auth,
         Some(id),
@@ -130,36 +131,34 @@ pub async fn get_one(auth: Auth, id: i32, conn: DbConn) -> RestResult<Wine> {
 }
 
 #[get("/wines/inventory")]
-pub async fn inventory(auth: Auth, conn: DbConn) -> RestResult<Vec<InventoryWine>> {
-    conn.run(move |c| {
-        wines::table
-            .inner_join(producers::table.inner_join(regions::table))
-            .inner_join(colors::table)
-            .inner_join(wine_types::table)
-            .left_join(recent_purchases::table)
-            .filter(wines::inventory.gt(0))
-            .filter(wines::user_id.eq(auth.id))
-            .order_by(recent_purchases::date)
-            .select((
-                wines::id,
-                colors::name,
-                wines::name,
-                wine_types::id,
-                wine_types::name,
-                producers::id,
-                producers::name,
-                regions::id,
-                regions::name,
-                recent_purchases::vintage.nullable(),
-                recent_purchases::date.nullable(),
-                wines::inventory,
-                recent_purchases::price.nullable(),
-            ))
-            .load::<InventoryWine>(c)
-            .map(Json)
-            .map_err(VinotecaError::from)
-    })
-    .await
+pub async fn inventory(auth: Auth, mut conn: Connection<Db>) -> RestResult<Vec<InventoryWine>> {
+    wines::table
+        .inner_join(producers::table.inner_join(regions::table))
+        .inner_join(colors::table)
+        .inner_join(wine_types::table)
+        .left_join(recent_purchases::table)
+        .filter(wines::inventory.gt(0))
+        .filter(wines::user_id.eq(auth.id))
+        .order_by(recent_purchases::date)
+        .select((
+            wines::id,
+            colors::name,
+            wines::name,
+            wine_types::id,
+            wine_types::name,
+            producers::id,
+            producers::name,
+            regions::id,
+            regions::name,
+            recent_purchases::vintage.nullable(),
+            recent_purchases::date.nullable(),
+            wines::inventory,
+            recent_purchases::price.nullable(),
+        ))
+        .load::<InventoryWine>(&mut **conn)
+        .await
+        .map(Json)
+        .map_err(VinotecaError::from)
 }
 
 fn wrap_in_wildcards(filter_str: &str) -> String {
@@ -174,81 +173,75 @@ pub async fn search(
     producer_like: Option<String>,
     region_like: Option<String>,
     viti_area_like: Option<String>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<Vec<Wine>> {
-    conn.run(move |c| {
-        let mut query = wines::table
-            .inner_join(producers::table.inner_join(regions::table))
-            .inner_join(colors::table)
-            .inner_join(wine_types::table)
-            .left_join(recent_purchases::table)
-            .left_join(viti_areas::table)
-            .filter(wines::user_id.eq(auth.id))
-            .into_boxed();
-        if let Some(color_like) = color_like {
-            query = query
-                .filter(lower(colors::name).like(wrap_in_wildcards(&color_like.to_lowercase())));
-        }
-        if let Some(wine_type_like) = wine_type_like {
-            query = query.filter(
-                lower(wine_types::name).like(wrap_in_wildcards(&wine_type_like.to_lowercase())),
-            );
-        }
-        if let Some(producer_like) = producer_like {
-            query = query.filter(
-                lower(producers::name).like(wrap_in_wildcards(&producer_like.to_lowercase())),
-            );
-        }
-        if let Some(region_like) = region_like {
-            query = query
-                .filter(lower(regions::name).like(wrap_in_wildcards(&region_like.to_lowercase())));
-        }
-        if let Some(viti_area_like) = viti_area_like {
-            query = query.filter(
-                lower(viti_areas::name).like(wrap_in_wildcards(&viti_area_like.to_lowercase())),
-            );
-        }
-        query
-            .select((
-                wines::id,
-                wines::description,
-                wines::notes,
-                wines::rating,
-                wines::inventory,
-                wines::why,
-                wines::color_id,
-                colors::name,
-                wines::producer_id,
-                producers::name,
-                producers::region_id,
-                regions::name,
-                wines::viti_area_id,
-                viti_areas::name.nullable(), // Left join
-                wines::name,
-                wines::wine_type_id,
-                wine_types::name,
-                recent_purchases::vintage.nullable(),
-                wines::image,
-                wines::is_in_shopping_list,
-            ))
-            .load::<Wine>(c)
-            .map(Json)
-            .map_err(VinotecaError::from)
-    })
-    .await
+    let mut query = wines::table
+        .inner_join(producers::table.inner_join(regions::table))
+        .inner_join(colors::table)
+        .inner_join(wine_types::table)
+        .left_join(recent_purchases::table)
+        .left_join(viti_areas::table)
+        .filter(wines::user_id.eq(auth.id))
+        .into_boxed();
+    if let Some(color_like) = color_like {
+        query =
+            query.filter(lower(colors::name).like(wrap_in_wildcards(&color_like.to_lowercase())));
+    }
+    if let Some(wine_type_like) = wine_type_like {
+        query = query.filter(
+            lower(wine_types::name).like(wrap_in_wildcards(&wine_type_like.to_lowercase())),
+        );
+    }
+    if let Some(producer_like) = producer_like {
+        query = query
+            .filter(lower(producers::name).like(wrap_in_wildcards(&producer_like.to_lowercase())));
+    }
+    if let Some(region_like) = region_like {
+        query =
+            query.filter(lower(regions::name).like(wrap_in_wildcards(&region_like.to_lowercase())));
+    }
+    if let Some(viti_area_like) = viti_area_like {
+        query = query.filter(
+            lower(viti_areas::name).like(wrap_in_wildcards(&viti_area_like.to_lowercase())),
+        );
+    }
+    query
+        .select((
+            wines::id,
+            wines::description,
+            wines::notes,
+            wines::rating,
+            wines::inventory,
+            wines::why,
+            wines::color_id,
+            colors::name,
+            wines::producer_id,
+            producers::name,
+            producers::region_id,
+            regions::name,
+            wines::viti_area_id,
+            viti_areas::name.nullable(), // Left join
+            wines::name,
+            wines::wine_type_id,
+            wine_types::name,
+            recent_purchases::vintage.nullable(),
+            wines::image,
+            wines::is_in_shopping_list,
+        ))
+        .load::<Wine>(&mut **conn)
+        .await
+        .map(Json)
+        .map_err(VinotecaError::from)
 }
 
 #[get("/wines/count")]
-pub async fn varieties(auth: Auth, conn: DbConn) -> Json<WineCount> {
-    let count = conn
-        .run(move |c| {
-            wines::table
-                .filter(wines::user_id.eq(auth.id))
-                .select(count(wines::id))
-                .first(c)
-                .unwrap_or(0)
-        })
-        .await;
+pub async fn varieties(auth: Auth, mut conn: Connection<Db>) -> Json<WineCount> {
+    let count = wines::table
+        .filter(wines::user_id.eq(auth.id))
+        .select(count(wines::id))
+        .first(&mut **conn)
+        .await
+        .unwrap_or(0);
     Json(WineCount { count })
 }
 
@@ -259,7 +252,7 @@ mod test {
     use super::*;
     use crate::models::WineForm;
     use crate::storage::{MockStorage, Storage};
-    use crate::DbConn;
+    use crate::Db;
 
     use rocket::form::Form;
     use rocket::State;
@@ -291,7 +284,7 @@ mod test {
             assert!(wine_response.is_ok());
             let wine_id = wine_response.unwrap().id;
 
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             let inventory_response = inventory(auth, connection).await;
             assert!(inventory_response.is_ok());
             let inventory = inventory_response.unwrap().into_inner();

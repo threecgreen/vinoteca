@@ -1,60 +1,58 @@
+use chrono::Utc;
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use rocket::http::{Cookie, CookieJar, SameSite};
+use rocket::serde::json::Json;
+use rocket_db_pools::Connection;
+use validator::Validate;
+
 use super::auth::{Auth, COOKIE_NAME};
 use super::models::{ChangePasswordForm, ChangeUserForm, LoginForm};
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{InternalUser, NewUser, User, UserForm};
 use crate::schema::users;
-use crate::DbConn;
-
-use chrono::Utc;
-use diesel::prelude::*;
-use rocket::http::{Cookie, CookieJar, SameSite};
-use rocket::serde::json::Json;
-use validator::Validate;
+use crate::Db;
 
 // TODO: store bad login attempts and lock after 10
 
 #[get("/users")]
-pub async fn get(auth: Auth, conn: DbConn) -> RestResult<User> {
-    conn.run(move |c| {
-        users::table
-            .filter(users::id.eq(auth.id))
-            .select((
-                users::email,
-                users::name,
-                users::image,
-                users::created_at,
-                users::last_login,
-            ))
-            .first(c)
-            .map(Json)
-            .map_err(VinotecaError::from)
-    })
-    .await
+pub async fn get(auth: Auth, mut conn: Connection<Db>) -> RestResult<User> {
+    users::table
+        .filter(users::id.eq(auth.id))
+        .select((
+            users::email,
+            users::name,
+            users::image,
+            users::created_at,
+            users::last_login,
+        ))
+        .first(&mut **conn)
+        .await
+        .map(Json)
+        .map_err(VinotecaError::from)
 }
 
 #[post("/users/login", format = "json", data = "<form>")]
 pub async fn login(
     form: Json<LoginForm>,
     cookies: &CookieJar<'_>,
-    conn: DbConn,
+
+    mut conn: Connection<Db>,
 ) -> RestResult<User> {
     let form = form.into_inner();
-    let user = conn
-        .run(move |c| {
-            let user = users::table
-                .filter(users::email.eq(form.email))
-                .first::<InternalUser>(c)
-                .map_err(|_| VinotecaError::NotFound("Email not recognized".to_owned()))?;
-            let valid = bcrypt::verify(form.password, &user.hash)?;
-            if !valid {
-                return Err(VinotecaError::Forbidden("Bad password".to_string()));
-            }
-            diesel::update(users::table)
-                .filter(users::id.eq(user.id))
-                .set(users::last_login.eq(Utc::now()))
-                .execute(c)?;
-            Ok(user)
-        })
+    let user = users::table
+        .filter(users::email.eq(form.email))
+        .first::<InternalUser>(&mut **conn)
+        .await
+        .map_err(|_| VinotecaError::NotFound("Email not recognized".to_owned()))?;
+    let valid = bcrypt::verify(form.password, &user.hash)?;
+    if !valid {
+        return Err(VinotecaError::Forbidden("Bad password".to_string()));
+    }
+    diesel::update(users::table)
+        .filter(users::id.eq(user.id))
+        .set(users::last_login.eq(Utc::now()))
+        .execute(&mut **conn)
         .await?;
 
     add_auth_cookie(cookies, user.id);
@@ -66,7 +64,7 @@ pub async fn login(
 pub async fn create(
     form: Json<UserForm>,
     cookies: &CookieJar<'_>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<User> {
     let form = form.into_inner();
     form.validate()?;
@@ -79,15 +77,12 @@ pub async fn create(
         image: None,
         hash,
     };
-    let user_id = conn
-        .run(move |c| {
-            diesel::insert_into(users::table)
-                .values(new_user)
-                .returning(users::id)
-                .get_result(c)
-                .map_err(VinotecaError::from)
-        })
-        .await?;
+    let user_id = diesel::insert_into(users::table)
+        .values(new_user)
+        .returning(users::id)
+        .get_result(&mut **conn)
+        .await
+        .map_err(VinotecaError::from)?;
     add_auth_cookie(cookies, user_id);
     get(Auth { id: user_id }, conn).await
 }
@@ -97,16 +92,13 @@ pub async fn change_password(
     auth: Auth,
     form: Json<ChangePasswordForm<'_>>,
     cookies: &CookieJar<'_>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<()> {
     let form = form.into_inner();
     form.validate()?;
-    let user = conn
-        .run(move |c| {
-            users::table
-                .filter(users::id.eq(auth.id))
-                .first::<InternalUser>(c)
-        })
+    let user = users::table
+        .filter(users::id.eq(auth.id))
+        .first::<InternalUser>(&mut **conn)
         .await?;
     let valid = bcrypt::verify(form.old_password, &user.hash)?;
     if !valid {
@@ -114,19 +106,17 @@ pub async fn change_password(
     }
 
     let new_hash = bcrypt::hash(form.new_password, bcrypt::DEFAULT_COST)?;
-    conn.run(move |c| {
-        diesel::update(users::table.filter(users::id.eq(auth.id)))
-            .set(users::hash.eq(new_hash))
-            .execute(c)
-    })
-    .await?;
+    diesel::update(users::table.filter(users::id.eq(auth.id)))
+        .set(users::hash.eq(new_hash))
+        .execute(&mut **conn)
+        .await?;
     add_auth_cookie(cookies, auth.id);
     Ok(Json(()))
 }
 
 #[post("/users/logout")]
 pub fn logout(cookies: &CookieJar<'_>) -> RestResult<()> {
-    cookies.remove_private(Cookie::named(COOKIE_NAME));
+    cookies.remove_private(Cookie::from(COOKIE_NAME));
     Ok(Json(()))
 }
 
@@ -134,33 +124,32 @@ pub fn logout(cookies: &CookieJar<'_>) -> RestResult<()> {
 pub async fn modify_profile(
     auth: Auth,
     form: Json<ChangeUserForm>,
-    conn: DbConn,
+
+    mut conn: Connection<Db>,
 ) -> RestResult<User> {
     let form = form.into_inner();
     form.validate()?;
 
     // Check if exists
-    conn.run(move |c| -> Result<(), diesel::result::Error> {
-        users::table
-            .filter(users::id.eq(auth.id))
-            .first::<InternalUser>(c)?;
-        diesel::update(users::table.filter(users::id.eq(auth.id)))
-            .set(form)
-            .execute(c)?;
-        Ok(())
-    })
-    .await?;
+    users::table
+        .filter(users::id.eq(auth.id))
+        .first::<InternalUser>(&mut **conn)
+        .await?;
+    diesel::update(users::table.filter(users::id.eq(auth.id)))
+        .set(form)
+        .execute(&mut **conn)
+        .await?;
     get(auth, conn).await
 }
 
 fn add_auth_cookie(cookies: &CookieJar<'_>, user_id: i32) {
-    let cookie = Cookie::build(COOKIE_NAME, user_id.to_string())
+    let cookie = Cookie::build((COOKIE_NAME, user_id.to_string()))
         .path("/")
         .same_site(SameSite::Strict)
         .http_only(true)
         .secure(true)
         .expires(rocket::time::OffsetDateTime::now_utc() + rocket::time::Duration::days(14))
-        .finish();
+        .build();
     cookies.add_private(cookie);
 }
 

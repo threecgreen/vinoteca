@@ -29,13 +29,13 @@ pub struct RecentPurchase {
 #[derive(QueryableByName, Serialize, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct YearsPurchases {
-    #[sql_type = "Integer"]
+    #[diesel(sql_type = Integer)]
     pub year: i32,
-    #[sql_type = "BigInt"]
+    #[diesel(sql_type = BigInt)]
     pub quantity: i64,
-    #[sql_type = "Nullable<Double>"]
+    #[diesel(sql_type = Nullable<Double>)]
     pub total_price: Option<f64>,
-    #[sql_type = "Nullable<Double>"]
+    #[diesel(sql_type = Nullable<Double>)]
     pub avg_price: Option<f64>,
 }
 
@@ -54,6 +54,6 @@ pub struct PurchaseCount {
 #[derive(Serialize, QueryableByName, TypeScriptify, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct MostCommonPurchaseDate {
-    #[sql_type = "Nullable<Text>"]
+    #[diesel(sql_type = Nullable<Text>)]
     pub most_common_purchase_date: Option<String>,
 }

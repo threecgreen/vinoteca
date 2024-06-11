@@ -15,7 +15,7 @@ pub struct Color {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "colors"]
+#[diesel(table_name = colors)]
 #[serde(rename_all = "camelCase")]
 pub struct ColorForm {
     #[validate(length(min = 1))]
@@ -40,7 +40,7 @@ pub struct GrapeForm {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "grapes"]
+#[diesel(table_name = grapes)]
 pub struct NewGrape {
     pub name: String,
     pub user_id: i32,
@@ -73,7 +73,7 @@ pub struct ProducerForm {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[table_name = "producers"]
+#[diesel(table_name = producers)]
 pub struct NewProducer {
     pub name: String,
     pub region_id: i32,
@@ -106,8 +106,8 @@ pub struct Purchase {
 }
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[changeset_options(treat_none_as_null = "true")]
-#[table_name = "purchases"]
+#[diesel(treat_none_as_null = true)]
+#[diesel(table_name = purchases)]
 #[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
     #[validate(range(min = 0.0))]
@@ -133,7 +133,7 @@ pub struct Region {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "regions"]
+#[diesel(table_name = regions)]
 #[serde(rename_all = "camelCase")]
 pub struct RegionForm {
     #[validate(length(min = 1))]
@@ -157,7 +157,7 @@ pub struct StoreForm {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "stores"]
+#[diesel(table_name = stores)]
 pub struct NewStore {
     pub name: String,
     pub user_id: i32,
@@ -223,7 +223,7 @@ pub struct UserForm {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "users"]
+#[diesel(table_name = users)]
 pub struct NewUser {
     pub email: String,
     pub name: String,
@@ -250,7 +250,7 @@ pub struct VitiAreaForm {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[table_name = "viti_areas"]
+#[diesel(table_name = viti_areas)]
 pub struct NewVitiArea {
     pub name: String,
     pub region_id: i32,
@@ -320,8 +320,8 @@ pub struct WineForm {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[changeset_options(treat_none_as_null = "true")]
-#[table_name = "wines"]
+#[diesel(treat_none_as_null = true)]
+#[diesel(table_name = wines)]
 pub struct NewWine {
     pub description: Option<String>,
     pub notes: Option<String>,
@@ -352,6 +352,7 @@ impl From<Wine> for WineForm {
             name: wine.name,
             wine_type_id: wine.wine_type_id,
             is_in_shopping_list: wine.is_in_shopping_list,
+            has_image: wine.image.is_some(),
         }
     }
 }
@@ -385,7 +386,7 @@ pub struct WineGrape {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "wine_grapes"]
+#[diesel(table_name = wine_grapes)]
 #[serde(rename_all = "camelCase")]
 pub struct WineGrapeForm {
     pub percent: Option<i32>,
@@ -409,7 +410,7 @@ pub struct WineTypeForm {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "wine_types"]
+#[diesel(table_name = wine_types)]
 pub struct NewWineType {
     pub name: String,
     pub user_id: i32,

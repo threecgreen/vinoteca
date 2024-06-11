@@ -1,3 +1,6 @@
+use std::borrow::Cow;
+use std::path::{Path, PathBuf};
+
 use chrono::{DateTime, Utc};
 use rocket::http::{uncased::Uncased, ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
@@ -9,8 +12,6 @@ use rocket::{
     route::Handler,
 };
 use rocket::{Data, Request, Route};
-use std::borrow::Cow;
-use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NotModified<R>(pub R);
@@ -139,7 +140,7 @@ impl Handler for CachedStaticFiles {
         let current_route = req.route().expect("route while handling");
         let is_segments_route = current_route.uri.path().ends_with('>');
         if !is_segments_route {
-            return Outcome::forward(data);
+            return Outcome::forward(data, Status::Ok);
         };
         let path = req
             .routed_segments(0..)
@@ -147,7 +148,7 @@ impl Handler for CachedStaticFiles {
             .ok()
             .map(|pb| self.root.join(pb));
         match path {
-            Some(path) if path.is_dir() => Outcome::forward(data),
+            Some(path) if path.is_dir() => Outcome::forward(data, Status::Ok),
             Some(path) if path.exists() => {
                 let gz_path = PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
@@ -170,9 +171,9 @@ impl Handler for CachedStaticFiles {
                     "Request received for static file that doesn't exist at path {:?}. Root: {:?}",
                     path, self.root
                 );
-                Outcome::failure(Status::NotFound)
+                Outcome::error(Status::NotFound)
             }
-            None => Outcome::forward(data),
+            None => Outcome::forward(data, Status::BadRequest),
         }
     }
 }

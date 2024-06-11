@@ -1,38 +1,39 @@
-use super::image::handle_image;
-use super::models::RawWineForm;
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use rocket::serde::json::Json;
+use rocket::State;
+use rocket_db_pools::Connection;
+use validator::Validate;
+
+// use super::models::RawWineForm;
 use super::read::get_one;
+
 use crate::error::{RestResult, VinotecaError};
+use crate::models::WineForm;
 use crate::models::{NewWine, Wine};
 use crate::schema::wines;
 use crate::storage::Storage;
 use crate::users::Auth;
-use crate::DbConn;
+use crate::Db;
 
-use diesel::prelude::*;
-use rocket::form::Form;
-use rocket::State;
-use validator::Validate;
-
-#[post("/wines", data = "<raw_wine_form>")]
+// #[post("/wines", data = "<raw_wine_form>")]
+#[post("/wines", data = "<wine_form>", format = "json")]
 pub async fn post(
     auth: Auth,
     wine_form: Json<WineForm>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
     // let RawWineForm { wine_form, image } = raw_wine_form.into_inner();
     let wine_form = wine_form.into_inner();
     wine_form.validate()?;
 
-    let wine_id = conn
-        .run(move |c| {
-            diesel::insert_into(wines::table)
-                .values(NewWine::from((auth, wine_form)))
-                .returning(wines::id)
-                .get_result(c)
-                .map_err(VinotecaError::from)
-        })
-        .await?;
+    let wine_id = diesel::insert_into(wines::table)
+        .values(NewWine::from((auth, wine_form)))
+        .returning(wines::id)
+        .get_result(&mut **conn)
+        .await
+        .map_err(VinotecaError::from)?;
     // if let Some(image) = image {
     //     warn!("Found an image");
     //     if let Err(e) = handle_image(wine_id, image, &***storage, &conn).await {
@@ -51,7 +52,7 @@ mod test {
     use crate::models::WineForm;
     use crate::storage::MockStorage;
     use crate::wines::models::RawWineForm;
-    use crate::DbConn;
+    use crate::Db;
 
     use rocket::serde::json::Json;
     use rocket::State;

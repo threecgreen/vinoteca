@@ -60,16 +60,16 @@ impl Storage for S3 {
     // }
 
     async fn get_object(&self, path: &str) -> Result<Vec<u8>, VinotecaError> {
-        let (data, code) = self.bucket.get_object(path).await?;
-        if code > 304 {
+        let resp = self.bucket.get_object(path).await?;
+        if resp.status_code() > 304 {
             warn!(
                 "Failed to get file from S3. Code: {}, AWSResponseData: {:?}",
-                code,
-                String::from_utf8(data)
+                resp.status_code(),
+                resp.as_str()
             );
             Err(VinotecaError::Internal("Error getting file".to_owned()))
         } else {
-            Ok(data)
+            Ok(resp.to_vec())
         }
     }
 

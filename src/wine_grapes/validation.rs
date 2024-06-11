@@ -1,10 +1,12 @@
+use diesel::prelude::*;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
+use rocket_db_pools::Connection;
+use std::collections::HashSet;
+use validator::ValidationError;
+
 use super::models::AssociatedGrape;
 use crate::error::VinotecaError;
 use crate::schema::grapes;
-
-use diesel::prelude::*;
-use std::collections::HashSet;
-use validator::ValidationError;
 
 pub fn validate_total_percentage(grapes: &[AssociatedGrape]) -> Result<(), ValidationError> {
     let total_percentage = grapes
@@ -29,10 +31,10 @@ pub fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError
     Ok(())
 }
 
-pub fn validate_user_owns_grapes(
+pub async fn validate_user_owns_grapes(
     user_id: i32,
     wine_grapes: &[AssociatedGrape],
-    pg_conn: &mut PgConnection,
+    pg_conn: &mut AsyncPgConnection,
 ) -> Result<(), VinotecaError> {
     let valid_grape_count = grapes::table
         .filter(grapes::user_id.eq(user_id))
@@ -45,7 +47,8 @@ pub fn validate_user_owns_grapes(
             ),
         )
         .count()
-        .get_result::<i64>(pg_conn)?;
+        .get_result::<i64>(pg_conn)
+        .await?;
     if valid_grape_count as usize == wine_grapes.len() {
         Ok(())
     } else {

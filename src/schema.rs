@@ -1,11 +1,11 @@
-table! {
+diesel::table! {
     colors (id) {
         id -> Int4,
         name -> Text,
     }
 }
 
-table! {
+diesel::table! {
     grapes (id) {
         id -> Int4,
         name -> Text,
@@ -13,7 +13,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     producers (id) {
         id -> Int4,
         name -> Text,
@@ -22,7 +22,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     purchases (id) {
         id -> Int4,
         price -> Nullable<Float8>,
@@ -35,14 +35,14 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     regions (id) {
         id -> Int4,
         name -> Text,
     }
 }
 
-table! {
+diesel::table! {
     stores (id) {
         id -> Int4,
         name -> Text,
@@ -50,7 +50,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     users (id) {
         id -> Int4,
         email -> Text,
@@ -62,7 +62,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     viti_areas (id) {
         id -> Int4,
         name -> Text,
@@ -71,7 +71,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     wine_grapes (wine_id, grape_id) {
         wine_id -> Int4,
         grape_id -> Int4,
@@ -79,7 +79,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     wines (id) {
         id -> Int4,
         name -> Nullable<Text>,
@@ -98,7 +98,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     wine_types (id) {
         id -> Int4,
         name -> Text,
@@ -106,7 +106,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     recent_purchases(wine_id) {
         wine_id -> Int4,
         price -> Nullable<Float8>,
@@ -118,26 +118,26 @@ table! {
     }
 }
 
-joinable!(grapes -> users (user_id));
-joinable!(producers -> regions (region_id));
-joinable!(producers -> users (user_id));
-joinable!(purchases -> stores (store_id));
-joinable!(purchases -> wines (wine_id));
-joinable!(recent_purchases -> stores (store_id));
-joinable!(recent_purchases -> wines (wine_id));
-joinable!(stores -> users (user_id));
-joinable!(viti_areas -> regions (region_id));
-joinable!(viti_areas -> users (user_id));
-joinable!(wine_grapes -> grapes (grape_id));
-joinable!(wine_grapes -> wines (wine_id));
-joinable!(wine_types -> users (user_id));
-joinable!(wines -> colors (color_id));
-joinable!(wines -> producers (producer_id));
-joinable!(wines -> users (user_id));
-joinable!(wines -> viti_areas (viti_area_id));
-joinable!(wines -> wine_types (wine_type_id));
+diesel::joinable!(grapes -> users (user_id));
+diesel::joinable!(producers -> regions (region_id));
+diesel::joinable!(producers -> users (user_id));
+diesel::joinable!(purchases -> stores (store_id));
+diesel::joinable!(purchases -> wines (wine_id));
+diesel::joinable!(recent_purchases -> stores (store_id));
+diesel::joinable!(recent_purchases -> wines (wine_id));
+diesel::joinable!(stores -> users (user_id));
+diesel::joinable!(viti_areas -> regions (region_id));
+diesel::joinable!(viti_areas -> users (user_id));
+diesel::joinable!(wine_grapes -> grapes (grape_id));
+diesel::joinable!(wine_grapes -> wines (wine_id));
+diesel::joinable!(wine_types -> users (user_id));
+diesel::joinable!(wines -> colors (color_id));
+diesel::joinable!(wines -> producers (producer_id));
+diesel::joinable!(wines -> users (user_id));
+diesel::joinable!(wines -> viti_areas (viti_area_id));
+diesel::joinable!(wines -> wine_types (wine_type_id));
 
-allow_tables_to_appear_in_same_query!(
+diesel::allow_tables_to_appear_in_same_query!(
     colors,
     grapes,
     producers,

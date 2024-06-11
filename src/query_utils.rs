@@ -2,42 +2,46 @@ use crate::error::{RestResult, VinotecaError};
 
 use diesel::sql_types::Text;
 use rocket::serde::json::Json;
-use rocket_sync_db_pools::diesel::PgConnection;
+use rocket_db_pools::{diesel::PgPool, Database};
 
 /// Macro for fetching the `$limit` top rows from `$table`. We use a macro
 /// because of issues with creating generic diesel functions
 macro_rules! top_table {
     ($table: expr, $id: expr, $name: expr, $limit: expr, $conn: expr) => {{
+        use rocket::serde::json::Json;
+        use rocket_db_pools::diesel::{
+            dsl::sql,
+            prelude::*,
+            sql_types::{BigInt, Double, Nullable},
+        };
+
         use crate::error::VinotecaError;
         use crate::models::generic;
 
-        use diesel::sql_types::{BigInt, Double, Nullable};
-        use rocket::serde::json::Json;
-
-        $conn.run(move |c| {
-            $table
-                .group_by(($id, $name))
-                .select((
-                    $id,
-                    $name,
-                    sql::<BigInt>("sum(purchases.quantity)"),
-                    sql::<BigInt>("count(DISTINCT wines.id)"),
-                    sql::<Nullable<Double>>("avg(purchases.price)"),
-                ))
-                .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
-                .limit($limit as i64)
-                .load::<generic::TopEntity>(c)
-                .map(Json)
-                .map_err(VinotecaError::from)
-        })
+        $table
+            .group_by(($id, $name))
+            .select((
+                $id,
+                $name,
+                sql::<BigInt>("sum(purchases.quantity)"),
+                sql::<BigInt>("count(DISTINCT wines.id)"),
+                sql::<Nullable<Double>>("avg(purchases.price)"),
+            ))
+            .order_by(sql::<BigInt>("sum(purchases.quantity) DESC"))
+            .limit($limit as i64)
+            .load::<generic::TopEntity>(&mut **$conn)
+            .await
+            .map(Json)
+            .map_err(VinotecaError::from)
     }};
 }
 
 sql_function!(fn lower(x: Text) -> Text);
 
 /// Database connection from connection pool.
+#[derive(Database)]
 #[database("vinoteca")]
-pub struct DbConn(PgConnection);
+pub struct Db(pub PgPool);
 
 /// Used for reusing the `GET` request logic in `POST` and `PUT` methods to
 /// retrieved the created or modified entity. `GET` methods usually return a

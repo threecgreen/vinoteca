@@ -7,8 +7,6 @@ extern crate lazy_static;
 #[macro_use]
 extern crate rocket;
 #[macro_use]
-extern crate rocket_sync_db_pools;
-#[macro_use]
 extern crate validator_derive;
 
 // Diesel modules
@@ -47,38 +45,44 @@ pub mod wine_grapes;
 mod wine_types;
 pub mod wines;
 
-use cached_static::CachedStaticFiles;
-use query_utils::DbConn;
-
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use rocket::{fairing::AdHoc, Rocket};
+use rocket_db_pools::{diesel::async_connection_wrapper::AsyncConnectionWrapper, Database};
 use storage::Storage;
 
-#[macro_use]
-extern crate diesel_migrations;
-embed_migrations!();
+use cached_static::CachedStaticFiles;
+use query_utils::Db;
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 pub async fn run_db_migrations(
     rocket: Rocket<rocket::Build>,
 ) -> Result<Rocket<rocket::Build>, Rocket<rocket::Build>> {
-    let connection = DbConn::get_one(&rocket).await.expect("database connection");
-    connection
-        .run(|conn| match embedded_migrations::run(conn) {
-            Ok(()) => {
-                info!("Successfully ran database migrations");
-                Ok(rocket)
-            }
-            Err(e) => {
-                error!("Failed to run database migrations: {:?}", e);
-                Err(rocket)
-            }
-        })
-        .await
+    let db = Db::fetch(&rocket).unwrap();
+    let conn = db.get().await.unwrap();
+
+    // let mut async_wrapper = AsyncConnectionWrapper::establish(rocket.figment().extract().unwrap());
+    // rocket::tokio::task::spawn_blocking(move || {
+    //     match async_wrapper.run_pending_migrations(MIGRATIONS) {
+    //         Ok(_) => {
+    //             info!("Successfully ran database migrations");
+    //             Ok(rocket)
+    //         }
+    //         Err(e) => {
+    //             error!("Failed to run database migrations: {e:?}");
+    //             Err(rocket)
+    //         }
+    //     }
+    // })
+    // .await
+    // .unwrap()
+    Ok(rocket)
 }
 
 pub async fn create_rocket() -> Result<rocket::Rocket<rocket::Ignite>, rocket::Error> {
     let rocket = rocket::build()
         // Allow handlers access to the database
-        .attach(DbConn::fairing())
+        .attach(Db::init())
         // Run embedded database migrations on startup
         .attach(AdHoc::try_on_ignite(
             "Database migrations",

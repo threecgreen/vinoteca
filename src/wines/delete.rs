@@ -1,30 +1,29 @@
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use rocket::serde::json::Json;
+use rocket::State;
+use rocket_db_pools::Connection;
+
 use super::image;
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
 use crate::storage::Storage;
 use crate::users::Auth;
-use crate::DbConn;
-
-use diesel::prelude::*;
-use rocket::serde::json::Json;
-use rocket::State;
+use crate::Db;
 
 #[delete("/wines/<id>")]
 pub async fn delete(
     auth: Auth,
     id: i32,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<()> {
     // Validate is user's wine
-    let image_path = conn
-        .run(move |c| {
-            wines::table
-                .filter(wines::id.eq(id))
-                .filter(wines::user_id.eq(auth.id))
-                .select(wines::image)
-                .first::<Option<String>>(c)
-        })
+    let image_path = wines::table
+        .filter(wines::id.eq(id))
+        .filter(wines::user_id.eq(auth.id))
+        .select(wines::image)
+        .first::<Option<String>>(&mut **conn)
         .await?;
 
     if let Some(image_path) = image_path {
@@ -32,12 +31,10 @@ pub async fn delete(
             warn!("Error deleting image for deleted wine: {:?}", e);
         };
     }
-    conn.run(move |c| {
-        diesel::delete(wines::table.filter(wines::id.eq(id)))
-            .execute(c)
-            .map_err(VinotecaError::from)
-    })
-    .await?;
+    diesel::delete(wines::table.filter(wines::id.eq(id)))
+        .execute(&mut **conn)
+        .await
+        .map_err(VinotecaError::from)?;
     Ok(Json(()))
 }
 
@@ -60,10 +57,10 @@ mod test {
             let auth = Auth { id: 1 };
             let wines = get_one(auth, 1, connection).await;
             assert!(matches!(wines, Ok(Json(wines)) if wines.id == 1));
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             let response = delete(auth, 1, connection, storage).await;
             assert!(response.is_ok());
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             let res = get_one(auth, 1, connection).await;
             assert!(matches!(res, Err(VinotecaError::NotFound(_))));
         })

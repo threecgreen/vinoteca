@@ -1,76 +1,73 @@
+use diesel::prelude::*;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
+// use rocket::form::Form;
+use rocket::serde::json::Json;
+use rocket::State;
+use rocket_db_pools::Connection;
+use validator::Validate;
+
 use super::get_one;
-use super::image::handle_image;
-use super::models::{RawWineForm, WinePatchForm};
+// use super::image::handle_image;
+use super::models::WinePatchForm;
 use crate::error::{RestResult, VinotecaError};
-use crate::models::{NewWine, Wine};
+use crate::models::{NewWine, Wine, WineForm};
 use crate::schema::wines;
 use crate::storage::Storage;
 use crate::users::Auth;
-use crate::DbConn;
+use crate::Db;
 
-use diesel::prelude::*;
-use rocket::form::Form;
-use rocket::serde::json::Json;
-use rocket::State;
-use validator::Validate;
-
+// #[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
 #[patch("/wines/<id>", format = "json", data = "<wine_patch_form>")]
 pub async fn patch(
     auth: Auth,
     id: i32,
     wine_patch_form: Json<WinePatchForm>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<Wine> {
     let wine_patch_form = wine_patch_form.into_inner();
-    conn.run(move |c| validate_owns_wine(auth, id, c)).await?;
+    validate_owns_wine(auth, id, &mut **conn).await?;
     match wine_patch_form {
         WinePatchForm::Inventory(inventory) if inventory >= 0 => {
-            conn.run(move |c| {
-                diesel::update(wines::table.filter(wines::id.eq(id)))
-                    .set(wines::inventory.eq(inventory))
-                    .execute(c)
-                    .map_err(VinotecaError::from)
-            })
-            .await?;
+            diesel::update(wines::table.filter(wines::id.eq(id)))
+                .set(wines::inventory.eq(inventory))
+                .execute(&mut **conn)
+                .await
+                .map_err(VinotecaError::from)?;
             get_one(auth, id, conn).await
         }
         WinePatchForm::Inventory(_invalid_inventory) => Err(VinotecaError::BadRequest(
             "Invalid inventory value".to_owned(),
         )),
         WinePatchForm::IsInShoppingList(is_in_shopping_list) => {
-            conn.run(move |c| {
-                diesel::update(wines::table.filter(wines::id.eq(id)))
-                    .set(wines::is_in_shopping_list.eq(is_in_shopping_list))
-                    .execute(c)
-                    .map_err(VinotecaError::from)
-            })
-            .await?;
+            diesel::update(wines::table.filter(wines::id.eq(id)))
+                .set(wines::is_in_shopping_list.eq(is_in_shopping_list))
+                .execute(&mut **conn)
+                .await
+                .map_err(VinotecaError::from)?;
             get_one(auth, id, conn).await
         }
     }
 }
 
-#[put("/wines/<id>", data = "<raw_wine_form>")]
+// #[put("/wines/<id>", data = "<raw_wine_form>")]
+#[put("/wines/<id>", format = "json", data = "<wine_form>")]
 pub async fn put(
     auth: Auth,
     id: i32,
     wine_form: Json<WineForm>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<Wine> {
     let wine_form = wine_form.into_inner();
     wine_form.validate()?;
+    validate_owns_wine(auth, id, &mut **conn).await?;
 
-    conn.run(move |c| {
-        validate_owns_wine(auth, id, c)?;
-
-        // TODO: editing an image should be handled separately
-        diesel::update(wines::table.filter(wines::id.eq(id)))
-            .set(NewWine::from((auth, wine_form)))
-            .execute(c)
-            .map_err(VinotecaError::from)
-    })
-    .await?;
+    // TODO: editing an image should be handled separately
+    diesel::update(wines::table.filter(wines::id.eq(id)))
+        .set(NewWine::from((auth, wine_form)))
+        .execute(&mut **conn)
+        .await
+        .map_err(VinotecaError::from)?;
     // if let Some(image) = image {
     //     if let Err(e) = handle_image(id, image, &***storage, &conn).await {
     //         warn!("Error updating image for wine with id {}: {}", id, e);
@@ -79,16 +76,17 @@ pub async fn put(
     get_one(auth, id, conn).await
 }
 
-pub fn validate_owns_wine(
+pub async fn validate_owns_wine(
     auth: Auth,
     id: i32,
-    pg_conn: &mut PgConnection,
+    conn: &mut AsyncPgConnection,
 ) -> Result<(), VinotecaError> {
     wines::table
         .filter(wines::id.eq(id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(pg_conn)?;
+        .first::<i32>(conn)
+        .await?;
     Ok(())
 }
 
@@ -96,7 +94,7 @@ pub fn validate_owns_wine(
 mod test {
     use super::*;
     use crate::storage::MockStorage;
-    use crate::DbConn;
+    use crate::Db;
     use crate::{models::WineForm, wines::get_one};
 
     #[rocket::async_test]
@@ -132,13 +130,13 @@ mod test {
             let mock = MockStorage::new();
             let mock_storage: Box<dyn Storage> = Box::new(mock);
             let storage = State::from(&mock_storage);
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             // Add description
             let wine2 = put(
                 auth,
                 1,
                 Form::from(RawWineForm {
-                    image: None,
+                    // image: None,
                     wine_form: Json(form),
                 }),
                 connection,
@@ -150,12 +148,12 @@ mod test {
             // Nullify description
             let mut null_form = WineForm::from(wine2.into_inner());
             null_form.description = None;
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             let wine3 = put(
                 auth,
                 1,
                 Form::from(RawWineForm {
-                    image: None,
+                    // image: None,
                     wine_form: Json(null_form),
                 }),
                 connection,

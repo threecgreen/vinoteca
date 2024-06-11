@@ -1,79 +1,77 @@
+use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
+use rocket::serde::json::Json;
+use rocket_db_pools::Connection;
+use validator::Validate;
+
 use super::models::WineGrapesForm;
 use super::validation::validate_user_owns_grapes;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{WineGrape, WineGrapeForm};
 use crate::schema::{grapes, wine_grapes};
 use crate::users::Auth;
-use crate::DbConn;
-
-use diesel::prelude::*;
-use rocket::serde::json::Json;
-use validator::Validate;
+use crate::Db;
 
 #[get("/wine-grapes?<wine_id>&<grape_id>")]
 pub async fn get(
     auth: Auth,
     wine_id: Option<i32>,
     grape_id: Option<i32>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<Vec<WineGrape>> {
-    conn.run(move |c| {
-        let mut query = wine_grapes::table
-            .inner_join(grapes::table)
-            .filter(grapes::user_id.eq(auth.id))
-            .into_boxed();
-        if let Some(wine_id) = wine_id {
-            query = query.filter(wine_grapes::wine_id.eq(wine_id));
-        }
-        if let Some(grape_id) = grape_id {
-            query = query.filter(wine_grapes::grape_id.eq(grape_id));
-        }
-        query
-            .select((
-                wine_grapes::percent,
-                wine_grapes::grape_id,
-                grapes::name,
-                wine_grapes::wine_id,
-            ))
-            .load::<WineGrape>(c)
-            .map(Json)
-            .map_err(VinotecaError::from)
-    })
-    .await
+    let mut query = wine_grapes::table
+        .inner_join(grapes::table)
+        .filter(grapes::user_id.eq(auth.id))
+        .into_boxed();
+    if let Some(wine_id) = wine_id {
+        query = query.filter(wine_grapes::wine_id.eq(wine_id));
+    }
+    if let Some(grape_id) = grape_id {
+        query = query.filter(wine_grapes::grape_id.eq(grape_id));
+    }
+    query
+        .select((
+            wine_grapes::percent,
+            wine_grapes::grape_id,
+            grapes::name,
+            wine_grapes::wine_id,
+        ))
+        .load::<WineGrape>(&mut **conn)
+        .await
+        .map(Json)
+        .map_err(VinotecaError::from)
 }
 
 #[post("/wine-grapes", format = "json", data = "<wine_grape_form>")]
 pub async fn post(
     auth: Auth,
     wine_grape_form: Json<WineGrapesForm>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
 ) -> RestResult<Vec<WineGrape>> {
     let wine_grape_form = wine_grape_form.into_inner();
     wine_grape_form.validate()?;
     let wine_id = wine_grape_form.wine_id;
 
-    conn.run(move |c| -> Result<(), VinotecaError> {
-        validate_user_owns_grapes(auth.id, &wine_grape_form.grapes, c)?;
-        let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
+    validate_user_owns_grapes(auth.id, &wine_grape_form.grapes, &mut **conn).await?;
+    let wine_grapes: Vec<WineGrapeForm> = wine_grape_form.into();
 
-        // Delete existing wine grapes
-        diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
-            .execute(c)
-            .map_err(|e| {
-                VinotecaError::Internal(format!(
-                    "Error deleting existing wine grapes for wine with id {}: {}",
-                    wine_id, e
-                ))
-            })?;
+    // Delete existing wine grapes
+    diesel::delete(wine_grapes::table.filter(wine_grapes::wine_id.eq(wine_id)))
+        .execute(&mut **conn)
+        .await
+        .map_err(|e| {
+            VinotecaError::Internal(format!(
+                "Error deleting existing wine grapes for wine with id {}: {}",
+                wine_id, e
+            ))
+        })?;
 
-        if !wine_grapes.is_empty() {
-            diesel::insert_into(wine_grapes::table)
-                .values(&wine_grapes)
-                .execute(c)?;
-        }
-        Ok(())
-    })
-    .await?;
+    if !wine_grapes.is_empty() {
+        diesel::insert_into(wine_grapes::table)
+            .values(&wine_grapes)
+            .execute(&mut **conn)
+            .await?;
+    }
 
     get(auth, Some(wine_id), None, conn).await
 }
@@ -218,7 +216,7 @@ mod test {
             let response = post(Auth { id: 1 }, Json(form), connection).await;
             assert!(matches!(response, Ok(Json(wg)) if wg.len() == 2));
             // Post empty wine grapes for same wine
-            let connection = DbConn::get_one(&rocket).await.expect("database connection");
+            let connection = Db::get_one(&rocket).await.expect("database connection");
             let form = WineGrapesForm {
                 wine_id: 1,
                 grapes: Vec::new(),

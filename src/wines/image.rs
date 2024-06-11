@@ -1,16 +1,18 @@
+use diesel::prelude::*;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
+use image::GenericImageView;
+use rocket::data::Capped;
+use rocket::serde::json::Json;
+use rocket::State;
+use rocket_db_pools::Connection;
+use std::io::{BufReader, Cursor};
+
 use super::{update::validate_owns_wine, Rotation, RotationForm};
 use crate::error::{RestResult, VinotecaError};
 use crate::schema::wines;
 use crate::storage::Storage;
 use crate::users::Auth;
-use crate::DbConn;
-
-use diesel::prelude::*;
-use image::GenericImageView;
-use rocket::data::Capped;
-use rocket::serde::json::Json;
-use rocket::State;
-use std::io::{BufReader, Cursor};
+use crate::Db;
 
 const WINE_DIR: &str = "wine_images";
 const MAX_IMAGE_DIM: u32 = 1280;
@@ -20,24 +22,23 @@ pub async fn handle_image(
     wine_id: i32,
     image: Vec<u8>,
     storage: &dyn Storage,
-    conn: &DbConn,
+    conn: &mut AsyncPgConnection,
 ) -> Result<String, VinotecaError> {
     // Read in image and fix orientation based on EXIF data
     let image = reformat_image(&image)?;
     // AWS
-    let path = storage
-        .create_object(WINE_DIR, &image, "image/jpeg")
-        .await?;
-    let ret = path.clone();
-    conn.run(move |c| {
-        diesel::update(wines::table)
-            .filter(wines::id.eq(wine_id))
-            .set(wines::image.eq(&path))
-            .execute(c)
-    })
-    .await?;
+    // let path = storage
+    //     .create_object(WINE_DIR, &image, "image/jpeg")
+    //     .await?;
+    todo!()
+    // let ret = path.clone();
+    // diesel::update(wines::table)
+    //     .filter(wines::id.eq(wine_id))
+    //     .set(wines::image.eq(&path))
+    //     .execute(conn)
+    //     .await?;
 
-    Ok(ret)
+    // Ok(ret)
 }
 
 #[post("/wines/<id>/image", data = "<image>")]
@@ -45,20 +46,16 @@ pub async fn post(
     auth: Auth,
     id: i32,
     image: Capped<Vec<u8>>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<String> {
-    let existing_image_path = conn
-        .run(move |c| {
-            validate_owns_wine(auth, id, c)?;
-            get_image_path(auth, id, c)
-        })
-        .await?;
+    validate_owns_wine(auth, id, &mut **conn).await?;
+    let existing_image_path = get_image_path(auth, id, &mut **conn).await?;
 
-    let path = handle_image(id, image.into_inner(), &***storage, &conn).await?;
+    let path = handle_image(id, image.into_inner(), &***storage, &mut conn).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
-        storage.delete_object(&existing_image_path).await?;
+        // storage.delete_object(&existing_image_path).await?;
     }
     Ok(Json(path))
 }
@@ -68,15 +65,12 @@ pub async fn rotate(
     auth: Auth,
     id: i32,
     rotation_form: Json<RotationForm>,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<String> {
-    let path = conn
-        .run(move |c| {
-            get_image_path(auth, id, c)?
-                .ok_or_else(|| VinotecaError::NotFound(format!("No wine with id {}", id)))
-        })
-        .await?;
+    let path = get_image_path(auth, id, &mut **conn)
+        .await?
+        .ok_or_else(|| VinotecaError::NotFound(format!("No wine with id {}", id)))?;
     let rotation = rotation_form.into_inner().rotation;
 
     let full_path = format!("{}/{}", WINE_DIR, path);
@@ -86,7 +80,7 @@ pub async fn rotate(
         "Updated rotation of image at {} by rotation {:?}",
         full_path, rotation,
     );
-    storage.update_object(&full_path, &rotated_image).await?;
+    // storage.update_object(&full_path, &rotated_image).await?;
     Ok(Json(path))
 }
 
@@ -94,23 +88,21 @@ pub async fn rotate(
 pub async fn delete(
     auth: Auth,
     id: i32,
-    conn: DbConn,
+    mut conn: Connection<Db>,
     storage: &State<Box<dyn Storage>>,
 ) -> RestResult<()> {
-    let file_path = conn.run(move |c| get_image_path(auth, id, c)).await?;
+    let file_path = get_image_path(auth, id, &mut **conn).await?;
 
     match file_path {
         Some(file_path) => {
             // Delete from database first, because it's better to have an orphan
             // file than have the database think there's a file when we've
             // already deleted it.
-            conn.run(move |c| {
-                diesel::update(wines::table)
-                    .filter(wines::id.eq(id))
-                    .set(wines::image.eq::<Option<String>>(None))
-                    .execute(c)
-            })
-            .await?;
+            diesel::update(wines::table)
+                .filter(wines::id.eq(id))
+                .set(wines::image.eq::<Option<String>>(None))
+                .execute(&mut **conn)
+                .await?;
             delete_from_storage(&***storage, &file_path).await?;
             Ok(Json(()))
         }
@@ -118,22 +110,24 @@ pub async fn delete(
     }
 }
 
-fn get_image_path(
+async fn get_image_path(
     auth: Auth,
     id: i32,
-    pg_conn: &mut PgConnection,
+    pg_conn: &mut AsyncPgConnection,
 ) -> Result<Option<String>, VinotecaError> {
     Ok(wines::table
         .filter(wines::user_id.eq(auth.id))
         .filter(wines::id.eq(id))
         .select(wines::image)
-        .first::<Option<String>>(pg_conn)?)
+        .first::<Option<String>>(pg_conn)
+        .await?)
 }
 
 pub async fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
-    storage
-        .delete_object(&format!("{}/{}", WINE_DIR, path))
-        .await
+    todo!()
+    // storage
+    //     .delete_object(&format!("{}/{}", WINE_DIR, path))
+    //     .await
 }
 
 fn get_exif(raw: &[u8]) -> Option<exif::Exif> {
@@ -162,8 +156,8 @@ fn handle_exif(
     let orientation_field = exif.get_field(exif::Tag::Orientation, exif::In::PRIMARY);
     if let Some(orientation_field) = orientation_field {
         let orientation = match &orientation_field.value {
-            exif::Value::Short(v) => v.first().map(|n| n.to_owned()),
-            exif::Value::Byte(v) => v.first().map(|n| n.to_owned() as u16),
+            exif::Value::Short(v) => v.iter().next().map(|n| n.to_owned()),
+            exif::Value::Byte(v) => v.iter().next().map(|n| n.to_owned() as u16),
             _ => None,
         };
         if let Some(orientation) = orientation {

@@ -1,13 +1,15 @@
-use crate::error::VinotecaError;
-use crate::schema::users;
-use crate::DbConn;
-
 use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
 use rocket::http::Status;
 use rocket::outcome::Outcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::serde::json::Json;
+use rocket_db_pools::Connection;
 use serde::{Deserialize, Serialize};
+
+use crate::error::VinotecaError;
+use crate::schema::users;
+use crate::Db;
 
 // If more fields are added, remove `Copy`
 #[derive(Copy, Clone, Debug, Deserialize, Serialize)]
@@ -23,9 +25,9 @@ impl<'r> FromRequest<'r> for Auth {
     type Error = Json<VinotecaError>;
 
     async fn from_request(request: &'r Request<'_>) -> request::Outcome<Auth, Self::Error> {
-        let conn =
-            rocket::outcome::try_outcome!(request.guard::<DbConn>().await.map_failure(|e| {
-                error!("Failed to acquire database connection: {:?}", e);
+        let mut conn =
+            rocket::outcome::try_outcome!(request.guard::<Connection<Db>>().await.map_error(|e| {
+                error!("Failed to acquire database connection: {e:?}");
                 (
                     Status::InternalServerError,
                     Json(VinotecaError::Internal(
@@ -41,27 +43,24 @@ impl<'r> FromRequest<'r> for Auth {
         let user_id = match user_id {
             Some(user_id) => user_id,
             None => {
-                return Outcome::Failure((
+                return Outcome::Error((
                     Status::Unauthorized,
                     Json(VinotecaError::Unauthorized("Login required".to_owned())),
                 ));
             }
         };
         // Verify user id exists
-        let id = conn
-            .run(move |c| {
-                users::table
-                    .filter(users::id.eq(user_id))
-                    .select(users::id)
-                    .first(c)
-                    .ok()
-            })
-            .await;
+        let id = users::table
+            .filter(users::id.eq(user_id))
+            .select(users::id)
+            .first(&mut **conn)
+            .await
+            .ok();
 
         if let Some(id) = id {
             Outcome::Success(Auth { id })
         } else {
-            Outcome::Failure((
+            Outcome::Error((
                 Status::Forbidden,
                 Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
             ))

@@ -16,7 +16,8 @@ bcrypt = "0.15.0"
 # Datetime functionality
 chrono = { version = "0.4.31", features = ["serde"] }
 # basic ORM
-diesel = { version = "2.1.4", features = ["postgres", "chrono"] }
+diesel = { version = "2.1.4", features = ["chrono", "postgres"] }
+diesel-async =  { version = "0.4.1", features = ["async-connection-wrapper"] }
 diesel_migrations = "2.1.0"
 # Image handling
 image = "0.24.7"
@@ -34,14 +35,14 @@ validator = "0.16.1"
 validator_derive = "0.16.0"
 
 [dependencies.rocket]
-version = "0.5.0"
-default_features = false
+version = "0.5.1"
+default-features = false
 features = ["secrets", "json"]
 
-[dependencies.rocket_sync_db_pools]
-version = "0.1.0"
+[dependencies.rocket_db_pools]
+version = "0.2.0"
 default-features = false
-features = ["diesel_postgres_pool"]
+features = ["diesel_postgres"]
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]
