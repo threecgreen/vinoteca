@@ -14,8 +14,35 @@ interface IProps {
 export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
     const [case_, setCase] = React.useState(Case.Lower);
     const [chars, setChars] = React.useState([
-        "à", "á", "â", "ã", "æ", "č", "ç", "è", "é", "ê", "ë", "í", "î",
-        "ï", "ñ", "ó", "ô", "õ", "œ", "š", "ù", "ú", "û", "ü", "ž",
+        "à",
+        "á",
+        "â",
+        "ã",
+        "ä",
+        "å",
+        "æ",
+        "ç",
+        "č",
+        "è",
+        "é",
+        "ê",
+        "ë",
+        "í",
+        "î",
+        "ï",
+        "ñ",
+        "ó",
+        "ô",
+        "õ",
+        "ö",
+        "ø",
+        "œ",
+        "š",
+        "ù",
+        "ú",
+        "û",
+        "ü",
+        "ž",
     ]);
 
     const handleShift = () => {
