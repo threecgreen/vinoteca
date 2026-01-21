@@ -1,19 +1,21 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, Region};
+use crate::query_utils::DbConn;
 use crate::schema::{producers, purchases, regions, wines};
 use crate::users::Auth;
-use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use diesel_async::RunQueryDsl;
+use rocket::get;
+use rocket::serde::json::Json;
 
 #[get("/regions?<id>&<name>&<producer_name>")]
-pub fn get(
+pub async fn get(
     id: Option<i32>,
     name: Option<String>,
     producer_name: Option<String>,
-    connection: DbConn,
+    mut connection: DbConn,
 ) -> RestResult<Vec<Region>> {
     // Still want to include regions that don't have a producer associated with them
     let mut query = regions::table.left_join(producers::table).into_boxed();
@@ -29,16 +31,17 @@ pub fn get(
     query
         .select((regions::id, regions::name))
         .distinct()
-        .load::<Region>(&*connection)
+        .load::<Region>(&mut *connection)
+        .await
         .map(Json)
         .map_err(VinotecaError::from)
 }
 
 #[get("/regions/top?<limit>")]
-pub fn top(
+pub async fn top(
     auth: Auth,
     limit: Option<usize>,
-    connection: DbConn,
+    mut connection: DbConn,
 ) -> RestResult<Vec<generic::TopEntity>> {
     let limit = limit.unwrap_or(10);
     top_table!(
@@ -49,6 +52,6 @@ pub fn top(
         regions::id,
         regions::name,
         limit,
-        connection
+        &mut *connection
     )
 }

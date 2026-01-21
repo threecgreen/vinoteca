@@ -1,14 +1,14 @@
 use std::env;
 use std::process;
 
-fn run() {
-    vinoteca::create_rocket().launch();
-}
-
-fn main() {
+#[rocket::main]
+async fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() == 1 {
-        run()
+        if let Err(e) = vinoteca::create_rocket().launch().await {
+            eprintln!("Rocket failed to launch: {}", e);
+            process::exit(1);
+        }
     } else {
         let option = &args[1];
         match option.as_str() {

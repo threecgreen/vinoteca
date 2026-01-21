@@ -1,9 +1,10 @@
 use crate::users::Auth;
 
-use rocket::response::content::{Html, Plain, Xml};
+use rocket::get;
+use rocket::response::content::{RawHtml, RawText, RawXml};
 
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![
+    rocket::routes![
         home,
         robots,
         sitemap,
@@ -30,88 +31,88 @@ pub fn get_routes() -> Vec<rocket::Route> {
 // Keep in sync with Router.tsx
 
 #[get("/")]
-pub fn home() -> Html<&'static str> {
-    Html(include_str!("static/index.html"))
+pub fn home() -> RawHtml<&'static str> {
+    RawHtml(include_str!("static/index.html"))
 }
 #[get("/about")]
-pub fn about() -> Html<&'static str> {
+pub fn about() -> RawHtml<&'static str> {
     home()
 }
 #[get("/about/changelog")]
-pub fn changelog() -> Html<&'static str> {
+pub fn changelog() -> RawHtml<&'static str> {
     home()
 }
 #[get("/login")]
-pub fn login() -> Html<&'static str> {
+pub fn login() -> RawHtml<&'static str> {
     home()
 }
 #[get("/register")]
-pub fn register() -> Html<&'static str> {
+pub fn register() -> RawHtml<&'static str> {
     home()
 }
 #[get("/dashboards")]
-pub fn dashboards(_auth: Auth) -> Html<&'static str> {
+pub async fn dashboards(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/grapes")]
-pub fn grapes(_auth: Auth) -> Html<&'static str> {
+pub async fn grapes(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/producers")]
-pub fn producers(_auth: Auth) -> Html<&'static str> {
+pub async fn producers(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines")]
-pub fn wines(_auth: Auth) -> Html<&'static str> {
+pub async fn wines(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines/<_id>")]
-pub fn wine_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
+pub async fn wine_profile(_auth: Auth, _id: i32) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines/inventory")]
-pub fn inventory(_auth: Auth) -> Html<&'static str> {
+pub async fn inventory(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines/new")]
-pub fn new_wine(_auth: Auth) -> Html<&'static str> {
+pub async fn new_wine(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines/search")]
-pub fn search_wines(_auth: Auth) -> Html<&'static str> {
+pub async fn search_wines(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wines/shopping-list")]
-pub fn shopping_list(_auth: Auth) -> Html<&'static str> {
+pub async fn shopping_list(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/producers/<_id>")]
-pub fn producer_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
+pub async fn producer_profile(_auth: Auth, _id: i32) -> RawHtml<&'static str> {
     home()
 }
 #[get("/regions/<_id>")]
-pub fn region_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
+pub async fn region_profile(_auth: Auth, _id: i32) -> RawHtml<&'static str> {
     home()
 }
 #[get("/profile")]
-pub fn user_profile(_auth: Auth) -> Html<&'static str> {
+pub async fn user_profile(_auth: Auth) -> RawHtml<&'static str> {
     home()
 }
 #[get("/viti-areas/<_id>")]
-pub fn viti_area_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
+pub async fn viti_area_profile(_auth: Auth, _id: i32) -> RawHtml<&'static str> {
     home()
 }
 #[get("/wine-types/<_id>")]
-pub fn wine_type_profile(_auth: Auth, _id: i32) -> Html<&'static str> {
+pub async fn wine_type_profile(_auth: Auth, _id: i32) -> RawHtml<&'static str> {
     home()
 }
 
 #[get("/robots.txt")]
-pub fn robots() -> Plain<&'static str> {
-    Plain(include_str!("static/robots.txt"))
+pub fn robots() -> RawText<&'static str> {
+    RawText(include_str!("static/robots.txt"))
 }
 
 #[get("/sitemap.xml")]
-pub fn sitemap() -> Xml<&'static str> {
-    Xml(include_str!("static/sitemap.xml"))
+pub fn sitemap() -> RawXml<&'static str> {
+    RawXml(include_str!("static/sitemap.xml"))
 }

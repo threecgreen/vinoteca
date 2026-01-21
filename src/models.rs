@@ -3,11 +3,12 @@ use crate::serde::{trim_opt_string, trim_str};
 use crate::users::Auth;
 
 use chrono::{DateTime, NaiveDate, Utc};
-use diesel::{Insertable, Queryable};
+use diesel::{AsChangeset, Insertable, Queryable, Selectable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 
-#[derive(Queryable, Clone, Serialize, TypeScriptify, Debug)]
+#[derive(Queryable, Selectable, Clone, Serialize, TypeScriptify, Debug)]
+#[diesel(table_name = colors)]
 #[serde(rename_all = "camelCase")]
 pub struct Color {
     pub id: i32,
@@ -15,7 +16,7 @@ pub struct Color {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "colors"]
+#[diesel(table_name = colors)]
 #[serde(rename_all = "camelCase")]
 pub struct ColorForm<'a> {
     #[validate(length(min = 1))]
@@ -40,7 +41,7 @@ pub struct GrapeForm<'a> {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "grapes"]
+#[diesel(table_name = grapes)]
 pub struct NewGrape<'a> {
     pub name: &'a str,
     pub user_id: i32,
@@ -73,7 +74,7 @@ pub struct ProducerForm<'a> {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[table_name = "producers"]
+#[diesel(table_name = producers)]
 pub struct NewProducer<'a> {
     pub name: &'a str,
     pub region_id: i32,
@@ -106,8 +107,8 @@ pub struct Purchase {
 }
 
 #[derive(AsChangeset, Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[changeset_options(treat_none_as_null = "true")]
-#[table_name = "purchases"]
+#[diesel(treat_none_as_null = true)]
+#[diesel(table_name = purchases)]
 #[serde(rename_all = "camelCase")]
 pub struct PurchaseForm {
     #[validate(range(min = 0.0))]
@@ -133,7 +134,7 @@ pub struct Region {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "regions"]
+#[diesel(table_name = regions)]
 #[serde(rename_all = "camelCase")]
 pub struct RegionForm<'a> {
     #[validate(length(min = 1))]
@@ -157,7 +158,7 @@ pub struct StoreForm<'a> {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "stores"]
+#[diesel(table_name = stores)]
 pub struct NewStore<'a> {
     pub name: &'a str,
     pub user_id: i32,
@@ -221,7 +222,7 @@ pub struct UserForm<'a> {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "users"]
+#[diesel(table_name = users)]
 pub struct NewUser<'a> {
     pub email: &'a str,
     pub name: &'a str,
@@ -248,7 +249,7 @@ pub struct VitiAreaForm<'a> {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[table_name = "viti_areas"]
+#[diesel(table_name = viti_areas)]
 pub struct NewVitiArea<'a> {
     pub name: &'a str,
     pub region_id: i32,
@@ -317,8 +318,8 @@ pub struct WineForm {
 }
 
 #[derive(AsChangeset, Insertable, Debug)]
-#[changeset_options(treat_none_as_null = "true")]
-#[table_name = "wines"]
+#[diesel(treat_none_as_null = true)]
+#[diesel(table_name = wines)]
 pub struct NewWine {
     pub description: Option<String>,
     pub notes: Option<String>,
@@ -382,7 +383,7 @@ pub struct WineGrape {
 }
 
 #[derive(Deserialize, Insertable, Validate, TypeScriptify, Debug)]
-#[table_name = "wine_grapes"]
+#[diesel(table_name = wine_grapes)]
 #[serde(rename_all = "camelCase")]
 pub struct WineGrapeForm {
     pub percent: Option<i32>,
@@ -406,7 +407,7 @@ pub struct WineTypeForm<'a> {
 }
 
 #[derive(Insertable, Debug)]
-#[table_name = "wine_types"]
+#[diesel(table_name = wine_types)]
 pub struct NewWineType<'a> {
     pub name: &'a str,
     pub user_id: i32,

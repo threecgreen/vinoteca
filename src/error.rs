@@ -1,14 +1,14 @@
 use crate::static_handlers;
 
 use bcrypt::BcryptError;
+use log::{error, warn};
 use image::ImageError;
-use rocket::http::{uncased::Uncased, Header, Status};
+use rocket::http::{Header, Status};
 use rocket::request::Request;
-use rocket::response::{self, Responder};
-use rocket_contrib::json::Json;
+use rocket::response::{self, Responder, Response};
+use rocket::serde::json::Json;
 use s3::error::S3Error;
 use serde::Serialize;
-use std::borrow::Cow;
 use std::convert::From;
 use std::error::Error;
 use std::fmt::{self, Display};
@@ -33,34 +33,36 @@ pub enum VinotecaError {
 
 pub type RestResult<T> = Result<Json<T>, VinotecaError>;
 
-impl<'r> Responder<'r> for VinotecaError {
-    fn respond_to(self, req: &Request) -> response::Result<'static> {
+impl<'r, 'o: 'r> Responder<'r, 'o> for VinotecaError {
+    fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         // Return JSON or HTML depending on accept header
-        let mut res = if req
-            .accept()
-            .map_or(false, |a| a.preferred().media_type().is_html())
-        {
-            static_handlers::home().respond_to(req)
-        } else {
-            Json(self.clone()).respond_to(req)
-        }?;
-        res.set_status(match self {
+        let status = match &self {
             VinotecaError::NotFound(_) => Status::NotFound,
             VinotecaError::Internal(_) => Status::InternalServerError,
             VinotecaError::MissingConstraint(_) => Status::BadRequest,
             VinotecaError::BadRequest(_) => Status::BadRequest,
             VinotecaError::Forbidden(_) => Status::Forbidden,
             VinotecaError::Unauthorized(_) => Status::Unauthorized,
-        });
+        };
+
+        let mut builder = if req
+            .accept()
+            .is_some_and(|a| a.preferred().media_type().is_html())
+        {
+            Response::build_from(static_handlers::home().respond_to(req)?)
+        } else {
+            Response::build_from(Json(self.clone()).respond_to(req)?)
+        };
+
+        builder.status(status);
+
         if let VinotecaError::Unauthorized(_) = self {
             // Response with 401 Unauthorized must set this header
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/WWW-Authenticate
-            res.set_header(Header {
-                name: Uncased::new("WWW-Authenticate"),
-                value: Cow::from("cookie"),
-            });
+            builder.header(Header::new("WWW-Authenticate", "cookie"));
         }
-        Ok(res)
+
+        builder.ok()
     }
 }
 
@@ -159,8 +161,9 @@ mod tests {
     use crate::testing::simple_rocket;
 
     use rocket::{
+        get, routes,
         http::{Accept, ContentType},
-        local::Client,
+        local::blocking::Client,
     };
 
     #[get("/")]
@@ -170,16 +173,13 @@ mod tests {
 
     fn error_rocket_client() -> Client {
         let rocket = simple_rocket().mount("/", routes![handle_err]);
-        let client = Client::new(rocket).unwrap();
-        client
+        Client::tracked(rocket).unwrap()
     }
 
     #[test]
     fn accept_html_bad_request_receives_html() {
         let client = error_rocket_client();
-        let mut req = client.get("/");
-        req.add_header(Accept::HTML);
-        let response = req.dispatch();
+        let response = client.get("/").header(Accept::HTML).dispatch();
         assert_eq!(response.status(), Status::Unauthorized);
         assert_eq!(response.content_type(), Some(ContentType::HTML));
     }
@@ -187,8 +187,7 @@ mod tests {
     #[test]
     fn plain_bad_request_receives_json() {
         let client = error_rocket_client();
-        let req = client.get("/");
-        let response = req.dispatch();
+        let response = client.get("/").dispatch();
         assert_eq!(response.status(), Status::Unauthorized);
         assert_eq!(response.content_type(), Some(ContentType::JSON));
     }
@@ -196,9 +195,7 @@ mod tests {
     #[test]
     fn accept_json_bad_request_receives_json() {
         let client = error_rocket_client();
-        let mut req = client.get("/");
-        req.add_header(Accept::JSON);
-        let response = req.dispatch();
+        let response = client.get("/").header(Accept::JSON).dispatch();
         assert_eq!(response.status(), Status::Unauthorized);
         assert_eq!(response.content_type(), Some(ContentType::JSON));
     }

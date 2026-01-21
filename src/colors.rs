@@ -1,15 +1,21 @@
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{generic, Color};
+use crate::query_utils::DbConn;
 use crate::schema::{colors, purchases, wines};
 use crate::users::Auth;
-use crate::DbConn;
 
 use diesel::dsl::sql;
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use diesel_async::RunQueryDsl;
+use rocket::get;
+use rocket::serde::json::Json;
 
 #[get("/colors?<id>&<name>")]
-pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestResult<Vec<Color>> {
+pub async fn get(
+    id: Option<i32>,
+    name: Option<String>,
+    mut connection: DbConn,
+) -> RestResult<Vec<Color>> {
     let mut query = colors::table.into_boxed();
     if let Some(id) = id {
         query = query.filter(colors::id.eq(id));
@@ -18,13 +24,14 @@ pub fn get(id: Option<i32>, name: Option<String>, connection: DbConn) -> RestRes
         query = query.filter(colors::name.eq(name));
     }
     query
-        .load::<Color>(&*connection)
+        .load::<Color>(&mut *connection)
+        .await
         .map(Json)
         .map_err(VinotecaError::from)
 }
 
 #[get("/colors/top")]
-pub fn top(auth: Auth, connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
+pub async fn top(auth: Auth, mut connection: DbConn) -> RestResult<Vec<generic::TopEntity>> {
     let limit = 20;
     top_table!(
         colors::table
@@ -33,6 +40,6 @@ pub fn top(auth: Auth, connection: DbConn) -> RestResult<Vec<generic::TopEntity>
         colors::id,
         colors::name,
         limit,
-        connection
+        &mut *connection
     )
 }

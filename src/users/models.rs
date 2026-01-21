@@ -24,7 +24,7 @@ pub struct ChangePasswordForm<'a> {
 }
 
 #[derive(AsChangeset, Deserialize, TypeScriptify, Validate, Debug)]
-#[table_name = "users"]
+#[diesel(table_name = users)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangeUserForm<'a> {
     #[validate(email)]

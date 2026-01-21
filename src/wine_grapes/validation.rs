@@ -1,9 +1,9 @@
 use super::models::AssociatedGrape;
 use crate::error::VinotecaError;
 use crate::schema::grapes;
-use crate::DbConn;
 
 use diesel::prelude::*;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
 use std::collections::HashSet;
 use validator::ValidationError;
 
@@ -30,12 +30,12 @@ pub fn validate_unique(grapes: &[AssociatedGrape]) -> Result<(), ValidationError
     Ok(())
 }
 
-pub fn validate_user_owns_grapes(
+pub async fn validate_user_owns_grapes(
     user_id: i32,
     wine_grapes: &[AssociatedGrape],
-    connection: &DbConn,
+    connection: &mut AsyncPgConnection,
 ) -> Result<(), VinotecaError> {
-    let valid_grape_count = grapes::table
+    let valid_grape_count: i64 = grapes::table
         .filter(grapes::user_id.eq(user_id))
         .filter(
             grapes::id.eq_any(
@@ -46,7 +46,8 @@ pub fn validate_user_owns_grapes(
             ),
         )
         .count()
-        .get_result::<i64>(&**connection)?;
+        .get_result(connection)
+        .await?;
     if valid_grape_count as usize == wine_grapes.len() {
         Ok(())
     } else {

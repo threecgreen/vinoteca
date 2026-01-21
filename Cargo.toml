@@ -15,40 +15,41 @@ categories = ["web-programming"]
 bcrypt = "0.14.0"
 # Datetime functionality
 chrono = { version = "0.4.24", features = ["serde"] }
-# basic ORM
-diesel = { version = "1.4.8", features = ["postgres", "chrono"] }
-diesel_migrations = "1.4.0"
+# Async ORM
+diesel = { version = "2.2", features = ["postgres", "chrono"] }
+diesel-async = { version = "0.5", features = ["postgres", "deadpool"] }
+diesel_migrations = "2.2"
 # Image handling
 image = "0.24.6"
 kamadak-exif = "0.5.5"
-lazy_static = "1.4.0"
+# Async runtime
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 log = "0.4.17"
-rocket_codegen = "0.4.11"
-rocket-multipart-form-data = "0.9.6"
 # AWS S3 access
 rust-s3 = { version = "0.32.3", features = ["blocking"] }
 # (De)serialization
 serde = { version = "1.0.159", features = ["derive"] }
 serde_json = "1.0.95"
-time = "0.1.45"
+time = "0.3"
 uuid = { version = "1.3.0", features = ["v4"] }
 # Input validation
 validator = "0.16.0"
 validator_derive = "0.16.0"
+# Multipart form handling
+multer = "3"
+# Async utilities
+futures = "0.3"
+# MIME types
+mime = "0.3"
 
 [dependencies.rocket]
-version = "0.4.11"
-default-features = false
-features = ["private-cookies"]
-
-[dependencies.rocket_contrib]
-version = "0.4.11"
-default-features = false
-features = ["json", "diesel_postgres_pool"]
+version = "0.5.1"
+features = ["secrets", "json"]
 
 # Generate typescript type definitions from rust structs
 [dependencies.typescript-definitions]
-version = "0.1.10"
+package = "typescript-definitions-ufo-patch"
+version = "0.1.11"
 # Enable export in release build
 features = ["export-typescript"]
 

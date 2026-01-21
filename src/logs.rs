@@ -1,6 +1,7 @@
 use crate::users::Auth;
 
-use rocket_contrib::json::Json;
+use rocket::post;
+use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
 
@@ -31,19 +32,19 @@ pub fn post(auth: Option<Auth>, log_form: Json<LogForm>) -> Json<LogResponse> {
     let log_form = log_form.into_inner();
     let tags = fmt_tags(auth, log_form.tags);
     match log_form.level.as_str() {
-        "critical" | "error" => error!(
+        "critical" | "error" => log::error!(
             fmt_str!(),
             log_form.module, log_form.url, log_form.message, tags
         ),
-        "warning" => warn!(
+        "warning" => log::warn!(
             fmt_str!(),
             log_form.module, log_form.url, log_form.message, tags
         ),
-        "info" => info!(
+        "info" => log::info!(
             fmt_str!(),
             log_form.module, log_form.url, log_form.message, tags
         ),
-        _ => debug!(
+        _ => log::debug!(
             fmt_str!(),
             log_form.module, log_form.url, log_form.message, tags
         ),

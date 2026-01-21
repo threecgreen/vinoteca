@@ -1,5 +1,6 @@
 use crate::error::VinotecaError;
 
+use log::warn;
 use s3::bucket::Bucket as S3Bucket;
 use uuid::Uuid;
 

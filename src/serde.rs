@@ -9,14 +9,6 @@ where
     Ok(s.trim())
 }
 
-pub fn trim_string<'de, D>(deserializer: D) -> Result<String, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    Ok(s.trim().to_owned())
-}
-
 pub fn trim_opt_string<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
 where
     D: Deserializer<'de>,
@@ -38,6 +30,14 @@ mod test {
 
     use serde::de::value::{BorrowedStrDeserializer, Error, StringDeserializer};
     use serde::de::IntoDeserializer;
+
+    fn trim_string<'de, D>(deserializer: D) -> Result<String, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = Deserialize::deserialize(deserializer)?;
+        Ok(s.trim().to_owned())
+    }
 
     #[test]
     fn trim_str_untouched() {

@@ -1,16 +1,7 @@
-#![feature(decl_macro, proc_macro_hygiene)]
 #![allow(clippy::extra_unused_lifetimes)]
 
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate rocket_contrib;
-#[macro_use]
-extern crate rocket;
 #[macro_use]
 extern crate validator_derive;
 
@@ -51,38 +42,74 @@ mod wine_types;
 pub mod wines;
 
 use cached_static::CachedStaticFiles;
-use query_utils::DbConn;
+use query_utils::DbPool;
 
+use diesel::Connection;
+use diesel_async::pooled_connection::deadpool::Pool;
+use diesel_async::pooled_connection::AsyncDieselConnectionManager;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use rocket::fairing::AdHoc;
-use rocket::Rocket;
+use rocket::{catchers, routes, Build, Rocket};
 
-#[macro_use]
-extern crate diesel_migrations;
-embed_migrations!();
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
-#[allow(clippy::result_large_err)]
-pub fn run_db_migrations(rocket: Rocket) -> Result<Rocket, Rocket> {
-    let connection = DbConn::get_one(&rocket).expect("database connection");
-    match embedded_migrations::run(&*connection) {
-        Ok(()) => {
-            info!("Successfully ran database migrations");
+pub async fn run_db_migrations(rocket: Rocket<Build>) -> rocket::fairing::Result {
+    let database_url: String = rocket
+        .figment()
+        .extract_inner("databases.vinoteca.url")
+        .expect("database url");
+
+    // Run migrations synchronously at startup (one-time operation)
+    let mut conn = diesel::PgConnection::establish(&database_url)
+        .expect("Failed to connect to database for migrations");
+
+    match conn.run_pending_migrations(MIGRATIONS) {
+        Ok(_) => {
+            log::info!("Successfully ran database migrations");
             Ok(rocket)
         }
         Err(e) => {
-            error!("Failed to run database migrations: {:?}", e);
+            log::error!("Failed to run database migrations: {:?}", e);
             Err(rocket)
         }
     }
 }
 
-pub fn create_rocket() -> rocket::Rocket {
-    let mut rocket = rocket::ignite();
+pub fn create_rocket() -> rocket::Rocket<Build> {
+    let rocket = rocket::build();
 
-    rocket = rocket
-        // Allow handlers access to the database
-        .attach(DbConn::fairing())
+    // Get database URL from config
+    let database_url: String = rocket
+        .figment()
+        .extract_inner("databases.vinoteca.url")
+        .expect("database url");
+
+    // Create async connection pool
+    let config = AsyncDieselConnectionManager::<diesel_async::AsyncPgConnection>::new(database_url);
+    let pool: DbPool = Pool::builder(config)
+        .build()
+        .expect("Failed to create database pool");
+
+    let static_dir: String = rocket
+        .figment()
+        .extract_inner("static_dir")
+        .unwrap_or_else(|_| "web/static".to_owned());
+    let aws_access_key: String = rocket
+        .figment()
+        .extract_inner("aws_access_key")
+        .expect("AWS access key");
+    let aws_secret_key: String = rocket
+        .figment()
+        .extract_inner("aws_secret_key")
+        .expect("AWS secret key");
+    let storage =
+        storage::S3::new(&aws_access_key, &aws_secret_key).expect("AWS S3 bucket connection");
+
+    rocket
+        .manage(pool)
+        .manage(config::Config::new(storage))
         // Run embedded database migrations on startup
-        .attach(AdHoc::on_attach("Database migrations", run_db_migrations))
+        .attach(AdHoc::try_on_ignite("Database migrations", run_db_migrations))
         .mount("/", static_handlers::get_routes())
         .mount(
             "/rest",
@@ -132,7 +159,7 @@ pub fn create_rocket() -> rocket::Rocket {
                 wines::patch,
                 wines::post,
                 wines::put,
-                wines::delete,
+                wines::delete_wine,
                 wines::inventory,
                 wines::search,
                 wines::varieties,
@@ -149,29 +176,13 @@ pub fn create_rocket() -> rocket::Rocket {
             ],
         )
         // These errors should only happen with rest requests so they also return JSON
-        .register(catchers![
-            catchers::unauthorized,
-            catchers::forbidden,
-            catchers::not_found
-        ]);
-    let static_dir = rocket
-        .config()
-        .get_str("static_dir")
-        .unwrap_or("web/static")
-        .to_owned();
-    let aws_access_key = rocket
-        .config()
-        .get_str("aws_access_key")
-        .expect("AWS access key")
-        .to_owned();
-    let aws_secret_key = rocket
-        .config()
-        .get_str("aws_secret_key")
-        .expect("AWS secret key")
-        .to_owned();
-    let storage =
-        storage::S3::new(&aws_access_key, &aws_secret_key).expect("AWS S3 bucket connection");
-    rocket
-        .manage(config::Config::new(storage))
+        .register(
+            "/",
+            catchers![
+                catchers::unauthorized,
+                catchers::forbidden,
+                catchers::not_found
+            ],
+        )
         .mount("/static", CachedStaticFiles::from(static_dir).rank(1))
 }

@@ -1,12 +1,12 @@
 use crate::error::VinotecaError;
+use crate::query_utils::DbConn;
 use crate::schema::users;
-use crate::DbConn;
 
 use diesel::prelude::*;
+use diesel_async::RunQueryDsl;
 use rocket::http::Status;
-use rocket::request::{self, FromRequest, Request};
-use rocket::Outcome;
-use rocket_contrib::json::Json;
+use rocket::request::{self, FromRequest, Outcome, Request};
+use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 
 // If more fields are added, remove `Copy`
@@ -18,44 +18,52 @@ pub struct Auth {
 
 pub const COOKIE_NAME: &str = "vinoteca-auth";
 
-impl<'a, 'r> FromRequest<'a, 'r> for Auth {
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for Auth {
     type Error = Json<VinotecaError>;
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Auth, Self::Error> {
-        let connection = request.guard::<DbConn>().map_failure(|e| {
-            error!("Failed to acquire database connection: {:?}", e);
-            (
-                Status::InternalServerError,
-                Json(VinotecaError::Internal(
-                    "Database connection failed".to_owned(),
-                )),
-            )
-        })?;
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<Auth, Self::Error> {
+        let connection = request.guard::<DbConn>().await;
+        let mut connection = match connection {
+            Outcome::Success(conn) => conn,
+            Outcome::Error(_) => {
+                log::error!("Failed to acquire database connection");
+                return Outcome::Error((
+                    Status::InternalServerError,
+                    Json(VinotecaError::Internal(
+                        "Database connection failed".to_owned(),
+                    )),
+                ));
+            }
+            Outcome::Forward(status) => return Outcome::Forward(status),
+        };
+
         let cookie = request.cookies().get_private(COOKIE_NAME);
         match cookie {
             Some(cookie) => {
-                let auth = cookie
-                    .value()
-                    .parse()
-                    .ok()
-                    .and_then(|id: i32| {
-                        users::table
+                let user_id: Option<i32> = cookie.value().parse().ok();
+                let auth = match user_id {
+                    Some(id) => {
+                        let result: Result<i32, _> = users::table
                             .filter(users::id.eq(id))
                             .select(users::id)
-                            .first(&*connection)
-                            .ok()
-                    })
-                    .map(|id| Auth { id });
+                            .first(&mut *connection)
+                            .await;
+                        result.ok().map(|id| Auth { id })
+                    }
+                    None => None,
+                };
+
                 if let Some(auth) = auth {
                     Outcome::Success(auth)
                 } else {
-                    Outcome::Failure((
+                    Outcome::Error((
                         Status::Forbidden,
                         Json(VinotecaError::Forbidden("Bad email or password".to_owned())),
                     ))
                 }
             }
-            None => Outcome::Failure((
+            None => Outcome::Error((
                 Status::Unauthorized,
                 Json(VinotecaError::Unauthorized("Login required".to_owned())),
             )),
@@ -67,49 +75,52 @@ impl<'a, 'r> FromRequest<'a, 'r> for Auth {
 mod test {
     use super::*;
 
+    use crate::testing::{acquire_db_lock, create_test_rocket};
     use rocket::http::Cookie;
-    use rocket::local::Client;
+    use rocket::local::asynchronous::Client;
+    use rocket::{get, routes};
 
     #[get("/")]
-    fn handle_auth(auth: Auth) -> Json<i32> {
+    async fn handle_auth(auth: Auth) -> Json<i32> {
         Json(auth.id)
     }
 
-    #[test]
-    fn missing_cookie() {
-        rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::new(rocket).expect("rocket client");
-            let req = client.get("/");
-            let response = req.dispatch();
-            assert_eq!(response.status(), Status::Unauthorized);
-        })
+    #[rocket::async_test]
+    async fn missing_cookie() {
+        let _lock = acquire_db_lock();
+        let rocket = create_test_rocket().await;
+        let rocket = rocket.mount("/", routes![handle_auth]);
+        let client = Client::tracked(rocket).await.expect("rocket client");
+        let response = client.get("/").dispatch().await;
+        assert_eq!(response.status(), Status::Unauthorized);
     }
 
-    #[test]
-    fn missing_user() {
-        rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::new(rocket).expect("rocket client");
-            let req = client
-                .get("/")
-                // User that doesn't exist
-                .private_cookie(Cookie::new("vinoteca-auth", "-1"));
-            let response = req.dispatch();
-            assert_eq!(response.status(), Status::Forbidden);
-        })
+    #[rocket::async_test]
+    async fn missing_user() {
+        let _lock = acquire_db_lock();
+        let rocket = create_test_rocket().await;
+        let rocket = rocket.mount("/", routes![handle_auth]);
+        let client = Client::tracked(rocket).await.expect("rocket client");
+        let response = client
+            .get("/")
+            // User that doesn't exist
+            .private_cookie(Cookie::new("vinoteca-auth", "-1"))
+            .dispatch()
+            .await;
+        assert_eq!(response.status(), Status::Forbidden);
     }
 
-    #[test]
-    fn authorize() {
-        rocket_test!(|rocket| {
-            let rocket = rocket.mount("/", routes![handle_auth]);
-            let client = Client::new(rocket).expect("rocket client");
-            let req = client
-                .get("/")
-                .private_cookie(Cookie::new("vinoteca-auth", "1"));
-            let response = req.dispatch();
-            assert_eq!(response.status(), Status::Ok);
-        })
+    #[rocket::async_test]
+    async fn authorize() {
+        let _lock = acquire_db_lock();
+        let rocket = create_test_rocket().await;
+        let rocket = rocket.mount("/", routes![handle_auth]);
+        let client = Client::tracked(rocket).await.expect("rocket client");
+        let response = client
+            .get("/")
+            .private_cookie(Cookie::new("vinoteca-auth", "1"))
+            .dispatch()
+            .await;
+        assert_eq!(response.status(), Status::Ok);
     }
 }

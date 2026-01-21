@@ -1,10 +1,8 @@
 use chrono::{DateTime, Utc};
-use rocket::handler::{Handler, Outcome};
-use rocket::http::hyper::header::{CacheControl, CacheDirective, ContentEncoding, Encoding};
-use rocket::http::{uncased::Uncased, uri::Segments, ContentType, Header, Method, Status};
+use rocket::http::{ContentType, Header, Method, Status};
 use rocket::response::{self, Responder, Response};
-use rocket::{Data, Request, Route};
-use std::borrow::Cow;
+use rocket::route::{Handler, Outcome, Route};
+use rocket::{Data, Request};
 use std::fs::{self, File};
 use std::io;
 use std::path::{Path, PathBuf};
@@ -13,8 +11,8 @@ use std::path::{Path, PathBuf};
 pub struct NotModified<R>(pub R);
 
 /// Sets the status code of the response to 304 Not Modified.
-impl<'r, R: Responder<'r>> Responder<'r> for NotModified<R> {
-    fn respond_to(self, _req: &Request) -> Result<Response<'r>, Status> {
+impl<'r, 'o: 'r, R: Responder<'r, 'o>> Responder<'r, 'o> for NotModified<R> {
+    fn respond_to(self, _req: &'r Request<'_>) -> response::Result<'o> {
         Response::build().status(Status::NotModified).ok()
     }
 }
@@ -34,17 +32,13 @@ impl CachedFile {
         Ok(CachedFile { path, file })
     }
 
-    /// Retrieve the underlying `File`.
-    pub fn file(&self) -> &File {
-        &self.file
-    }
 }
 
 /// Streams the named file to the client. Sets or overrides the Content-Type in
 /// the response according to the file's extension if the extension is
 /// recognized.
-impl<'r> Responder<'r> for CachedFile {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+impl<'r, 'o: 'r> Responder<'r, 'o> for CachedFile {
+    fn respond_to(self, req: &'r Request<'_>) -> response::Result<'o> {
         let mut response = self.file.respond_to(req)?;
         if let Some(ext) = self.path.extension() {
             if ext == "gz" {
@@ -59,7 +53,7 @@ impl<'r> Responder<'r> for CachedFile {
                 {
                     // Support for gzipped code, e.g. js or css
                     response.set_header(content_type);
-                    response.set_header(ContentEncoding(vec![Encoding::Gzip]));
+                    response.set_header(Header::new("Content-Encoding", "gzip"));
                 } else {
                     response.set_header(ContentType::new("application", "gzip"));
                 }
@@ -73,12 +67,9 @@ impl<'r> Responder<'r> for CachedFile {
             let metadata = fs::metadata(&self.path).unwrap();
             metadata.modified().unwrap().into()
         };
-        response.set_header(Header {
-            name: Uncased::new("Last-Modified"),
-            value: Cow::from(epoch.to_rfc2822()),
-        });
+        response.set_header(Header::new("Last-Modified", epoch.to_rfc2822()));
         // User agent must revalidate. This is especially important for JS bundles
-        response.set_header(CacheControl(vec![CacheDirective::NoCache]));
+        response.set_header(Header::new("Cache-Control", "no-cache"));
 
         if req.headers().contains("If-Modified-Since") {
             if let Some(if_modified_since) = req.headers().get_one("If-Modified-Since") {
@@ -103,7 +94,7 @@ impl io::Read for CachedFile {
     }
 }
 
-/// Modified version of `rocket_contrib::serve::StaticFiles` that sets last
+/// Modified version of `rocket::fs::FileServer` that sets last
 /// modified time and caching
 #[derive(Debug, Clone)]
 pub struct CachedStaticFiles {
@@ -138,26 +129,26 @@ impl From<CachedStaticFiles> for Vec<Route> {
     }
 }
 
+#[rocket::async_trait]
 impl Handler for CachedStaticFiles {
-    fn handle<'r>(&self, req: &'r Request<'_>, data: Data) -> Outcome<'r> {
+    async fn handle<'r>(&self, req: &'r Request<'_>, data: Data<'r>) -> Outcome<'r> {
         // If this is not the route with segments, handle it only if the user
         // requested a handling of index files.
         let current_route = req.route().expect("route while handling");
         let is_segments_route = current_route.uri.path().ends_with('>');
         if !is_segments_route {
-            return Outcome::forward(data);
+            return Outcome::forward(data, Status::NotFound);
         }
 
-        let path = req
-            .get_segments::<Segments<'_>>(0)
-            .and_then(|res| res.ok())
-            .and_then(|segments| segments.into_path_buf(false).ok())
-            .map(|path| self.root.join(path));
+        // Get path segments
+        let path: Option<PathBuf> = req.segments(0..).ok().and_then(|segments: rocket::http::uri::Segments<'_, rocket::http::uri::fmt::Path>| {
+            segments.to_path_buf(false).ok()
+        }).map(|p| self.root.join(p));
 
         match &path {
-            Some(path) if path.is_dir() => Outcome::forward(data),
+            Some(path) if path.is_dir() => Outcome::forward(data, Status::NotFound),
             Some(path) if path.exists() => {
-                let gz_path = &&PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
+                let gz_path = PathBuf::from(&format!("{}.gz", path.to_string_lossy()));
                 let accept_encoding: Option<std::collections::HashSet<String>> = req
                     .headers()
                     .get_one("Accept-Encoding")
@@ -167,20 +158,19 @@ impl Handler for CachedStaticFiles {
                         .map(|enc| enc.contains("gzip"))
                         .unwrap_or(false)
                 {
-                    // TODO: make CachedGzFile struct
-                    Outcome::from(req, CachedFile::open(gz_path).ok())
+                    Outcome::from(req, CachedFile::open(&gz_path).ok())
                 } else {
                     Outcome::from(req, CachedFile::open(path).ok())
                 }
             }
             Some(path) => {
-                warn!(
+                log::warn!(
                     "Request received for static file that doesn't exist at path '{:?}'",
                     path
                 );
-                Outcome::failure(Status::NotFound)
+                Outcome::error(Status::NotFound)
             }
-            None => Outcome::forward(data),
+            None => Outcome::forward(data, Status::NotFound),
         }
     }
 }

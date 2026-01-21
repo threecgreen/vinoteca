@@ -1,4 +1,5 @@
 use crate::error::VinotecaError;
+use rocket::catch;
 
 #[catch(401)]
 pub fn unauthorized() -> VinotecaError {

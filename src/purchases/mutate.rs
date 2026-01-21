@@ -1,78 +1,111 @@
-use super::read::get;
 use crate::error::{RestResult, VinotecaError};
 use crate::models::{Purchase, PurchaseForm};
-use crate::query_utils::IntoFirst;
+use crate::query_utils::{DbConn, IntoFirst};
 use crate::schema::{purchases, stores, wines};
 use crate::users::Auth;
-use crate::DbConn;
 
 use diesel::prelude::*;
-use rocket_contrib::json::Json;
+use diesel_async::{AsyncPgConnection, RunQueryDsl};
+use rocket::serde::json::Json;
+use rocket::{delete, post, put};
 use validator::Validate;
 
 #[post("/purchases", format = "json", data = "<purchase_form>")]
-pub fn post(
+pub async fn post(
     auth: Auth,
     purchase_form: Json<PurchaseForm>,
-    connection: DbConn,
+    mut connection: DbConn,
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_relations(auth, &purchase_form, &connection)?;
+    validate_relations(auth, &purchase_form, &mut connection).await?;
 
-    diesel::insert_into(purchases::table)
+    let purchase_id: i32 = diesel::insert_into(purchases::table)
         .values(&purchase_form)
         .returning(purchases::id)
-        .get_result(&*connection)
-        .map_err(|_| VinotecaError::Internal("Creating new purchase".to_owned()))
-        .and_then(|purchase_id| {
-            get(auth, Some(purchase_id), None, None, connection)?
-                .into_first("Newly-created purchase")
-        })
+        .get_result(&mut connection)
+        .await
+        .map_err(|_| VinotecaError::Internal("Creating new purchase".to_owned()))?;
+
+    // Query the newly created purchase
+    Json(get_purchase(auth, purchase_id, &mut connection).await?)
+        .into_first("Newly-created purchase")
 }
 
 #[put("/purchases/<id>", format = "json", data = "<purchase_form>")]
-pub fn put(
+pub async fn put(
     auth: Auth,
     id: i32,
     purchase_form: Json<PurchaseForm>,
-    connection: DbConn,
+    mut connection: DbConn,
 ) -> RestResult<Purchase> {
     let purchase_form = purchase_form.into_inner();
     purchase_form.validate()?;
-    validate_owns_wine(auth, id, &connection)?;
-    validate_relations(auth, &purchase_form, &connection)?;
+    validate_owns_wine(auth, id, &mut connection).await?;
+    validate_relations(auth, &purchase_form, &mut connection).await?;
 
     diesel::update(purchases::table.filter(purchases::id.eq(id)))
         .set(purchase_form)
-        .execute(&*connection)
-        .map_err(VinotecaError::from)
-        .and_then(|_| get(auth, Some(id), None, None, connection)?.into_first("Edited purchase"))
+        .execute(&mut connection)
+        .await
+        .map_err(VinotecaError::from)?;
+
+    Json(get_purchase(auth, id, &mut connection).await?)
+        .into_first("Edited purchase")
 }
 
 #[delete("/purchases/<id>")]
-pub fn delete(auth: Auth, id: i32, connection: DbConn) -> Result<(), VinotecaError> {
-    validate_owns_wine(auth, id, &connection)?;
+pub async fn delete(auth: Auth, id: i32, mut connection: DbConn) -> Result<(), VinotecaError> {
+    validate_owns_wine(auth, id, &mut connection).await?;
 
     diesel::delete(purchases::table.filter(purchases::id.eq(id)))
-        .execute(&*connection)
+        .execute(&mut connection)
+        .await
         .map(|_| ())
         .map_err(VinotecaError::from)
 }
 
-fn validate_relations(
+/// Helper to get a single purchase by id
+async fn get_purchase(
+    auth: Auth,
+    id: i32,
+    connection: &mut AsyncPgConnection,
+) -> Result<Vec<Purchase>, VinotecaError> {
+    purchases::table
+        .left_join(stores::table)
+        .inner_join(wines::table)
+        .filter(wines::user_id.eq(auth.id))
+        .filter(purchases::id.eq(id))
+        .select((
+            purchases::id,
+            purchases::price,
+            purchases::quantity,
+            purchases::vintage,
+            purchases::memo,
+            stores::name.nullable(),
+            purchases::store_id,
+            purchases::wine_id,
+            purchases::date,
+        ))
+        .load::<Purchase>(connection)
+        .await
+        .map_err(VinotecaError::from)
+}
+
+async fn validate_relations(
     auth: Auth,
     purchase_form: &PurchaseForm,
-    connection: &DbConn,
+    connection: &mut AsyncPgConnection,
 ) -> Result<(), VinotecaError> {
     // Validate wine is user's
     wines::table
         .filter(wines::id.eq(purchase_form.wine_id))
         .filter(wines::user_id.eq(auth.id))
         .select(wines::id)
-        .first::<i32>(&**connection)
+        .first::<i32>(connection)
+        .await
         .map_err(|e| {
-            warn!("User tried to create purchase with invalid or another user's wine. wine_id: {}, user_id: {}, error: {:?}", purchase_form.wine_id, auth.id, e);
+            log::warn!("User tried to create purchase with invalid or another user's wine. wine_id: {}, user_id: {}, error: {:?}", purchase_form.wine_id, auth.id, e);
             // Not forbidden to prevent leaking info to user
             VinotecaError::BadRequest("Wine not found for purchase".to_owned())
         })?;
@@ -82,9 +115,10 @@ fn validate_relations(
             .filter(stores::id.eq(store_id))
             .filter(stores::user_id.eq(auth.id))
             .select(stores::id)
-            .first::<i32>(&**connection)
+            .first::<i32>(connection)
+            .await
             .map_err(|e| {
-                warn!("User tried to create purchase with invalid or another user's store. wine_id: {}, user_id: {}, store_id: {}, error: {:?}", purchase_form.wine_id, auth.id, store_id, e);
+                log::warn!("User tried to create purchase with invalid or another user's store. wine_id: {}, user_id: {}, store_id: {}, error: {:?}", purchase_form.wine_id, auth.id, store_id, e);
                 VinotecaError::BadRequest("Store not found for purchase".to_owned())
             })?;
     }
@@ -92,16 +126,17 @@ fn validate_relations(
 }
 
 /// Validate is user's purchase
-fn validate_owns_wine(
+async fn validate_owns_wine(
     auth: Auth,
     purchase_id: i32,
-    connection: &DbConn,
+    connection: &mut AsyncPgConnection,
 ) -> Result<(), VinotecaError> {
     purchases::table
         .inner_join(wines::table)
         .filter(purchases::id.eq(purchase_id))
         .filter(wines::user_id.eq(auth.id))
         .select(purchases::id)
-        .first::<i32>(&**connection)?;
+        .first::<i32>(connection)
+        .await?;
     Ok(())
 }
