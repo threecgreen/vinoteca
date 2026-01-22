@@ -102,7 +102,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
                 const rawCompletions = await getGrapes({});
                 setCompletions(toDict(rawCompletions));
             } catch (e) {
-                logger.logWarning(`Failed to fetch grape autocompletions: ${e}`);
+                logger.logException("Failed to fetch grape autocompletions", e);
             }
         }
 
@@ -112,7 +112,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
     return (
         <Row>
             <Col s={ 12 }>
-                <h6>Grape composition</h6>
+                <h6 className="mt-6 mb-4">Grape composition</h6>
             </Col>
             { grapes.map((grape) => (
                 <GrapeInput key={ grape.grapeId }
@@ -129,7 +129,7 @@ export const GrapesInputs: React.FC<IProps> = ({grapes, dispatch}) => {
                     }) }
                 />
             )) }
-            <InputField classes={ ["col"] }>
+            <InputField>
                 <FloatingBtn onClick={ () => dispatch({type: "addGrape"}) }
                     classes={ ["green-bg"] }
                 >

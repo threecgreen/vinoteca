@@ -1,4 +1,3 @@
-import { Range } from "materialize-css";
 import React from "react";
 import { Col } from "../Grid";
 import { CheckboxInput } from "../inputs/CheckboxInput";
@@ -13,32 +12,32 @@ interface IProps {
 export const RatingInput: React.FC<IProps> = ({
     isChecked, onIsCheckedChange, rating, onRatingChange,
 }) => {
-
-    const ref = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-
-    React.useEffect(() => {
-        if (ref) {
-            new Range(ref.current);
-        }
-    }, [ref]);
-
     return (
-        <Col s={ 12 } m={ 5 } l={ 2 } classes={ ["range-field" ] }>
-            <CheckboxInput name="has-rating"
+        <Col s={12} m={5} l={2} classes={["range-field"]}>
+            <CheckboxInput
+                name="has-rating"
                 text="Rating"
-                isChecked={ isChecked }
-                onClick={ onIsCheckedChange }
+                isChecked={isChecked}
+                onClick={onIsCheckedChange}
             />
-            <label htmlFor="rating" />
-            <p className="range-field">
-                <input type="range" name="rating"
-                    ref={ ref }
-                    min={ 0 } max={ 10 } step={ 1 }
-                    value={ rating }
-                    disabled={ !isChecked }
-                    onChange={ (e) => onRatingChange(parseInt(e.target.value, 10)) }
+            <div className="mt-2">
+                <input
+                    type="range"
+                    name="rating"
+                    min={0}
+                    max={10}
+                    step={1}
+                    value={rating}
+                    disabled={!isChecked}
+                    onChange={(e) => onRatingChange(parseInt(e.target.value, 10))}
+                    className="w-full"
                 />
-            </p>
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>0</span>
+                    <span className="font-medium">{rating}</span>
+                    <span>10</span>
+                </div>
+            </div>
         </Col>
     );
 };

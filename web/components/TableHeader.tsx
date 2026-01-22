@@ -108,17 +108,21 @@ export const SelectFilterHeader: React.FC<IFilterProps> = (props) => {
         })();
     }, [logger]);
 
+    const options = [
+        { value: "", label: "Any" },
+        ...colors.map((color) => ({
+            value: color,
+            label: capitalizeFirstLetter(color),
+        })),
+    ];
+
     return (
         <td>
             <SelectInput name=""
                 selection={ props.text }
                 onChange={ props.onChange }
-            >
-                <option key="any" value="">Any</option>
-                { colors.map((color) => (
-                    <option key={ color } value={ color }>{ capitalizeFirstLetter(color) }</option>
-                )) }
-            </SelectInput>
+                options={ options }
+            />
         </td>
     );
 };

@@ -1,4 +1,5 @@
-import "./vinoteca-style.sass";
+import "./styles.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { onError, onLoad } from "lib/utils";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";

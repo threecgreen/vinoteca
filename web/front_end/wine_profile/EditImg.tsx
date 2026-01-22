@@ -4,7 +4,6 @@ import { MaterialIcon } from "components/MaterialIcon";
 import { Modal, ModalContent, ModalFooter } from "components/Modal";
 import { Rotation } from "generated/enums";
 import { handleSubmit } from "lib/component_utils";
-import { Range } from "materialize-css";
 import React from "react";
 import { WineImg } from "./WineImg";
 
@@ -78,40 +77,30 @@ const rawToRotation = (raw: number): Rotation | null => {
 }
 
 const RotationInput: React.FC<IRotationInputProps> = ({rotation, setRotation}) => {
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-    React.useEffect(() => {
-        if (inputRef) {
-            new Range(inputRef.current);
-        }
-    }, [inputRef]);
-
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-
         const newRotation = parseInt(e.target.value, 10);
         setRotation(newRotation);
     };
 
     return (
-        <Col s={ 12 } classes={ ["range-field"] }>
-            <label htmlFor="rotation">
-                <MaterialIcon iconName="rotate_left"
-                    className="left"
-                />
-                <div className="center">
-                    Rotation
+        <Col s={12} classes={["range-field"]}>
+            <label htmlFor="rotation" className="block">
+                <div className="flex items-center justify-between mb-2">
+                    <MaterialIcon iconName="rotate_left" />
+                    <span>Rotation</span>
+                    <MaterialIcon iconName="rotate_right" />
                 </div>
-                <MaterialIcon iconName="rotate_right"
-                    className="right"
+                <input
+                    type="range"
+                    name="rotation"
+                    min={-270}
+                    max={270}
+                    step={90}
+                    value={rotation}
+                    onChange={onChange}
+                    className="w-full"
                 />
-                <p className="range-field">
-                    <input type="range" name="rotation"
-                        ref={ inputRef }
-                        min={ -270 } max={ 270 } step={ 90 }
-                        value={ rotation }
-                        onChange={ onChange }
-                    />
-                </p>
             </label>
         </Col>
     );

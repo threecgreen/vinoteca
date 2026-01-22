@@ -73,12 +73,12 @@ const InventoryApp: React.FC = (_) => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col s={ 6 }>
+                        <Col s={ 12 } m={ 6 }>
                             <InventoryStatsTable wineCount={ wineCount }
                                 bottleCount={ bottleCount }
                             />
                         </Col>
-                        <Col s={ 6 }>
+                        <Col s={ 12 } m={ 6 } classes={["valign-wrapper"]}>
                             <Btn classes={ ["green-bg"] }
                                 onClick={ downloadInventory }
                             >

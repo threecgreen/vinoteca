@@ -2,9 +2,9 @@ import { IVitiArea } from "generated/rest";
 import { toDict } from "lib/api/common";
 import { getVitiAreas } from "lib/api/viti_areas";
 import { useLogger } from "lib/Logger";
-import { autocomplete } from "lib/widgets";
 import React from "react";
-import { TextInput } from "../inputs/TextInput";
+import { InputField } from "../Grid";
+import { Autocomplete } from "../inputs/Autocomplete";
 import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
@@ -14,33 +14,31 @@ interface IProps extends IOnChange {
 
 export const VitiAreaInput: React.FC<IProps> = ({value, regionText, ...props}) => {
     const logger = useLogger("VitiAreaInput");
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-    const onChangeRef = React.useRef((_: string) => { return; });
-    React.useEffect(() => {
-        onChangeRef.current = props.onChange;
-    }, [props.onChange]);
+    const [completions, setCompletions] = React.useState<Record<string, string | null>>({});
 
     React.useEffect(() => {
         async function fetchVitiAreas() {
             try {
                 const vitiAreas: IVitiArea[] = await getVitiAreas({regionName: regionText});
-                autocomplete(inputRef, toDict(vitiAreas), onChangeRef.current);
+                setCompletions(toDict(vitiAreas));
             } catch (e) {
-                logger.logError("Failed to get viti area autocomplete options");
+                logger.logException("Failed to get viti area autocomplete options", e);
             }
         }
 
         void fetchVitiAreas();
-    }, [inputRef, logger, regionText]);
+    }, [logger, regionText]);
 
     return (
-        <TextInput name="Viticultural Area"
-            className="autocomplete"
-            inputRef={ inputRef }
-            s={ 12 } m={ 7 } l={ 4 }
-            value={ value }
-            onChange={ onChangeRef.current }
-        />
+        <InputField s={12} m={6} l={4}>
+            <label>Viticultural Area</label>
+            <Autocomplete
+                name="vitiArea"
+                value={value}
+                onChange={props.onChange}
+                completions={completions}
+            />
+        </InputField>
     );
 };
 VitiAreaInput.displayName = "VitiAreaInput";

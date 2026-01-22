@@ -11,60 +11,62 @@ export const Footer: React.FC = (_) => {
     const user = useUser();
 
     return (
-        <footer className="page-footer pink darken-4 footer-copyright">
-            <div className="container">
-                <div className="row">
-                    <div className="col l6 s12">
-                        <h5 className="white-text brand-logo">vinoteca</h5>
-                        <ul>
-                            <li>
-                                <Link className="footer-link"
-                                    to="/about"
-                                >
-                                    About
-                                </Link>
-                            </li>
-                            <li>
-                                <Link className="footer-link"
-                                    to="/about/changelog"
-                                >
-                                    Changelog
-                                </Link>
-                            </li>
-                            <li>
-                                <Link className="footer-link"
-                                    to="/about#bugs-and-suggestions"
-                                >
-                                    Report a bug
-                                </Link>
-                            </li>
-                        </ul>
+        <footer className="w-full page-footer">
+            <div className="py-6">
+                <div className="container">
+                    <div className="row">
+                        <div className="col l6 s12">
+                            <h5 className="text-white brand-logo">vinoteca</h5>
+                            <ul>
+                                <li>
+                                    <Link className="footer-link"
+                                        to="/about"
+                                    >
+                                        About
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link className="footer-link"
+                                        to="/about/changelog"
+                                    >
+                                        Changelog
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link className="footer-link"
+                                        to="/about#bugs-and-suggestions"
+                                    >
+                                        Report a bug
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+                        { user && <div className="col l6 s12">
+                            <h5 className="text-white">List views</h5>
+                            <p className="text-gray-300">
+                                Simple views for more direct access to your data.
+                            </p>
+                            <ul>
+                                <li>
+                                    <Link to="/grapes"
+                                        className="footer-link"
+                                    >
+                                        Grapes
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/producers"
+                                        className="footer-link"
+                                    >
+                                        Producers
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div> }
                     </div>
-                    { user && <div className="col l6 s12">
-                        <h5 className="white-text">List views</h5>
-                        <p className="grey-text text-lighten-4">
-                            Simple views for more direct access to your data.
-                        </p>
-                        <ul>
-                            <li>
-                                <Link to="/grapes"
-                                    className="footer-link"
-                                >
-                                    Grapes
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/producers"
-                                    className="footer-link"
-                                >
-                                    Producers
-                                </Link>
-                            </li>
-                        </ul>
-                    </div> }
                 </div>
             </div>
-            <div className="footer-copyright">
+            <div className="footer-copyright py-4">
                 <div className="container">
                     <div className="row">
                         <div className="col s12 l4">
@@ -79,7 +81,7 @@ export const Footer: React.FC = (_) => {
                         <div className="col s12 l4">
                             <p className={ `${width > MOBILE_CUTOFF
                                     ? "right"
-                                    : undefined} no-indent` }
+                                    : undefined}` }
                             >
                                 Version { VERSION }
                             </p>

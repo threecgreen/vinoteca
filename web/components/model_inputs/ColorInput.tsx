@@ -29,16 +29,23 @@ export const ColorInput: React.FC<IProps> = (props) => {
         })();
     }, [logger]);
 
+    const options = [
+        { value: "", label: "Select a color", disabled: true },
+        ...colors.map((color) => ({
+            value: color,
+            label: capitalizeFirstLetter(color),
+        })),
+    ];
+
     return (
         <SelectInput name="Color"
-            { ...props }
-            onChange={ (v) => props?.onChange(v) }
-        >
-            <option key="default" value="" disabled>Select a color</option>
-            { colors.map((color) => (
-                <option key={ color } value={ color }>{ capitalizeFirstLetter(color) }</option>
-            )) }
-        </SelectInput>
+            s={props.s}
+            m={props.m}
+            l={props.l}
+            selection={props.selection}
+            onChange={(v) => props?.onChange(v)}
+            options={options}
+        />
     );
 };
 ColorInput.displayName = "ColorInput";

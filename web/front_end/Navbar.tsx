@@ -1,40 +1,46 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition, Dialog, DialogPanel, TransitionChild } from "@headlessui/react";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { MaterialIcon } from "components/MaterialIcon";
 import { IUser } from "generated/rest";
 import { logout } from "lib/api/auth";
-import { Dropdown, Sidenav } from "materialize-css";
-import React from "react";
+import React, { Fragment } from "react";
 
 export const Navbar: React.FC = () => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
     return (
         <>
-            <DesktopNavbar />
-            <MobileNavbar />
+            <DesktopNavbar onMobileMenuOpen={() => setIsMobileMenuOpen(true)} />
+            <MobileSidenav isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         </>
     );
 };
 
-const DesktopNavbar: React.FC = () => {
+interface IDesktopNavbarProps {
+    onMobileMenuOpen: () => void;
+}
+
+const DesktopNavbar: React.FC<IDesktopNavbarProps> = ({onMobileMenuOpen}) => {
     return (
-        <nav>
-            <div className="nav-wrapper pink darken-4">
-                <div className="container">
-                    <Link to="/" className="brand-logo">
+        <nav className="bg-wine-red text-white shadow-md w-full">
+            <div className="container">
+                <div className="flex items-center justify-between h-14">
+                    <Link to="/" className="brand-logo flex items-center gap-2">
                         <img src="/static/img/wine-icon.png"
-                            id="logo-img"
+                            className="h-6"
                             alt="vinoteca logo"
                         />
                         vinoteca
                     </Link>
-                    <a href="#" data-target="mobile"
-                        className="sidenav-trigger left hide-on-large-and-up"
+                    <button
+                        onClick={onMobileMenuOpen}
+                        className="lg:hidden p-2"
                     >
                         <MaterialIcon iconName="menu" />
-                    </a>
-                    <ul className="right hide-on-med-and-down">
-                        <MenuItems id="top-dropdown" />
+                    </button>
+                    <ul className="hidden lg:flex items-center gap-4">
+                        <MenuItemsComponent />
                     </ul>
                 </div>
             </div>
@@ -43,69 +49,91 @@ const DesktopNavbar: React.FC = () => {
 };
 DesktopNavbar.displayName = "DesktopNavbar";
 
-const MobileNavbar: React.FC = (props) => {
-    const sideNavRef = React.useRef() as React.MutableRefObject<HTMLUListElement>;
-    React.useEffect(() => {
-        new Sidenav(sideNavRef.current);
-    }, [sideNavRef]);
+interface IMobileSidenavProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
 
+const MobileSidenav: React.FC<IMobileSidenavProps> = ({isOpen, onClose}) => {
     return (
-        <ul className="sidenav" id="mobile" ref={ sideNavRef }>
-            <MenuItems id="sidebar-dropdown" {...props} />
-        </ul>
+        <Transition show={isOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-50 lg:hidden" onClose={onClose}>
+                <TransitionChild
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-black/50" />
+                </TransitionChild>
+
+                <div className="fixed inset-0 flex">
+                    <TransitionChild
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="-translate-x-full"
+                        enterTo="translate-x-0"
+                        leave="ease-in duration-200"
+                        leaveFrom="translate-x-0"
+                        leaveTo="-translate-x-full"
+                    >
+                        <DialogPanel className="relative w-64 bg-white shadow-xl h-full overflow-y-auto">
+                            <div className="p-4">
+                                <ul className="space-y-2">
+                                    <MobileMenuItems onClose={onClose} />
+                                </ul>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </Dialog>
+        </Transition>
     );
 };
-MobileNavbar.displayName = "MobileNavbar";
+MobileSidenav.displayName = "MobileSidenav";
 
-const NavLink: React.FC<{to: string, children: React.ReactNode}> = ({to, ...props}) => {
+interface INavLinkProps {
+    to: string;
+    children: React.ReactNode;
+    onClick?: () => void;
+}
+
+const NavLink: React.FC<INavLinkProps> = ({to, onClick, ...props}) => {
     const location = useLocation();
+    const isActive = location.pathname === to;
     return (
-        // Sidenav-close closes the sidenav on click
-        <li className={ location.pathname === to ? "active sidenav-close" : "sidenav-close" }
-            aria-current={ location.pathname === to ? "page" : undefined }
-        >
-            <Link to={ to }>
-                { props.children }
+        <li className={isActive ? "active" : ""}>
+            <Link
+                to={to}
+                onClick={onClick}
+                className={`block px-3 py-2 rounded-sm transition-colors ${
+                    isActive ? "bg-white/10" : "hover:bg-white/10"
+                }`}
+                aria-current={isActive ? "page" : undefined}
+            >
+                {props.children}
             </Link>
         </li>
     );
 };
 
-interface IMenuItemsProps {
-    id: string;
-}
-
-const MenuItems: React.FC<IMenuItemsProps> = (props) => {
+const MenuItemsComponent: React.FC = () => {
     const user = useUser();
 
-    return (
-        user
-        ? <UserMenuItems {...props} user={ user } />
-        : <NoUserMenuItems {...props} />
-    );
+    return user ? <UserMenuItemsComponent user={user} /> : <NoUserMenuItemsComponent />;
 };
-MenuItems.displayName = "MenuItems";
+MenuItemsComponent.displayName = "MenuItems";
 
-interface IUserMenuItemsProps extends IMenuItemsProps {
+interface IUserMenuItemsProps {
     user: IUser;
 }
 
-const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
+const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
     const setUser = useSetUser();
     const navigate = useNavigate();
-
-    const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
-    const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
-    const winesDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
-    React.useEffect(() => {
-        new Dropdown(addDropdownRef.current);
-    }, [addDropdownRef]);
-    React.useEffect(() => {
-        new Dropdown(userDropdownRef.current);
-    }, [userDropdownRef]);
-    React.useEffect(() => {
-        new Dropdown(winesDropdownRef.current);
-    }, [winesDropdownRef]);
 
     const onLogout = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -116,88 +144,222 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
 
     return (
         <>
-            <li>
-                <ul id={ `${id}-add` } className="dropdown-content">
-                    <NavLink to="/wines/new">
-                        New wine
-                    </NavLink>
-                    <NavLink to="/wines/search">
-                        Purchased again
-                    </NavLink>
-                </ul>
-                <a className="dropdown-trigger" data-target={ `${id}-add` }
-                    ref={ addDropdownRef }
-                >
-                    <MaterialIcon className="left" iconName="add_circle" />
+            {/* Add dropdown */}
+            <Menu as="li" className="relative">
+                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                    <MaterialIcon iconName="add_circle" />
                     Add
-                    <MaterialIcon className="right" iconName="arrow_drop_down" />
-                </a>
-            </li>
-            <li>
-                <ul id={ `${id}-wines` } className="dropdown-content">
-                    <NavLink to="/wines">
-                        All wines
-                    </NavLink>
-                    <NavLink to="/wines/inventory">
-                        Inventory
-                    </NavLink>
-                    <NavLink to="/wines/shopping-list">
-                        Shopping list
-                    </NavLink>
-                </ul>
-                <a className="dropdown-trigger" data-target={ `${id}-wines` }
-                    ref={ winesDropdownRef }
+                    <MaterialIcon iconName="arrow_drop_down" />
+                </MenuButton>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
                 >
-                    <MaterialIcon className="left" iconName="reorder" />
+                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                        <MenuItem>
+                            <Link to="/wines/new" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                New wine
+                            </Link>
+                        </MenuItem>
+                        <MenuItem>
+                            <Link to="/wines/search" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                Purchased again
+                            </Link>
+                        </MenuItem>
+                    </MenuItems>
+                </Transition>
+            </Menu>
+
+            {/* Wines dropdown */}
+            <Menu as="li" className="relative">
+                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                    <MaterialIcon iconName="reorder" />
                     Wines
-                    <MaterialIcon className="right" iconName="arrow_drop_down" />
-                </a>
-            </li>
-            {/* <NavLink to="/wines">
-                Wines
-            </NavLink> */}
-            <NavLink to="/dashboards">
-                <MaterialIcon className="left" iconName="dashboard" />
-                Dashboards
-            </NavLink>
-            {/* <NavLink to="/wines/inventory">
-                <MaterialIcon className="left" iconName="view_comfy" />
-                Inventory
-            </NavLink> */}
-            <li>
-                <ul id={ `${id}-user` } className="dropdown-content">
-                    <NavLink to="/profile">
-                        Profile
-                    </NavLink>
-                    <li className="sidenav-close">
-                        <a onClick={ onLogout }>
-                            Log out
-                        </a>
-                    </li>
-                </ul>
-                <a className="dropdown-trigger" data-target={ `${id}-user` }
-                    ref={ userDropdownRef }
+                    <MaterialIcon iconName="arrow_drop_down" />
+                </MenuButton>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
                 >
-                    <MaterialIcon className="left" iconName="account_circle" />
-                    { user.name }
-                    <MaterialIcon className="right" iconName="arrow_drop_down" />
-                </a>
-            </li>
+                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                        <MenuItem>
+                            <Link to="/wines" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                All wines
+                            </Link>
+                        </MenuItem>
+                        <MenuItem>
+                            <Link to="/wines/inventory" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                Inventory
+                            </Link>
+                        </MenuItem>
+                        <MenuItem>
+                            <Link to="/wines/shopping-list" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                Shopping list
+                            </Link>
+                        </MenuItem>
+                    </MenuItems>
+                </Transition>
+            </Menu>
+
+            {/* Dashboards link */}
+            <NavLink to="/dashboards">
+                <span className="flex items-center gap-1">
+                    <MaterialIcon iconName="dashboard" />
+                    Dashboards
+                </span>
+            </NavLink>
+
+            {/* User dropdown */}
+            <Menu as="li" className="relative">
+                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                    <MaterialIcon iconName="account_circle" />
+                    {user.name}
+                    <MaterialIcon iconName="arrow_drop_down" />
+                </MenuButton>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                        <MenuItem>
+                            <Link to="/profile" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                                Profile
+                            </Link>
+                        </MenuItem>
+                        <MenuItem>
+                            <a onClick={onLogout} className="block px-4 py-2 text-wine-green hover:bg-gray-100 cursor-pointer">
+                                Log out
+                            </a>
+                        </MenuItem>
+                    </MenuItems>
+                </Transition>
+            </Menu>
         </>
     );
 };
-UserMenuItems.displayName = "UserMenuItems";
+UserMenuItemsComponent.displayName = "UserMenuItems";
 
-const NoUserMenuItems: React.FC<IMenuItemsProps> = () => (
+const NoUserMenuItemsComponent: React.FC = () => (
     <>
         <NavLink to="/login">
-            <MaterialIcon className="left" iconName="account_circle" />
-            Login
+            <span className="flex items-center gap-1">
+                <MaterialIcon iconName="account_circle" />
+                Login
+            </span>
         </NavLink>
         <NavLink to="/register">
-            <MaterialIcon className="left" iconName="add_circle" />
-            Register
+            <span className="flex items-center gap-1">
+                <MaterialIcon iconName="add_circle" />
+                Register
+            </span>
         </NavLink>
     </>
 );
-NoUserMenuItems.displayName = "NoUserMenuItems";
+NoUserMenuItemsComponent.displayName = "NoUserMenuItems";
+
+interface IMobileMenuItemsProps {
+    onClose: () => void;
+}
+
+const MobileMenuItems: React.FC<IMobileMenuItemsProps> = ({onClose}) => {
+    const user = useUser();
+    const setUser = useSetUser();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const onLogout = async () => {
+        await logout();
+        setUser(null);
+        navigate("/");
+        onClose();
+    };
+
+    const MobileLink: React.FC<{to: string, children: React.ReactNode}> = ({to, children}) => {
+        const isActive = location.pathname === to;
+        return (
+            <li>
+                <Link
+                    to={to}
+                    onClick={onClose}
+                    className={`block px-3 py-2 text-gray-800 rounded-sm transition-colors ${
+                        isActive ? "bg-wine-red/10 text-wine-red" : "hover:bg-gray-100"
+                    }`}
+                >
+                    {children}
+                </Link>
+            </li>
+        );
+    };
+
+    if (user) {
+        return (
+            <>
+                <li className="font-medium text-wine-red px-3 py-2">Add</li>
+                <MobileLink to="/wines/new">New wine</MobileLink>
+                <MobileLink to="/wines/search">Purchased again</MobileLink>
+
+                <li className="border-t border-gray-200 my-2" />
+
+                <li className="font-medium text-wine-red px-3 py-2">Wines</li>
+                <MobileLink to="/wines">All wines</MobileLink>
+                <MobileLink to="/wines/inventory">Inventory</MobileLink>
+                <MobileLink to="/wines/shopping-list">Shopping list</MobileLink>
+
+                <li className="border-t border-gray-200 my-2" />
+
+                <MobileLink to="/dashboards">
+                    <span className="flex items-center gap-2">
+                        <MaterialIcon iconName="dashboard" />
+                        Dashboards
+                    </span>
+                </MobileLink>
+
+                <li className="border-t border-gray-200 my-2" />
+
+                <li className="font-medium text-wine-red px-3 py-2">{user.name}</li>
+                <MobileLink to="/profile">Profile</MobileLink>
+                <li>
+                    <button
+                        onClick={onLogout}
+                        className="w-full text-left px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-sm transition-colors"
+                    >
+                        Log out
+                    </button>
+                </li>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <MobileLink to="/login">
+                <span className="flex items-center gap-2">
+                    <MaterialIcon iconName="account_circle" />
+                    Login
+                </span>
+            </MobileLink>
+            <MobileLink to="/register">
+                <span className="flex items-center gap-2">
+                    <MaterialIcon iconName="add_circle" />
+                    Register
+                </span>
+            </MobileLink>
+        </>
+    );
+};
+MobileMenuItems.displayName = "MobileMenuItems";

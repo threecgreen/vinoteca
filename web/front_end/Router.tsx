@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { AsyncRoute, AuthAsyncRoute, NotFound, RouteById } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";
 import { VersionProvider } from "components/context/VersionContext";
@@ -29,6 +30,7 @@ export const Router: React.FC = () => (
         <ErrorBoundary>
             <UserProvider>
                 <ViewportProvider>
+                    <Toaster position="top-right" />
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<App />}>

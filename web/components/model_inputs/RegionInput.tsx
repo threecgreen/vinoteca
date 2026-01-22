@@ -2,9 +2,10 @@ import { IRegion } from "generated/rest";
 import { EmptyResultError } from "lib/api/common";
 import { getRegions } from "lib/api/regions";
 import { useLogger } from "lib/Logger";
-import { autocomplete } from "lib/widgets";
 import React from "react";
-import { TextInput } from "../inputs/TextInput";
+import { RequiredIndicator } from "../RequiredIndicator";
+import { InputField } from "../Grid";
+import { Autocomplete } from "../inputs/Autocomplete";
 import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
@@ -13,16 +14,12 @@ interface IProps extends IOnChange {
     producerText?: string;
 }
 
-// TODO: validate region exists
-export const RegionInput: React.FC<IProps> = ({value, producerText, required, ...props}) => {
+export const RegionInput: React.FC<IProps> = ({value, producerText, required, onChange}) => {
     const logger = useLogger("RegionInput");
-
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-
-    const onChangeRef = React.useRef((_: string) => { return; });
-    React.useEffect(() => {
-        onChangeRef.current = props.onChange;
-    }, [props.onChange]);
+    const [completions, setCompletions] = React.useState<Record<string, string | null>>({});
+    const [enabled, setEnabled] = React.useState(true);
+    const onChangeRef = React.useRef(onChange);
+    onChangeRef.current = onChange;
 
     // Get autocomplete options
     React.useEffect(() => {
@@ -33,15 +30,13 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, ..
                 regions.forEach((region) => {
                     result[region.name] = `/static/img/flags/${region.name}.svg`;
                 });
-                autocomplete(inputRef, result, onChangeRef.current);
+                setCompletions(result);
             } catch (e) {
                 logger.logException("Failed to get region autocomplete options", e);
             }
         }
         void fetchAutocompleteOptions();
-    }, [inputRef, logger]);
-
-    const [enabled, setEnabled] = React.useState(true);
+    }, [logger]);
 
     // Try to get region from producer input. If found, lock and set value
     React.useEffect(() => {
@@ -70,18 +65,29 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, ..
         } else {
             setEnabled(true);
         }
-    }, [logger, producerText, setEnabled]);
+    }, [logger, producerText]);
 
     return (
-        <TextInput name="Region"
-            className="autocomplete"
-            s={ 12 } m={ 5 } l={ 3 }
-            inputRef={ inputRef }
-            enabled={ enabled }
-            value={ value }
-            onChange={ onChangeRef.current }
-            required={ required }
-        />
+        <InputField s={12} m={6} l={3}>
+            <label>
+                Region{required && <RequiredIndicator />}
+            </label>
+            {enabled ? (
+                <Autocomplete
+                    name="region"
+                    value={value}
+                    onChange={onChange}
+                    completions={completions}
+                />
+            ) : (
+                <input
+                    type="text"
+                    value={value}
+                    disabled
+                    className="w-full py-2 bg-transparent border-0 border-b border-gray-300 text-gray-500"
+                />
+            )}
+        </InputField>
     );
 };
 RegionInput.displayName = "RegionInput";

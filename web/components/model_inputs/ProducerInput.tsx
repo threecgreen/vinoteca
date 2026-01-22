@@ -2,9 +2,10 @@ import { IProducer } from "generated/rest";
 import { toDict } from "lib/api/common";
 import { getProducers } from "lib/api/producers";
 import { useLogger } from "lib/Logger";
-import { autocomplete } from "lib/widgets";
 import React from "react";
-import { TextInput } from "../inputs/TextInput";
+import { RequiredIndicator } from "../RequiredIndicator";
+import { InputField } from "../Grid";
+import { Autocomplete } from "../inputs/Autocomplete";
 import { IOnChange } from "../IProps";
 
 interface IProps extends IOnChange {
@@ -14,36 +15,33 @@ interface IProps extends IOnChange {
 
 export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => {
     const logger = useLogger("ProducerInput", true);
-    const inputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
-    const onChangeRef = React.useRef((_: string) => { return; });
-    React.useEffect(() => {
-        onChangeRef.current = props.onChange;
-    }, [props.onChange]);
+    const [completions, setCompletions] = React.useState<Record<string, string | null>>({});
 
     React.useEffect(() => {
         async function fetchProducers() {
             try {
                 const producers: IProducer[] = await getProducers({});
-                autocomplete(inputRef, toDict(producers), onChangeRef.current);
+                setCompletions(toDict(producers));
             } catch (e) {
                 logger.logException("Failed to get producer autocomplete options", e);
             }
         }
 
         void fetchProducers();
-    }, [inputRef, logger]);
+    }, [logger]);
 
     return (
-        <TextInput name="Producer"
-            className="autocomplete"
-            s={ 12 } m={ 7 } l={ 3 }
-            inputRef={ inputRef }
-            value={ value }
-            onChange={ (s) => {
-                onChangeRef.current(s);
-            } }
-            required={ required }
-        />
+        <InputField s={12} m={6} l={3}>
+            <label>
+                Producer{required && <RequiredIndicator />}
+            </label>
+            <Autocomplete
+                name="producer"
+                value={value}
+                onChange={props.onChange}
+                completions={completions}
+            />
+        </InputField>
     );
 };
 ProducerInput.displayName = "ProducerInput";

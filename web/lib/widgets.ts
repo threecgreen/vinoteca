@@ -1,30 +1,13 @@
-import { Autocomplete } from "materialize-css";
-
-type OnChange = (e: string) => void;
-
-/** Setup autocompletion with provided completion options. */
-export function autocomplete(elem: React.MutableRefObject<HTMLInputElement>,
-                             completions: Record<string, string | null>,
-                             onChange: OnChange, minLength = 1, limit = 5): void {
-    if (elem.current) {
-        new Autocomplete(elem.current, {
-            data: completions,
-            limit,
-            minLength,
-
-            onAutocomplete: function(this, text) {
-                onChange(text);
-            },
-        });
-    }
-}
+import toast from "react-hot-toast";
 
 /** Simplifies displaying of toast messages to user */
-export function toast(message: string): void {
-    M.toast({
-        classes: "red-bg",
-        displayLength: 10000,
-        html: message,
+export function showToast(message: string): void {
+    toast.error(message, {
+        duration: 10000,
+        style: {
+            background: "rgb(173, 20, 87)",
+            color: "#fff",
+        },
     });
 }
 

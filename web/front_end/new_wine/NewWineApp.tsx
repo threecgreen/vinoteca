@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Btn, BtnLink } from "components/Buttons";
 import { Form } from "components/Form";
-import { Row } from "components/Grid";
+import { Col, Row } from "components/Grid";
 import { MaterialIcon } from "components/MaterialIcon";
 import { grapeReducer, GrapesInputs, wineGrapesToForm } from "components/model_inputs/GrapesInputs";
 import {
@@ -87,11 +87,16 @@ const NewWineApp: React.FC = () => {
     return (
         <div className="container">
             <h1 className="page-title med-heading">Enter new wine information</h1>
-            <Btn classes={ ["yellow-bg"] }
-                onClick={ onReset }
-            >
-                Reset form
-            </Btn>
+            <Row classes={["mb-4"]}>
+                <Col s={12}>
+                    <Btn classes={ ["yellow-bg"] }
+                        onClick={ onReset }
+                        noRbtn
+                    >
+                        Reset form
+                    </Btn>
+                </Col>
+            </Row>
             <Form onSubmit={ () => !isSaving && wineState.producer && wineState.region
                 && wineState.wineType && onSubmit() }
             >
@@ -107,20 +112,25 @@ const NewWineApp: React.FC = () => {
                 <GrapesInputs grapes={ grapes }
                     dispatch={ grapesDispatch }
                 />
-                <Btn classes={ ["green-bg"] }
-                    onClick={ onSubmit }
-                    disabled={ isSaving || !wineState.producer || !wineState.region
-                        || !wineState.wineType }
-                >
-                    Confirm
-                    <MaterialIcon className="right" iconName="send" />
-                </Btn>
-                <BtnLink classes={ ["red-bg"] }
-                    to="/"
-                >
-                    Cancel
-                </BtnLink>
-                { isSaving && <PreloaderCirc className="hor-margin" /> }
+                <Row classes={["mt-6"]}>
+                    <Col s={12}>
+                        <Btn classes={ ["green-bg"] }
+                            onClick={ onSubmit }
+                            disabled={ isSaving || !wineState.producer || !wineState.region
+                                || !wineState.wineType }
+                            noRbtn
+                        >
+                            Confirm
+                            <MaterialIcon className="right" iconName="send" />
+                        </Btn>
+                        <BtnLink classes={ ["red-bg"] }
+                            to="/"
+                        >
+                            Cancel
+                        </BtnLink>
+                        { isSaving && <PreloaderCirc className="hor-margin" /> }
+                    </Col>
+                </Row>
             </Form>
         </div>
     );

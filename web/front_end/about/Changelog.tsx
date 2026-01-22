@@ -11,6 +11,9 @@ export const Changelog: React.FC = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>7.0.0</h5>
+            <p>Migrate backend and frontend to more newer frameworks and versions</p>
+
             <h5>6.3.0</h5>
             <p>Add å, ä, ö, and ø as available special characters</p>
 

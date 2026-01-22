@@ -2,7 +2,7 @@ import { GIT_SHA, LOG_LEVEL, VERSION } from "generated/constants";
 import React from "react";
 import { postLog } from "./api/logs";
 import { isIn } from "./utils";
-import { toast } from "./widgets";
+import { showToast } from "./widgets";
 
 /** Provides logging functionality for client-side JavaScript errors. */
 export enum LogLevel {
@@ -96,7 +96,7 @@ export default class Logger {
 
     private toast(level: LogLevel, message: string) {
         if (this.shouldToast) {
-            toast(`${level.toUpperCase()}: ${message}`);
+            showToast(`${level.toUpperCase()}: ${message}`);
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Btn } from "components/Buttons";
-import { Row } from "components/Grid";
+import { Col, Row } from "components/Grid";
 import { IWine } from "generated/rest";
 import { searchWines } from "lib/api/wines";
 import Logger from "lib/Logger";
@@ -60,13 +60,16 @@ export default class SearchWinesApp extends React.Component<{}, ISearchWinesAppS
     public render(): ReactElement {
         return (
             <div className="container">
-                <Row s={ 12 }>
-                    <h1 className="page-title med-heading">Find a previously purchased wine</h1>
-                    <Btn classes={ ["yellow-bg"] }
-                        onClick={ this.onResetClick }
-                    >
-                        Reset Filters
-                    </Btn>
+                <h1 className="page-title med-heading">Find a previously purchased wine</h1>
+                <Row classes={["mb-4"]}>
+                    <Col s={12}>
+                        <Btn classes={ ["yellow-bg"] }
+                            onClick={ this.onResetClick }
+                            noRbtn
+                        >
+                            Reset Filters
+                        </Btn>
+                    </Col>
                 </Row>
                 <SearchWinesForm
                     colorSelection={ this.state.colorSelection }

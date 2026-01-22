@@ -19,12 +19,18 @@ export default defineConfig({
       output: {
         format: 'es',
         entryFileNames: 'vinoteca.bundle.js',
-        chunkFileNames: '[name].bundle.js',
+        chunkFileNames: 'chunks/[name]-[hash].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) return 'vinoteca.bundle.css'
           return 'assets/[name][extname]'
         },
-        inlineDynamicImports: true
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['react-router-dom'],
+          'vendor-charts': ['chart.js'],
+          'vendor-dates': ['date-fns', 'react-datepicker'],
+          'vendor-ui': ['@headlessui/react'],
+        }
       }
     }
   },

@@ -1,0 +1,864 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Color variables as CSS custom properties */
+:root {
+  --wine-red: rgb(135, 14, 79);
+  --wine-green: rgb(139, 195, 74);
+  --golden-yellow: rgb(251, 192, 45);
+  --white: rgb(240, 240, 240);
+  --black: rgba(0, 0, 0, 0.87);
+  --light-gray: rgb(200, 200, 200);
+
+  /* Lightened color variants using color-mix in HSL (closer to Sass lighten) */
+  --wine-red-lighten-5: color-mix(in hsl, var(--wine-red), white 10%);
+  --wine-red-lighten-15: color-mix(in hsl, var(--wine-red), white 30%);
+  --wine-red-lighten-40: color-mix(in hsl, var(--wine-red), white 60%);
+  --wine-green-lighten-10: color-mix(in hsl, var(--wine-green), white 20%);
+  --wine-green-lighten-15: color-mix(in hsl, var(--wine-green), white 30%);
+  --golden-yellow-lighten-10: color-mix(in hsl, var(--golden-yellow), white 20%);
+  --light-gray-lighten-7: color-mix(in hsl, var(--light-gray), white 15%);
+
+  /* Darkened color variants using color-mix */
+  --wine-red-darken-5: color-mix(in hsl, var(--wine-red), black 10%);
+}
+
+/* Base layer customizations */
+@layer base {
+  body {
+    @apply font-sans text-wine-black bg-wine-white text-[15px];
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-normal;
+  }
+
+  /* Heading sizes matching Materialize defaults */
+  h1 {
+    font-size: 4.2rem;
+    @apply my-6;
+  }
+
+  h2 {
+    font-size: 3.56rem;
+    @apply my-5;
+  }
+
+  h3 {
+    font-size: 2.92rem;
+    @apply my-4;
+  }
+
+  h4 {
+    font-size: 2.28rem;
+    @apply my-3;
+  }
+
+  h5 {
+    font-size: 1.64rem;
+    @apply my-2;
+  }
+
+  h6 {
+    font-size: 1rem;
+    @apply my-1;
+  }
+
+  a {
+    @apply no-underline;
+  }
+}
+
+/* Component layer - reusable component styles */
+@layer components {
+  /* Colored background classes */
+  .green-bg {
+    background-color: var(--wine-green);
+  }
+  .green-bg:hover {
+    background-color: var(--wine-green-lighten-10);
+  }
+
+  .yellow-bg {
+    background-color: var(--golden-yellow);
+  }
+  .yellow-bg:hover {
+    background-color: var(--golden-yellow-lighten-10);
+  }
+
+  .red-bg {
+    background-color: var(--wine-red-lighten-5);
+  }
+  .red-bg:hover {
+    background-color: var(--wine-red-lighten-15);
+  }
+
+  .light-gray-bg {
+    background-color: var(--light-gray);
+  }
+  .light-gray-bg:hover {
+    background-color: var(--light-gray-lighten-7);
+  }
+
+  /* Container styles */
+  .container {
+    @apply mx-auto max-w-container px-4;
+    width: 90%;
+  }
+
+  .text-container {
+    @apply mx-auto max-w-text-container px-4;
+    width: 90%;
+  }
+
+  /* Brand logo */
+  .brand-logo {
+    font-size: 2.1rem;
+    font-weight: 300;
+    letter-spacing: -0.1rem;
+  }
+
+  /* Text utilities */
+  .bold {
+    @apply font-bold;
+  }
+
+  .light {
+    @apply font-light;
+  }
+
+  .by-the-numbers {
+    @apply text-by-the-numbers font-by-the-numbers;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded shadow-md
+           font-medium text-white uppercase cursor-pointer transition-colors
+           disabled:opacity-50 disabled:cursor-not-allowed mb-2.5;
+  }
+
+  .btn-floating {
+    @apply inline-flex items-center justify-center w-10 h-10 min-w-[2.5rem] min-h-[2.5rem]
+           rounded-full text-white cursor-pointer transition-colors shadow-md hover:shadow-lg flex-shrink-0;
+  }
+
+  .btn-floating-small {
+    @apply w-[30px] h-[30px] leading-[30px] align-baseline relative top-[5px];
+  }
+
+  .rbtn {
+    @apply ml-3;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-sm shadow-md overflow-hidden mb-4;
+  }
+
+  .card-content {
+    @apply p-4;
+  }
+
+  .card-title {
+    font-size: 24px;
+    font-weight: 300;
+  }
+
+  .card-image {
+    @apply max-h-[35rem];
+  }
+
+  .card-image img {
+    @apply max-h-[inherit] max-w-full;
+  }
+
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.15);
+  }
+
+  .wine-red-card {
+    background-color: var(--wine-red-lighten-5);
+    @apply card-shadow;
+  }
+
+  .wine-red-card .card-content {
+    @apply text-white;
+  }
+
+  .wine-green-card {
+    background-color: var(--wine-green);
+    @apply card-shadow;
+  }
+
+  .wine-green-card .card-content {
+    @apply text-white;
+  }
+
+  .golden-yellow-card {
+    background-color: var(--golden-yellow);
+    @apply card-shadow;
+  }
+
+  /* Table styles */
+  table {
+    @apply w-full border-collapse font-sans;
+  }
+
+  table th {
+    @apply text-left font-bold p-3 border-b border-gray-300;
+  }
+
+  table td {
+    @apply p-3 border-b border-black/10;
+  }
+
+  table.highlight tbody tr:hover {
+    @apply bg-gray-100/50;
+  }
+
+  table.condensed td,
+  table.condensed th {
+    @apply py-1 whitespace-nowrap;
+  }
+
+  td a {
+    @apply block text-inherit no-underline;
+  }
+
+  td a:hover {
+    @apply underline;
+  }
+
+  /* Link styles */
+  .text-link {
+    color: var(--wine-green);
+  }
+  .text-link:hover {
+    color: var(--wine-green-lighten-15);
+  }
+
+  .text-link:visited {
+    color: var(--wine-red);
+  }
+  .text-link:visited:hover {
+    color: var(--wine-red-lighten-15);
+  }
+
+  /* Form styles */
+  .input-field {
+    @apply relative mb-4 px-2 box-border flex-shrink-0;
+  }
+
+  .input-field label {
+    @apply block text-sm text-gray-500;
+  }
+
+  .input-field input,
+  .input-field textarea {
+    @apply w-full py-2 bg-transparent border-0 border-b border-gray-300
+           focus:outline-none focus:border-b-2 focus:border-wine-green;
+  }
+
+  .input-field select {
+    @apply w-full py-2 bg-transparent border-0 border-b border-gray-300
+           focus:outline-none focus:border-b-2 focus:border-wine-green;
+  }
+
+  .input-field .helper-text {
+    @apply text-sm text-gray-500 mt-1 min-h-0;
+  }
+
+  /* Modal styles */
+  .modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50;
+  }
+
+  .modal-content {
+    @apply relative bg-white rounded-sm shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-auto;
+  }
+
+  .modal-footer {
+    @apply flex justify-end gap-2 p-4 border-t border-gray-200;
+  }
+
+  /* Tabs styles */
+  .tabs {
+    @apply flex border-b border-gray-200;
+  }
+
+  .tab {
+    @apply px-4 py-2 cursor-pointer border-b-2 border-transparent
+           hover:text-wine-red transition-colors;
+  }
+
+  .tab.active {
+    @apply border-wine-red text-wine-red;
+  }
+
+  /* Navbar styles */
+  nav {
+    @apply bg-wine-red text-white shadow-md;
+  }
+
+  nav .nav-wrapper {
+    @apply flex items-center justify-between px-4 h-14;
+  }
+
+  nav a {
+    @apply text-white hover:text-gray-200;
+  }
+
+  nav ul {
+    @apply flex items-center gap-4;
+  }
+
+  nav ul li {
+    @apply list-none;
+  }
+
+  /* Dropdown styles */
+  .dropdown-content {
+    @apply absolute top-full left-0 mt-1 bg-white rounded-sm shadow-lg
+           min-w-[150px] py-2 z-50;
+  }
+
+  .dropdown-content li a {
+    @apply block px-4 py-2 text-gray-800 hover:bg-gray-100;
+  }
+
+  /* Footer styles */
+  .page-footer {
+    background-color: var(--wine-red);
+    @apply text-white;
+  }
+
+  .footer-copyright {
+    background-color: var(--wine-red-darken-5);
+  }
+
+  .footer-link {
+    @apply text-pink-300 hover:text-pink-200;
+  }
+
+  /* Page title */
+  .page-title {
+    @apply font-bold text-center;
+    color: var(--wine-red-lighten-5);
+  }
+
+  .med-heading {
+    @apply text-med-heading;
+  }
+
+  /* Preloader */
+  .preloader-wrapper {
+    @apply inline-block animate-spin;
+  }
+
+  .preloader-wrapper.tiny {
+    @apply w-6 h-6;
+  }
+
+  .spinner-wine-red {
+    @apply border-wine-red;
+  }
+
+  .spinner-golden-yellow {
+    @apply border-golden-yellow;
+  }
+
+  /* Fixed action button */
+  .fixed-action-div {
+    @apply relative h-[60px];
+  }
+
+  .fixed-action-btn {
+    @apply absolute inline-block top-[5px];
+  }
+
+  .fixed-action-btn ul li {
+    @apply mr-2;
+  }
+
+  /* Special characters */
+  .spec-char-btn {
+    @apply normal-case bg-light-gray hover:bg-gray-300 mx-1 mt-1;
+  }
+
+  .special-char-picker {
+    @apply bg-wine-white flex flex-row flex-wrap h-[250px] w-[280px]
+           relative content-center p-4 shadow-md;
+  }
+
+  .floating-bar {
+    @apply fixed bottom-0 bg-white z-10 p-4 mb-8 ml-0 content-center;
+  }
+
+  /* Grid system - 12 column responsive */
+  .row {
+    @apply flex flex-wrap -mx-2 items-stretch;
+  }
+
+  .col {
+    @apply px-2 box-border flex-shrink-0;
+  }
+
+  .no-col {
+    @apply px-0;
+  }
+
+  /* Small screens (default) */
+  .col.s1, .input-field.s1 { width: 8.33333%; }
+  .col.s2, .input-field.s2 { width: 16.66667%; }
+  .col.s3, .input-field.s3 { width: 25%; }
+  .col.s4, .input-field.s4 { width: 33.33333%; }
+  .col.s5, .input-field.s5 { width: 41.66667%; }
+  .col.s6, .input-field.s6 { width: 50%; }
+  .col.s7, .input-field.s7 { width: 58.33333%; }
+  .col.s8, .input-field.s8 { width: 66.66667%; }
+  .col.s9, .input-field.s9 { width: 75%; }
+  .col.s10, .input-field.s10 { width: 83.33333%; }
+  .col.s11, .input-field.s11 { width: 91.66667%; }
+  .col.s12, .input-field.s12 { width: 100%; }
+
+  /* Medium screens (601px+) */
+  @media (min-width: 601px) {
+    .col.m1, .input-field.m1 { width: 8.33333%; }
+    .col.m2, .input-field.m2 { width: 16.66667%; }
+    .col.m3, .input-field.m3 { width: 25%; }
+    .col.m4, .input-field.m4 { width: 33.33333%; }
+    .col.m5, .input-field.m5 { width: 41.66667%; }
+    .col.m6, .input-field.m6 { width: 50%; }
+    .col.m7, .input-field.m7 { width: 58.33333%; }
+    .col.m8, .input-field.m8 { width: 66.66667%; }
+    .col.m9, .input-field.m9 { width: 75%; }
+    .col.m10, .input-field.m10 { width: 83.33333%; }
+    .col.m11, .input-field.m11 { width: 91.66667%; }
+    .col.m12, .input-field.m12 { width: 100%; }
+  }
+
+  /* Large screens (993px+) */
+  @media (min-width: 993px) {
+    .col.l1, .input-field.l1 { width: 8.33333%; }
+    .col.l2, .input-field.l2 { width: 16.66667%; }
+    .col.l3, .input-field.l3 { width: 25%; }
+    .col.l4, .input-field.l4 { width: 33.33333%; }
+    .col.l5, .input-field.l5 { width: 41.66667%; }
+    .col.l6, .input-field.l6 { width: 50%; }
+    .col.l7, .input-field.l7 { width: 58.33333%; }
+    .col.l8, .input-field.l8 { width: 66.66667%; }
+    .col.l9, .input-field.l9 { width: 75%; }
+    .col.l10, .input-field.l10 { width: 83.33333%; }
+    .col.l11, .input-field.l11 { width: 91.66667%; }
+    .col.l12, .input-field.l12 { width: 100%; }
+  }
+
+  /* Extra large screens (1201px+) */
+  @media (min-width: 1201px) {
+    .col.xl1, .input-field.xl1 { width: 8.33333%; }
+    .col.xl2, .input-field.xl2 { width: 16.66667%; }
+    .col.xl3, .input-field.xl3 { width: 25%; }
+    .col.xl4, .input-field.xl4 { width: 33.33333%; }
+    .col.xl5, .input-field.xl5 { width: 41.66667%; }
+    .col.xl6, .input-field.xl6 { width: 50%; }
+    .col.xl7, .input-field.xl7 { width: 58.33333%; }
+    .col.xl8, .input-field.xl8 { width: 66.66667%; }
+    .col.xl9, .input-field.xl9 { width: 75%; }
+    .col.xl10, .input-field.xl10 { width: 83.33333%; }
+    .col.xl11, .input-field.xl11 { width: 91.66667%; }
+    .col.xl12, .input-field.xl12 { width: 100%; }
+  }
+
+  /* Section spacing */
+  .section {
+    @apply py-8;
+  }
+
+  .white {
+    @apply bg-white;
+  }
+
+  /* Utility classes */
+  .valign-wrapper {
+    @apply flex items-center h-full;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .center-align {
+    text-align: center;
+  }
+
+  .right {
+    float: right;
+  }
+
+  .left {
+    float: left;
+  }
+
+  .invisible {
+    visibility: hidden;
+  }
+
+  .inline-h {
+    display: inline;
+  }
+
+  .inline-block {
+    display: inline-block;
+  }
+
+  .flex {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .flex-grow {
+    flex-grow: 1;
+  }
+
+  .center-content {
+    @apply flex items-center justify-center;
+  }
+
+  /* Bullets list */
+  ul.bullets {
+    @apply pl-8 mt-2.5 mb-4 list-disc;
+  }
+
+  ul.bullets li ul {
+    @apply my-0;
+    list-style-type: square;
+  }
+
+  /* Region flag */
+  .region-flag {
+    @apply w-[50px] h-[50px] align-middle mr-2.5;
+  }
+
+  /* Table wrapper for horizontal scroll */
+  .table-wrapper {
+    @apply w-full overflow-x-auto mb-8;
+  }
+
+  .table-wrapper td,
+  .table-wrapper th {
+    @apply whitespace-nowrap;
+  }
+
+  /* Number column alignment */
+  .num-col {
+    @apply pr-[2ch] text-right;
+  }
+
+  /* Dashboard */
+  .dashboard-row {
+    @apply mb-0;
+  }
+
+  .dashboard-top-card {
+    @apply mt-0;
+  }
+
+  /* Canvas container for charts */
+  .canvas-container {
+    @apply relative;
+  }
+
+  /* Error message */
+  p.error-msg {
+    @apply mb-8 text-red-600;
+  }
+
+  /* Code styling */
+  code {
+    @apply text-sm;
+  }
+
+  /* Grape buttons */
+  .grape-btn-add {
+    @apply bg-wine-green hover:bg-wine-green-light;
+  }
+
+  .grape-btn-remove {
+    @apply bg-wine-red-light hover:bg-wine-red-lighter;
+  }
+
+  /* Wine image */
+  #wine-image {
+    @apply float-right;
+  }
+
+  #wine-image img {
+    @apply w-auto;
+  }
+
+  /* Form spacing */
+  form {
+    @apply mb-5;
+  }
+
+  /* Horizontal margin */
+  .hor-margin {
+    @apply mx-5;
+  }
+
+  /* Overlap for adjacent elements */
+  .overlap {
+    @apply -ml-[50px];
+  }
+
+  /* Narrow tabs */
+  .narrow-tabs .tab a {
+    @apply px-3;
+  }
+
+  /* Sidenav */
+  .sidenav {
+    @apply fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 transform -translate-x-full transition-transform;
+  }
+
+  .sidenav.open {
+    @apply translate-x-0;
+  }
+
+  .sidenav-overlay {
+    @apply fixed inset-0 bg-black/50 z-40;
+  }
+
+  /* Switch/Toggle */
+  .switch {
+    @apply relative inline-flex items-center cursor-pointer;
+  }
+
+  .switch label {
+    @apply flex items-center gap-2 cursor-pointer;
+  }
+
+  .switch input {
+    @apply sr-only;
+  }
+
+  .lever {
+    @apply w-9 h-4 rounded-full relative transition-colors;
+    background-color: var(--light-gray);
+  }
+
+  .lever::after {
+    @apply content-[''] absolute -left-0.5 -top-1 w-5 h-5 bg-gray-400 rounded-full transition-transform shadow-md;
+  }
+
+  .switch input:checked + .lever {
+    background-color: var(--wine-red-lighten-40);
+  }
+
+  .switch input:checked + .lever::after {
+    @apply translate-x-5;
+    background-color: var(--wine-red);
+  }
+
+  /* Range slider */
+  input[type="range"] {
+    @apply w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 rounded-full cursor-pointer;
+    background-color: var(--wine-red-lighten-15);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    @apply w-4 h-4 rounded-full cursor-pointer border-0;
+    background-color: var(--wine-red-lighten-15);
+  }
+
+  /* Checkbox */
+  .checkbox-wrapper {
+    @apply flex items-center gap-2;
+  }
+
+  input[type="checkbox"] {
+    @apply w-4 h-4 text-wine-red border-gray-300 rounded focus:ring-wine-red;
+  }
+
+  /* Select dropdown */
+  select {
+    @apply w-full appearance-none bg-transparent border-0 border-b border-gray-300 py-2 pr-6
+           focus:outline-none focus:border-b-2 focus:border-wine-green cursor-pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0 center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+
+  select option {
+    @apply bg-white text-wine-black py-2;
+  }
+
+  /* Parallax */
+  .parallax-container {
+    @apply relative h-[500px] overflow-hidden;
+  }
+
+  .parallax-container img {
+    @apply absolute bottom-0 left-0 min-w-full;
+  }
+
+  /* Z-depth shadows */
+  .z-depth-1 {
+    @apply shadow-md;
+  }
+
+  .z-depth-2 {
+    @apply shadow-lg;
+  }
+
+  /* Waves effect placeholder */
+  .waves-effect {
+    @apply transition-all;
+  }
+
+  .waves-light {
+    /* Placeholder for wave animation */
+  }
+
+  /* Collection (list) */
+  .collection {
+    @apply border border-gray-200 rounded-sm;
+  }
+
+  .collection-item {
+    @apply p-4 border-b border-gray-200 last:border-b-0;
+  }
+}
+
+/* Sticky footer layout */
+#site-content {
+  @apply flex min-h-screen flex-col w-full;
+}
+
+main {
+  @apply flex-1 w-full;
+}
+
+/* Image orientation */
+img {
+  image-orientation: from-image;
+}
+
+/* Logo image */
+#logo-img {
+  @apply align-middle inline h-6;
+}
+
+/* Table header links */
+th a.table-header {
+  @apply text-wine-black hover:underline;
+}
+
+/* Inventory plus/minus buttons */
+td.inventory-plus-minus a {
+  @apply mx-1;
+}
+
+/* Edit wine section */
+#edit-wine {
+  @apply pt-24;
+}
+
+/* Rating slider */
+#rating-slider {
+  @apply mb-0;
+}
+
+#rating-slider input {
+  @apply mb-0;
+}
+
+/* Grape block */
+.grape-block .no-padding {
+  @apply p-0;
+}
+
+/* Range field paragraph */
+p.range-field {
+  @apply mb-0;
+}
+
+/* Confirm spinner */
+div.confirm {
+  @apply align-middle m-1;
+}
+
+/* Page link */
+.page-link {
+  @apply text-wine-black;
+}
+
+/* React DatePicker styling */
+.react-datepicker-wrapper {
+  @apply w-full;
+}
+
+.react-datepicker {
+  @apply font-sans border-0 shadow-lg rounded-sm;
+}
+
+.react-datepicker__header {
+  @apply bg-wine-red border-0 rounded-t-sm;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  @apply text-white;
+}
+
+.react-datepicker__navigation-icon::before {
+  @apply border-white;
+}
+
+.react-datepicker__day {
+  @apply rounded-full hover:bg-wine-red-light hover:text-white transition-colors;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  @apply bg-wine-red text-white;
+}
+
+.react-datepicker__day--today {
+  @apply font-bold;
+}
+
+.react-datepicker__year-dropdown,
+.react-datepicker__month-dropdown {
+  @apply bg-white shadow-lg border-0;
+}
+
+.react-datepicker__year-option:hover,
+.react-datepicker__month-option:hover {
+  @apply bg-wine-red-light text-white;
+}
+
+.react-datepicker__year-option--selected,
+.react-datepicker__month-option--selected {
+  @apply text-wine-red;
+}
+
+.react-datepicker-wrapper .react-datepicker__close-icon::after,
+.react-datepicker__close-icon::after {
+  background-color: var(--wine-red) !important;
+}
+
+.react-datepicker__close-icon:hover::after {
+  background-color: var(--wine-red-darken-5) !important;
+}

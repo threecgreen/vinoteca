@@ -3,8 +3,9 @@ import { toDict } from "lib/api/common";
 import { getOrCreateStore, getStores } from "lib/api/stores";
 import { defaultVintageYear } from "lib/component_utils";
 import { useLogger } from "lib/Logger";
-import { autocomplete } from "lib/widgets";
 import React from "react";
+import { InputField } from "../Grid";
+import { Autocomplete } from "../inputs/Autocomplete";
 import { CheckboxInput } from "../inputs/CheckboxInput";
 import { DateInput } from "../inputs/DateInput";
 import { NumberInput } from "../inputs/NumberInput";
@@ -92,24 +93,20 @@ interface IProps {
 
 export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dispatch}) => {
     const logger = useLogger("PurchaseInputs");
-    const storeInputRef = React.useRef() as React.MutableRefObject<HTMLInputElement>;
+    const [storeCompletions, setStoreCompletions] = React.useState<Record<string, string | null>>({});
 
     React.useEffect(() => {
         async function fetchStores() {
             try {
                 const stores: IStore[] = await getStores({});
-                autocomplete(
-                    storeInputRef,
-                    toDict(stores),
-                    (store) => dispatch({type: "setStore", store})
-                );
+                setStoreCompletions(toDict(stores));
             } catch (e) {
-                logger.logError("Failed to get store autocomplete options");
+                logger.logException("Failed to get store autocomplete options", e);
             }
         }
 
         void fetchStores();
-    }, [dispatch, logger, storeInputRef]);
+    }, [logger]);
 
     const [quantityS, quantityL] = displayInventoryBtn ? [3, 2] : [6, 3];
     const inventory = displayInventoryBtn
@@ -151,13 +148,15 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
                 max={ new Date().getFullYear() }
                 s={ 6 } l={ 3 }
             />
-            <TextInput name="Store"
-                className="autocomplete"
-                value={ data.store }
-                onChange={ (store) => dispatch({type: "setStore", store}) }
-                s={ 12 } m={ 6 } l={ 3 }
-                inputRef={ storeInputRef }
-            />
+            <InputField s={12} m={6} l={3}>
+                <label>Store</label>
+                <Autocomplete
+                    name="store"
+                    value={data.store}
+                    onChange={(store) => dispatch({type: "setStore", store})}
+                    completions={storeCompletions}
+                />
+            </InputField>
             <TextInput name="Memo"
                 className=""
                 value={ data.memo }

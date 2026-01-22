@@ -11,6 +11,7 @@ import {
     LinearScale,
     Legend,
     Tooltip,
+    Filler,
     ChartConfiguration,
     TooltipItem,
 } from "chart.js";
@@ -29,7 +30,8 @@ Chart.register(
     CategoryScale,
     LinearScale,
     Legend,
-    Tooltip
+    Tooltip,
+    Filler
 );
 
 export interface IChartInput {
@@ -96,6 +98,7 @@ interface IPieChartProps {
 
 export const PieChart: React.FC<IPieChartProps> = ({data}) => {
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
+    const chartRef = React.useRef<Chart<"pie"> | null>(null);
 
     React.useEffect(() => {
         const [chartLabels, chartData] = splitData(data);
@@ -146,7 +149,11 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
             type: "pie",
         };
 
-        new Chart(canvasRef.current, config);
+        chartRef.current = new Chart(canvasRef.current, config);
+
+        return () => {
+            chartRef.current?.destroy();
+        };
     }, [data]);
 
     return (
@@ -165,6 +172,7 @@ interface IBarChartProps {
 
 export const BarChart: React.FC<IBarChartProps> = ({data, height, decimalPlaces}) => {
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
+    const chartRef = React.useRef<Chart<"bar"> | null>(null);
 
     React.useEffect(() => {
         const [chartLabels, chartData] = splitData(data);
@@ -245,7 +253,11 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height, decimalPlaces}
             type: "bar",
         };
 
-        new Chart(canvasRef.current, config);
+        chartRef.current = new Chart(canvasRef.current, config);
+
+        return () => {
+            chartRef.current?.destroy();
+        };
     }, [data, decimalPlaces]);
 
     return (
@@ -262,6 +274,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
     const logger = useLogger("LineChart");
 
     const canvasRef = React.useRef() as React.MutableRefObject<HTMLCanvasElement>;
+    const chartRef = React.useRef<Chart<"line"> | null>(null);
 
     React.useEffect(() => {
         const chartLabels = splitData(data[0])[0];
@@ -361,7 +374,11 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
         }
 
 
-        new Chart(canvasRef.current, config);
+        chartRef.current = new Chart(canvasRef.current, config);
+
+        return () => {
+            chartRef.current?.destroy();
+        };
     }, [data, logger, seriesLabels]);
 
     return (

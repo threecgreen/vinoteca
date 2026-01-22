@@ -1,5 +1,6 @@
 import { nameToId } from "lib/component_utils";
 import React, { ReactElement } from "react";
+import { RequiredIndicator } from "../RequiredIndicator";
 import { IGridProps, InputField } from "../Grid";
 
 type IInputValue = string | number | string[];
@@ -41,6 +42,10 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
             <InputField s={ this.props.s } m={ this.props.m } l={ this.props.l }
                 classes={ [this.props.inputFieldClassName ?? ""] }
             >
+                <label htmlFor={ id }>
+                    { this.props.name }
+                    { this.props.required && <RequiredIndicator /> }
+                </label>
                 <input id={ id }
                     name={ id }
                     className={ this.props.className }
@@ -55,9 +60,6 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     required={ this.props.required }
                     autoComplete={ this.props.autocomplete }
                 />
-                <label className={ this.props.active ? "active" : "" } htmlFor={ id }>
-                    { this.props.name }
-                </label>
                 { helper }
             </InputField>
         );

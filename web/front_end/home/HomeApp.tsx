@@ -47,10 +47,10 @@ export const HomeApp: React.FC = () => {
                                 Welcome to <span className="brand-logo">vinoteca</span>
                             </h1>
                             <h5 className="center">A wine purchase tracker and review system</h5>
+                            <div className="center-align">
+                                { button }
+                            </div>
                         </Col>
-                        <div className="center-align">
-                            { button }
-                        </div>
                     </Row>
                     { homeDashboards }
                 </div>

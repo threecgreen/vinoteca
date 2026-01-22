@@ -1,24 +1,8 @@
 import React from "react";
 import { Btn } from "../Buttons";
-import { Col, IGridProps } from "../Grid";
-import { IChildrenProp } from "../IProps";
+import { IGridProps } from "../Grid";
 import { insertCharAt, SpecialCharPicker } from "../SpecialChars";
 import { Input } from "./Input";
-
-interface IUseColProps extends IChildrenProp, IGridProps {
-    useCol: boolean;
-}
-
-const UseCol: React.FC<IUseColProps> = (props) => (
-    props.useCol
-    ? <Col s={ props.s } m={ props.m } l={ props.l } classes={ ["flex"] }>
-        { props.children }
-    </Col>
-    : <div className="flex">
-        { props.children }
-    </div>
-);
-UseCol.displayName = "UseCol";
 
 interface ITextProps extends IGridProps {
     name: string;
@@ -80,18 +64,26 @@ export const TextInput: React.FC<ITextProps> = (props) => {
         setShowPicker(!showPicker);
     };
 
+    const gridClasses = useCol ? [
+        "col",
+        props.s ? `s${props.s}` : "",
+        props.m ? `m${props.m}` : "",
+        props.l ? `l${props.l}` : "",
+    ].filter(Boolean).join(" ") : "";
+
     return (
         <div onFocus={ (_) => onFocus() }
             onBlur={ (_) => onBlur() }
+            className={ gridClasses }
         >
-            <UseCol useCol={ useCol } s={ props.s } m={ props.m } l={ props.l }>
+            <div className="flex">
                 <Input inputType="text"
                     name={ props.name }
                     value={ props.value }
                     enabled={ props.enabled }
                     onChange={ (val) => onChange(val) }
                     className={ `${props.className} ${props.required ? "validate" : ""}`  }
-                    inputFieldClassName="flex-grow"
+                    inputFieldClassName="flex-grow no-col"
                     inputRef={ inputRef }
                     active={ Boolean(props.value) }
                     required={ props.required }
@@ -103,7 +95,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                 >
                     ñ
                 </Btn> }
-            </UseCol>
+            </div>
             { showPicker && <SpecialCharPicker
                 onClick={ onSpecialCharClick }
             /> }

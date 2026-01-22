@@ -21,31 +21,33 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
 
     return (
         <InputField s={ 12 } l={ 6 }
-            classes={ ["file-field", "col"] }
+            classes={ ["file-field"] }
         >
-            <div className="btn yellow-bg">
-                <span>{ name }</span>
-                <input type="file"
-                    accept="image/*"
-                    name={ id }
-                    id={ id }
-                    onChange={ (e) => onChange(e.target.files?.item(0) ?? null) }
-                />
-            </div>
-            <div className="file-path-wrapper">
-                <input type="text"
-                    // Shorten so button fits
-                    style={ {width: "calc(100% - 95px"} }
-                    className="file-path validate inline"
-                    defaultValue={ fileName }
-                    ref={ inputRef }
-                />
-                <Btn onClick={ clear }
-                    classes={ ["red-bg", "right"] }
-                    disabled={ !fileName }
+            <div className="flex items-end gap-4">
+                <label htmlFor={ id }
+                    className="btn yellow-bg cursor-pointer whitespace-nowrap"
                 >
-                    Clear
-                </Btn>
+                    { name }
+                    <input type="file"
+                        accept="image/*"
+                        name={ id }
+                        id={ id }
+                        className="hidden"
+                        onChange={ (e) => onChange(e.target.files?.item(0) ?? null) }
+                        ref={ inputRef }
+                    />
+                </label>
+                <div className="flex-grow flex items-center gap-2">
+                    <span className="flex-grow py-2 border-b border-gray-300 text-gray-600">
+                        { fileName || "No file selected" }
+                    </span>
+                    <Btn onClick={ clear }
+                        classes={ ["red-bg"] }
+                        disabled={ !fileName }
+                    >
+                        Clear
+                    </Btn>
+                </div>
             </div>
         </InputField>
     );
