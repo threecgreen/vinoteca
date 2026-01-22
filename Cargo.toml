@@ -18,6 +18,11 @@ chrono = { version = "0.4.24", features = ["serde"] }
 # Async ORM
 diesel = { version = "2.2", features = ["postgres", "chrono"] }
 diesel-async = { version = "0.5", features = ["postgres", "deadpool"] }
+# TLS for async postgres
+tokio-postgres = "0.7"
+tokio-native-tls = "0.3"
+postgres-native-tls = "0.5"
+native-tls = "0.2"
 diesel_migrations = "2.2"
 # Image handling
 image = "0.24.6"

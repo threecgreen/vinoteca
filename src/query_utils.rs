@@ -13,9 +13,7 @@ use rocket::State;
 pub type DbPool = Pool<AsyncPgConnection>;
 
 /// Database connection from connection pool.
-pub struct DbConn(
-    pub diesel_async::pooled_connection::deadpool::Object<AsyncPgConnection>,
-);
+pub struct DbConn(pub diesel_async::pooled_connection::deadpool::Object<AsyncPgConnection>);
 
 impl Deref for DbConn {
     type Target = AsyncPgConnection;
@@ -40,7 +38,10 @@ impl<'r> FromRequest<'r> for DbConn {
         match pool {
             Some(pool) => match pool.get().await {
                 Ok(conn) => Outcome::Success(DbConn(conn)),
-                Err(_) => Outcome::Error((Status::ServiceUnavailable, ())),
+                Err(e) => {
+                    log::error!("Failed to get database connection: {e}");
+                    Outcome::Error((Status::ServiceUnavailable, ()))
+                }
             },
             None => Outcome::Error((Status::InternalServerError, ())),
         }

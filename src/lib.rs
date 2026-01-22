@@ -12,6 +12,7 @@ mod schema;
 mod cached_static;
 mod catchers;
 mod config;
+mod db;
 pub mod error;
 mod serde;
 mod storage;
@@ -42,11 +43,8 @@ mod wine_types;
 pub mod wines;
 
 use cached_static::CachedStaticFiles;
-use query_utils::DbPool;
 
 use diesel::Connection;
-use diesel_async::pooled_connection::deadpool::Pool;
-use diesel_async::pooled_connection::AsyncDieselConnectionManager;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use rocket::fairing::AdHoc;
 use rocket::{catchers, routes, Build, Rocket};
@@ -84,11 +82,8 @@ pub fn create_rocket() -> rocket::Rocket<Build> {
         .extract_inner("databases.vinoteca.url")
         .expect("database url");
 
-    // Create async connection pool
-    let config = AsyncDieselConnectionManager::<diesel_async::AsyncPgConnection>::new(database_url);
-    let pool: DbPool = Pool::builder(config)
-        .build()
-        .expect("Failed to create database pool");
+    // Create async connection pool with TLS support
+    let pool = db::create_pool(database_url);
 
     let static_dir: String = rocket
         .figment()
