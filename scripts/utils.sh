@@ -65,7 +65,7 @@ js_install_and_build()
     else
         npm ci || error_exit "Failed installing JavaScript dependencies"
     fi
-    npm run-script build || error_exit "Failed building webpack bundles"
+    npm run-script build || error_exit "Failed building Vite bundles"
     cd - || exit
 }
 

@@ -1,5 +1,6 @@
+import "./vinoteca-style.sass";
 import { onError, onLoad } from "lib/utils";
-import React, { StrictMode } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Router } from "./Router";
 
