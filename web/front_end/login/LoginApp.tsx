@@ -1,11 +1,12 @@
-import { navigate, RouteComponentProps } from "@gatsbyjs/reach-router";
+import { useNavigate } from "react-router-dom";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 import { LoginForm } from "./LoginForm";
 
-const LoginApp: React.FC<RouteComponentProps> = () => {
+const LoginApp: React.FC = () => {
+    const navigate = useNavigate();
     useTitle("Login");
     useCanonical("/login");
     useDescription("Login to an existing vinoteca account");
@@ -22,7 +23,7 @@ const LoginApp: React.FC<RouteComponentProps> = () => {
 
     const onFinish = (updatedUser: IUser) => {
         setUser(updatedUser);
-        void navigate("/");
+        navigate("/");
     }
 
     return (

@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { ErrorHandler } from "components/ErrorHandler";
 import { Col, Row } from "components/Grid";
 import { Preloader } from "components/Preloader";
@@ -9,7 +8,7 @@ import { useLogger } from "lib/Logger";
 import React from "react";
 import { initState, reducer } from "./state";
 
-const ShoppingListApp: React.FC<RouteComponentProps> = () => {
+const ShoppingListApp: React.FC = () => {
     const logger = useLogger("ShoppingListApp");
     useTitle("Shopping list");
 

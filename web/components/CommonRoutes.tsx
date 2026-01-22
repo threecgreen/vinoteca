@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { RouteComponentProps } from "@gatsbyjs/reach-router";
+import { useParams } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 import { useLogger } from "../lib/Logger";
 import { BtnLink } from "./Buttons";
@@ -7,17 +7,14 @@ import { useUser } from "./context/UserContext";
 import { MaterialIcon } from "./MaterialIcon";
 import { Preloader } from "./Preloader";
 
-interface IRouteComponentProps extends RouteComponentProps {
-    children?: React.ReactNode;
-}
-
 interface IRouteByIdProps {
-    id: string;
     componentName: keyof typeof Components;
 }
 
-// TODO: check if id is valid
-export const RouteById: React.FC<RouteComponentProps<IRouteByIdProps>> = ({id, componentName}) => {
+export const RouteById: React.FC<IRouteByIdProps> = ({componentName}) => {
+    const params = useParams();
+    const id = params.id;
+
     if (!componentName) {
         throw new Error("Unexpected undefined or null componentName");
     }
@@ -42,8 +39,8 @@ interface IAuthAsyncRouteProps {
     componentName: keyof typeof Components;
 }
 
-export const AuthAsyncRoute: React.FC<RouteComponentProps<IAuthAsyncRouteProps>> =
-    ({componentName, ...props}) => {
+export const AuthAsyncRoute: React.FC<IAuthAsyncRouteProps> = ({componentName}) => {
+    const params = useParams();
 
     if (!componentName) {
         throw new Error("Unexpected undefined or null componentName");
@@ -51,7 +48,8 @@ export const AuthAsyncRoute: React.FC<RouteComponentProps<IAuthAsyncRouteProps>>
 
     const user = useUser();
     if (user) {
-        return <AsyncComponent componentName={ componentName } {...props} />;
+        // Pass URL params as props to the component
+        return <AsyncComponent componentName={ componentName } {...params} />;
     }
 
     return <Unauthorized />;
@@ -101,9 +99,9 @@ const Components = {
 };
 
 interface IAsyncComponentProps {
-    path?: string;
     componentName: keyof typeof Components;
     children?: React.ReactNode;
+    [key: string]: unknown;
 }
 
 export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, ...props}) => {
@@ -119,11 +117,17 @@ export const AsyncComponent: React.FC<IAsyncComponentProps> = ({componentName, .
     );
 };
 
-export const AsyncRoute: React.FC<IAsyncComponentProps> = ({
-    componentName, ...props
-}) => (
-    <AsyncComponent componentName={ componentName } { ...props } />
+interface IAsyncRouteProps {
+    componentName: keyof typeof Components;
+}
+
+export const AsyncRoute: React.FC<IAsyncRouteProps> = ({componentName}) => (
+    <AsyncComponent componentName={ componentName } />
 )
+
+interface IRouteComponentProps {
+    children?: React.ReactNode;
+}
 
 export const NotFound: React.FC<IRouteComponentProps> = (props) => {
     const logger = useLogger("NotFound", false, false);

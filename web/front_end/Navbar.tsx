@@ -1,4 +1,4 @@
-import { Link, navigate, useLocation } from "@gatsbyjs/reach-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { MaterialIcon } from "components/MaterialIcon";
 import { IUser } from "generated/rest";
@@ -92,6 +92,7 @@ interface IUserMenuItemsProps extends IMenuItemsProps {
 
 const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
     const setUser = useSetUser();
+    const navigate = useNavigate();
 
     const addDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
     const userDropdownRef = React.useRef() as React.MutableRefObject<HTMLAnchorElement>;
@@ -110,7 +111,7 @@ const UserMenuItems: React.FC<IUserMenuItemsProps> = ({id, user}) => {
         e.preventDefault();
         await logout();
         setUser(null);
-        void navigate("/");
+        navigate("/");
     };
 
     return (

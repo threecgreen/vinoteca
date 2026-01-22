@@ -1,11 +1,12 @@
-import { navigate, RouteComponentProps } from "@gatsbyjs/reach-router";
+import { useNavigate } from "react-router-dom";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 import { NewUserForm } from "./NewUserForm";
 
-const RegisterApp: React.FC<RouteComponentProps> = () => {
+const RegisterApp: React.FC = () => {
+    const navigate = useNavigate();
     useTitle("Register for an account");
     useCanonical("/register")
     useDescription("Create a new vinoteca account");
@@ -22,7 +23,7 @@ const RegisterApp: React.FC<RouteComponentProps> = () => {
 
     const onFinish = (newUser: IUser) => {
         setUser(newUser);
-        void navigate("/");
+        navigate("/");
     }
 
     return (

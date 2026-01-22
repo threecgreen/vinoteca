@@ -1,4 +1,4 @@
-import { navigate } from "@gatsbyjs/reach-router";
+import { useNavigate } from "react-router-dom";
 import { FloatingBtn } from "components/Buttons";
 import { useViewport } from "components/context/ViewportContext";
 import { ErrorHandler } from "components/ErrorHandler";
@@ -43,6 +43,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     // Setup
     const [state, dispatch] = React.useReducer(wineReducer, initState());
     const logger = useLogger("WineProfileApp");
+    const navigate = useNavigate();
 
     const {width} = useViewport();
 
@@ -198,7 +199,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
-            void navigate("/wines");
+            navigate("/wines");
         } catch (e) {
             logger.logException("Failed to delete wine", e, {id}, LogLevel.Warning);
         }

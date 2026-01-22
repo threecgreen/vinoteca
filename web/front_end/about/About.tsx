@@ -1,10 +1,9 @@
 /* eslint-disable max-len */
-import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { MaterialIcon } from "components/MaterialIcon";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 
-export const About: React.FC<RouteComponentProps> = () => {
+export const About: React.FC = () => {
     useTitle("About");
     useDescription("Background on vinoteca, and links to submit bugs and suggestions");
     useCanonical("/about");

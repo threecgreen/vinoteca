@@ -1,4 +1,3 @@
-import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { BtnLink } from "components/Buttons";
 import { AsyncComponent } from "components/CommonRoutes";
 import { useUser } from "components/context/UserContext";
@@ -9,7 +8,7 @@ import { Preloader } from "components/Preloader";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React, { Suspense } from "react";
 
-export const HomeApp: React.FC<RouteComponentProps> = () => {
+export const HomeApp: React.FC = () => {
     useTitle("Wine purchase tracker");
     useDescription("A simple, free wine purchase tracker");
     useCanonical("");

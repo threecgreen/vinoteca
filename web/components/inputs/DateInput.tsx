@@ -1,4 +1,4 @@
-import format from "date-fns/esm/format";
+import { format } from "date-fns";
 import { useLogger } from "lib/Logger";
 import { Datepicker } from "materialize-css";
 import React from "react";

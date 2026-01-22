@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 import "@testing-library/jest-dom/extend-expect";
 import { fireEvent, render, screen, getAllByRole } from "@testing-library/react";
 import React from "react";
+import { MemoryRouter } from "react-router-dom";
 import { WinesTable, WinesTableColumn } from "../WinesTable";
 import mockWines from "./mock/wines.json";
 
@@ -9,10 +10,12 @@ const setup = (filterTexts?: Map<WinesTableColumn, string>) => {
     const mockOnFilterChange = jest.fn();
     expect(mockWines).toBeInstanceOf(Array);
     const result = render(
-        <WinesTable wines={ mockWines}
-            filterTexts={ filterTexts }
-            onFilterChange={ mockOnFilterChange }
-        />);
+        <MemoryRouter>
+            <WinesTable wines={ mockWines}
+                filterTexts={ filterTexts }
+                onFilterChange={ mockOnFilterChange }
+            />
+        </MemoryRouter>);
     return { container: result.container, mockOnFilterChange };
 }
 

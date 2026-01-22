@@ -1,6 +1,36 @@
-import Chart from "chart.js";
+import {
+    Chart,
+    ArcElement,
+    BarElement,
+    LineElement,
+    PointElement,
+    BarController,
+    LineController,
+    PieController,
+    CategoryScale,
+    LinearScale,
+    Legend,
+    Tooltip,
+    ChartConfiguration,
+    TooltipItem,
+} from "chart.js";
 import { useLogger } from "lib/Logger";
 import React from "react";
+
+// Register Chart.js components for tree-shaking
+Chart.register(
+    ArcElement,
+    BarElement,
+    LineElement,
+    PointElement,
+    BarController,
+    LineController,
+    PieController,
+    CategoryScale,
+    LinearScale,
+    Legend,
+    Tooltip
+);
 
 export interface IChartInput {
     label: string;
@@ -69,7 +99,7 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
 
     React.useEffect(() => {
         const [chartLabels, chartData] = splitData(data);
-        const config: Chart.ChartConfiguration = {
+        const config: ChartConfiguration<"pie"> = {
             data: {
                 datasets: [{
                     backgroundColor: [
@@ -94,18 +124,24 @@ export const PieChart: React.FC<IPieChartProps> = ({data}) => {
                         top: 15,
                     },
                 },
-                legend: {
-                    labels: {
-                        fontFamily: FONT_FAMILY,
-                        fontSize: 16,
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                family: FONT_FAMILY,
+                                size: 16,
+                            },
+                        },
+                        position: "bottom",
                     },
-                    position: "bottom",
+                    tooltip: {
+                        bodyFont: {
+                            family: FONT_FAMILY,
+                            size: 14,
+                        },
+                    },
                 },
                 responsive: true,
-                tooltips: {
-                    bodyFontFamily: FONT_FAMILY,
-                    bodyFontSize: 14,
-                },
             },
             type: "pie",
         };
@@ -137,7 +173,7 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height, decimalPlaces}
             return;
         }
 
-        const config: Chart.ChartConfiguration = {
+        const config: ChartConfiguration<"bar"> = {
             data: {
                 datasets: [{
                     backgroundColor: Object.values(COLORS),
@@ -146,55 +182,67 @@ export const BarChart: React.FC<IBarChartProps> = ({data, height, decimalPlaces}
                 labels: chartLabels,
             },
             options: {
+                indexAxis: "y", // horizontal bar chart
                 layout: {
                     padding: {
                         bottom: 15,
                         top: 15,
                     },
                 },
-                legend: {
-                    display: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    tooltip: {
+                        bodyFont: {
+                            family: FONT_FAMILY,
+                            size: 12,
+                        },
+                        titleFont: {
+                            family: FONT_FAMILY,
+                            size: 14,
+                        },
+                        callbacks: {
+                            label: (context: TooltipItem<"bar">) => {
+                                const value = context.parsed.x;
+                                if (typeof value === "number") {
+                                    return value.toFixed(decimalPlaces);
+                                }
+                                return String(value ?? "");
+                            }
+                        }
+                    },
                 },
                 responsive: true,
                 scales: {
-                    xAxes: [{
-                        gridLines: {
+                    x: {
+                        grid: {
                             color: TRANSLUCENT_GRAY,
                         },
                         ticks: {
-                            beginAtZero: true,
-                            fontColor: TRANSLUCENT_WHITE,
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 14,
+                            color: TRANSLUCENT_WHITE,
+                            font: {
+                                family: FONT_FAMILY,
+                                size: 14,
+                            },
                         },
-                    }],
-                    yAxes: [{
-                        gridLines: {
+                        beginAtZero: true,
+                    },
+                    y: {
+                        grid: {
                             color: TRANSLUCENT_GRAY,
                         },
                         ticks: {
-                            fontColor: TRANSLUCENT_WHITE,
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 14,
+                            color: TRANSLUCENT_WHITE,
+                            font: {
+                                family: FONT_FAMILY,
+                                size: 14,
+                            },
                         },
-                    }],
-                },
-                tooltips: {
-                    bodyFontFamily: FONT_FAMILY,
-                    bodyFontSize: 12,
-                    titleFontFamily: FONT_FAMILY,
-                    titleFontSize: 14,
-                    callbacks: {
-                        label: (tooltipItem, _data) => {
-                            if (typeof tooltipItem.xLabel === "number") {
-                                return tooltipItem.xLabel.toFixed(decimalPlaces);
-                            }
-                            return tooltipItem.xLabel ?? "";
-                        }
-                    }
+                    },
                 },
             },
-            type: "horizontalBar",
+            type: "bar",
         };
 
         new Chart(canvasRef.current, config);
@@ -217,7 +265,7 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
 
     React.useEffect(() => {
         const chartLabels = splitData(data[0])[0];
-        const config: Chart.ChartConfiguration = {
+        const config: ChartConfiguration<"line"> = {
             data: {
                 datasets: [],
                 labels: chartLabels,
@@ -232,41 +280,52 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
                 maintainAspectRatio: false,
                 responsive: true,
                 scales: {
-                    xAxes: [{
-                        gridLines: {
+                    x: {
+                        grid: {
                             color: TRANSLUCENT_GRAY,
                         },
                         ticks: {
-                            beginAtZero: true,
-                            fontColor: TRANSLUCENT_WHITE,
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 14,
+                            color: TRANSLUCENT_WHITE,
+                            font: {
+                                family: FONT_FAMILY,
+                                size: 14,
+                            },
                         },
-                    }],
-                    yAxes: [{
-                        gridLines: {
+                    },
+                    y: {
+                        grid: {
                             color: TRANSLUCENT_GRAY,
                         },
                         ticks: {
-                            fontColor: TRANSLUCENT_WHITE,
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 14,
+                            color: TRANSLUCENT_WHITE,
+                            font: {
+                                family: FONT_FAMILY,
+                                size: 14,
+                            },
                         },
-                    }],
+                        beginAtZero: true,
+                    },
                 },
-                tooltips: {
-                    bodyFontFamily: FONT_FAMILY,
-                    bodyFontSize: 12,
-                    titleFontFamily: FONT_FAMILY,
-                    titleFontSize: 14,
-                    callbacks: {
-                        label: (tooltipItem, _data) => {
-                            if (typeof tooltipItem.yLabel === "number") {
-                                return tooltipItem.yLabel.toFixed(2);
+                plugins: {
+                    tooltip: {
+                        bodyFont: {
+                            family: FONT_FAMILY,
+                            size: 12,
+                        },
+                        titleFont: {
+                            family: FONT_FAMILY,
+                            size: 14,
+                        },
+                        callbacks: {
+                            label: (context: TooltipItem<"line">) => {
+                                const value = context.parsed.y;
+                                if (typeof value === "number") {
+                                    return value.toFixed(2);
+                                }
+                                return String(value ?? "");
                             }
-                            return tooltipItem.yLabel ?? "";
                         }
-                    }
+                    },
                 },
             },
             type: "line",

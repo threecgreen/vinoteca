@@ -1,4 +1,4 @@
-import { format } from "date-fns/esm";
+import { format } from "date-fns";
 import { deserializeDate } from "../date";
 
 test("Deserialize naive date string without timezone", () => {

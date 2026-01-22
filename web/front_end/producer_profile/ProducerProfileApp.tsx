@@ -1,4 +1,4 @@
-import { navigate } from "@gatsbyjs/reach-router";
+import { useNavigate } from "react-router-dom";
 import { FloatingBtn } from "components/Buttons";
 import { FixedActionList } from "components/FixedActionList";
 import { Col, Row } from "components/Grid";
@@ -89,6 +89,7 @@ interface IProps {
 
 const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
     const logger = useLogger("ProducerProfileApp");
+    const navigate = useNavigate();
 
     const [state, dispatch] = React.useReducer(reducer, [], () => ({
         mode: Mode.Display,
@@ -182,7 +183,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         try {
             await deleteProducer(producerId);
             // Redirect home
-            void navigate("/");
+            navigate("/");
         } catch (ex) {
             logger.logException("Failed to delete producer", ex, {id: producerId},
                                 LogLevel.Warning);

@@ -1,9 +1,8 @@
 /* eslint-disable max-len */
-import { RouteComponentProps } from "@gatsbyjs/reach-router";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
 import React from "react";
 
-export const Changelog: React.FC<RouteComponentProps> = () => {
+export const Changelog: React.FC = () => {
     useTitle("Changelog");
     useDescription("History of changes and versions");
     useCanonical("/about/changelog");

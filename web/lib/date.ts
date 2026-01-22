@@ -1,5 +1,4 @@
-import format from "date-fns/esm/format";
-import parse from "date-fns/esm/parse";
+import { format, parse } from "date-fns";
 
 const FORMAT = "yyyy-MM-dd";
 

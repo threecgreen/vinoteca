@@ -2,7 +2,7 @@ import { Btn } from "components/Buttons";
 import { Unauthorized } from "components/CommonRoutes";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { Col, Row } from "components/Grid";
-import format from "date-fns/esm/format";
+import { format } from "date-fns";
 import { IChangeUserForm } from "generated/rest";
 import { updateUser } from "lib/api/auth";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";

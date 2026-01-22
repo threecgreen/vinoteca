@@ -1,4 +1,4 @@
-import { Link } from "@gatsbyjs/reach-router";
+import { Link } from "react-router-dom";
 import React from "react";
 import { Col } from "./Grid";
 import { IChildrenProp, IClassesProp } from "./IProps";

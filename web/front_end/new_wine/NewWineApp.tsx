@@ -1,4 +1,4 @@
-import { navigate, RouteComponentProps } from "@gatsbyjs/reach-router";
+import { useNavigate } from "react-router-dom";
 import { Btn, BtnLink } from "components/Buttons";
 import { Form } from "components/Form";
 import { Row } from "components/Grid";
@@ -18,8 +18,9 @@ import { useLogger } from "lib/Logger";
 import React from "react";
 import { initWineInputData, wineDataToForm, wineInputReducer, WineInputs } from "./WineInputs";
 
-const NewWineApp: React.FC<RouteComponentProps> = (_) => {
+const NewWineApp: React.FC = () => {
     const logger = useLogger("NewWineApp");
+    const navigate = useNavigate();
     const [purchaseState, purchaseDispatch, clearPurchaseStorage] = useLocalStorageReducer(
         "NewWineApp-Purchase", purchaseInputReducer, initPurchaseInputData,
         (v) => Json.stringify(v, {dateKeys: ["date"]}),
@@ -63,7 +64,7 @@ const NewWineApp: React.FC<RouteComponentProps> = (_) => {
             clearPurchaseStorage();
             clearWineStorage();
             clearGrapesStorage();
-            void navigate(`/wines/${wine.id}`);
+            navigate(`/wines/${wine.id}`);
         } catch (err) {
             logger.logException("Error creating new wine", err);
             // Prevent partial data

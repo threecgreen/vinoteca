@@ -1,5 +1,5 @@
-import { Link } from "@gatsbyjs/reach-router";
-import format from "date-fns/esm/format";
+import { Link } from "react-router-dom";
+import { format } from "date-fns";
 import { EN_DASH, getNameAndType } from "lib/component_utils";
 import { capitalizeFirstLetter } from "lib/utils";
 import React, { ReactElement } from "react";

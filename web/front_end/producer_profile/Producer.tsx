@@ -1,4 +1,4 @@
-import { Link } from "@gatsbyjs/reach-router";
+import { Link } from "react-router-dom";
 import { CancelOrConfirmBtns } from "components/Buttons";
 import { Form } from "components/Form";
 import { Col, Row } from "components/Grid";
