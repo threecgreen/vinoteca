@@ -89,6 +89,7 @@ pub fn create_rocket() -> rocket::Rocket<Build> {
         .figment()
         .extract_inner("static_dir")
         .unwrap_or_else(|_| "web/static".to_owned());
+    let static_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(&static_dir);
     let aws_access_key: String = rocket
         .figment()
         .extract_inner("aws_access_key")
@@ -104,7 +105,10 @@ pub fn create_rocket() -> rocket::Rocket<Build> {
         .manage(pool)
         .manage(config::Config::new(storage))
         // Run embedded database migrations on startup
-        .attach(AdHoc::try_on_ignite("Database migrations", run_db_migrations))
+        .attach(AdHoc::try_on_ignite(
+            "Database migrations",
+            run_db_migrations,
+        ))
         .mount("/", static_handlers::get_routes())
         .mount(
             "/rest",
