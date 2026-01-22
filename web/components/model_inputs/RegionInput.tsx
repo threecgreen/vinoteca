@@ -84,7 +84,8 @@ export const RegionInput: React.FC<IProps> = ({value, producerText, required, on
                     type="text"
                     value={value}
                     disabled
-                    className="w-full py-2 bg-transparent border-0 border-b border-gray-300 text-gray-500"
+                    className="w-full py-2 bg-transparent border-0 border-b
+                        border-gray-300 text-gray-500"
                 />
             )}
         </InputField>

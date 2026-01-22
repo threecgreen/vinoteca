@@ -34,7 +34,7 @@ export const Modal: React.FC<IModalProps> = ({children, onClose}) => {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <DialogPanel className="w-full max-w-lg transform overflow-hidden rounded-sm bg-white shadow-xl transition-all">
+                            <DialogPanel className="modal-dialog-panel">
                                 { children }
                             </DialogPanel>
                         </TransitionChild>
@@ -70,7 +70,9 @@ export const DeleteModal: React.FC<IDeleteModalProps> = ({item, onYesClick, onNo
     return (
         <Modal onClose={ onNoClick }>
             <ModalContent>
-                <h5 className="text-lg font-medium">Are you sure you want to delete this { item }?</h5>
+                <h5 className="text-lg font-medium">
+                    Are you sure you want to delete this { item }?
+                </h5>
                 <p className="mt-2 text-gray-600">This action is irreversible.</p>
             </ModalContent>
             <ModalFooter>

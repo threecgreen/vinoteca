@@ -73,8 +73,13 @@ export function TopEntity<Entity extends IEntity>({
                 </TabsList>
                 <TabPanelList>
                     <TabPanel>
-                        <SimpleTable columns={[name, { name: "Purchases", isNumCol: true },
-                            { name: "Varieties", isNumCol: true }, { name: "Price", isNumCol: true }]}
+                        <SimpleTable
+                            columns={[
+                                name,
+                                { name: "Purchases", isNumCol: true },
+                                { name: "Varieties", isNumCol: true },
+                                { name: "Price", isNumCol: true },
+                            ]}
                             condensed={false}
                         >
                             {topEntities.map((entity) =>
@@ -90,14 +95,22 @@ export function TopEntity<Entity extends IEntity>({
                         </SimpleTable>
                     </TabPanel>
                     <TabPanel>
-                        <BarChart height={canvasHeight}
-                            data={topEntities.map((ent) => ({ label: ent.name, value: ent.quantity }))}
+                        <BarChart
+                            height={canvasHeight}
+                            data={topEntities.map((ent) => ({
+                                label: ent.name,
+                                value: ent.quantity,
+                            }))}
                             decimalPlaces={ 0 }
                         />
                     </TabPanel>
                     <TabPanel>
-                        <BarChart height={canvasHeight}
-                            data={topEntities.map((ent) => ({ label: ent.name, value: ent.varieties }))}
+                        <BarChart
+                            height={canvasHeight}
+                            data={topEntities.map((ent) => ({
+                                label: ent.name,
+                                value: ent.varieties,
+                            }))}
                             decimalPlaces={ 0 }
                         />
                     </TabPanel>

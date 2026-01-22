@@ -93,7 +93,9 @@ interface IProps {
 
 export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dispatch}) => {
     const logger = useLogger("PurchaseInputs");
-    const [storeCompletions, setStoreCompletions] = React.useState<Record<string, string | null>>({});
+    const [storeCompletions, setStoreCompletions] = React.useState<
+        Record<string, string | null>
+    >({});
 
     React.useEffect(() => {
         async function fetchStores() {

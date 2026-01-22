@@ -1,5 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, MenuButton, MenuItem, MenuItems, Transition, Dialog, DialogPanel, TransitionChild } from "@headlessui/react";
+import {
+    Menu, MenuButton, MenuItem, MenuItems, Transition,
+    Dialog, DialogPanel, TransitionChild,
+} from "@headlessui/react";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { MaterialIcon } from "components/MaterialIcon";
 import { IUser } from "generated/rest";
@@ -80,7 +83,7 @@ const MobileSidenav: React.FC<IMobileSidenavProps> = ({isOpen, onClose}) => {
                         leaveFrom="translate-x-0"
                         leaveTo="-translate-x-full"
                     >
-                        <DialogPanel className="relative w-64 bg-white shadow-xl h-full overflow-y-auto">
+                        <DialogPanel className="sidenav-panel">
                             <div className="p-4">
                                 <ul className="space-y-2">
                                     <MobileMenuItems onClose={onClose} />
@@ -146,7 +149,7 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
         <>
             {/* Add dropdown */}
             <Menu as="li" className="relative">
-                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                <MenuButton className="nav-menu-button">
                     <MaterialIcon iconName="add_circle" />
                     Add
                     <MaterialIcon iconName="arrow_drop_down" />
@@ -160,14 +163,14 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                    <MenuItems className="nav-dropdown-menu">
                         <MenuItem>
-                            <Link to="/wines/new" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/wines/new" className="nav-dropdown-link">
                                 New wine
                             </Link>
                         </MenuItem>
                         <MenuItem>
-                            <Link to="/wines/search" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/wines/search" className="nav-dropdown-link">
                                 Purchased again
                             </Link>
                         </MenuItem>
@@ -177,7 +180,7 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
 
             {/* Wines dropdown */}
             <Menu as="li" className="relative">
-                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                <MenuButton className="nav-menu-button">
                     <MaterialIcon iconName="reorder" />
                     Wines
                     <MaterialIcon iconName="arrow_drop_down" />
@@ -191,19 +194,19 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                    <MenuItems className="nav-dropdown-menu">
                         <MenuItem>
-                            <Link to="/wines" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/wines" className="nav-dropdown-link">
                                 All wines
                             </Link>
                         </MenuItem>
                         <MenuItem>
-                            <Link to="/wines/inventory" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/wines/inventory" className="nav-dropdown-link">
                                 Inventory
                             </Link>
                         </MenuItem>
                         <MenuItem>
-                            <Link to="/wines/shopping-list" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/wines/shopping-list" className="nav-dropdown-link">
                                 Shopping list
                             </Link>
                         </MenuItem>
@@ -221,7 +224,7 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
 
             {/* User dropdown */}
             <Menu as="li" className="relative">
-                <MenuButton className="flex items-center gap-1 px-3 py-2 hover:bg-white/10 rounded-sm transition-colors">
+                <MenuButton className="nav-menu-button">
                     <MaterialIcon iconName="account_circle" />
                     {user.name}
                     <MaterialIcon iconName="arrow_drop_down" />
@@ -235,14 +238,14 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <MenuItems className="absolute right-0 mt-1 w-48 bg-white rounded-sm shadow-lg py-1 z-50">
+                    <MenuItems className="nav-dropdown-menu">
                         <MenuItem>
-                            <Link to="/profile" className="block px-4 py-2 text-wine-green hover:bg-gray-100">
+                            <Link to="/profile" className="nav-dropdown-link">
                                 Profile
                             </Link>
                         </MenuItem>
                         <MenuItem>
-                            <a onClick={onLogout} className="block px-4 py-2 text-wine-green hover:bg-gray-100 cursor-pointer">
+                            <a onClick={onLogout} className="nav-dropdown-link cursor-pointer">
                                 Log out
                             </a>
                         </MenuItem>
@@ -334,10 +337,7 @@ const MobileMenuItems: React.FC<IMobileMenuItemsProps> = ({onClose}) => {
                 <li className="font-medium text-wine-red px-3 py-2">{user.name}</li>
                 <MobileLink to="/profile">Profile</MobileLink>
                 <li>
-                    <button
-                        onClick={onLogout}
-                        className="w-full text-left px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-sm transition-colors"
-                    >
+                    <button onClick={onLogout} className="mobile-logout-btn">
                         Log out
                     </button>
                 </li>

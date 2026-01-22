@@ -1,4 +1,6 @@
-import { Tab as HeadlessTab, TabGroup, TabList, TabPanel as HeadlessTabPanel, TabPanels } from "@headlessui/react";
+import {
+    Tab as HeadlessTab, TabGroup, TabList, TabPanel as HeadlessTabPanel, TabPanels,
+} from "@headlessui/react";
 import React from "react";
 import { IChildrenProp } from "./IProps";
 
@@ -41,17 +43,10 @@ interface ITabProps extends IChildrenProp {
 
 export const Tab: React.FC<ITabProps> = ({children, color, enabled}) => {
     const isEnabled = enabled ?? true;
-    const colorClass = color === TabColor.Green
-        ? "text-wine-green data-[selected]:border-wine-green hover:text-wine-green-light"
-        : "text-wine-red data-[selected]:border-wine-red hover:text-wine-red-light";
+    const colorClass = color === TabColor.Green ? "tab-green" : "tab-red";
 
     return (
-        <HeadlessTab
-            disabled={!isEnabled}
-            className={`flex-1 px-3 py-2 text-center uppercase whitespace-nowrap border-b-2 border-transparent transition-colors
-                focus:outline-none ${colorClass}
-                disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
+        <HeadlessTab disabled={!isEnabled} className={`tab-button ${colorClass}`}>
             { children }
         </HeadlessTab>
     );

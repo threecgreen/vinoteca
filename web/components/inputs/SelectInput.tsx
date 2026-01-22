@@ -1,4 +1,6 @@
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react";
+import {
+    Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition,
+} from "@headlessui/react";
 import { nameToId } from "lib/component_utils";
 import React, { Fragment } from "react";
 import { InputField } from "../Grid";
@@ -32,9 +34,7 @@ export const SelectInput: React.FC<IProps> = (props) => {
             )}
             <Listbox value={props.selection} onChange={props.onChange}>
                 <div className="relative">
-                    <ListboxButton className="w-full py-2 bg-transparent border-0 border-b border-gray-300
-                        text-left cursor-pointer focus:outline-none focus:border-b-2 focus:border-wine-green
-                        flex items-center justify-between">
+                    <ListboxButton className="select-button">
                         <span className={selectedOption?.value ? "" : "text-gray-400"}>
                             {selectedOption?.label || "Select..."}
                         </span>
@@ -46,17 +46,13 @@ export const SelectInput: React.FC<IProps> = (props) => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <ListboxOptions className="absolute z-50 mt-1 max-h-60 w-full overflow-auto
-                            rounded-sm bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        <ListboxOptions className="dropdown-options">
                             {props.options.map((option) => (
                                 <ListboxOption
                                     key={option.value}
                                     value={option.value}
                                     disabled={option.disabled}
-                                    className="relative cursor-pointer select-none py-2 px-4
-                                        data-[focus]:bg-wine-red data-[focus]:text-white
-                                        data-[selected]:font-medium data-[disabled]:text-gray-300
-                                        data-[disabled]:cursor-not-allowed"
+                                    className="dropdown-option"
                                 >
                                     {option.label}
                                 </ListboxOption>

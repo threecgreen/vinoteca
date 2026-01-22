@@ -38,25 +38,73 @@ export const Router: React.FC = () => (
                                 <Route path="about" element={<About />} />
                                 <Route path="about/changelog" element={<Changelog />} />
 
-                                <Route path="login" element={<AsyncRoute componentName="Login" />} />
-                                <Route path="register" element={<AsyncRoute componentName="Register" />} />
+                                <Route
+                                    path="login"
+                                    element={<AsyncRoute componentName="Login" />}
+                                />
+                                <Route
+                                    path="register"
+                                    element={<AsyncRoute componentName="Register" />}
+                                />
 
-                                <Route path="dashboards" element={<AuthAsyncRoute componentName="Dashboard" />} />
-                                <Route path="grapes" element={<AuthAsyncRoute componentName="Grapes" />} />
-                                <Route path="producers" element={<AuthAsyncRoute componentName="Producers" />} />
+                                <Route
+                                    path="dashboards"
+                                    element={<AuthAsyncRoute componentName="Dashboard" />}
+                                />
+                                <Route
+                                    path="grapes"
+                                    element={<AuthAsyncRoute componentName="Grapes" />}
+                                />
+                                <Route
+                                    path="producers"
+                                    element={<AuthAsyncRoute componentName="Producers" />}
+                                />
 
-                                <Route path="wines" element={<AuthAsyncRoute componentName="Wines" />} />
-                                <Route path="wines/:id" element={<RouteById componentName="WineProfile" />} />
-                                <Route path="wines/inventory" element={<AuthAsyncRoute componentName="Inventory" />} />
-                                <Route path="wines/new" element={<AuthAsyncRoute componentName="NewWine" />} />
-                                <Route path="wines/search" element={<AuthAsyncRoute componentName="SearchWines" />} />
-                                <Route path="wines/shopping-list" element={<AuthAsyncRoute componentName="ShoppingList" />} />
+                                <Route
+                                    path="wines"
+                                    element={<AuthAsyncRoute componentName="Wines" />}
+                                />
+                                <Route
+                                    path="wines/:id"
+                                    element={<RouteById componentName="WineProfile" />}
+                                />
+                                <Route
+                                    path="wines/inventory"
+                                    element={<AuthAsyncRoute componentName="Inventory" />}
+                                />
+                                <Route
+                                    path="wines/new"
+                                    element={<AuthAsyncRoute componentName="NewWine" />}
+                                />
+                                <Route
+                                    path="wines/search"
+                                    element={<AuthAsyncRoute componentName="SearchWines" />}
+                                />
+                                <Route
+                                    path="wines/shopping-list"
+                                    element={<AuthAsyncRoute componentName="ShoppingList" />}
+                                />
 
-                                <Route path="producers/:producerId" element={<AuthAsyncRoute componentName="ProducerProfile" />} />
-                                <Route path="regions/:regionId" element={<AuthAsyncRoute componentName="RegionProfile" />} />
-                                <Route path="profile" element={<AuthAsyncRoute componentName="UserProfile" />} />
-                                <Route path="viti-areas/:vitiAreaId" element={<AuthAsyncRoute componentName="VitiAreaProfile" />} />
-                                <Route path="wine-types/:wineTypeId" element={<AuthAsyncRoute componentName="WineTypeProfile" />} />
+                                <Route
+                                    path="producers/:producerId"
+                                    element={<AuthAsyncRoute componentName="ProducerProfile" />}
+                                />
+                                <Route
+                                    path="regions/:regionId"
+                                    element={<AuthAsyncRoute componentName="RegionProfile" />}
+                                />
+                                <Route
+                                    path="profile"
+                                    element={<AuthAsyncRoute componentName="UserProfile" />}
+                                />
+                                <Route
+                                    path="viti-areas/:vitiAreaId"
+                                    element={<AuthAsyncRoute componentName="VitiAreaProfile" />}
+                                />
+                                <Route
+                                    path="wine-types/:wineTypeId"
+                                    element={<AuthAsyncRoute componentName="WineTypeProfile" />}
+                                />
 
                                 <Route path="*" element={<NotFound />} />
                             </Route>
