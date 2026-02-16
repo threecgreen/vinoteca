@@ -35,6 +35,16 @@
     font-family: inherit;
   }
 
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  textarea {
+    @apply w-full py-2 bg-transparent border-0 border-b border-gray-300
+           focus:outline-none focus:border-b-2 focus:border-wine-green;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-normal;
   }
@@ -254,6 +264,10 @@
   /* Form styles */
   .input-field {
     @apply relative mb-4 px-2 box-border flex-shrink-0;
+  }
+
+  td .input-field {
+    @apply mb-0 px-0;
   }
 
   .input-field label {
@@ -817,7 +831,7 @@ div.confirm {
 }
 
 .dropdown-options {
-  @apply absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-sm
+  @apply absolute z-50 mt-1 max-h-60 min-w-full w-max overflow-auto rounded-sm
          bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none;
 }
 

@@ -50,7 +50,7 @@ export const grapeReducer: React.Reducer<IWineGrape[], Action> = (grapes, action
     switch (action.type) {
         case "addGrape":
             const maxId = maxBy(grapes, (grape) => grape.grapeId)?.grapeId ?? 0;
-            const hasGrapePct = grapes.some((grape) => grape.percent !== null && grape.grape);
+            const hasGrapePct = grapes.some((grape) => grape.percent !== null);
             const remPct = remainingGrapePct(grapes);
             const wineId = grapes.length > 0 ? grapes[grapes.length - 1].wineId : 0;
             // Need to create new array to assuage React diffing algo
