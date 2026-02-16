@@ -12,7 +12,14 @@ export const Changelog: React.FC = () => {
             <h1 className="page-title med-heading">Changelog</h1>
 
             <h5>7.0.0</h5>
-            <p>Migrate backend and frontend to more newer frameworks and versions</p>
+            <ul className="bullets">
+                <li>Migrate backend to Rocket 0.5 with async Diesel</li>
+                <li>Add TLS support</li>
+                <li>Migrate from webpack to vite</li>
+                <li>Migrate from Materialize CSS to Tailwind CSS</li>
+                <li>Upgrade front-end dependencies including React Router</li>
+                <li>Fix grape composition remaining percentage not being prefilled when grape name is empty</li>
+            </ul>
 
             <h5>6.3.0</h5>
             <p>Add å, ä, ö, and ø as available special characters</p>
