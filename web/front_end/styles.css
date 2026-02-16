@@ -27,7 +27,12 @@
 /* Base layer customizations */
 @layer base {
   body {
-    @apply font-sans text-wine-black bg-wine-white text-[15px];
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    @apply text-wine-black bg-wine-white text-[15px];
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -252,7 +257,7 @@
   }
 
   .input-field label {
-    @apply block text-sm text-gray-500;
+    @apply block text-base text-gray-400 text-left;
   }
 
   .input-field input,
