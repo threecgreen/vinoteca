@@ -15,21 +15,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Update stable
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
           components: clippy
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
+        run: cargo build
       - name: Lint
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- --deny warnings
+        run: cargo clippy --all-targets -- --deny warnings
 
   rust-test:
     name: Rust test
@@ -40,11 +32,9 @@ jobs:
       - name: Setup test database
         run: docker compose up --detach
       - name: Test
-        uses: actions-rs/cargo@v1
+        run: cargo test
         env:
           ROCKET_TEST_DB: postgres://postgres:docker@localhost:5432
-        with:
-          command: test
 
   js:
     name: JS
@@ -56,10 +46,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Generate contracts
-        uses: actions-rs/cargo@v1
-        with:
-          command: run
-          args: --bin gen_contracts
+        run: cargo run --bin gen_contracts
       - name: Install NPM
         uses: actions/setup-node@v4
         with:
