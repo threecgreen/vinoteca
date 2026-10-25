@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Btn, BtnLink } from "components/Buttons";
 import { Form } from "components/Form";
 import { Col, Row } from "components/Grid";
@@ -64,7 +64,7 @@ const NewWineApp: React.FC = () => {
             clearPurchaseStorage();
             clearWineStorage();
             clearGrapesStorage();
-            navigate(`/wines/${wine.id}`);
+            void navigate(`/wines/${wine.id}`);
         } catch (err) {
             logger.logException("Error creating new wine", err);
             // Prevent partial data

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { format } from "date-fns";
 import { EN_DASH, getNameAndType } from "lib/component_utils";
 import { capitalizeFirstLetter } from "lib/utils";

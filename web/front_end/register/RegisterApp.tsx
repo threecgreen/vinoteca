@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useSetUser, useUser } from "components/context/UserContext";
 import { IUser } from "generated/rest";
 import { useCanonical, useDescription, useTitle } from "lib/hooks";
@@ -23,7 +23,7 @@ const RegisterApp: React.FC = () => {
 
     const onFinish = (newUser: IUser) => {
         setUser(newUser);
-        navigate("/");
+        void navigate("/");
     }
 
     return (

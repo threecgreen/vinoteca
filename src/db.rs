@@ -10,9 +10,7 @@ fn establish_tls_connection(
 ) -> BoxFuture<'_, diesel::ConnectionResult<AsyncPgConnection>> {
     let url = url.to_string();
     async move {
-        let tls_connector = native_tls::TlsConnector::builder()
-            .danger_accept_invalid_certs(true)
-            .build()
+        let tls_connector = native_tls::TlsConnector::new()
             .map_err(|e| diesel::ConnectionError::BadConnection(e.to_string()))?;
         let postgres_tls = postgres_native_tls::MakeTlsConnector::new(tls_connector);
 

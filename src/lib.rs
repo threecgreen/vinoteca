@@ -2,8 +2,6 @@
 
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate validator_derive;
 
 // Diesel modules
 pub mod models;

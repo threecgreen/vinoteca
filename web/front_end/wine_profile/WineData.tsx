@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { FloatingBtn } from "components/Buttons";
 import { MaterialIcon } from "components/MaterialIcon";
 import { capitalizeFirstLetter } from "lib/utils";
