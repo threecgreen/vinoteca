@@ -18,14 +18,18 @@ test("Clicking button should trigger onClick", () => {
     expect(mockOnClick).toBeCalledWith("è");
 });
 
-test("Shift button changes to uppercase and back to lowercase", () => {
+test("Case toggle switches between lowercase and uppercase", () => {
     const { mockOnClick } = setup();
-    const shiftBtn = screen.getByText("↑");
+    const lower = screen.getByRole("button", { name: "abc" });
+    const upper = screen.getByRole("button", { name: "ABC" });
+    expect(lower).toHaveAttribute("aria-pressed", "true");
     expect(screen.queryByText("Ñ")).toBeFalsy();
-    fireEvent.mouseDown(shiftBtn);
-    expect(screen.queryByText("Ñ")).toBeTruthy();
-    expect(mockOnClick).toBeCalledTimes(0);
-    fireEvent.mouseDown(shiftBtn);
-    expect(mockOnClick).toBeCalledTimes(0);
+
+    fireEvent.click(upper);
+    expect(upper).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText("Ñ")).toBeTruthy();
+
+    fireEvent.click(lower);
     expect(screen.getByText("ñ")).toBeTruthy();
+    expect(mockOnClick).toBeCalledTimes(0);
 });

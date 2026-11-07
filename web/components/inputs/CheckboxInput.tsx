@@ -19,7 +19,7 @@ export class CheckboxInput extends React.Component<IProps> {
         const id = nameToId(this.props.name);
         return (
             <Col { ...this.props }>
-                <div className="switch flex flex-wrap items-center gap-1">
+                <div className="switch flex flex-wrap items-center gap-2">
                     <label htmlFor={ id } className="text-sm text-gray-500">
                         { this.props.text }
                     </label>

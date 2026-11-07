@@ -1,6 +1,6 @@
 import React from "react";
 import { FloatingBtn } from "../Buttons";
-import { Col, Row } from "../Grid";
+import { Col } from "../Grid";
 import { Autocomplete } from "../inputs/Autocomplete";
 import { NumberInput } from "../inputs/NumberInput";
 import { MaterialIcon } from "../MaterialIcon";
@@ -18,31 +18,34 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent,
                                               handleDelete, onChange}) => {
     return (
         <Col s={12} l={6}>
-            <Row>
-                <Col s={2} l={1} classes={["flex", "items-center"]}>
-                    <FloatingBtn onClick={() => handleDelete(id)}
-                        classes={["red-bg"]}
-                    >
-                        <MaterialIcon iconName="remove" />
-                    </FloatingBtn>
-                </Col>
-                <NumberInput name="Percent"
-                    number={percent}
-                    s={4}
-                    l={4}
-                    min={0}
-                    max={100}
-                    step="1"
-                    onChange={(n) => onChange(id, grape, n)}
-                />
-                <Autocomplete name="Grape"
-                    id={ `grape-${id}` }
-                    s={ 6 } l={ 7 }
-                    value={ grape }
-                    onChange={ (updatedGrape) => onChange(id, updatedGrape, percent) }
-                    completions={ completions }
-                />
-            </Row>
+            {/* Sized by content rather than the viewport grid so the row fits in modals */}
+            <div className="flex items-center">
+                <FloatingBtn onClick={() => handleDelete(id)}
+                    classes={["red-bg", "flex-none"]}
+                >
+                    <MaterialIcon iconName="remove" />
+                </FloatingBtn>
+                <div className="w-24 flex-none">
+                    <NumberInput name="Percent"
+                        id={ `percent-${id}` }
+                        number={percent}
+                        s={12}
+                        min={0}
+                        max={100}
+                        step="1"
+                        onChange={(n) => onChange(id, grape, n)}
+                    />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <Autocomplete name="Grape"
+                        id={ `grape-${id}` }
+                        s={ 12 }
+                        value={ grape }
+                        onChange={ (updatedGrape) => onChange(id, updatedGrape, percent) }
+                        completions={ completions }
+                    />
+                </div>
+            </div>
         </Col>
     );
 };

@@ -38,7 +38,7 @@ export const SelectInput: React.FC<IProps> = (props) => {
                     <span className={selectedOption?.value ? "" : "text-gray-400"}>
                         {selectedOption?.label || "Select..."}
                     </span>
-                    <MaterialIcon iconName="arrow_drop_down" className="text-gray-500" />
+                    <MaterialIcon iconName="arrow_drop_down" className="text-gray-500 -my-1" />
                 </ListboxButton>
                 <ListboxOptions
                     anchor="bottom start"

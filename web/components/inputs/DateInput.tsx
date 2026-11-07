@@ -24,7 +24,8 @@ export const DateInput: React.FC<IProps> = ({ date, name, onChange }) => {
                 scrollableYearDropdown
                 placeholderText="Select date..."
                 className="w-full py-2 bg-transparent border-0 border-b border-gray-300
-                    focus:outline-none focus:border-b-2 focus:border-wine-green"
+                    focus:outline-none focus:border-wine-green
+                    focus:shadow-[0_1px_0_0_theme(colors.wine-green.DEFAULT)]"
             />
         </InputField>
     );

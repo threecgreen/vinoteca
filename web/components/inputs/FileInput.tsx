@@ -21,7 +21,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
 
     return (
         <InputField s={ 12 } l={ 6 }>
-            <div className="flex items-end gap-4">
+            <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
                 <label htmlFor={ id }
                     className="btn yellow-bg cursor-pointer whitespace-nowrap"
                 >
@@ -35,7 +35,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
                         ref={ inputRef }
                     />
                 </label>
-                <div className="flex-grow flex items-center gap-2">
+                <div className="flex-grow min-w-0 flex items-center gap-2">
                     <span className="flex-grow py-2 border-b border-gray-300 text-gray-600">
                         { fileName || "No file selected" }
                     </span>

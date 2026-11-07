@@ -20,6 +20,9 @@ export const Changelog: React.FC = () => {
                 <li>Restore required-field validation messages and label focus</li>
                 <li>Fix loading indicators, pagination, navbar dropdown contrast, and clipped dropdowns</li>
                 <li>Fix the date picker being cut off in modals and rotated images not resizing</li>
+                <li>Fix the edit wine form layout, including grape percentages overlapping the remove buttons</li>
+                <li>Fix the special character button not responding and redesign the picker with an abc/ABC toggle</li>
+                <li>Stop fields from shifting the layout when focused or changed</li>
                 <li>Reload automatically when a page is stale after a deploy</li>
                 <li>Restore small buttons, round flags, and line chart scaling</li>
             </ul>

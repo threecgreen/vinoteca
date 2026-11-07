@@ -11,6 +11,8 @@ interface IProps extends IGridProps {
     min: number;
     step: string;
     required?: boolean;
+    /** Overrides the id derived from `name`; needed when the same name repeats on a page. */
+    id?: string;
 }
 
 export const NumberInput: React.FC<IProps> = (props) => {
@@ -24,6 +26,7 @@ export const NumberInput: React.FC<IProps> = (props) => {
     return (
         <Input inputType="number"
             name={ props.name }
+            id={ props.id }
             enabled={ props.enabled ?? true }
             inputFieldClassName="col"
             value={ props.number || "" }

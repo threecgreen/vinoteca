@@ -38,10 +38,10 @@ export const EditWine: React.FC<IProps> = ({wine, grapes, onSubmit, onCancel}) =
                     <WineInputs data={ mutableWine }
                         dispatch={ wineDispatch }
                     />
-                    <GrapesInputs grapes={ mutableGrapes }
-                        dispatch={ grapesDispatch }
-                    />
                 </Row>
+                <GrapesInputs grapes={ mutableGrapes }
+                    dispatch={ grapesDispatch }
+                />
             </ModalContent>
             <ModalFooter>
                 <CancelOrConfirmBtns

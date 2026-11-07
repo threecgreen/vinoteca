@@ -1,5 +1,6 @@
-import "./styles.css";
+// Library defaults first so styles.css overrides them
 import "react-datepicker/dist/react-datepicker.css";
+import "./styles.css";
 import { installStaleChunkReload } from "lib/staleChunkReload";
 import { onError, onLoad } from "lib/utils";
 import React, { StrictMode } from "react";

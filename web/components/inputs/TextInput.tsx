@@ -83,7 +83,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
             onBlur={ (_) => onBlur() }
             className={ gridClasses }
         >
-            <div className="flex">
+            <div className="flex items-end">
                 <Input inputType="text"
                     name={ props.name }
                     value={ props.value }
