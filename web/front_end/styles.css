@@ -856,7 +856,8 @@ div.confirm {
 }
 
 .nav-dropdown-link {
-  @apply block px-4 py-2 text-wine-green hover:bg-gray-100;
+  @apply block px-4 py-2 text-wine-green hover:bg-gray-100 hover:text-wine-green
+         data-[focus]:bg-gray-100 data-[focus]:text-wine-green;
 }
 
 .sidenav-panel {
