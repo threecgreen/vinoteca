@@ -11,6 +11,19 @@ export const Changelog: React.FC = () => {
         <div className="text-container">
             <h1 className="page-title med-heading">Changelog</h1>
 
+            <h5>7.0.1</h5>
+            <ul className="bullets">
+                <li>Fix image upload, rotation, and deletion failing</li>
+                <li>Reject uploads over 16 MiB with a clear error</li>
+                <li>Keep typed text in autocomplete fields instead of replacing it with the first suggestion</li>
+                <li>Restore the special character picker on autocomplete fields</li>
+                <li>Restore required-field validation messages and label focus</li>
+                <li>Fix loading indicators, pagination, navbar dropdown contrast, and clipped dropdowns</li>
+                <li>Fix the date picker being cut off in modals and rotated images not resizing</li>
+                <li>Reload automatically when a page is stale after a deploy</li>
+                <li>Restore small buttons, round flags, and line chart scaling</li>
+            </ul>
+
             <h5>7.0.0</h5>
             <ul className="bullets">
                 <li>Migrate backend to Rocket 0.5 with async Diesel</li>
