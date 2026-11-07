@@ -42,14 +42,6 @@ export default defineConfig({
       'generated': resolve(__dirname, 'generated')
     }
   },
-  css: {
-    preprocessorOptions: {
-      sass: {
-        api: 'modern-compiler',
-        silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin', 'color-functions', 'slash-div', 'mixed-decls'],
-      }
-    }
-  },
   // Optimize date-fns - only include English locale
   optimizeDeps: {
     include: ['date-fns/locale/en-US']
