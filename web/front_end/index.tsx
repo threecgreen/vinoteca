@@ -1,5 +1,6 @@
 import "./styles.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { installStaleChunkReload } from "lib/staleChunkReload";
 import { onError, onLoad } from "lib/utils";
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -7,6 +8,7 @@ import { Router } from "./Router";
 
 onLoad(() => {
     window.onerror = onError;
+    installStaleChunkReload();
     const elem = document.getElementById("app-container");
     if (!elem) {
         throw new Error("Failed to find root element for app.");
