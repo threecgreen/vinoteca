@@ -20,9 +20,7 @@ export const FileInput: React.FC<IProps> = ({name, onChange, fileName}) => {
     };
 
     return (
-        <InputField s={ 12 } l={ 6 }
-            classes={ ["file-field"] }
-        >
+        <InputField s={ 12 } l={ 6 }>
             <div className="flex items-end gap-4">
                 <label htmlFor={ id }
                     className="btn yellow-bg cursor-pointer whitespace-nowrap"

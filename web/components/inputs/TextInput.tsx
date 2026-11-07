@@ -82,7 +82,7 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     value={ props.value }
                     enabled={ props.enabled }
                     onChange={ (val) => onChange(val) }
-                    className={ `${props.className} ${props.required ? "validate" : ""}`  }
+                    className={ props.className }
                     inputFieldClassName="flex-grow no-col"
                     inputRef={ inputRef }
                     active={ Boolean(props.value) }
@@ -150,7 +150,7 @@ interface IIntSimpleProps {
 export const SimpleTextInput: React.FC<IIntSimpleProps> = (props) => (
     <Input inputType={ props.type }
         {...props}
-        className={ `${props.className ?? ""} ${props.required ? "validate" : ""}`  }
+        className={ props.className }
         active={ Boolean(props.value) }
     />
 );
