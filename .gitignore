@@ -8,7 +8,6 @@ data/*.db
 
 # Test files
 .cache/
-.coverage
 
 # Media files
 media/*.png
@@ -16,7 +15,6 @@ media/*.jpg
 
 # Script cache files
 scripts/*.cache
-.vscode/.ropeproject/
 
 # Workspaces
 *.code-workspace
@@ -48,3 +46,7 @@ Rocket.toml
 
 # Migration
 **/migration_conf.json
+
+# Agents
+.claude/
+tasks/
