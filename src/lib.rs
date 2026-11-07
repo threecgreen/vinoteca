@@ -49,6 +49,8 @@ use rocket::{catchers, routes, Build, Rocket};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
+// Rocket dictates this signature for `AdHoc::try_on_ignite`
+#[allow(clippy::result_large_err)]
 pub async fn run_db_migrations(rocket: Rocket<Build>) -> rocket::fairing::Result {
     let database_url: String = rocket
         .figment()

@@ -11,16 +11,16 @@ use diesel_migrations::MigrationHarness;
 use rocket::figment::Figment;
 use rocket::{Build, Rocket};
 use std::env;
-use std::sync::{Mutex, MutexGuard};
+use tokio::sync::{Mutex, MutexGuard};
 
 // Use a lock to synchronize between tests so database operations from one
 // test don't interfere with another
-static DB_LOCK: Mutex<()> = Mutex::new(());
+static DB_LOCK: Mutex<()> = Mutex::const_new(());
 
 /// Acquire the database lock before running a test.
 /// Hold onto the returned guard for the duration of the test.
-pub fn acquire_db_lock() -> MutexGuard<'static, ()> {
-    DB_LOCK.lock().unwrap_or_else(|e| e.into_inner())
+pub async fn acquire_db_lock() -> MutexGuard<'static, ()> {
+    DB_LOCK.lock().await
 }
 
 /// Doesn't include database access
@@ -73,7 +73,7 @@ fn setup_test_db_sync(connection: &mut diesel::PgConnection) {
         .execute(connection)
         .unwrap();
 
-    let mock_grapes = vec![
+    let mock_grapes = [
         "Cabernet Sauvignon",
         "Tempranillo",
         "Merlot",
@@ -93,7 +93,7 @@ fn setup_test_db_sync(connection: &mut diesel::PgConnection) {
             .unwrap();
     }
 
-    for (i, producer) in vec!["Martineli", "Le Grand Noir", "Rodney Strong"]
+    for (i, producer) in ["Martineli", "Le Grand Noir", "Rodney Strong"]
         .iter()
         .enumerate()
     {
@@ -108,7 +108,7 @@ fn setup_test_db_sync(connection: &mut diesel::PgConnection) {
             .unwrap();
     }
 
-    let mock_wine_types = vec![
+    let mock_wine_types = [
         "Sauvignon Blanc",
         "Pinot Noir",
         "Cabernet Sauvignon",

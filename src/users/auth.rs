@@ -87,7 +87,7 @@ mod test {
 
     #[rocket::async_test]
     async fn missing_cookie() {
-        let _lock = acquire_db_lock();
+        let _lock = acquire_db_lock().await;
         let rocket = create_test_rocket().await;
         let rocket = rocket.mount("/", routes![handle_auth]);
         let client = Client::tracked(rocket).await.expect("rocket client");
@@ -97,7 +97,7 @@ mod test {
 
     #[rocket::async_test]
     async fn missing_user() {
-        let _lock = acquire_db_lock();
+        let _lock = acquire_db_lock().await;
         let rocket = create_test_rocket().await;
         let rocket = rocket.mount("/", routes![handle_auth]);
         let client = Client::tracked(rocket).await.expect("rocket client");
@@ -112,7 +112,7 @@ mod test {
 
     #[rocket::async_test]
     async fn authorize() {
-        let _lock = acquire_db_lock();
+        let _lock = acquire_db_lock().await;
         let rocket = create_test_rocket().await;
         let rocket = rocket.mount("/", routes![handle_auth]);
         let client = Client::tracked(rocket).await.expect("rocket client");
