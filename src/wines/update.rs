@@ -51,10 +51,11 @@ pub async fn patch(
 pub async fn put(
     auth: Auth,
     id: i32,
-    raw_wine_form: RawWineForm,
+    raw_wine_form: Result<RawWineForm, VinotecaError>,
     mut connection: DbConn,
     config: &State<Config>,
 ) -> RestResult<Wine> {
+    let raw_wine_form = raw_wine_form?;
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
     wine_form.validate()?;

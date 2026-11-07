@@ -16,10 +16,11 @@ use validator::Validate;
 #[post("/wines", data = "<raw_wine_form>")]
 pub async fn post(
     auth: Auth,
-    raw_wine_form: RawWineForm,
+    raw_wine_form: Result<RawWineForm, VinotecaError>,
     mut connection: DbConn,
     config: &State<Config>,
 ) -> RestResult<Wine> {
+    let raw_wine_form = raw_wine_form?;
     let wine_form = raw_wine_form.wine_form;
     let image = raw_wine_form.image;
     wine_form.validate()?;

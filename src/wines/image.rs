@@ -49,10 +49,11 @@ pub async fn handle_image(
 pub async fn post(
     auth: Auth,
     id: i32,
-    image: Image,
+    image: Result<Image, VinotecaError>,
     mut connection: DbConn,
     config: &State<Config>,
 ) -> RestResult<String> {
+    let image = image?;
     validate_owns_wine(auth, id, &mut connection).await?;
 
     let existing_image_path = get_image_path(auth, id, &mut connection).await?;
