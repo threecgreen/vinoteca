@@ -46,6 +46,7 @@ interface IBtnProps extends IChildrenProp, IClassesProp {
     disabled?: boolean;
     noRbtn?: boolean;
     type?: "button" | "reset" | "submit";
+    onMouseDown?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const Btn: React.FC<IBtnProps> = (props) => {
@@ -61,6 +62,7 @@ export const Btn: React.FC<IBtnProps> = (props) => {
     return (
         <button className={ `${noRbtn ? "" : "rbtn"} waves-effect waves-light btn ${classes}` }
             onClick={ onClick }
+            onMouseDown={ props.onMouseDown }
             disabled={ disabled }
             type={ props.type }
         >

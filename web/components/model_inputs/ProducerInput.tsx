@@ -3,8 +3,6 @@ import { toDict } from "lib/api/common";
 import { getProducers } from "lib/api/producers";
 import { useLogger } from "lib/Logger";
 import React from "react";
-import { RequiredIndicator } from "../RequiredIndicator";
-import { InputField } from "../Grid";
 import { Autocomplete } from "../inputs/Autocomplete";
 import { IOnChange } from "../IProps";
 
@@ -13,7 +11,7 @@ interface IProps extends IOnChange {
     required: boolean;
 }
 
-export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => {
+export const ProducerInput: React.FC<IProps> = ({value, required, onChange}) => {
     const logger = useLogger("ProducerInput", true);
     const [completions, setCompletions] = React.useState<Record<string, string | null>>({});
 
@@ -31,17 +29,13 @@ export const ProducerInput: React.FC<IProps> = ({value, required, ...props}) => 
     }, [logger]);
 
     return (
-        <InputField s={12} m={6} l={3}>
-            <label>
-                Producer{required && <RequiredIndicator />}
-            </label>
-            <Autocomplete
-                name="producer"
-                value={value}
-                onChange={props.onChange}
-                completions={completions}
-            />
-        </InputField>
+        <Autocomplete name="Producer"
+            s={ 12 } m={ 6 } l={ 3 }
+            value={ value }
+            onChange={ onChange }
+            completions={ completions }
+            required={ required }
+        />
     );
 };
 ProducerInput.displayName = "ProducerInput";

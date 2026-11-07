@@ -16,6 +16,9 @@ interface ITextProps extends IGridProps {
     required?: boolean;
     autocomplete?: string;
     useCol?: boolean;
+    id?: string;
+    inputAttrs?: React.InputHTMLAttributes<HTMLInputElement>;
+    children?: React.ReactNode;
 }
 
 export const TextInput: React.FC<ITextProps> = (props) => {
@@ -59,6 +62,10 @@ export const TextInput: React.FC<ITextProps> = (props) => {
         props.onFocus?.();
     };
 
+    // Some browsers, like Safari and Firefox on macOS, don't focus buttons on click, so the
+    // input's blur would hide the picker before the click lands.
+    const keepInputFocus = (e: React.MouseEvent) => e.preventDefault();
+
     const onShowPicker = () => {
         clearTimeout(timeoutId);
         setShowPicker(!showPicker);
@@ -88,17 +95,22 @@ export const TextInput: React.FC<ITextProps> = (props) => {
                     active={ Boolean(props.value) }
                     required={ props.required }
                     autocomplete={ props.autocomplete }
-                />
+                    id={ props.id }
+                    inputAttrs={ props.inputAttrs }
+                >
+                    { props.children }
+                </Input>
                 { isActive && <Btn onClick={ onShowPicker }
+                    onMouseDown={ keepInputFocus }
                     noRbtn={ true }
                     classes={ ["green-bg", "overlap", "btn-small", showPicker ? "active" : ""] }
                 >
                     ñ
                 </Btn> }
             </div>
-            { showPicker && <SpecialCharPicker
-                onClick={ onSpecialCharClick }
-            /> }
+            { showPicker && <div onMouseDown={ keepInputFocus }>
+                <SpecialCharPicker onClick={ onSpecialCharClick } />
+            </div> }
          </div>
     );
 };

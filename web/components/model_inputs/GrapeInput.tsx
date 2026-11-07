@@ -1,6 +1,6 @@
 import React from "react";
 import { FloatingBtn } from "../Buttons";
-import { Col, InputField, Row } from "../Grid";
+import { Col, Row } from "../Grid";
 import { Autocomplete } from "../inputs/Autocomplete";
 import { NumberInput } from "../inputs/NumberInput";
 import { MaterialIcon } from "../MaterialIcon";
@@ -35,17 +35,13 @@ export const GrapeInput: React.FC<IProps> = ({id, completions, grape, percent,
                     step="1"
                     onChange={(n) => onChange(id, grape, n)}
                 />
-                <InputField s={6} l={7}>
-                    <label className="block text-sm text-gray-500">
-                        Grape
-                    </label>
-                    <Autocomplete
-                        name="grape"
-                        value={grape}
-                        onChange={(updatedGrape) => onChange(id, updatedGrape, percent)}
-                        completions={completions}
-                    />
-                </InputField>
+                <Autocomplete name="Grape"
+                    id={ `grape-${id}` }
+                    s={ 6 } l={ 7 }
+                    value={ grape }
+                    onChange={ (updatedGrape) => onChange(id, updatedGrape, percent) }
+                    completions={ completions }
+                />
             </Row>
         </Col>
     );
