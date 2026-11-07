@@ -4,7 +4,6 @@ import { getOrCreateStore, getStores } from "lib/api/stores";
 import { defaultVintageYear } from "lib/component_utils";
 import { useLogger } from "lib/Logger";
 import React from "react";
-import { InputField } from "../Grid";
 import { Autocomplete } from "../inputs/Autocomplete";
 import { CheckboxInput } from "../inputs/CheckboxInput";
 import { DateInput } from "../inputs/DateInput";
@@ -150,15 +149,12 @@ export const PurchaseInputs: React.FC<IProps> = ({displayInventoryBtn, data, dis
                 max={ new Date().getFullYear() }
                 s={ 6 } l={ 3 }
             />
-            <InputField s={12} m={6} l={3}>
-                <label>Store</label>
-                <Autocomplete
-                    name="store"
-                    value={data.store}
-                    onChange={(store) => dispatch({type: "setStore", store})}
-                    completions={storeCompletions}
-                />
-            </InputField>
+            <Autocomplete name="Store"
+                s={ 12 } m={ 6 } l={ 3 }
+                value={ data.store }
+                onChange={ (store) => dispatch({type: "setStore", store}) }
+                completions={ storeCompletions }
+            />
             <TextInput name="Memo"
                 className=""
                 value={ data.memo }

@@ -20,6 +20,12 @@ export interface IInputProps<T extends IInputValue> extends IGridProps {
     inputFieldClassName?: string;
     required: boolean;
     autocomplete?: string;
+    /** Overrides the id derived from `name`; needed when the same name repeats on a page. */
+    id?: string;
+    /** Native attributes spread onto the input before the explicit props. */
+    inputAttrs?: React.InputHTMLAttributes<HTMLInputElement>;
+    /** Rendered directly below the input, inside the relative field. */
+    children?: React.ReactNode;
 }
 
 export class Input<U extends IInputValue> extends React.Component<IInputProps<U>> {
@@ -32,7 +38,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
     };
 
     public render(): ReactElement {
-        const id = nameToId(this.props.name);
+        const id = this.props.id ?? nameToId(this.props.name);
         const helper = this.props.required
             ? <span className="helper-text"
                 data-error={ `${this.props.name} is required` }
@@ -46,7 +52,8 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     { this.props.name }
                     { this.props.required && <RequiredIndicator /> }
                 </label>
-                <input id={ id }
+                <input { ...this.props.inputAttrs }
+                    id={ id }
                     name={ id }
                     className={ this.props.className }
                     ref={ this.props.inputRef }
@@ -60,6 +67,7 @@ export class Input<U extends IInputValue> extends React.Component<IInputProps<U>
                     required={ this.props.required }
                     autoComplete={ this.props.autocomplete }
                 />
+                { this.props.children }
                 { helper }
             </InputField>
         );

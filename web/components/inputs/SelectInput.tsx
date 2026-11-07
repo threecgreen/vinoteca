@@ -24,17 +24,18 @@ interface IProps {
 
 export const SelectInput: React.FC<IProps> = (props) => {
     const selectedOption = props.options.find(o => o.value === props.selection);
+    const id = props.name ? nameToId(props.name) : undefined;
 
     return (
         <InputField s={props.s} m={props.m} l={props.l}>
             {props.name && (
-                <label htmlFor={nameToId(props.name)}>
+                <label htmlFor={id}>
                     {props.name}
                 </label>
             )}
             <Listbox value={props.selection} onChange={props.onChange}>
                 <div className="relative">
-                    <ListboxButton className="select-button">
+                    <ListboxButton id={id} className="select-button">
                         <span className={selectedOption?.value ? "" : "text-gray-400"}>
                             {selectedOption?.label || "Select..."}
                         </span>

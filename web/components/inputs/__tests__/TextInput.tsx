@@ -50,3 +50,18 @@ test("Clicking special character button inserts character into input", async () 
     //     expect(target.value).toBe("añ")
     // );
 });
+
+test("Pressing the picker toggle and a character keeps focus in the input", async () => {
+    const { target } = setup("a");
+
+    target.focus();
+    target.setSelectionRange(1, 1);
+    const toggle = await screen.findByText("ñ");
+    expect(fireEvent.mouseDown(toggle)).toBe(false);
+    fireEvent.click(toggle);
+
+    const charBtn = await screen.findByText("é");
+    expect(fireEvent.mouseDown(charBtn)).toBe(false);
+    await waitFor(() => expect(target.value).toBe("aé"));
+    expect(screen.queryByText("é")).toBeTruthy();
+});
