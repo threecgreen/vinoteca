@@ -159,6 +159,14 @@
            rounded-full text-white cursor-pointer transition-colors shadow-md hover:shadow-lg flex-shrink-0;
   }
 
+  .btn-small {
+    @apply h-[32.4px] py-0 text-[13px] leading-[32.4px];
+  }
+
+  .btn-floating.btn-small {
+    @apply w-[32.4px] h-[32.4px] min-w-[32.4px] min-h-[32.4px] p-0;
+  }
+
   .btn-floating-small {
     @apply w-[30px] h-[30px] leading-[30px] align-baseline relative top-[5px];
   }
