@@ -17,14 +17,14 @@ export const ProducerListItem: React.FC<IProps> = ({producer, onEditClick, onDel
         />
         <td>
             <FloatingBtn onClick={ () => onEditClick(producer.id) }
-                classes={ ["small", "yellow-bg"] }
+                classes={ ["btn-small", "yellow-bg"] }
             >
                 <MaterialIcon iconName="edit" />
             </FloatingBtn>
         </td>
         <td>
             <FloatingBtn onClick={ () => onDeleteClick(producer.id) }
-                classes={ ["small", "red-bg"] }
+                classes={ ["btn-small", "red-bg"] }
             >
                 <MaterialIcon iconName="delete" />
             </FloatingBtn>

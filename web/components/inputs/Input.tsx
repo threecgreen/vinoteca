@@ -9,7 +9,7 @@ export interface IInputProps<T extends IInputValue> extends IGridProps {
     name: string;
     value: T;
     enabled: boolean;
-    className: string;
+    className?: string;
     onChange: (val: string) => void;
     inputRef?: React.Ref<HTMLInputElement>;
     inputType?: string;

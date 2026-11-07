@@ -139,7 +139,7 @@ export const NotFound: React.FC<IRouteComponentProps> = (props) => {
     document.head.appendChild(metaRobots);
     return (
         <div className="text-container" style={ {maxWidth: "750px"} }>
-            <h1 className="light center big" style={ {fontSize: "80px" } }>
+            <h1 className="light center" style={ {fontSize: "80px" } }>
                 Error 404<span style={ {whiteSpace: "pre-wrap"} }>   (○口○&nbsp;)</span>
             </h1>
             <br />
@@ -153,7 +153,7 @@ NotFound.displayName = "NotFound";
 export const Unauthorized: React.FC<IRouteComponentProps> = (props) => {
     return (
         <div className="text-container">
-            <h1 className="light center big">You need to log in to access this</h1>
+            <h1 className="light center">You need to log in to access this</h1>
             <br />
             { props.children }
             <BtnLink classes={["green-bg"]} to="/login">
@@ -174,7 +174,7 @@ export const Forbidden: React.FC<IRouteComponentProps> = (props) => {
     logger.logWarning("Client requested a forbidden resource");
     return (
         <div className="text-container">
-            <h1 className="light center big">Forbidden</h1>
+            <h1 className="light center">Forbidden</h1>
             { props.children }
         </div>
     );

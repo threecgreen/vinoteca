@@ -4,7 +4,6 @@
 # Data files
 data/*.csv
 data/*.db
-.sass-cache/
 **.ipynb
 
 # Test files

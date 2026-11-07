@@ -19,14 +19,14 @@ export const GrapesListItem: React.FC<IProps> = ({grape, onEditClick, onDeleteCl
             />
             <td>
                 <FloatingBtn onClick={ () => onEditClick(grape.id) }
-                    classes={ ["small", "yellow-bg"] }
+                    classes={ ["btn-small", "yellow-bg"] }
                 >
                     <MaterialIcon iconName="edit" />
                 </FloatingBtn>
             </td>
             <td>
                 <FloatingBtn onClick={ () => onDeleteClick(grape.id) }
-                    classes={ ["small", "red-bg"] }
+                    classes={ ["btn-small", "red-bg"] }
                     enabled={ grape.wineCount === 0 }
                 >
                     <MaterialIcon iconName="delete" />

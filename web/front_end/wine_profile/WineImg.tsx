@@ -20,7 +20,7 @@ export const WineImg: React.FC<IProps> = ({path, id, imageCounter, ...props}) =>
             <div className="card-image">
                 <img src={ src }
                     alt="Wine image"
-                    className="responsive-img"
+                    className="max-w-full h-auto"
                 />
             </div>
         </div>

@@ -25,7 +25,6 @@ export const NumberInput: React.FC<IProps> = (props) => {
         <Input inputType="number"
             name={ props.name }
             enabled={ props.enabled ?? true }
-            className="validate"
             inputFieldClassName="col"
             value={ props.number || "" }
             onChange={ onChange }

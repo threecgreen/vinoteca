@@ -58,7 +58,7 @@ export const SpecialCharPicker: React.FC<IProps> = ({onClick}) => {
     return (
         <aside className="special-char-picker">
             {/* Shift button */}
-            <FloatingBtn classes={ ["center", "green-bg", "shift-btn"] }
+            <FloatingBtn classes={ ["center", "green-bg", "mx-1"] }
                 onClick={ () => null }
                 onMouseDown={ handleShift }
             >
