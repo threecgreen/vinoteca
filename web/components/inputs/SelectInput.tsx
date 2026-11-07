@@ -1,8 +1,8 @@
 import {
-    Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition,
+    Listbox, ListboxButton, ListboxOption, ListboxOptions,
 } from "@headlessui/react";
 import { nameToId } from "lib/component_utils";
-import React, { Fragment } from "react";
+import React from "react";
 import { InputField } from "../Grid";
 import { MaterialIcon } from "../MaterialIcon";
 
@@ -34,33 +34,28 @@ export const SelectInput: React.FC<IProps> = (props) => {
                 </label>
             )}
             <Listbox value={props.selection} onChange={props.onChange}>
-                <div className="relative">
-                    <ListboxButton id={id} className="select-button">
-                        <span className={selectedOption?.value ? "" : "text-gray-400"}>
-                            {selectedOption?.label || "Select..."}
-                        </span>
-                        <MaterialIcon iconName="arrow_drop_down" className="text-gray-500" />
-                    </ListboxButton>
-                    <Transition
-                        as={Fragment}
-                        leave="transition ease-in duration-100"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                    >
-                        <ListboxOptions className="dropdown-options">
-                            {props.options.map((option) => (
-                                <ListboxOption
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled={option.disabled}
-                                    className="dropdown-option"
-                                >
-                                    {option.label}
-                                </ListboxOption>
-                            ))}
-                        </ListboxOptions>
-                    </Transition>
-                </div>
+                <ListboxButton id={id} className="select-button">
+                    <span className={selectedOption?.value ? "" : "text-gray-400"}>
+                        {selectedOption?.label || "Select..."}
+                    </span>
+                    <MaterialIcon iconName="arrow_drop_down" className="text-gray-500" />
+                </ListboxButton>
+                <ListboxOptions
+                    anchor="bottom start"
+                    transition
+                    className="dropdown-options dropdown-options-anchored"
+                >
+                    {props.options.map((option) => (
+                        <ListboxOption
+                            key={option.value}
+                            value={option.value}
+                            disabled={option.disabled}
+                            className="dropdown-option"
+                        >
+                            {option.label}
+                        </ListboxOption>
+                    ))}
+                </ListboxOptions>
             </Listbox>
         </InputField>
     );
