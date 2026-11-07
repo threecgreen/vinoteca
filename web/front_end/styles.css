@@ -835,6 +835,15 @@ div.confirm {
          bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none;
 }
 
+/* Portaled via the Headless UI `anchor` prop, so it escapes overflow-clipping
+   ancestors such as .table-wrapper. */
+.dropdown-options-anchored {
+  @apply mt-0 min-w-[var(--button-width)] transition-opacity duration-100 ease-in
+         data-[leave]:data-[closed]:opacity-0;
+  --anchor-gap: 0.25rem;
+  --anchor-max-height: 15rem;
+}
+
 .dropdown-option {
   @apply relative cursor-pointer select-none py-2 px-4
          data-[focus]:bg-wine-red data-[focus]:text-white
