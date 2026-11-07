@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { MOBILE_CUTOFF } from "components/constants";
 import { useUser } from "components/context/UserContext";
 import { useViewport } from "components/context/ViewportContext";

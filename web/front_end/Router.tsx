@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router";
 import { Toaster } from "react-hot-toast";
 import { AsyncRoute, AuthAsyncRoute, NotFound, RouteById } from "components/CommonRoutes";
 import { UserProvider } from "components/context/UserContext";

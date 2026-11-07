@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Update stable
         uses: actions-rs/toolchain@v1
         with:
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup test database
         run: docker compose up --detach
       - name: Test
@@ -54,16 +54,16 @@ jobs:
         working-directory: web
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Generate contracts
         uses: actions-rs/cargo@v1
         with:
           command: run
           args: --bin gen_contracts
       - name: Install NPM
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.3
+          node-version-file: .nvmrc
       - run: npm --version
       - name: Install
         run: npm ci --include=dev

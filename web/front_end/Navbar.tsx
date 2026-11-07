@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
     Menu, MenuButton, MenuItem, MenuItems, Transition,
     Dialog, DialogPanel, TransitionChild,
@@ -142,7 +142,7 @@ const UserMenuItemsComponent: React.FC<IUserMenuItemsProps> = ({user}) => {
         e.preventDefault();
         await logout();
         setUser(null);
-        navigate("/");
+        void navigate("/");
     };
 
     return (
@@ -288,7 +288,7 @@ const MobileMenuItems: React.FC<IMobileMenuItemsProps> = ({onClose}) => {
     const onLogout = async () => {
         await logout();
         setUser(null);
-        navigate("/");
+        void navigate("/");
         onClose();
     };
 

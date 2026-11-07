@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FloatingBtn } from "components/Buttons";
 import { useViewport } from "components/context/ViewportContext";
 import { ErrorHandler } from "components/ErrorHandler";
@@ -199,7 +199,7 @@ const WineProfileApp: React.FC<IProps> = ({id}) => {
     const onDeleteWine = async () => {
         try {
             await deleteWine(id);
-            navigate("/wines");
+            void navigate("/wines");
         } catch (e) {
             logger.logException("Failed to delete wine", e, {id}, LogLevel.Warning);
         }

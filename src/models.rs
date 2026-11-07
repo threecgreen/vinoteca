@@ -6,6 +6,7 @@ use chrono::{DateTime, NaiveDate, Utc};
 use diesel::{AsChangeset, Insertable, Queryable, Selectable};
 use serde::{Deserialize, Serialize};
 use typescript_definitions::TypeScriptify;
+use validator::Validate;
 
 #[derive(Queryable, Selectable, Clone, Serialize, TypeScriptify, Debug)]
 #[diesel(table_name = colors)]

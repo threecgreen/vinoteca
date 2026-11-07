@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FloatingBtn } from "components/Buttons";
 import { FixedActionList } from "components/FixedActionList";
 import { Col, Row } from "components/Grid";
@@ -183,7 +183,7 @@ const ProducerProfileApp: React.FC<IProps> = ({producerId}) => {
         try {
             await deleteProducer(producerId);
             // Redirect home
-            navigate("/");
+            void navigate("/");
         } catch (ex) {
             logger.logException("Failed to delete producer", ex, {id: producerId},
                                 LogLevel.Warning);

@@ -26,7 +26,7 @@ export default defineConfig({
         },
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
-          'vendor-router': ['react-router-dom'],
+          'vendor-router': ['react-router'],
           'vendor-charts': ['chart.js'],
           'vendor-dates': ['date-fns', 'react-datepicker'],
           'vendor-ui': ['@headlessui/react'],

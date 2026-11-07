@@ -29,7 +29,7 @@ pub trait Storage: Send + Sync + 'static {
 /// Stores files on AWS S3 bucket.
 #[derive(Debug)]
 pub struct S3 {
-    bucket: S3Bucket,
+    bucket: Box<S3Bucket>,
 }
 
 const BUCKET_NAME: &str = "vinoteca";

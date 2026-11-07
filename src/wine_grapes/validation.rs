@@ -60,6 +60,8 @@ pub async fn validate_user_owns_grapes(
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::wine_grapes::models::WineGrapesForm;
+    use validator::Validate;
 
     #[test]
     fn total_percentage_some_and_none() {
@@ -83,5 +85,26 @@ mod test {
         ];
         let result = validate_total_percentage(&associated_grapes);
         assert!(result.is_err());
+    }
+
+    fn form(grapes: &[(i32, Option<i32>)]) -> WineGrapesForm {
+        WineGrapesForm {
+            wine_id: 1,
+            grapes: grapes
+                .iter()
+                .map(|&(grape_id, percent)| AssociatedGrape { grape_id, percent })
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn form_validation() {
+        assert!(form(&[(1, Some(60)), (2, Some(40))]).validate().is_ok());
+        assert!(form(&[(1, Some(-1))]).validate().is_err(), "nested range");
+        assert!(
+            form(&[(1, Some(60)), (2, Some(41))]).validate().is_err(),
+            "total percentage"
+        );
+        assert!(form(&[(1, None), (1, None)]).validate().is_err(), "unique");
     }
 }

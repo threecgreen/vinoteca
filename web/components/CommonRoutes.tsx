@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import React, { lazy, Suspense } from "react";
 import { useLogger } from "../lib/Logger";
 import { BtnLink } from "./Buttons";

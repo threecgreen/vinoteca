@@ -17,9 +17,9 @@ pub struct AssociatedGrape {
 #[serde(rename_all = "camelCase")]
 pub struct WineGrapesForm {
     pub wine_id: i32,
-    #[validate] // Nested validation
-    #[validate(custom = "validate_total_percentage")]
-    #[validate(custom = "validate_unique")]
+    #[validate(nested)]
+    #[validate(custom(function = "validate_total_percentage"))]
+    #[validate(custom(function = "validate_unique"))]
     pub grapes: Vec<AssociatedGrape>,
 }
 
