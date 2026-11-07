@@ -375,23 +375,6 @@
     @apply text-med-heading;
   }
 
-  /* Preloader */
-  .preloader-wrapper {
-    @apply inline-block animate-spin;
-  }
-
-  .preloader-wrapper.tiny {
-    @apply w-6 h-6;
-  }
-
-  .spinner-wine-red {
-    @apply border-wine-red;
-  }
-
-  .spinner-golden-yellow {
-    @apply border-golden-yellow;
-  }
-
   /* Fixed action button */
   .fixed-action-div {
     @apply relative h-[60px];

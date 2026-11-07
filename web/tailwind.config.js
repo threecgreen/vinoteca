@@ -46,6 +46,15 @@ export default {
         'container': '1280px',
         'text-container': '650px',
       },
+      keyframes: {
+        indeterminate: {
+          '0%': { left: '-33%' },
+          '100%': { left: '100%' },
+        },
+      },
+      animation: {
+        indeterminate: 'indeterminate 1.5s ease-in-out infinite',
+      },
     },
     screens: {
       'sm': '601px',  // Tablet
