@@ -27,7 +27,7 @@ pub async fn delete(
         .await?;
 
     if let Some(image_path) = image_path {
-        if let Err(e) = image::delete_from_storage(&*config.storage, &image_path) {
+        if let Err(e) = image::delete_from_storage(&*config.storage, &image_path).await {
             log::warn!("Error deleting image for deleted wine: {:?}", e);
         };
     }

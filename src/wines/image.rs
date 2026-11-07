@@ -30,10 +30,11 @@ pub async fn handle_image(
     storage: &dyn Storage,
     connection: &mut AsyncPgConnection,
 ) -> Result<String, VinotecaError> {
-    // Read in image and fix orientation based on EXIF data
-    let image = reformat_image(image)?;
-    // AWS
-    let path = storage.create_object(WINE_DIR, &image, "image/jpeg")?;
+    // Decoding and resizing is CPU-bound, so keep it off the async workers
+    let image = tokio::task::spawn_blocking(move || reformat_image(image)).await??;
+    let path = storage
+        .create_object(WINE_DIR, &image, "image/jpeg")
+        .await?;
 
     diesel::update(wines::table)
         .filter(wines::id.eq(wine_id))
@@ -59,7 +60,7 @@ pub async fn post(
     let path = handle_image(id, image, &*config.storage, &mut connection).await?;
     if let Some(existing_image_path) = existing_image_path {
         // Delete old image after we upload the new one
-        config.storage.delete_object(&existing_image_path)?;
+        config.storage.delete_object(&existing_image_path).await?;
     }
     Ok(Json(path))
 }
@@ -80,13 +81,17 @@ pub async fn rotate(
     let rotation = rotation_form.into_inner().rotation;
 
     let full_path = format!("{}/{}", WINE_DIR, path);
-    let image_bytes = config.storage.get_object(&full_path)?;
-    let rotated_image = rotate_image(image_bytes, rotation)?;
+    let image_bytes = config.storage.get_object(&full_path).await?;
+    let rotated_image =
+        tokio::task::spawn_blocking(move || rotate_image(image_bytes, rotation)).await??;
     log::info!(
         "Updated rotation of image at {} by rotation {:?}",
         full_path, rotation,
     );
-    config.storage.update_object(&full_path, &rotated_image)?;
+    config
+        .storage
+        .update_object(&full_path, &rotated_image)
+        .await?;
     Ok(Json(path))
 }
 
@@ -109,7 +114,9 @@ pub async fn delete(
                 .set(wines::image.eq::<Option<String>>(None))
                 .execute(&mut connection)
                 .await?;
-            delete_from_storage(&*config.storage, &file_path).map(Json)
+            delete_from_storage(&*config.storage, &file_path)
+                .await
+                .map(Json)
         }
         None => Ok(Json(())),
     }
@@ -128,8 +135,10 @@ async fn get_image_path(
         .await?)
 }
 
-pub fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
-    storage.delete_object(&format!("{}/{}", WINE_DIR, path))
+pub async fn delete_from_storage(storage: &dyn Storage, path: &str) -> Result<(), VinotecaError> {
+    storage
+        .delete_object(&format!("{}/{}", WINE_DIR, path))
+        .await
 }
 
 fn get_exif(mime_type: &Mime, raw: Vec<u8>) -> Option<exif::Exif> {

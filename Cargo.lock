@@ -230,16 +230,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "block_on_proc"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b872f3528eeeb4370ee73b51194dc1cd93680c2d0eb6c7a223889038d2c1a167"
-dependencies = [
- "quote 1.0.47",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "blowfish"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2695,7 +2685,6 @@ dependencies = [
  "aws-creds",
  "aws-region",
  "base64 0.22.1",
- "block_on_proc",
  "bytes",
  "cfg-if 1.0.5",
  "futures-util",

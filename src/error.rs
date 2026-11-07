@@ -117,6 +117,13 @@ impl From<S3Error> for VinotecaError {
     }
 }
 
+impl From<tokio::task::JoinError> for VinotecaError {
+    fn from(join_error: tokio::task::JoinError) -> Self {
+        error!("Blocking task failed: {join_error:?}");
+        VinotecaError::Internal("Image processing failed".to_owned())
+    }
+}
+
 impl From<exif::Error> for VinotecaError {
     fn from(exif_error: exif::Error) -> Self {
         warn!("Error reading exif data: {:?}", exif_error);
