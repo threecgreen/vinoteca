@@ -316,7 +316,6 @@ export const LineChart: React.FC<ILineChartProps> = ({data, seriesLabels}) => {
                                 size: 14,
                             },
                         },
-                        beginAtZero: true,
                     },
                 },
                 plugins: {
