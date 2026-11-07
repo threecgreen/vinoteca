@@ -884,8 +884,9 @@ div.confirm {
 }
 
 /* Modal styling */
+/* No overflow clipping: the date picker popup must extend past the panel. */
 .modal-dialog-panel {
-  @apply w-full max-w-lg transform overflow-hidden rounded-sm
+  @apply w-[80%] md:w-[55%] transform rounded-sm
          bg-white shadow-xl transition-all;
 }
 
