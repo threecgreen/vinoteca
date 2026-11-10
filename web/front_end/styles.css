@@ -26,6 +26,16 @@
 
 /* Base layer customizations */
 @layer base {
+  /* Browsers fill the overscroll area with the root background color. lib/overscrollColor.ts
+     switches it to the footer color in the bottom half of the page. */
+  html {
+    background-color: var(--wine-red);
+  }
+
+  html.overscroll-footer {
+    background-color: var(--wine-red-darken-5);
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     @apply text-wine-black bg-wine-white text-[15px];

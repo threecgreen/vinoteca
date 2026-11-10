@@ -2,7 +2,7 @@
 name = "vinoteca"
 description = "Wine purchase tracker"
 repository = "https://github.com/threecgreen/vinoteca"
-version = "7.0.1"
+version = "7.0.2"
 edition = "2021"
 authors = ["Carter Green <crtrgreen AT gmail DOT com>"]
 readme = "./README.md"
